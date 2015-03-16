@@ -1,0 +1,7 @@
+vagrant/.vagrant
+*.pyc
+*.pyo
+*.swp
+*.swo
+private/
+app/instance/
