@@ -5,3 +5,4 @@ vagrant/.vagrant
 *.swo
 private/
 app/instance/
+app/venv/

@@ -1,0 +1,9 @@
+
+pip install Flask
+
+# http://flask-sso.readthedocs.org/en/latest/#a-minimal-example
+pip install flask-sso
+
+
+# for development
+pip install flask_debugtoolbar
