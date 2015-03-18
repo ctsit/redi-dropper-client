@@ -27,7 +27,7 @@ def index():
     else:
         print "not logged in... show login button"
 
-    return render_template("index.html", loggedin=loggedin, details=details)
+    return render_template("login.html", loggedin=loggedin, details=details)
 
 @app.route('/logout')
 def logout():
