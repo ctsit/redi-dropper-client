@@ -34,6 +34,10 @@ def logout():
     session.pop('user')
     return redirect('/')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/uploaderhome')
 def uploaderhome():
     return render_template('uploaderhome.html')
