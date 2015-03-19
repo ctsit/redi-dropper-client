@@ -1,4 +1,4 @@
-# Helper script for running frequent tasks on the vargrant machine
+# Helper script for running frequent tasks on the vagrant machine
 
 SHARED_DIR := /vagrant/
 VAGR := VAGRANT_CWD=vagrant
