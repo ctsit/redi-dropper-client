@@ -43,6 +43,11 @@ def logout():
 def about1():
     return render_template('about1.html')
 
+# This page is visible when user is not logged in
+@app.route('/contact1')
+def contact1():
+    return render_template('contact1.html')
+
 # This page is visible when user is logged in
 @app.route('/about')
 def about():
