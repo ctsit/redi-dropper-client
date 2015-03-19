@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-3 col-md-2 sidebar">
+				<ul class="nav nav-sidebar">
+            		<li><a href="#">Upload</a></li>
+            		<li><a href="#">Other Functions</a></li>
+          		</ul>
+        	</div>      
+        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        		<div class="container-fluid">
+        			<div class="row">
+        				<div class="col-sm-9">
+        					<h3>List of Subjects</h3>
+        				</div>
+        			</div>
+        		</div>
+
+        		<br><br>
+
+	        	<table class="table">
+	        		<tr>
+	        			<th>ID</th>
+	        			<th>Name</th>
+	        			<th>No. of Files</th>
+	        		</tr>
+	        		<tr>
+	        			<td>1</td>
+	        			<td>Sarah</td>
+	        			<td>3</td>
+	        		</tr>
+	        		<tr>
+	        			<td>2</td>
+	        			<td>Jane</td>
+	        			<td>5</td>
+	        		</tr>
+	        		<tr>
+	        			<td>3</td>
+	        			<td>James</td>
+	        			<td>1</td>
+	        		</tr>
+	        	</table>
+        	</div>
+    	</div>
+	</div>
+
+{% endblock %}

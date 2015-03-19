@@ -9,6 +9,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
@@ -39,12 +40,13 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
+            <li><a href="#">Logout</a></li>
           </ul>
         </div>
       </div>
     </div>
 
-    {% block login %}
+    {% block content %}
     {% endblock %}
 
     <!-- Bootstrap core JavaScript
