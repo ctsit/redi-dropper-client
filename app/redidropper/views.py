@@ -53,6 +53,11 @@ def contact1():
 def about():
     return render_template('about.html')
 
+# This page is visible when user is logged in
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
 @app.route('/uploaderhome')
 def uploaderhome():
     return render_template('uploaderhome.html')
