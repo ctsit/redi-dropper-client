@@ -27,13 +27,23 @@ def index():
     else:
         print "not logged in... show login button"
 
-    return render_template("index.html", loggedin=loggedin, details=details)
+    return render_template("login.html", loggedin=loggedin, details=details)
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user')
     return redirect('/')
 
+# This page is visible when user is not logged in
+@app.route('/about1')
+def about1():
+    return render_template('about1.html')
+
+# This page is visible when user is logged in
 @app.route('/about')
 def about():
     return render_template('about.html')
