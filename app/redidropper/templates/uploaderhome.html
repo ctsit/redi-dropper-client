@@ -1,76 +1,60 @@
 {% extends "layout.html" %}
 
 {% block content %}
-	<link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
+	<div class="starter-template">
+		<h1>Uploader Hompage</h1>
+	</div>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="starter-template">
-				<h1>Uploader Hompage</h1>
-			</div>
-			<div class="col-sm-3 col-md-2 sidebar">
-				<ul class="nav nav-sidebar">
-					<li><a href="#"><h3>Role: Uploader</h3></a></li>
-					<li class="active"><a href="{{ url_for('uploaderhome') }}">Upload</a></li>
-            		<li><a href="#">Other Functions</a></li>
-          		</ul>
-        	</div>      
-        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        		<div class="container-fluid">
-        			<div class="row">
-        				<div class="col-sm-9">
-        					<h3>List of Subjects</h3>
-        				</div>
-        			</div>
-        		</div>
-
-        		<br><br>
-
-				<div class="table-responsive">
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Name</th>
-								<th>No. of Files</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Sarah</td>
-								<td>3</td>
-								<td><button class="btn btn-primary btn">Add</button></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Jane</td>
-								<td>5</td>
-								<td><button class="btn btn-primary btn">Add</button></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>James</td>
-								<td>1</td>
-								<td><button class="btn btn-primary btn">Add</button></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>Jack</td>
-								<td>1</td>
-								<td><button class="btn btn-primary btn">Add</button></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>Jill</td>
-								<td>2</td>
-								<td><button class="btn btn-primary btn">Add</button></td>
-							</tr>
-						</body>
-					</table>
-				</div>
+			<div class="col-sm-9">
+				<h3>List of Subjects</h3>
 			</div>
 		</div>
+	</div>
+	<br><br>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>No. of Files</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>Sarah</td>
+					<td>3</td>
+					<td><button class="btn btn-primary btn">Add</button></td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>Jane</td>
+					<td>5</td>
+					<td><button class="btn btn-primary btn">Add</button></td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>James</td>
+					<td>1</td>
+					<td><button class="btn btn-primary btn">Add</button></td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>Jack</td>
+					<td>1</td>
+					<td><button class="btn btn-primary btn">Add</button></td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>Jill</td>
+					<td>2</td>
+					<td><button class="btn btn-primary btn">Add</button></td>
+				</tr>
+			</body>
+		</table>
 	</div>
 
 {% endblock %}

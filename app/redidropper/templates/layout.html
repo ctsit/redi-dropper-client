@@ -9,10 +9,11 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -46,8 +47,23 @@
       </div>
     </div>
 
-    {% block content %}
-    {% endblock %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li><a href="#"><h3>Role: Uploader</h3></a></li>
+          <li class="active"><a href="{{ url_for('uploaderhome') }}">Upload</a></li>
+                <li><a href="#">Other Functions</a></li>
+              </ul>
+          </div>
+          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block content %}
+            {% endblock %}
+          </div>
+        </dvi>
+      </div>
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
