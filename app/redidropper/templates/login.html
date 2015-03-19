@@ -1,10 +1,12 @@
 {% extends "index.html" %}
 
 {% block content %}
+<link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
 	<div class="container">
+        <div class="starter-template">
+            <h1>Login Page</h1>
+        </div>
         <form class="form-signin" role="form" align="center" action="{{ url_for('uploaderhome') }}" method="get">
-            <h2 class="form-signin-heading" align="center">Login Page</h2>
-            <br><br><br>
             <input type="text" class="form-control" name="UNAME" id="UNAME" placeholder="Username" required autofocus>
             <input type="password" class="form-control" name="PSWD" id="PSWD" placeholder="Password" required>
             <br>
