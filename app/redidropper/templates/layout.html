@@ -25,48 +25,61 @@
     <![endif]-->
   </head>
 
-  <body>
+<body>
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar">A</span>
-            <span class="icon-bar">B</span>
-            <span class="icon-bar">C</span>
-          </button>
-          <a class="navbar-brand" href="{{ url_for('technician') }}">REDIDropper</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{{ url_for('about') }}">About</a></li>
-            <li><a href="{{ url_for('contact') }}">Contact</a></li>
-            <li><a href="{{ url_for('index') }}">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('index') }}" title="Research Electronic Data Dropper">
+                    <img alt="RED-Dropper" style="height: 3em; width: 3em;" src="/static/img/redd.png">
+              </a>
+            </div>
 
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('admin') }}">            Admin</a></li>
+                    <li><a href="{{ url_for('technician') }}">       Technician</a></li>
+                    <li><a href="{{ url_for('researcher_one') }}">   Researcher 1</a></li>
+                    <li><a href="{{ url_for('researcher_two') }}">   Researcher 2</a></li>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-3 col-md-2 sidebar">
-        <ul class="nav nav-sidebar">
-          <li><a href="#"><h3>Role: Uploader</h3></a></li>
-          <li class="active"><a href="{{ url_for('technician') }}">Upload</a></li>
-                <li><a href="#">Other Functions</a></li>
-              </ul>
+                    <li><a href="{{ url_for('about') }}">    About</a></li>
+                    <li><a href="{{ url_for('contact') }}">  Contact</a></li>
+                    <li><a href="{{ url_for('logout') }}">   Logout</a></li>
+                </ul>
+            </div>
           </div>
-          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </dvi>
-      </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar">
+                    <ul class="nav nav-sidebar">
+                        <li>
+                            <h3>Role: xyz</h3>
+                        </li>
+                        <li class="active">
+                            <a href="{{ url_for('upload') }}">Upload</a>
+                        </li>
+                        <li>
+                            <a href="#">Other Functions</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-  </body>
+</body>
 </html>
