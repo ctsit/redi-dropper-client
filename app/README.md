@@ -10,9 +10,12 @@ There are three great tools for python development:
     - virtualenvwrapper (allows to switch between virtualenvs)
     - fabric (allows to execute common python tasks in similar way to Makefiles)
 
+@see https://virtualenvwrapper.readthedocs.org/en/latest/
+
 <pre>
-sudo pip install fabric
+sudo pip install virtualenv
 sudo pip install virtualenvwrapper
+sudo pip install fabric
 
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/git
