@@ -34,3 +34,9 @@ def researcher_two():
     return render_template('users/researcher_two.html')
 
 
+@app.route('/users/upload')
+def upload():
+    """ Render the upload screen """
+    return render_template('users/upload.html')
+
+
