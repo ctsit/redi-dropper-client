@@ -3,7 +3,29 @@
 This folder is dedicated to storing the code for REDI-Dropper Client Application.
 
 
-## Directory structure
+## Workflow
+
+There are three great tools for python development:
+    - virtualenv (allows to isolate python packages required for your application)
+    - virtualenvwrapper (allows to switch between virtualenvs)
+    - fabric (allows to execute common python tasks in similar way to Makefiles)
+
+<pre>
+sudo pip install fabric
+sudo pip install virtualenvwrapper
+
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/git
+source /usr/local/bin/virtualenvwrapper.sh
+
+mkvirtualenv -p /usr/local/bin/python2.7 redi-dropper-client
+workon redi-dropper-client
+cd ~/git/redi-dropper-client/app
+fab install_requirements
+</pre>
+
+
+## Directory structure (needs update)
 
 <pre>
 +--------------------------------------------------------------------------------------------------+

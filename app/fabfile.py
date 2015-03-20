@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 
 @task
-def update_env():
+def install_requirements():
     """
     Install required Python packages using pip and requirements.txt
     """
