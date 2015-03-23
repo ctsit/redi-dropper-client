@@ -6,9 +6,10 @@ This folder is dedicated to storing the code for REDI-Dropper Client Application
 ## Workflow
 
 There are three great tools for python development:
-    - virtualenv (allows to isolate python packages required for your application)
-    - virtualenvwrapper (allows to switch between virtualenvs)
-    - fabric (allows to execute common python tasks in similar way to Makefiles)
+
+ * virtualenv (allows to isolate python packages required for your application)
+ * virtualenvwrapper (allows to switch between virtualenvs)
+ * fabric (allows to execute common python tasks in similar way to Makefiles)
 
 @see https://virtualenvwrapper.readthedocs.org/en/latest/
 
