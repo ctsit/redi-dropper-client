@@ -6,6 +6,26 @@
         <div class="panel-heading"><strong>Upload Files</strong> <small>Bootstrap files upload</small></div>
         <div class="panel-body">
 
+          <div class="resumable-drop" ondragenter="jQuery(this).addClass('resumable-dragover');" ondragend="jQuery(this).removeClass('resumable-dragover');" ondrop="jQuery(this).removeClass('resumable-dragover');">
+            Drop video files here to upload or <a id="file-select" class="resumable-browse"><u>select from your computer</u></a>
+          </div>
+          
+          <div class="resumable-progress">
+            <table>
+              <tr>
+                <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
+                <td class="progress-text" nowrap="nowrap"></td>
+                <td class="progress-pause" nowrap="nowrap">
+                  <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="resume.png" title="Resume upload" /></a>
+                  <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="pause.png" title="Pause upload" /></a>
+                  <a href="#" onclick="r.cancel(); return(false);" class="progress-cancel-link"><img src="cancel.png" title="Cancel upload" /></a>
+                </td>
+              </tr>
+            </table>
+          </div>
+          
+          <ul class="resumable-list"></ul>
+
           <!-- Standar Form -->
           <h4>Select files from your computer</h4>
           <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
