@@ -13,6 +13,23 @@ from flask_user import login_required, roles_required
 
 from redidropper.main import app
 
+@app.route('/api/list_subject_files', methods=['POST', 'GET'])
+def list_subject_files(subject_id):
+    return """[
+{"file_name": "123.jpg", "file_added": "today", "file_added_by": "technician 1"},
+{"file_name": "xyz.jpg", "file_added": "2015-01-01 01:02:03", "file_added_by": "technician 2"},
+{"file_name": "abc.jpg", "file_added": "today", "file_added_by": "technician 3"}
+]"""
+
+@app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
+def list_redcap_subjects():
+    """ Receives files on the server side """
+    return """[
+{ "id": "1", "name": "Billy Joe", "files": "3"},
+{ "id": "002", "name": "Anne Blue", "files": "1"},
+{ "id": "200", "name": "Maggie Magic", "files": "10"}
+]"""
+
 #@app.route('/api/upload', methods=['POST', 'GET'])
 @app.route('/api/upload', methods=['POST'])
 def api_upload():
@@ -65,4 +82,4 @@ def merge_files(numberOfChunks,filename):
     for i in range(1, int(numberOfChunks)+1):        
         currentFileName = "{}.part{}".format(filename, i)
         os.remove(os.path.join(app.config['TEMP_FOLDER'], currentFileName))
-            
+
