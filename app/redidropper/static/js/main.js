@@ -7,6 +7,11 @@ var r = new Resumable({
   throttleProgressCallbacks:1
 });
 
+var file_select = document.getElementById("file-select");
+var file_drop = document.getElementById('file-drop');
+if(!(file_select&&file_drop)){
+   return;
+}
 // If Resumable.js isn't supported, fall back on a different method
 if(!r.support) {
 	console.log("Resumable is Not Supported . Switch to Some other Style");
@@ -24,7 +29,11 @@ if(!r.support) {
          r.upload();
    });
    r.on('pause', function(){
-         $('.file-status').html('Paused');
+         $('.file-status').each(function(){
+            if($(this).html()!="Success"){
+               $(this).html('Paused');
+            }
+         });
    });
    r.on('complete', function(){
          // Hide pause/resume when the upload has completed
@@ -51,13 +60,20 @@ if(!r.support) {
    });
    r.on('cancel', function(){
          $('.file-progress-status').html('');
-         $('.file-status').html('Cancelled');
+          $('.file-status').each(function(){
+            if($(this).html()!="Success"){
+               $(this).html('Cancelled');
+            }
+         });
          $('.file-progress-list-item').attr('class','file-progress-list-item list-group-item list-group-item-danger');
-  
+         $("#file-upload-progress-bar").hide(); 
    });
    r.on('uploadStart', function(){
-
-            $('.file-status').html('Uploading');
+         $('.file-status').each(function(){
+            if($(this).html()!="Success"){
+               $(this).html('Uploading');
+            }
+         });
             // Show pause, hide resume
             $("#pause-button").show();
             $("#cancel-button").show();
