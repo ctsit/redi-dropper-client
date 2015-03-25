@@ -14,30 +14,23 @@ function render_subject_files() {
 }
 
 function render_redcap_subjects() {
-    var container = $("#redcap_subjects_container");
-    container.empty();
-
-    var thead = $('<thead><tr> <th> # </th> <th> Name </th> <th> Number of Files </th> </tr>'); 
-    var tbody = $('<tbody>');
-    var table = $('<table border="1" cellpadding="2" cellspacing="2" id="redcap_subjects">').append(thead).append(tbody);
-    container.append(table);
-
     var data = {};
     var request = api_request("/api/list_redcap_subjects", "POST", data, "json", true);
-
     request.success( function(json) {
         console.log(json);
         if (array_keys(json).length < 1) {
-            console.log("Empty list returned.");
+            $("#no-table-data-error").text("There are no subject present")
             return;
         }
 
+        $("#technician-table").show();
         $.each(json, function (i, obj) {
             var row = $('<tr>');
-            row.append($('<td>').text(i));
+            row.append($('<td>').text(obj.id));
             row.append($('<td>').text(obj.name));
             row.append($('<td>').text(obj.files));
-            tbody.append(row);
+            row.append($('<td>').html('<a href="/users/upload/'+obj.id+'" class="btn btn-primary btn">Add</a>'));
+            $("#technician-table-body").append(row);
         });
     });
 

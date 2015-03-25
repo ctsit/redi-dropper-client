@@ -15,8 +15,12 @@
 		</div>
 	</div>
 
+	 {{ subject_id }}
+
+	<div id="no-table-data-error" class="no-table-data">
+	</div>
 	<div class="table-responsive">
-		<table class="table table-striped">
+		<table id="technician-table" class="table table-striped" hidden>
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -25,29 +29,9 @@
 					<th></th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td>1</td>
-					<td>Sarah</td>
-                    <td><a href="/view-subject-files/1">3</a></td>
-					<td><button class="btn btn-primary btn">Add</button></td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>Jane</td>
-                    <td><a href="/view-subject-files/2">110</a></td>
-					<td><button class="btn btn-primary btn">Add</button></td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>James</td>
-                    <td><a href="/view-subject-files/3">0</a></td>
-					<td><button class="btn btn-primary btn">Add</button></td>
-				</tr>
+			<tbody id="technician-table-body">
 			</body>
 		</table>
 	</div>
-
-    <div id="redcap_subjects_container"> empty </div>
 
 {% endblock %}

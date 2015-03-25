@@ -21,7 +21,6 @@ def technician():
     """ Render the technician's home page """
     return render_template('users/technician.html')
 
-
 @app.route('/users/researcher_one')
 def researcher_one():
     """ Render the researcher's home page """
@@ -33,10 +32,11 @@ def researcher_two():
     """ Render the researcher's home page """
     return render_template('users/researcher_two.html')
 
-
 @app.route('/users/upload')
-def upload():
+@app.route('/users/upload/<subject_id>')
+def upload(subject_id=None):
     """ Render the upload screen """
-    return render_template('users/upload.html')
+
+    return render_template('users/upload.html',subject_id=subject_id)
 
 
