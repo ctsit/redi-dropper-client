@@ -15,8 +15,6 @@
 		</div>
 	</div>
 
-	 {{ subject_id }}
-
 	<div id="no-table-data-error" class="no-table-data">
 	</div>
 	<div class="table-responsive">
@@ -30,8 +28,11 @@
 				</tr>
 			</thead>
 			<tbody id="technician-table-body">
-			</body>
+			</tbody>
 		</table>
 	</div>
+
+	
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 {% endblock %}
