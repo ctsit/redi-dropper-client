@@ -6,3 +6,4 @@ vagrant/.vagrant
 private/
 app/instance/
 app/venv/
+.coverage

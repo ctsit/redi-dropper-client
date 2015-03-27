@@ -18,6 +18,9 @@ help:
 run:
 	cd app && fab run
 
+test:
+	cd app && fab test
+
 vup:
 	$(VAGR) vagrant up
 
