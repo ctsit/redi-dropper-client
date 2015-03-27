@@ -1,10 +1,17 @@
-# The 'fabfile.py' is used by Fabric and must reside in the application root directory.
+# The 'fabfile.py' is used by Fabric and must reside in the
+# application root directory.
 
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
 from contextlib import contextmanager
 
+@task
+def list():
+    """
+    List available tasks
+    """
+    local("fab --list")
 
 @task
 def install_requirements():
@@ -35,13 +42,13 @@ def test_cov():
     """
     Run the automated test suite using py.test
     """
-    local('py.test --tb=short -s  --cov redidropper  --cov-config tests/.coveragerc  --cov-report term-missing  tests/')
+    local("py.test --tb=short -s --cov redidropper --cov-config tests/.coveragerc --cov-report term-missing tests/")
 
 
 @task
 def run():
     """
-    Start the web application using a development WSGI webserver provided by Flask
+    Start the web application using the WSGI webserver provided by Flask
     """
     local('python run.py')
 
