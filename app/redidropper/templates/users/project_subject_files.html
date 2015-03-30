@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="starter-template">
+        <h1>Subjects List of Files</h1>
+    </div>
+
+	<div id="subject-files-list">
+	</div>
+
+    <script type="text/jsx" src="{{ url_for('static', filename='js/subject_files.js') }}"></script>
+
+{% endblock %}

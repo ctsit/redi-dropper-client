@@ -21,6 +21,12 @@ def technician():
     """ Render the technician's home page """
     return render_template('users/technician.html')
 
+@app.route('/users/project')
+@app.route('/users/project/<project_id>/subject/<subject_id>')
+def project_subject_files(project_id=None,subject_id=None):
+    """ Render the project subject files page """
+    return render_template('users/project_subject_files.html',subject_id=subject_id,project_id=project_id)
+
 @app.route('/users/researcher_one')
 def researcher_one():
     """ Render the researcher's home page """

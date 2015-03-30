@@ -7,32 +7,9 @@
         <p class="lead"> Technicians can upload/download images.</p>
     </div>
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-9">
-				<h3>List of Subjects</h3>
-			</div>
-		</div>
+	<div id="technician">
 	</div>
 
-	<div id="no-table-data-error" class="no-table-data">
-	</div>
-	<div class="table-responsive">
-		<table id="technician-table" class="table table-striped" hidden>
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>No. of Files</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody id="technician-table-body">
-			</tbody>
-		</table>
-	</div>
-
-	
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/technician.js') }}"></script>
 
 {% endblock %}
