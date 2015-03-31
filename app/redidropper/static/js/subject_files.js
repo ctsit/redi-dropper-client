@@ -8,24 +8,29 @@ function api_request(url, reqType, data, dataType, doCache) {
     });
 }
 
-var SubjectFilesList = React.createClass({
+function get_subject_files(){
+    var data =[{foldername:"Folder 1",list_of_files:[{file_id:"1",file_name:"test 1",file_size:"10MB"},{file_id:"1",file_name:"test 2",file_size:"20MB"},{file_id:"3",file_name:"test 3434",file_size:"30MB"}]},
+                {foldername:"Folder 2",list_of_files:[{file_id:"2",file_name:"test 1",file_size:"10MB"},{file_id:"1",file_name:"test 2",file_size:"20MB"},{file_id:"3",file_name:"test 3434",file_size:"30MB"}]},
+                {foldername:"Folder 3",list_of_files:[{file_id:"3",file_name:"test 1",file_size:"10MB"},{file_id:"1",file_name:"test 2",file_size:"20MB"},{file_id:"3",file_name:"test 3434",file_size:"30MB"}]},
+                {foldername:"Folder 4",list_of_files:[{file_id:"4",file_name:"test 1",file_size:"10MB"},{file_id:"1",file_name:"test 2",file_size:"20MB"},{file_id:"3",file_name:"test 3434",file_size:"30MB"}]}
+                ];
+     return data;           
+}
+
+var FolderFilesList = React.createClass({
   getInitialState: function() {
-    return {subjects:[]};
+    return {list_of_files:this.props.list_of_files,visibility:this.props.visibility};
   },
-  componentWillMount:function(){
-    var request = api_request("/api/list_redcap_subjects", "POST",{}, "json", true);
-    var _this=this;
-    request.success( function(json) {
-        console.log("success "+json);
-        _this.setState({subjects:json});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
+  componentWillReceiveProps:function(nextProps){
+        this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
   },
   render: function() {
-    return (
-    <div className="table-responsive">
+    var style={};
+    if (!this.state.visibility) {
+        style.display = 'none';
+    }
+    return (    
+    <div className="table-responsive" style={style}>
         <div>{this.props.selected_project}</div>
         <table id="technician-table" className="table table-striped">
             <thead>
@@ -37,15 +42,13 @@ var SubjectFilesList = React.createClass({
                 </tr>
             </thead>
             <tbody id="technician-table-body">
-                {this.state.subjects.map(function(record,i) {
-                    
-                    var add_url="/users/upload/"+record.id;
-                    var file_url="/users/project/"+record.id+"/subject/"+record.id;
+                {this.state.list_of_files.map(function(record,i) {
+                    var add_url="/users/file_download/"+record.id;
                     return <tr>
-                                <td>{record.id}</td>
-                                <td>{record.name}</td>
-                                <td><a href={file_url} className="btn btn-primary btn">{record.files}</a></td>
-                                <td><a href={add_url} className="btn btn-primary btn">Add</a></td>
+                                <td>{record.file_id}</td>
+                                <td>{record.file_name}</td>
+                                <td>{record.file_size}</td>
+                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
                             </tr>           
                 })}
             </tbody>
@@ -55,5 +58,62 @@ var SubjectFilesList = React.createClass({
   }
 });
 
+var FoldersList = React.createClass({
+  getInitialState: function() {
+    var data = get_subject_files();
+    for( var i=0;i<data.length;i++){
+        data[i].visible=false;
+    }
+    return {subjects:data};
+  },
+  componentWillMount:function(){
+    /*
+    var request = api_request("/api/list_redcap_subjects", "POST",{}, "json", true);
+    var _this=this;
+    request.success( function(json) {
+        console.log("success "+json);
+        _this.setState({subjects:json});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });*/
+  },
+  collapseAll:function(){
+    var data=this.state.subjects;
+    for( var i=0;i<data.length;i++){
+        data[i].visible=false;
+    }
+     this.setState({subjects:data});
+  },
+  displayAll:function(){
+    var data=this.state.subjects;
+    for( var i=0;i<data.length;i++){
+        data[i].visible=true;
+    }
+     this.setState({subjects:data});
+  },
+  changeDisplay:function(i){
+    var data=this.state.subjects;
+    data[i].visible=!(data[i].visible);
+    this.setState({subjects:data});
+  },
+  render: function() {
+    var _this=this;
+    return (
+    <div>
+    <button onClick={this.collapseAll} className="btn btn-primary btn">Collapse All</button>
+    <button onClick={this.displayAll} className="btn btn-primary btn">Display All</button>
+        {this.state.subjects.map(function(record,i) {
+            return <div>
+                    <h3 onClick={_this.changeDisplay.bind(null,i)}>{record.foldername}</h3>
+                    <br></br>
+                    <FolderFilesList folder_id={record.foldername} list_of_files={record.list_of_files} visibility={record.visible}/>  
+                    </div>                        
+        })}
+    </div>
+    );
+  }
+});
 
-React.render(<SubjectFilesList/>, document.getElementById("subject-files-list"));
+
+React.render(<FoldersList/>, document.getElementById("subject-files-list"));
