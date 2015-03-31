@@ -1,5 +1,18 @@
 This schema change adds tables for user management.
 
+show tables from RediDropper;
++-----------------------+
+| Tables_in_redidropper |
++-----------------------+
+| Project               |
+| ProjectUserRole       |
+| Role                  |
+| User                  |
+| UserAuth              |
+| Version               |
++-----------------------+
+6 rows in set (0.00 sec)
+
 
 -- View available roles
 SELECT * FROM Role;
@@ -27,16 +40,18 @@ SELECT prjName, prjApiKey, prjAddedAt FROM Project;
 
 -- Storing username and password
 desc UserAuth;
-+------------------------+------------------+------+-----+-------------------+-----------------------------+
-| Field                  | Type             | Null | Key | Default           | Extra                       |
-+------------------------+------------------+------+-----+-------------------+-----------------------------+
-| uathID                 | int(10) unsigned | NO   | PRI | NULL              | auto_increment              |
-| usrID                  | int(10) unsigned | NO   | UNI | NULL              |                             |
-| uathUsername           | varchar(255)     | NO   | UNI | NULL              |                             |
-| uathPassword           | varchar(255)     | NO   |     | NULL              |                             |
-| uathPasswordResetToken | varchar(255)     | NO   |     |                   |                             |
-| uathModifiedAt         | timestamp        | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
-+------------------------+------------------+------+-----+-------------------+-----------------------------+
++----------------------------+------------------+------+-----+-------------------+-----------------------------+
+| Field                      | Type             | Null | Key | Default           | Extra                       |
++----------------------------+------------------+------+-----+-------------------+-----------------------------+
+| uathID                     | int(10) unsigned | NO   | PRI | NULL              | auto_increment              |
+| usrID                      | int(10) unsigned | NO   | UNI | NULL              |                             |
+| uathUsername               | varchar(255)     | NO   | UNI | NULL              |                             |
+| uathPassword               | varchar(255)     | NO   |     | NULL              |                             |
+| uathPasswordResetToken     | varchar(255)     | NO   |     |                   |                             |
+| uathEmailConfirmationToken | varchar(255)     | NO   |     |                   |                             |
+| uathModifiedAt             | timestamp        | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
++----------------------------+------------------+------+-----+-------------------+-----------------------------+
+7 rows in set (0.01 sec)
 
 
 -- Selecting important data for an user
@@ -52,11 +67,12 @@ WHERE
     usrEmail LIKE '%@example.com'
 ;
 
+
 +-----------+----------------------------+--------------+----------------+--------------+--------------+
 | prjName   | usrEmail                   | usrFirst     | rolName        | uathUsername | uathPassword |
 +-----------+----------------------------+--------------+----------------+--------------+--------------+
 | ADRC TEST | admin@example.com          | Admin        | admin          | admin        | password     |
-| ADRC TEST | technician@example.com     | Technician   | technician     | NULL         | NULL         |
+| ADRC TEST | technician@example.com     | Technician   | technician     | technician   | password     |
 | ADRC TEST | researcher_one@example.com | Researcher 1 | researcher_one | NULL         | NULL         |
 | ADRC TEST | researcher_two@example.com | Researcher 2 | researcher_two | NULL         | NULL         |
 +-----------+----------------------------+--------------+----------------+--------------+--------------+
