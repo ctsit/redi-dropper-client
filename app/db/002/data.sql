@@ -18,17 +18,17 @@ VALUES
 
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt)
 VALUES
-    ('technician@example.com', 'Technician', 'ÅÄrnÄ', NOW())
+    ('technician@example.com', 'Technician', 'Țărnă', NOW())
 ;
 
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt)
 VALUES
-    ('researcher_one@example.com', 'Researcher 1', 'MÃ©ziriac', NOW())
+    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW())
 ;
 
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt)
 VALUES
-    ('researcher_two@example.com', 'Researcher 2', 'BauchspeicheldrÃ¼senkreb',NOW())
+    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW())
 ;
 
 
@@ -94,3 +94,11 @@ WHERE
     usrEmail = 'admin@example.com'
 ;
 
+INSERT INTO UserAuth (usrID, uathUsername, uathPassword)
+SELECT
+    usrID, 'technician', 'password'
+FROM
+    User
+WHERE
+    usrEmail = 'technician@example.com'
+;
