@@ -10,6 +10,11 @@
 import os
 
 
+# Limit the max upload size for the app to 20 MB
+# @see https://pythonhosted.org/Flask-Uploads/
+DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
+MAX_CONTENT_LENGTH = os.getenv('REDI_DROPPER_MAX_CONTENT_LENGTH', DEFAULT_MAX_CONTENT_LENGTH)
+
 DB_USER = os.getenv('REDI_DROPPER_DB_USER', 'redidropper')
 DB_PASS = os.getenv('REDI_DROPPER_DB_PASS', 'securepass')
 
