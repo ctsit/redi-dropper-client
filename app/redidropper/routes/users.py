@@ -38,11 +38,10 @@ def researcher_two():
     """ Render the researcher's home page """
     return render_template('users/researcher_two.html')
 
-@app.route('/users/upload')
-@app.route('/users/upload/<subject_id>')
-def upload(subject_id=None):
+@app.route('/users/manage_event')
+@app.route('/users/manage_event/<event_id>')
+def upload(event_id=None):
     """ Render the upload screen """
-
-    return render_template('users/upload.html',subject_id=subject_id)
+    return render_template('users/manage_event.html',event_id=event_id)
 
 
