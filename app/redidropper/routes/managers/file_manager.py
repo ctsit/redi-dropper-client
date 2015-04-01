@@ -8,16 +8,21 @@
 # @TODO: fix camelCaseS
 
 
+# bcrypt http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
+#
+
 import os
 import math
 import logging
 
 from flask import request
+from werkzeug import secure_filename
+
+from redidropper import utils
 from redidropper.main import app
 
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
 
+logger = app.logger
 
 def get_file_path(file_name):
     return os.path.join(app.config['INCOMING_SAVED_DIR'], file_name)
@@ -36,40 +41,55 @@ def save_uploaded_file():
     chunkSize   = int(request.form['resumableChunkSize'])
     totalSize   = int(request.form['resumableTotalSize'])
     identifier  = request.form['resumableIdentifier']
-    filename    = request.form['resumableFilename']
-    logger.info("Handling request for chunk {} of file: {}" \
-            .format(chunkNumber, filename))
+    filename    = secure_filename(request.form['resumableFilename'])
+    file        = request.files['file']
 
-    file = request.files['file']
+    # can't multiply sequence by non-int of type 'float'
+    numberOfChunks = int(max(math.floor(totalSize/chunkSize), 1))
+
+    logger.info("Uploading chunk {} out of {} for file: {} ({} out of {} bytes)" \
+            .format(chunkNumber, numberOfChunks, filename, chunkSize, totalSize))
+
+    if not utils.allowed_file(filename):
+        err = utils.pack_error("Invalid file type: {}." \
+                "Allowed extensions: {}".format(filename, utils.ALLOWED_EXTENSIONS))
+        logger.error(err)
+        return err
 
     if not file:
-        return "error: no file specified"
+        err = utils.pack_error("No file specified.")
+        logger.error(err)
+        return err
 
     chunk_path = get_chunk_path(filename, chunkNumber)
 
     try:
+        # For every request recived we store the chunk to a temp folder
         file.save(chunk_path)
     except:
         print "problem with save"
 
-    currentTestChunk = 1
-
-    # can't multiply sequence by non-int of type 'float'
-    numberOfChunks = int(max(math.floor(totalSize/chunkSize), 1)) + 1
-
-    # For every request recived we store the chunk to a temp folder
-    # until all chunks are ready
-    for i in range(1, numberOfChunks):
-        chunk_path = get_chunk_path(filename, chunkNumber)
-        if os.path.isfile(chunk_path):
-            if i == numberOfChunks:
-                logger.debug("All {} chunks received for {}.".format(chunkNumber, filename))
-                # Join the list of files
-                file_manager.merge_files(numberOfChunks, filename)
-        else:
-            break
+    # When all chunks are recived we merge them
+    if all_chunks_received(numberOfChunks, filename):
+        merge_files(numberOfChunks, filename)
 
     return "success"
+
+
+def all_chunks_received(numberOfChunks, filename):
+    done = False
+
+    for i in range(1, numberOfChunks + 1):
+        chunk_path = get_chunk_path(filename, i)
+
+        if os.path.isfile(chunk_path):
+            if i == numberOfChunks:
+                logger.debug("Verified all {} chunks received for {}." \
+                        .format(numberOfChunks, filename))
+                done = True
+        else:
+            break
+    return done
 
 
 def verify_file_integrity(file_props):
@@ -80,7 +100,7 @@ def verify_file_integrity(file_props):
 def delete_temp_files(file_props):
     logger.debug("Removing file chunks")
 
-    for i in range(1, file_props['num_chunks']):
+    for i in range(1, file_props['num_chunks'] + 1):
         chunk_path = get_chunk_path(file_props['file_name'], i)
         os.remove(chunk_path)
 
