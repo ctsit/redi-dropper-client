@@ -4,6 +4,9 @@
 # Flask Framework
 Flask==0.10.1
 Flask-SQLAlchemy==2.0
+MySQL-python==1.2.5
+
+
 Flask-User==0.6.1
 Flask-WTF==0.10.2
 

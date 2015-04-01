@@ -7,3 +7,4 @@ private/
 app/instance/
 app/venv/
 .coverage
+.idea/

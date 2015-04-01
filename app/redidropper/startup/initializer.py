@@ -27,6 +27,8 @@ def do_init(app, db, extra_settings={}):
     from redidropper.routes import api
 
     # load models
-    #from redidropper.models import user
+    #from redidropper.models import UserEntity
+    #from redidropper.models import UserAuthEntity
+
 
     return app
