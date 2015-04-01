@@ -7,7 +7,7 @@
 
 from flask_user import UserManager, SQLAlchemyAdapter
 import logging
-
+from logging import Formatter
 
 def do_init(app, db, extra_settings={}):
     """
@@ -30,5 +30,21 @@ def do_init(app, db, extra_settings={}):
     #from redidropper.models import UserEntity
     #from redidropper.models import UserAuthEntity
 
-
+    configure_logging(app)
     return app
+
+def configure_logging(app):
+    """
+    Set the log location and formatting
+    @see http://flask.pocoo.org/docs/0.10/errorhandling/
+    """
+    handler = logging.StreamHandler()
+    fmt = Formatter(
+        '%(asctime)s %(levelname)s: %(message)s ' \
+            '[in %(pathname)s:%(lineno)d]'
+    )
+    handler.setFormatter(fmt)
+    if app.debug:
+        handler.setLevel(logging.DEBUG)
+
+    app.logger.addHandler(handler)
