@@ -25,7 +25,7 @@ function getSubjectsList(){
         max_events:12,
         subjects_data:
             [
-                {subject_id:"1",subject_name:"Subject 1",events:[{event_id:23:event_files:0,event_id:23,event_files:100}]},
+                {subject_id:"1",subject_name:"Subject 1",events:[{event_id:23,event_files:100}]},
                  {subject_id:"2",subject_name:"Subject 2",events:[{event_id:23,event_files:50},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
                         {subject_id:"3",subject_name:"Subject 3",events:[{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
                         {subject_id:"4",subject_name:"Subject 4",events:[{event_id:23,event_files:10},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
@@ -38,6 +38,12 @@ var SubjectsRow = React.createClass({
   getInitialState: function() {
     return {row_data:this.props.row_data,max_events:this.props.max_events};
   },
+  showAlert:function(){
+    $("#event-alert").show();
+    setTimeout(function () {
+        $("#event-alert").hide();
+    }, 1500)
+  },
   render: function() {
     var column_count = this.state.max_events;
     var table_columns=[];
@@ -45,13 +51,17 @@ var SubjectsRow = React.createClass({
     var events_count=row_data.events.length;
     for(var i=0;i<events_count;i++){
         console.log(this.props.row_data.subject_id);
-        var view_files_url="/users/project";
-
-        table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_id}</a></td>);
+        var view_files_url="/users/manage_event/"+row_data.events[i].event_id;
+        if (row_data.events[i].event_files!=0){
+            table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
+        }else{
+            table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+        }
     }
-    for(var i=events_count+1;i<=column_count;i++){
-        var upload_url="/users/upload/"+row_data.subject_id;
-        table_columns.push(<td><a href={upload_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+    var view_files_url="/users/manage_event/new";
+    table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+    for(var i=events_count+2;i<=column_count;i++){
+        table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
     }
 
     return (

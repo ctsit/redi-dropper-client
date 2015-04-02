@@ -5,10 +5,10 @@
       <div class="panel panel-default">
         <div class="panel-heading"><strong>Upload Files</strong> <small>Bootstrap files upload</small></div>
         <div class="panel-body">
-        <div id="subject-files-list">
-        </div>
 
-          <h3> Upload Files For Event : {{ event_id }} </h3>
+        <h3> Upload Files For Event : {{ event_id }} </h3>
+        <div id="event-files-list">
+        </div>
 
           <div id="file-drop" class="file-drop-css" ondragenter="jQuery(this).addClass('file-dragover-css');" ondragend="jQuery(this).removeClass('file-dragover-css');" ondrop="jQuery(this).removeClass('file-dragover-css');">
             Drop files here to upload or <a id="file-select" class="resumable-browse"><u>select from your computer</u></a>
@@ -36,7 +36,5 @@
       </div>
     </div>
     
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
-    <script type="text/jsx" src="{{ url_for('static', filename='js/subject_files.js') }}"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/manage_event.js') }}"></script>
     {% endblock %}
