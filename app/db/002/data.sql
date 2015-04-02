@@ -35,7 +35,7 @@ VALUES
 INSERT INTO Project (prjUrlHost, prjUrlPath, prjName, prjApiKey, prjAddedAt)
 VALUES
     ('http://localhost:8081', '/redcap/redcap_v6.0.5/ProjectSetup/index.php?pid=34', 'ADRC TEST', 'FC25694A0BFD3602362992E12DC89DB3', NOW()),
-    ('http://localhost:8998', '/redcap_v5.7.4/ProjectSetup/index.php?pid=12', 'HCV Target', '121212', NOW())
+    ('http://localhost:8998', '/redcap_v5.7.4/ProjectSetup/index.php?pid=12', 'PMP TEST', '121212', NOW())
 ;
 
 
@@ -101,4 +101,16 @@ FROM
     User
 WHERE
     usrEmail = 'technician@example.com'
+;
+
+-- second project
+INSERT INTO ProjectUserRole (prjID, usrID, rolID)
+SELECT
+    prjID, usrID, rolID
+FROM
+    Project, User, Role
+WHERE
+    prjName = 'PMP TEST'
+    AND usrEmail = 'admin@example.com'
+    AND rolName = 'admin'
 ;

@@ -18,7 +18,7 @@ CREATE TABLE User (
     usrAddedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     usrModifiedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usrEmailConfirmedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    usrIsActive tinyint DEFAULT 1,
+    usrIsActive tinyint NOT NULL DEFAULT 1,
  PRIMARY KEY (usrID),
  UNIQUE KEY (usrEmail),
  KEY (usrFirst, usrLast),
@@ -82,6 +82,23 @@ CREATE TABLE UserAuth (
  UNIQUE KEY (uathUsername),
  CONSTRAINT `fk_UserAuth_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+CREATE
+    ALGORITHM=UNDEFINED
+    DEFINER=`redidropper`@`localhost`
+    VIEW UserProjectRoleView
+AS
+SELECT
+    prjID, prjName, usrID, usrEmail, rolID, rolName, uathID, uathUsername, uathPassword
+FROM
+    User
+    JOIN ProjectUserRole USING (usrID)
+    JOIN Project USING (prjID)
+    JOIN Role USING (rolID)
+    LEFT JOIN UserAuth USING(usrID)
+WHERE
+    usrIsActive
 ;
 
 
