@@ -139,3 +139,8 @@ def merge_files(fchunk):
         chunk_path = get_chunk_path(file_name, i)
         tempfile = open(chunk_path, "r")
         f.write(tempfile.read())
+
+def get_file_path_from_id(file_id):
+    #get file path from database
+    file_path="/Users/sanathkumarpasumarthy/.redidropper/incoming/saved/example.tgz"
+    return file_path

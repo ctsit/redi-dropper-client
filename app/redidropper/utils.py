@@ -36,7 +36,9 @@ def pack(msg_type, msg):
     Create a string represenation of dictionary
         {'msg_type': 'msg'}
     """
-    return '"{}": "{}"'.format(msg_type, html.escape(msg))
+    #escaped = html.escape(msg)
+    escaped = msg
+    return '"{}": "{}"'.format(msg_type, escaped)
 
 def pack_error(msg):
     return pack('error', msg)

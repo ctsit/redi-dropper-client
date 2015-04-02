@@ -5,8 +5,11 @@ from flask import request
 from flask import url_for
 from flask import redirect
 from flask import render_template
+from flask import send_file
 
 from flask_user import login_required, roles_required
+
+from managers import file_manager
 
 from redidropper.main import app
 
@@ -44,4 +47,9 @@ def upload(event_id=None):
     """ Render the upload screen """
     return render_template('users/manage_event.html',event_id=event_id)
 
+
+@app.route("/filedownload/<file_id>")
+def getFile(file_id):
+    file_path=file_manager.get_file_path_from_id(file_id)
+    return send_file(file_path, as_attachment=True)
 
