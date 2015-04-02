@@ -9,6 +9,11 @@
 # @TODO: add code to check for valid paths
 import os
 
+# Flask settings
+
+# Generate with:
+#   python import os; os.urandom(24)
+SECRET_KEY = os.getenv('SECRET_KEY', '4\xb0L\x9b\xf41[\x14B\xb3\x1d\xc5\xfeO\xd2;$o\x95X~\x06\xaf\x9d')
 
 # Limit the max upload size for the app to 20 MB
 # @see https://pythonhosted.org/Flask-Uploads/

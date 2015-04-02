@@ -26,6 +26,7 @@ def reset_db():
     """
     Drop all tables, Create empty tables, and populate tables
     """
+    # sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql && sudo mysql < db/002/data.sql
     local('PYTHONPATH=. python redidropper/startup/db_manager.py')
 
 
