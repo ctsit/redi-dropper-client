@@ -112,5 +112,5 @@ FROM
 WHERE
     prjName = 'PMP TEST'
     AND usrEmail = 'admin@example.com'
-    AND rolName = 'admin'
+    AND rolName = 'technician'
 ;

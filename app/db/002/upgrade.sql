@@ -62,10 +62,10 @@ CREATE TABLE ProjectUserRole (
     usrID integer unsigned NOT NULL,
     rolID smallint unsigned NOT NULL,
  PRIMARY KEY (purID),
- UNIQUE KEY(prjID, usrID, rolID),
- CONSTRAINT `fk_Project_prjID` FOREIGN KEY (prjID) REFERENCES Project (prjID) ON DELETE CASCADE,
- CONSTRAINT `fk_User_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID) ON DELETE CASCADE,
- CONSTRAINT `fk_Role_rolID` FOREIGN KEY (rolID) REFERENCES Role (rolID) ON DELETE CASCADE
+ UNIQUE KEY(prjID, usrID),
+ CONSTRAINT `fk_ProjectUserRole_prjID` FOREIGN KEY (prjID) REFERENCES Project (prjID) ON DELETE CASCADE,
+ CONSTRAINT `fk_ProjectUserRole_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID) ON DELETE CASCADE,
+ CONSTRAINT `fk_ProjectUserRole_rolID` FOREIGN KEY (rolID) REFERENCES Role (rolID) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
@@ -87,7 +87,7 @@ CREATE TABLE UserAuth (
 CREATE
     ALGORITHM=UNDEFINED
     DEFINER=`redidropper`@`localhost`
-    VIEW UserProjectRoleView
+    VIEW `ProjectUserRoleView`
 AS
 SELECT
     prjID, prjName, usrID, usrEmail, rolID, rolName, uathID, uathUsername, uathPassword
