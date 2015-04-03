@@ -1,9 +1,11 @@
-# Goal: Delegate requests to the `/api` path to the appropriate controller
-#
-# @authors:
-#   Andrei Sura             <sura.andrei@gmail.com>
-#   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
-#   Sanath Pasumarthy       <sanath@ufl.edu>
+"""
+Goal: Delegate requests to the `/api` path to the appropriate controller
+
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
+"""
 
 from flask import request
 from flask import url_for
