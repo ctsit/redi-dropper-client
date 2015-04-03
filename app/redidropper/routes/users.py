@@ -1,16 +1,36 @@
 """
-Define the routes for the users
+Goal: Define the routes for the users
+
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
 """
+
 from flask import request
 from flask import url_for
 from flask import redirect
 from flask import render_template
 
-from flask_user import login_required, roles_required
+
+from flask.ext.login import LoginManager, login_user, logout_user
+from flask.ext.login import login_required, current_user
+from flask.ext.principal import Principal, Permission, RoleNeed
+
+#from flask_user import login_required, roles_required
 
 from redidropper.main import app
+from redidropper.models import dao
+
+# load the Principal extension
+principals = Principal(app)
+
+# define a permission
+admin_permission = Permission(RoleNeed('admin'))
+
 
 @app.route('/users/admin')
+@admin_permission.require()
 def admin():
     """ Render the technician's home page """
     return render_template('users/admin.html')
@@ -19,7 +39,7 @@ def admin():
 @app.route('/users/technician')
 def technician():
     """ Render the technician's home page """
-    return render_template('users/technician.html')
+    return render_template('users/technician.html', is_loggedin=True)
 
 @app.route('/users/project')
 @app.route('/users/project/<project_id>/subject/<subject_id>')
