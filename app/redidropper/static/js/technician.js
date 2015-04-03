@@ -20,11 +20,66 @@ function getProjectsList(){
     return [{project_id:"1",project_name:"1st Project"},{project_id:"2",project_name:"2nd Project"}]
 }
 
+function getSubjectsList(){
+    return {
+        max_events:12,
+        subjects_data:
+            [
+                {subject_id:"1",subject_name:"Subject 1",events:[{event_id:23,event_files:100}]},
+                 {subject_id:"2",subject_name:"Subject 2",events:[{event_id:23,event_files:50},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
+                        {subject_id:"3",subject_name:"Subject 3",events:[{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
+                        {subject_id:"4",subject_name:"Subject 4",events:[{event_id:23,event_files:10},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
+                        {subject_id:"5",subject_name:"Subject 5",events:[{event_id:23,event_files:16}]},
+                        {subject_id:"6",subject_name:"Subject 6",events:[{event_id:23,event_files:18}]}
+                        ]};
+}
+
+var SubjectsRow = React.createClass({
+  getInitialState: function() {
+    return {row_data:this.props.row_data,max_events:this.props.max_events};
+  },
+  showAlert:function(){
+    $("#event-alert").show();
+    setTimeout(function () {
+        $("#event-alert").hide();
+    }, 1500)
+  },
+  render: function() {
+    var column_count = this.state.max_events;
+    var table_columns=[];
+    var row_data=this.state.row_data;
+    var events_count=row_data.events.length;
+    for(var i=0;i<events_count;i++){
+        console.log(this.props.row_data.subject_id);
+        var view_files_url="/users/manage_event/"+row_data.events[i].event_id;
+        if (row_data.events[i].event_files!=0){
+            table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
+        }else{
+            table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+        }
+    }
+    var view_files_url="/users/manage_event/new";
+    table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+    for(var i=events_count+2;i<=column_count;i++){
+        table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
+    }
+
+    return (
+        <tr>
+        <td>{row_data.subject_id}</td>
+        <td>{row_data.subject_name}</td>
+        {table_columns}
+        </tr>
+    );
+}
+});
+
 var SubjectsTable = React.createClass({
   getInitialState: function() {
-    return {subjects:[]};
+    return {subjects:getSubjectsList()};
   },
   componentWillMount:function(){
+    /*
     var request = api_request("/api/list_redcap_subjects", "POST",{}, "json", true);
     var _this=this;
     request.success( function(json) {
@@ -33,33 +88,35 @@ var SubjectsTable = React.createClass({
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
-    });
+    });*/
   },
   render: function() {
+    var column_count = this.state.subjects.max_events;
+    var subjects_data=this.state.subjects.subjects_data;
+    var row_count = subjects_data.length;
+    var table_columns=[];
+    table_columns.push(<th>Subject ID</th>);
+    table_columns.push(<th>Name</th>);
+    for(var i=1;i<=column_count;i++){
+        table_columns.push(<th> Event {i}</th>);
+    }
+
+    var table_rows= [];
+    for(var i=0;i<row_count;i++){
+        table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
+    }
+
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
         <table id="technician-table" className="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>No. of Files</th>
-                    <th></th>
+                    {table_columns}
                 </tr>
             </thead>
             <tbody id="technician-table-body">
-                {this.state.subjects.map(function(record,i) {
-            
-                    var add_url="/users/upload/"+record.id;
-                    var file_url="/users/project/"+record.id+"/subject/"+record.id;
-                    return <tr>
-                                <td>{record.id}</td>
-                                <td>{record.name}</td>
-                                <td><a href={file_url} className="btn btn-primary btn">{record.files}</a></td>
-                                <td><a href={add_url} className="btn btn-primary btn">Add</a></td>
-                            </tr>           
-                })}
+                {table_rows}
             </tbody>
         </table>
     </div>
@@ -69,7 +126,7 @@ var SubjectsTable = React.createClass({
 
 var Technician = React.createClass({
   getInitialState: function() {
-    return {projects: [],selected_project:0,error:[]};
+    return {projects:getProjectsList(),selected_project:0,error:[]};
   },
   componentWillMount:function(){
     /*

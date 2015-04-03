@@ -11,6 +11,7 @@ from flask import request
 from flask import url_for
 from flask import redirect
 from flask import render_template
+from flask import send_file
 
 
 from flask.ext.login import LoginManager, login_user, logout_user
@@ -18,6 +19,8 @@ from flask.ext.login import login_required, current_user
 from flask.ext.principal import Principal, Permission, RoleNeed
 
 #from flask_user import login_required, roles_required
+
+from managers import file_manager
 
 from redidropper.main import app
 from redidropper.models import dao
@@ -58,11 +61,15 @@ def researcher_two():
     """ Render the researcher's home page """
     return render_template('users/researcher_two.html')
 
-@app.route('/users/upload')
-@app.route('/users/upload/<subject_id>')
-def upload(subject_id=None):
+@app.route('/users/manage_event')
+@app.route('/users/manage_event/<event_id>')
+def upload(event_id=None):
     """ Render the upload screen """
+    return render_template('users/manage_event.html',event_id=event_id)
 
-    return render_template('users/upload.html',subject_id=subject_id)
 
+@app.route("/filedownload/<file_id>")
+def getFile(file_id):
+    file_path=file_manager.get_file_path_from_id(file_id)
+    return send_file(file_path, as_attachment=True)
 
