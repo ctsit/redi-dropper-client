@@ -1,11 +1,12 @@
-# Goal: Init the application routes and read the settings
-#
-# @authors:
-#   Andrei Sura             <sura.andrei@gmail.com>
-#   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
-#   Sanath Pasumarthy       <sanath@ufl.edu>
+"""
+Goal: Init the application routes and read the settings
 
-from flask_user import UserManager, SQLAlchemyAdapter
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
+"""
+
 import logging
 from logging import Formatter
 
