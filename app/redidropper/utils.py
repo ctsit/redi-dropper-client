@@ -7,7 +7,7 @@
 #
 
 import logging
-import html
+import json
 from flask import flash
 
 
@@ -36,7 +36,7 @@ def pack(msg_type, msg):
     Create a string represenation of dictionary
         {'msg_type': 'msg'}
     """
-    return '"{}": "{}"'.format(msg_type, html.escape(msg))
+    return '"{}": "{}"'.format(msg_type, json_dumps(msg))
 
 def pack_error(msg):
     return pack('error', msg)
