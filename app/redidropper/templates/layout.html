@@ -1,3 +1,4 @@
+{% from "macros.html" import render_nav_link with context %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,21 +12,20 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
+<!--
     <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
+-->
     <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/fileupload.css') }}" rel="stylesheet">
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    
     <script src="{{ url_for('static', filename='js/resumable.js') }}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js"></script>
 
     
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -43,21 +43,34 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('index') }}" title="Research Electronic Data Dropper">
+              <a class="navbar-brand" href="{{ url_for('index') }}"
+                    title="Research Electronic Data Uploader">
                     <img alt="RED-Dropper" style="height: 3em; width: 3em;" src="/static/img/redd.png">
               </a>
             </div>
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('admin') }}">            Admin</a></li>
-                    <li><a href="{{ url_for('technician') }}">       Technician</a></li>
-                    <li><a href="{{ url_for('researcher_one') }}">   Researcher 1</a></li>
-                    <li><a href="{{ url_for('researcher_two') }}">   Researcher 2</a></li>
+                    {% for link in [
+                        ("admin", "Admin"),
+                        ("technician", "Technician"),
+                        ("researcher_one", "Researcher 1"),
+                        ("researcher_two", "Researcher 2"),
+                    ] %}
+                        {{ render_nav_link(link[0], link[1]) }}
+                    {% endfor %}
 
-                    <li><a href="{{ url_for('about') }}">    About</a></li>
-                    <li><a href="{{ url_for('contact') }}">  Contact</a></li>
-                    <li><a href="{{ url_for('logout') }}">   Logout</a></li>
+                    {% for link in [
+                        ("index", "Home"),
+                        ("about", "About"),
+                        ("contact", "Contact"),
+                    ] %}
+                        {{ render_nav_link(link[0], link[1]) }}
+                    {% endfor %}
+
+                    {% if is_loggedin %}
+                        {{ render_nav_link('logout', 'Logout') }}
+                    {% endif %}
                 </ul>
             </div>
           </div>
@@ -78,7 +91,36 @@
                         </li>
                     </ul>
                 </div>
+
+
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+{% if errors %}
+<div class="alert-message block-message error">
+    <a class="close" href="#">×</a>
+  <ul>
+    {%- for msg in errors %}
+    <li>{{ msg }}</li>
+    {% endfor -%}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+{% with infos = get_flashed_messages(category_filter=["info"]) %}
+{% if infos %}
+<div class="alert-message block-message info">
+    <a class="close" href="#">×</a>
+  <ul>
+    {%- for msg in infos %}
+    <li>{{ msg }}</li>
+    {% endfor -%}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
                     {% block content %}
                     {% endblock %}
                 </div>
@@ -86,8 +128,5 @@
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
 </body>
 </html>
