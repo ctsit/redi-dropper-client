@@ -41,21 +41,12 @@
               </button>
               <a class="navbar-brand" href="{{ url_for('index') }}"
                     title="Research Electronic Data Uploader">
-                    <img alt="RED-Dropper" style="height: 3em; width: 3em;" src="/static/img/redd.png">
+                    <img alt="RED-Dropper" style="height: 2em; width: 2em;" src="/static/img/redd.png">
               </a>
             </div>
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    {% for link in [
-                        ("admin", "Admin"),
-                        ("technician", "Technician"),
-                        ("researcher_one", "Researcher 1"),
-                        ("researcher_two", "Researcher 2"),
-                    ] %}
-                        {{ render_nav_link(link[0], link[1]) }}
-                    {% endfor %}
-
                     {% for link in [
                         ("index", "Home"),
                         ("about", "About"),
@@ -64,32 +55,55 @@
                         {{ render_nav_link(link[0], link[1]) }}
                     {% endfor %}
 
-                    {% if is_loggedin %}
+                    {% if current_user.is_authenticated() %}
                         {{ render_nav_link('logout', 'Logout') }}
                     {% endif %}
                 </ul>
             </div>
-          </div>
         </div>
+    </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-3 col-md-2 sidebar">
-                    <ul class="nav nav-sidebar">
-                        <li>
-                            <h3>Role: xyz</h3>
-                        </li>
-                        <li class="active">
-                            <a href="{{ url_for('upload') }}">Upload</a>
-                        </li>
-                        <li>
-                            <a href="#">Other Functions</a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            {% if current_user.is_authenticated() %}
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li>
+                        Hi, {{ current_user.usrEmail }}
+                    </li>
 
+                    <li>
+                        <a href="{{ url_for('select_project') }}">Select Project</a>
+                    </li>
 
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <li> -- Admin pages </li>
+                    <li>
+                        <a href="{{ url_for('admin') }}">Project Users </a>
+                    </li>
+
+                    <li> -- Technician pages </li>
+                    <li>
+                        <a href="{{ url_for('technician') }}">List of Subjects</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('manage_event') }}">Manage Event</a>
+                    </li>
+
+                    <li> -- Researcher One pages </li>
+                    <li>
+                        <a href="{{ url_for('researcher_one') }}">Researcher 1</a>
+                    </li>
+
+                    <li> -- Researcher Two pages </li>
+                    <li>
+                        <a href="{{ url_for('researcher_two') }}">Researcher 2</a>
+                    </li>
+
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
 {% if errors %}
