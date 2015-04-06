@@ -46,7 +46,7 @@ def find_user_by_id(user_id):
     #sess.add(user)
     # sess.commit()
     try:
-        user = sess.query(User).filter_by(usrID=user_id).one()
+        user = sess.query(UserEntity).filter_by(usrID=user_id).one()
         return user
     except NoResultFound:
         print "Unable to find row in find_user_by_id()"

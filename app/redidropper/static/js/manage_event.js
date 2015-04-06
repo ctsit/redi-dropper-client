@@ -155,7 +155,7 @@ var EventFilesList = React.createClass({
             </thead>
             <tbody id="technician-table-body">
                 {this.state.list_of_files.map(function(record,i) {
-                    var add_url="/filedownload/"+record.id;
+                    var add_url="/download_file/"+record.id;
                     return <tr>
                                 <td>{record.file_id}</td>
                                 <td>{record.file_name}</td>
@@ -169,63 +169,5 @@ var EventFilesList = React.createClass({
     );
   }
 });
-/*
-var FoldersList = React.createClass({
-  getInitialState: function() {
-    var data = get_subject_files();
-    for( var i=0;i<data.length;i++){
-        data[i].visible=false;
-    }
-    return {subjects:data};
-  },
-  componentWillMount:function(){
-
-    var request = api_request("/api/list_redcap_subjects", "POST",{}, "json", true);
-    var _this=this;
-    request.success( function(json) {
-        console.log("success "+json);
-        _this.setState({subjects:json});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  collapseAll:function(){
-    var data=this.state.subjects;
-    for( var i=0;i<data.length;i++){
-        data[i].visible=false;
-    }
-     this.setState({subjects:data});
-  },
-  displayAll:function(){
-    var data=this.state.subjects;
-    for( var i=0;i<data.length;i++){
-        data[i].visible=true;
-    }
-     this.setState({subjects:data});
-  },
-  changeDisplay:function(i){
-    var data=this.state.subjects;
-    data[i].visible=!(data[i].visible);
-    this.setState({subjects:data});
-  },
-  render: function() {
-    var _this=this;
-    return (
-    <div>
-    <button onClick={this.collapseAll} className="btn btn-primary btn">Collapse All</button>
-    <button onClick={this.displayAll} className="btn btn-primary btn">Display All</button>
-        {this.state.subjects.map(function(record,i) {
-            return <div>
-                    <h3 onClick={_this.changeDisplay.bind(null,i)}>{record.foldername}</h3>
-                    <br></br>
-                    <FolderFilesList folder_id={record.foldername} list_of_files={record.list_of_files} visibility={record.visible}/>  
-                    </div>                        
-        })}
-    </div>
-    );
-  }
-});
-*/
 
 React.render(<EventFilesList/>, document.getElementById("event-files-list"));

@@ -12,26 +12,7 @@ from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.mysql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
-
-
-# Examples:
-# ! http://www.pythoncentral.io/sqlalchemy-orm-examples/
-# !! http://www.pythoncentral.io/sqlalchemy-expression-language-advanced/
-# !!! http://docs.sqlalchemy.org/en/latest/orm/join_conditions.html#self-referential-many-to-many-relationship
-
-# http://docs.sqlalchemy.org/en/latest/dialects/mysql.html
-# http://stackoverflow.com/questions/17972020/how-to-execute-raw-sql-in-sqlalchemy-flask-app
-# http://www.dangtrinh.com/2013/06/sqlalchemy-python-module-with-mysql.html
-
-# http://docs.sqlalchemy.org/en/rel_0_8/orm/extensions/declarative.html
-# http://sqlalchemy.readthedocs.org/en/improve_toc/orm/join_conditions.html
-# http://stackoverflow.com/questions/16028714/sqlalchemy-type-object-role-user-has-no-attribute-foreign-keys
-# https://github.com/mitsuhiko/flask-sqlalchemy/issues/98
-# http://version2beta.com/articles/migrating-from-mysql-to-postresql-using-sqlalchemy/
-
-
-# http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database
-# http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-viii-followers-contacts-and-friends
+from flask_login import UserMixin as LoginUserMixin
 
 Base = declarative_base()
 
@@ -74,7 +55,7 @@ class UserAuthEntity(Base):
             server_default='CURRENT_TIMESTAMP')
 
     # @OneToOne
-    user = relationship('UserEntity', uselist=False)
+    user = relationship('UserEntity', uselist=False, lazy='joined')
 
     def __repr__(self):
         return "<UserAuthEntity (\n\t" \
@@ -84,7 +65,7 @@ class UserAuthEntity(Base):
                 self.user)
 
 
-class UserEntity(Base):
+class UserEntity(Base, LoginUserMixin):
     """ Stores the basic information about the user """
     __tablename__ = 'User'
     usrID = Column(Integer, primary_key=True)
@@ -108,12 +89,20 @@ class UserEntity(Base):
             secondary='ProjectUserRole', \
             backref=backref('user'))
 
-    def __init__(self, usrEmail, usrFirst, usrLast, usrMI=''):
+    def __init__(self, usrEmail, usrFirst, usrLast, usrMI='', usrIsActive=1):
         self.usrEmail = usrEmail
         self.usrFirst = usrFirst
         self.usrLast = usrLast
         self.usrMI = usrMI
+        self.usrIsActive = usrIsActive
 
+
+    def get_id(self):
+        return self.usrID
+
+#    def is_active(self):
+#        return self.usrIsActive
+#
     def __repr__(self):
         return "<UserEntity (usrID: {}, usrEmail: {})>" \
             .format(self.usrID, self.usrEmail)
