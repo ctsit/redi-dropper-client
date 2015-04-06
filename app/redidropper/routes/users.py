@@ -31,6 +31,10 @@ def admin():
     """ Render the technician's home page """
     return render_template('users/admin.html')
 
+@app.route('/users/admin/events')
+def admin_events():
+    """ Render the technician's home page """
+    return render_template('users/admin_events.html')
 
 @app.route('/users/technician')
 @login_required
