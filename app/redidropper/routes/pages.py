@@ -5,7 +5,16 @@ Goal: Define the routes for general pages
   Andrei Sura             <sura.andrei@gmail.com>
   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
   Sanath Pasumarthy       <sanath@ufl.edu>
+
+
+@see https://flask-login.readthedocs.org/en/latest/
+@see https://pythonhosted.org/Flask-Principal/
 """
+
+import base64
+from collections import namedtuple
+from functools import partial
+
 from flask import current_app
 from flask import redirect
 from flask import render_template
@@ -14,32 +23,44 @@ from flask import session
 from flask import url_for
 from wtforms import Form, TextField, PasswordField, validators
 
-#import flask.ext.login as flask_login
-from flask_login import LoginManager, login_user, logout_user
-#, Permission, RoleNeed
+from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_principal import Principal, \
     Identity, AnonymousIdentity, identity_changed
+from flask_principal import identity_loaded, Permission, \
+        RoleNeed, Need, UserNeed
 
 
 from redidropper.main import app
 from redidropper import utils
 from redidropper.models import dao
+from redidropper.models.all import UserAuthEntity
 
 # load the Principal extension
-Principal(app)
+#principals = Principal(app)
 
 # set the login manager for the app
-LOGIN_MANAGER = LoginManager(app)
+login_manager = LoginManager(app)
 
-@LOGIN_MANAGER.user_loader
+# Possible options: strong, basic, None
+login_manager.session_protection = "strong"
+
+@login_manager.user_loader
 def load_user(userid):
     """Return the user from the database"""
     return dao.find_user_by_id(userid)
 
-"""
-Declare the validation rules for the login form
-"""
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """ Returns a message for the unauthorized users """
+    #return redirect('/')
+    return 'Please <a href="{}">login</a> first.'.format(url_for('index'))
+
+
 class LoginForm(Form):
+    """
+    Declare the validation rules for the login form
+    """
     username = TextField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField('Password', \
             [validators.Required(), validators.Length(min=6, max=25)])
@@ -83,6 +104,72 @@ def index():
             utils.flash_error("Incorrect password.")
 
     return render_template('pages/index.html', form=form)
+
+
+#ProjectRoleNeed = namedtuple('project_role', ['role', 'value'])
+ProjectRoleNeed = partial(Need, 'role')
+#AdminProjectRoleNeed = partial(ProjectRoleNeed, 'admin')
+#TechnicianProjectRoleNeed = partial(ProjectRoleNeed, 'technician')
+#BlogPostNeed = namedtuple('blog_post', ['method', 'value'])
+#EditiBlogPostNeed = partial(BlogPostNeed, 'edit')
+
+
+class ProjectRolePermission(Permission):
+    def __init__(self, pur_id):
+        need = ProjectRoleNeed(unicode(pur_id))
+        super(ProjectRolePermission, self).__init__(need)
+
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+    """ Describe what `needs` does this identity provide
+    @TODO: add unit tests
+        http://stackoverflow.com/questions/16712321/unit-testing-a-flask-principal-application
+    """
+    identity.user = current_user
+   
+    # Add the UserNeed to the identity
+    try:
+        identity.provides.add(UserNeed(current_user.get_id()))
+        app.logger.debug("provide UserNeed")
+    except AttributeError as ae:
+        app.logger.error("Error for signal identity_loaded: {}".format(ae))
+
+    try:
+        for pr in current_user.project_roles:
+            identity.provides.add(ProjectRoleNeed(pr.get_id()))
+    except AttributeError as ae:
+        app.logger.error("Error for signal identity_loaded: {}".format(ae))
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    """ To support login from both a url argument and from Basic Auth
+     using the Authorization header
+
+    @TODO: use for api requests?
+        Need to add column `UserAuth.uathApiKey`
+    """
+    # first, try to login using the api_key url arg
+    api_key = request.args.get('api_key')
+    if api_key:
+        auth = UserAuthEntity.query.filter_by(uathApiKey=api_key).first()
+        if auth and auth.user:
+            return auth.user
+
+    # next, try to login using Basic Auth
+    api_key = request.headers.get('Authorization')
+    if api_key:
+        api_key = api_key.replace('Basic ', '', 1)
+        try:
+            api_key = base64.b64decode(api_key)
+        except TypeError:
+            pass
+        auth = UserAuthEntity.query.filter_by(uathApiKey=api_key).first()
+        if auth and auth.user:
+            return auth.user
+
+    # finally, return None if both methods did not login the user
+    return None
 
 
 @app.route('/logout')

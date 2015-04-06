@@ -10,6 +10,7 @@ Goal: Define the routes for the users
 #from flask import request
 from flask import render_template
 from flask import send_file
+from flask import abort
 
 
 from flask_login import login_required, current_user
@@ -17,19 +18,32 @@ from flask_principal import Principal, Permission, RoleNeed
 
 from redidropper.main import app
 from redidropper.routes.managers import file_manager
+from redidropper.models.all import ProjectUserRoleEntity
+from redidropper.models import dao
 
+from pages import ProjectRolePermission
 # load the Principal extension
-PRINCIPALS = Principal(app)
+principals = Principal(app)
 
 # define a permission
-ADMIN_PERMISSION = Permission(RoleNeed('admin'))
+#admin_permission = Permission(RoleNeed('admin'))
+#@admin_permission.require()
 
 
 @app.route('/users/admin')
-@ADMIN_PERMISSION.require()
+@login_required
 def admin():
     """ Render the technician's home page """
-    return render_template('users/admin.html')
+    #pur = ProjectUserRoleEntity.query.filter_by(usrID='1', prjID='1').first()
+    project_id = 1
+    user_id = current_user.get_id()
+    pur = dao.find_project_user_role(project_id=project_id, user_id=user_id)
+    permission = ProjectRolePermission(pur.get_id())
+
+    if pur.role.is_admin() and permission.can():
+        return render_template('users/admin.html')
+
+    abort(403)
 
 
 @app.route('/users/technician')

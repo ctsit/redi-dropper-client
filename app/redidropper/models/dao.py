@@ -53,6 +53,24 @@ def find_user_by_id(user_id):
 
     return None
 
+def find_project_user_role(project_id, user_id):
+    """ Fetch the user object using the unique key
+
+    :project_id the project
+    :user_id the user
+
+    :rtype: ProjectUserRoleEntity
+    """
+    sess = get_session()
+    try:
+        pur = sess.query(ProjectUserRoleEntity).filter_by( \
+                prjID=project_id, usrID=user_id).one()
+        return pur
+    except NoResultFound:
+        print "Unable to find row in find_project_user_role()"
+
+    return None
+
 
 def find_user_by_email(email):
     """ Fetch the user object using the email unique key
