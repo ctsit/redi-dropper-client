@@ -6,5 +6,6 @@ vagrant/.vagrant
 private/
 app/instance/
 app/venv/
+app/htmlcov/
 .coverage
 .idea/

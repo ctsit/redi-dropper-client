@@ -1,13 +1,17 @@
-# The 'fabfile.py' is used by Fabric and must reside in the
-# application root directory.
+"""
+The 'fabfile.py' is used by Fabric and must reside in the
+application root directory.
+
+@see http://docs.fabfile.org/en/latest/tutorial.html
+"""
 
 from __future__ import with_statement
-from fabric.api import *
+from fabric.api import local, task, prefix, abort
 from fabric.contrib.console import confirm
 from contextlib import contextmanager
 
 @task
-def list():
+def tasks():
     """
     List available tasks
     """
@@ -16,7 +20,7 @@ def list():
 @task
 def install_requirements():
     """
-    Install required Python packages using pip and requirements.txt
+    Install required Python packages using: pip install -r requirements.txt
     """
     local('pip install -r requirements.txt')
 
@@ -25,8 +29,13 @@ def install_requirements():
 def reset_db():
     """
     Drop all tables, Create empty tables, and populate tables
+
+    sudo mysql < db/001/downgrade.sql && sudo mysql < db/001/upgrade.sql
+    sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql \
+            && sudo mysql < db/002/data.sql
     """
-    # sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql && sudo mysql < db/002/data.sql
+    if not confirm("Do you want to drop all tables and start from scratch?"):
+        abort("Aborting at user request.")
     local('PYTHONPATH=. python redidropper/startup/db_manager.py')
 
 
@@ -43,7 +52,14 @@ def test_cov():
     """
     Run the automated test suite using py.test
     """
-    local("py.test --tb=short -s --cov redidropper --cov-config tests/.coveragerc --cov-report term-missing tests/")
+    local("""
+    py.test \
+        --tb=short -s \
+        --cov redidropper \
+        --cov-config tests/.coveragerc \
+        --cov-report term-missing \
+        --cov-report html \
+        tests/""")
 
 
 @task
@@ -65,5 +81,6 @@ def deploy():
 
 @contextmanager
 def virtualenv(venv_name):
+    """ Activate a context """
     with prefix('source ~/.virtualenvs/'+venv_name+'/bin/activate'):
         yield
