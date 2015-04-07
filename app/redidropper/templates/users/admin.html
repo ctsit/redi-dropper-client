@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="starter-template">
+        <h1>Admin User Management Screen</h1>
+    </div>
+
+    <div id="no-table-data-error" class="no-table-data">
+	</div>
+	<div class="table-responsive">
+		<table id="admin-table" class="table table-striped" hidden>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Username</th>
+					<th>Email</th>
+					<th>Role</th>
+					<th>Date Added</th>
+					<th>Email Verified</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody id="admin-table-body">
+			</tbody>
+		</table>
+	</div>
+	<div class="col-sm-5">
+	<h3> Add New User </h3>
+	<br>
+	<div class="form-horizontal">
+	<div class="form-group">
+	    <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="admin-add-username" placeholder="Username">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="admin-add-email" placeholder="Email">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-sm-2 control-label">Role</label>
+	    <div class="col-sm-10">
+	      <select id="admin-add-role" class="form-control">
+			  <option value="admin">Admin</option>
+			  <option value="technician">Technician</option>
+			  <option value="researcher">Researcher</option>
+			</select>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-offset-2 col-sm-10">
+	      <button id="admin-save" class="btn btn-primary btn">Save</button>
+	    </div>
+	  </div>
+	</div>
+	<div>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

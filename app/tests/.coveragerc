@@ -1,0 +1,11 @@
+# Configure coverage tool (py.test --cov)
+#
+# Authors:
+#   Andrei Sura <sura.andrei@gmail.com>
+
+
+[run]
+omit = redidropper/config/local_settings.py
+
+[report]
+show_missing = True

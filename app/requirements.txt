@@ -1,9 +1,32 @@
+# Usage: pip install -r requirements.txt
+# @TODO: add developer-specific requirements
 
-pip install Flask
+# for escaping
+html==1.16
 
-# http://flask-sso.readthedocs.org/en/latest/#a-minimal-example
-pip install flask-sso
+# Flask Framework
+Flask==0.10.1
+Flask-Principal==0.4.0
+Flask-SQLAlchemy==2.0
+MySQL-python==1.2.5
+
+
+#Flask-User==0.6.1
+
+Flask-WTF==0.10.2
+WTForms==2.0.2
+
+# == Dependencies
+# Flask-Mail
+# Flask-Login
+# py-bcrypt
+
+
+# == Shibboleth http://flask-sso.readthedocs.org/en/latest/#a-minimal-example
+#flask-sso
 
 
 # for development
-pip install flask_debugtoolbar
+# Flask-DebugToolbar==0.9.2
+pytest==2.7.0
+pytest-cov==1.8.1
