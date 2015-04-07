@@ -1,11 +1,5 @@
 
 // @TODO: move to a separate "utils" class
-
-function render_subject_files() {
-    var data = {"subject_id": "1"};
-    var request = api_request("/api/list_subject_files", "POST", data, "json", true);
-}
-
 function api_request(url, reqType, data, dataType, doCache) {
     return $.ajax({
         url: url,
@@ -16,6 +10,13 @@ function api_request(url, reqType, data, dataType, doCache) {
     });
 }
 
+
+function render_subject_files() {
+    var data = {"subject_id": "1"};
+    var request = api_request("/api/list_subject_files", "POST", data, "json", true);
+}
+
+
 function getProjectsList(){
     return [{project_id:"1",project_name:"1st Project"},{project_id:"2",project_name:"2nd Project"}]
 }
@@ -25,13 +26,38 @@ function getSubjectsList(){
         max_events:12,
         subjects_data:
             [
-                {subject_id:"1",subject_name:"Subject 1",events:[{event_id:23,event_files:100}]},
-                 {subject_id:"2",subject_name:"Subject 2",events:[{event_id:23,event_files:50},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                        {subject_id:"3",subject_name:"Subject 3",events:[{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                        {subject_id:"4",subject_name:"Subject 4",events:[{event_id:23,event_files:10},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                        {subject_id:"5",subject_name:"Subject 5",events:[{event_id:23,event_files:16}]},
-                        {subject_id:"6",subject_name:"Subject 6",events:[{event_id:23,event_files:18}]}
-                        ]};
+            {subject_id:"1", subject_name:"Subject 1",
+                events:[{event_id:23,event_files:100}]
+            },
+            {subject_id: "2", subject_name: "Subject 2",
+                events:[
+                    {event_id:23,event_files:50}, {event_id:23,event_files:30},
+                    {event_id:23,event_files:30}, {event_id:23,event_files:30},
+                    {event_id:23,event_files:30}, {event_id:23,event_files:30}
+                ]
+            },
+            {subject_id:"3", subject_name:"Subject 3",
+                events:[
+                {event_id:23,event_files:30},
+                {event_id:23,event_files:30},
+                {event_id:23,event_files:30},
+                {event_id:23,event_files:30}]
+            },
+            {subject_id:"4", subject_name:"Subject 4",
+                events:[
+                {event_id:23,event_files:10}, {event_id:23,event_files:30},
+                {event_id:23,event_files:30}]
+            },
+            {subject_id:"5", subject_name:"Subject 5",
+                events:[
+                {event_id:23,event_files:16}]
+            },
+            {subject_id:"6",subject_name:"Subject 6",
+                events:[
+                {event_id:23,event_files:18}
+                ]
+            }
+    ]};
 }
 
 var SubjectsRow = React.createClass({
@@ -139,7 +165,7 @@ var Technician = React.createClass({
     });
     */
   },
-  selectChanged:function(){
+  selectChanged:function() {
     console.log("select changed "+this.refs.project_select.getDOMNode().value);
     var new_selected_value = this.refs.project_select.getDOMNode().value;
     this.setState({projects:this.state.projects,selected_project:new_selected_value});
@@ -155,8 +181,8 @@ var Technician = React.createClass({
         <div className="col-sm-4">
             <select onChange={this.selectChanged}  className="form-control" ref="project_select">
                 {this.state.projects.map(function(record,i) {
-                        return <option value={record.project_name}>{record.project_name}</option>           
-                })};  
+                        return <option value={record.project_name}>{record.project_name}</option>
+                })};
             </select>
         </div>
         <div className="col-sm-4">

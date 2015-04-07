@@ -9,17 +9,30 @@ function api_request(url, reqType, data, dataType, doCache) {
     });
 }
 
-function get_subject_files(i){
-    var data ={no_of_pages:10,list_of_events:[{file_id:"1",file_name:"test 1",file_size:"20th Jan 2015"},{file_id:"2",file_name:"test 2",file_size:"3rd Aug 2015"},{file_id:"3",file_name:"test 3434",file_size:"1st Dec 2015"}]};
-    var page_data ={list_of_events:[{file_id:"3",file_name:"page 2",file_size:"20th Jan 2013"},{file_id:"9",file_name:"page 2",file_size:"19th Feb 2015"},{file_id:"3",file_name:"page 2",file_size:"2nd Nov 2015"}]};
-    
+function get_subject_files(i) {
+    var data ={
+        no_of_pages: 10,
+        list_of_events: [
+            {file_id:"1", file_name:"test 1", file_size:"20th Jan 2015"},
+            {file_id:"2",file_name:"test 2",file_size:"3rd Aug 2015"},
+            {file_id:"3",file_name:"test 3434",file_size:"1st Dec 2015"}
+        ]
+    };
 
-    if(i==1){
-        return data;           
-    }else{
-        return page_data; 
+    var page_data = {
+        list_of_events: [
+            {file_id:"3", file_name: "page 2", file_size: "20th Jan 2013"},
+            {file_id:"9", file_name: "page 2", file_size:"19th Feb 2015"},
+            {file_id:"3",file_name:"page 2",file_size:"2nd Nov 2015"}
+        ]
+    };
+
+    if (i == 1) {
+        return data;
     }
+    return page_data;
 }
+
 var AdminEventsTable = React.createClass({
   getInitialState: function() {
     return {list_of_events:this.props.list_of_events};
@@ -28,7 +41,7 @@ var AdminEventsTable = React.createClass({
        this.setState({list_of_events:nextProps.list_of_events});
   },
   render: function() {
-    return (    
+    return (
     <div className="table-responsive" >
         <table className="table table-striped">
             <thead>
@@ -44,7 +57,7 @@ var AdminEventsTable = React.createClass({
                                 <td>{record.file_id}</td>
                                 <td>{record.file_name}</td>
                                 <td>{record.file_size}</td>
-                            </tr>           
+                            </tr>
                 })}
             </tbody>
         </table>
@@ -105,7 +118,7 @@ var AdminEventsPagination =React.createClass({
           </a>
         </li>
       </ul>
-    </nav>  
+    </nav>
     );
   }
 });
@@ -128,7 +141,7 @@ var AdminEventsList = React.createClass({
     this.setState({list_of_events:data.list_of_events,no_of_pages:data.no_of_pages});
 
   },
-  changePage:function(page_no){
+  changePage:function(page_no) {
     var data = get_subject_files(page_no);
     this.setState({list_of_events:data.list_of_events,no_of_pages:this.state.no_of_pages});
   },
@@ -136,21 +149,23 @@ var AdminEventsList = React.createClass({
     var no_of_pages=this.state.no_of_pages;
     var list_of_events=this.state.list_of_events;
     var pagination;
-    if(no_of_pages>1){
+    if(no_of_pages>1) {
         pagination=<AdminEventsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
     }
     var events_table;
-    if(list_of_events==undefined){
+    if(list_of_events==undefined) {
         //so some loading screen
-    }else if(list_of_events.length==0){
-        events_table=<div>No data to display</div>;
-    }else{
-        events_table=<AdminEventsTable list_of_events={this.state.list_of_events}/> 
     }
-    return (  
-    <div> 
-    {events_table}
-    {pagination}
+    else if(list_of_events.length == 0) {
+        events_table=<div>No data to display</div>;
+    }
+    else {
+        events_table=<AdminEventsTable list_of_events={this.state.list_of_events}/>
+    }
+    return (
+    <div>
+        {events_table}
+        {pagination}
     </div>
     );
   }
