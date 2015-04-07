@@ -16,14 +16,19 @@ before_install:
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
     - pip install fabric
-    - cd app && fab install_requirements
+    - pwd && pushd redi-dropper-client/app
+    - ls -al
+    - fab install_requirements
+    - popd && pwd
 
 # __3 Use this to prepare your build for testing
 before_script:
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
-    cd app && fab test
+    - pushd redi-dropper-client/app
+    - fab test
+    - popd
 
 # __5a after_success
 after_success:
