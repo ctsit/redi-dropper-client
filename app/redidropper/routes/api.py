@@ -10,7 +10,6 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
 from flask import request
 from flask import url_for
 from flask import redirect
-from flask_user import login_required, roles_required
 
 from managers import file_manager
 from managers import subject_manager
