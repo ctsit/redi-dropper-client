@@ -15,21 +15,22 @@ before_install:
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
-    pwd
-    pip install fabric coveralls
-    ls -al
-    pushd app
-    fab install_requirements
-    popd
+    - pwd
+    - pip install fabric coveralls
+    - ls -al
+    - pushd app
+    - fab install_requirements
+    - popd
 
 # __3 Use this to prepare your build for testing
 before_script:
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
-    pushd app
-    fab test
-    opd
+    - pushd app
+    - fab test
+    - fab test_cov
+    - popd
 
 # __5a after_success
 after_success:
