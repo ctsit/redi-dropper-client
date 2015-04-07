@@ -15,11 +15,11 @@ before_install:
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
-    - pip install fabric
-    - pwd && pushd redi-dropper-client/app
+    - pip install fabric coveralls
     - ls -al
+    - pushd redi-dropper-client/app
     - fab install_requirements
-    - popd && pwd
+    - popd
 
 # __3 Use this to prepare your build for testing
 before_script:
