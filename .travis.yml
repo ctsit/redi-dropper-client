@@ -27,6 +27,7 @@ before_script:
     - echo "Creating the database and tables..."
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
+    - mysql -uroot < app/db/002/data.sql
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
