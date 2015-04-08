@@ -39,3 +39,5 @@ check_apache:
 
 clean:
 	find . -type f -name "*.pyc" -print | xargs rm -f
+	rm -f app/.coverage
+	rm -rf app/htmlcov/
