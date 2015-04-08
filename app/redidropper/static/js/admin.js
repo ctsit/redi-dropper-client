@@ -1,31 +1,3 @@
-
-// @TODO: move to a separate "utils" class
-function array_keys(obj) {
-    list = [];
-    for (var key in obj) {
-        list.push(key);
-    }
-    return list;
-}
-
-function getListofUsers(){
-    return [{id:"123",username:"test1",email:"test1@gmail.com",date_added:"20th Jan",role:"admin",email_verified:"1"},
-              {id:"546",username:"test2",email:"test2@gmail.com",date_added:"10th Jan",role:"technician",email_verified:"0"},
-              {id:"897",username:"test3",email:"test3@gmail.com",date_added:"10th Jan",role:"researcher",email_verified:"0"}];
-        
-}
-
-function api_request(url, reqType, data, dataType, doCache) {
-    return $.ajax({
-        url: url,
-        type: reqType,
-        data: data,
-        dataType: dataType,
-        cache: doCache
-    });
-}
-
-
 var AdminUsersTable = React.createClass({
   getInitialState: function() {
     return {list_of_users:this.props.list_of_users};
@@ -177,18 +149,17 @@ var AddNewUserForm = React.createClass({
 
 var AdminUserManagement = React.createClass({
   getInitialState: function() {
-    return {list_of_users:getListofUsers(),no_of_pages:10};
+    return {list_of_users:undefined,no_of_pages:10};
   },
   componentWillMount:function(){
-    /*
-    var request = api_request("/api/list_redcap_subjects", "POST", data, "json", true);
+    var request = Utils.api_request("/api/users/list", "GET", {}, "json", true);
+    var _this=this;
     request.success( function(json) {
-        this.setState({projects:json,selected_project:json[0].id});
+        _this.setState({list_of_users:json.users,no_of_pages:10});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
     });
-    */
   },
   changePage:function(page_no){
   },
@@ -201,7 +172,7 @@ var AdminUserManagement = React.createClass({
     }
     var users_table;
     if(list_of_users==undefined){
-        //so some loading screen
+        //show some loading screen
     }else if(list_of_users.length==0){
         users_table=<div>No data to display</div>;
     }else{
