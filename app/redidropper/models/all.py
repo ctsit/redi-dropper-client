@@ -9,32 +9,29 @@ Goal: Store table models
 @see https://pythonhosted.org/Flask-SQLAlchemy/
 """
 
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from sqlalchemy import UniqueConstraint, ForeignKey
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects.mysql import TIMESTAMP
 from flask_login import UserMixin as LoginUserMixin
-
+from redidropper.main import db
 #Base = declarative_base()
 
-from redidropper.main import db
+ROLE_ADMIN = 'admin'
+ROLE_TECHNICIAN = 'technician'
 
 class ProjectEntity(db.Model):
     """ Stores details about projects """
     __tablename__ = 'Project'
 
-    prjID = Column(Integer, primary_key=True)
-    prjName = Column(String(255), nullable=False)
-    prjUrlHost = Column(String(255), nullable=False)
-    prjUrlPath = Column(String(255), nullable=False)
-    prjApiKey = Column(String(255), nullable=False)
-    prjUrlPath = Column(String(255), nullable=False)
-    prjAddedAt = Column(DateTime(), nullable=False, \
+    prjID = db.Column(db.Integer, primary_key=True)
+    prjName = db.Column(db.String(255), nullable=False)
+    prjUrlHost = db.Column(db.String(255), nullable=False)
+    prjUrlPath = db.Column(db.String(255), nullable=False)
+    prjApiKey = db.Column(db.String(255), nullable=False)
+    prjUrlPath = db.Column(db.String(255), nullable=False)
+    prjAddedAt = db.Column(db.DateTime(), nullable=False, \
             server_default='0000-00-00 00:00:00')
-    prjModifiedAt = Column(TIMESTAMP(), nullable=False, \
+    prjModifiedAt = db.Column(db.TIMESTAMP(), nullable=False, \
             server_default='CURRENT_TIMESTAMP')
 
-    __table_args__ = (UniqueConstraint('prjUrlHost', 'prjUrlPath'), )
+    __table_args__ = (db.UniqueConstraint('prjUrlHost', 'prjUrlPath'), )
 
     def __repr__(self):
         return "<ProjectEntity (prjID: {}, prjName: {}, prjUrlHost: {})>" \
@@ -45,19 +42,19 @@ class UserAuthEntity(db.Model):
     """ Stores the username/password for the user """
     __tablename__ = 'UserAuth'
 
-    uathID = Column(Integer, primary_key=True)
-    usrID = Column(Integer, ForeignKey('User.usrID'), nullable=False)
-    uathUsername = Column(String(255), nullable=False, unique=True)
-    uathPassword = Column(String(255), nullable=False)
-    uathPasswordResetToken = Column(String(255), nullable=False, \
+    uathID = db.Column(db.Integer, primary_key=True)
+    usrID = db.Column(db.Integer, db.ForeignKey('User.usrID'), nullable=False)
+    uathUsername = db.Column(db.String(255), nullable=False, unique=True)
+    uathPassword = db.Column(db.String(255), nullable=False)
+    uathPasswordResetToken = db.Column(db.String(255), nullable=False, \
             server_default='')
-    uathEmailConfirmationToken = Column(String(255), nullable=False, \
+    uathEmailConfirmationToken = db.Column(db.String(255), nullable=False, \
             server_default='')
-    uathModifiedAt = Column(TIMESTAMP(), nullable=False, \
+    uathModifiedAt = db.Column(db.TIMESTAMP(), nullable=False, \
             server_default='CURRENT_TIMESTAMP')
 
     # @OneToOne
-    user = relationship('UserEntity', uselist=False, lazy='joined')
+    user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
     def __repr__(self):
         return "<UserAuthEntity (\n\t" \
@@ -74,26 +71,26 @@ class UserEntity(db.Model, LoginUserMixin):
         https://flask-login.readthedocs.org/en/latest/
     """
     __tablename__ = 'User'
-    usrID = Column(Integer, primary_key=True)
-    usrEmail = Column(String(255), nullable=False, unique=True)
-    usrFirst = Column(String(255), nullable=False)
-    usrLast = Column(String(255), nullable=False)
-    usrMI = Column(String(1), nullable=False)
-    usrAddedAt = Column(DateTime(), nullable=False, \
+    usrID = db.Column(db.Integer, primary_key=True)
+    usrEmail = db.Column(db.String(255), nullable=False, unique=True)
+    usrFirst = db.Column(db.String(255), nullable=False)
+    usrLast = db.Column(db.String(255), nullable=False)
+    usrMI = db.Column(db.String(1), nullable=False)
+    usrAddedAt = db.Column(db.DateTime(), nullable=False, \
             server_default='0000-00-00 00:00:00')
-    usrModifiedAt = Column(TIMESTAMP(), nullable=False, \
+    usrModifiedAt = db.Column(db.TIMESTAMP(), nullable=False, \
             server_default='CURRENT_TIMESTAMP')
-    usrEmailConfirmedAt = Column(DateTime(), nullable=False, \
+    usrEmailConfirmedAt = db.Column(db.DateTime(), nullable=False, \
             server_default='0000-00-00 00:00:00')
-    usrIsActive = Column(Boolean(), nullable=False, server_default='1')
+    usrIsActive = db.Column(db.Boolean(), nullable=False, server_default='1')
 
     # @OneToOne
-    auth = relationship('UserAuthEntity', uselist=False)
+    auth = db.relationship('UserAuthEntity', uselist=False)
 
     # @OneToMany
-    roles = relationship('RoleEntity', \
+    roles = db.relationship('RoleEntity', \
             secondary='ProjectUserRole', \
-            backref=backref('user'))
+            backref=db.backref('user'))
 
     """
     `lazy` defines when SQLAlchemy will load the data from the database:
@@ -108,7 +105,7 @@ class UserEntity(db.Model, LoginUserMixin):
         if you expect more than a handful of items for this relationship.
     """
 
-    project_roles = relationship('ProjectUserRoleEntity', \
+    project_roles = db.relationship('ProjectUserRoleEntity', \
                                 lazy='joined')
 
 
@@ -148,14 +145,22 @@ class RoleEntity(db.Model):
     """ Stores possible user roles """
 
     __tablename__ = 'Role'
-    rolID = Column(Integer, primary_key=True)
-    rolName = Column(String(255), nullable=False, unique=True)
-    rolDescription = Column(String(255), nullable=False)
+    rolID = db.Column(db.Integer, primary_key=True)
+    rolName = db.Column(db.String(255), nullable=False, unique=True)
+    rolDescription = db.Column(db.String(255), nullable=False)
 
     def is_admin(self):
-        return 'admin' == self.rolName
+        """ helper for checking role """
+        return ROLE_ADMIN == self.rolName
+
+
+    def is_technician(self):
+        """ helper for checking role """
+        return ROLE_TECHNICIAN == self.rolName
+
 
     def __repr__(self):
+        """ implements friendly representation """
         return "<RoleEntity (rolID: {}, rolName: {})>" \
             .format(self.rolID, self.rolName)
 
@@ -164,29 +169,30 @@ class ProjectUserRoleEntity(db.Model):
     """ Stores the user's project roles """
 
     __tablename__ = 'ProjectUserRole'
-    purID = Column(Integer, primary_key=True)
-    prjID = Column(Integer, ForeignKey('Project.prjID', ondelete='CASCADE'), \
-            nullable=False)
-    usrID = Column(Integer, ForeignKey('User.usrID', ondelete='CASCADE'), \
-            nullable=False)
-    rolID = Column(Integer, ForeignKey('Role.rolID', ondelete='CASCADE'), \
-            nullable=False)
+    purID = db.Column(db.Integer, primary_key=True)
+    prjID = db.Column(db.Integer, db.ForeignKey('Project.prjID', \
+            ondelete='CASCADE'), nullable=False)
+    usrID = db.Column(db.Integer, db.ForeignKey('User.usrID', \
+            ondelete='CASCADE'), nullable=False)
+    rolID = db.Column(db.Integer, db.ForeignKey('Role.rolID', \
+            ondelete='CASCADE'), nullable=False)
 
     # @OneToOne
-    role = relationship('RoleEntity', uselist=False)
-    project = relationship('ProjectEntity', uselist=False)
-    user = relationship('UserEntity', uselist=False)
+    role = db.relationship('RoleEntity', uselist=False)
+    project = db.relationship('ProjectEntity', uselist=False)
+    user = db.relationship('UserEntity', uselist=False)
 
     def get_id(self):
+        """ return the unicode of the primary key value """
         return unicode(self.purID)
 
     # Don't allow more than one role for a specific user for a specific project
-    __table_args__ = (UniqueConstraint('prjID', 'usrID', name='project_user'), )
+    __table_args__ = (db.UniqueConstraint('prjID', 'usrID', name='project_user'), )
 
     def __repr__(self):
         return "<ProjectUserRoleEntity (\n\t" \
             "purID: {0.purID!r}, \n\t" \
-            " {1}, \n\t" \
-            " {2}, \n\t" \
-            " {3}, \n" \
-            ")>".format(self, self.project, self.user, self.role)
+            " {0.project}, \n\t" \
+            " {0.user}, \n\t" \
+            " {0.role}, \n" \
+            ")>".format(self)

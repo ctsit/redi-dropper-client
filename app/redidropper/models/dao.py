@@ -7,10 +7,8 @@ Goal: Implement the DAO
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-from sqlalchemy import create_engine
-from sqlalchemy import select
-from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.exc import NoResultFound
+from redidropper.main import app, db, db_session as sess
 
 from all import ProjectEntity
 from all import UserEntity
@@ -18,30 +16,12 @@ from all import RoleEntity
 from all import UserAuthEntity
 from all import ProjectUserRoleEntity
 
-def get_session():
-    """
-    Create a database session object
-    @TODO: http://stackoverflow.com/questions/12223335/sqlalchemy-creating-vs-reusing-a-session
-
-    """
-    user = 'redidropper'
-    passwd = 'insecurepassword'
-    host = 'localhost'
-    db_name = 'RediDropper'
-
-    engine = create_engine('mysql://{}:{}@{}/{}' \
-            .format(user, passwd, host, db_name))
-    Session = scoped_session(sessionmaker(bind=engine))
-    sess = Session()
-    return sess
-
 
 def find_user_by_id(user_id):
     """ Fetch the user object using the primary key
 
     :rtype: UserEntity
     """
-    sess = get_session()
     #user = User("test@test.com", "usrFirst", "usrLast")
     #sess.add(user)
     # sess.commit()
@@ -53,6 +33,7 @@ def find_user_by_id(user_id):
 
     return None
 
+
 def find_project_user_role(project_id, user_id):
     """ Fetch the user object using the unique key
 
@@ -61,7 +42,6 @@ def find_project_user_role(project_id, user_id):
 
     :rtype: ProjectUserRoleEntity
     """
-    sess = get_session()
     try:
         pur = sess.query(ProjectUserRoleEntity).filter_by( \
                 prjID=project_id, usrID=user_id).one()
@@ -77,7 +57,6 @@ def find_user_by_email(email):
 
     :rtype: UserEntity
     """
-    sess = get_session()
     try:
         user = sess.query(UserEntity).filter_by(usrEmail=email).one()
         return user
@@ -92,8 +71,6 @@ def find_auth_by_username(username):
 
     :rtype UserAuthEntity
     """
-    sess = get_session()
-
     try:
         auth = sess.query(UserAuthEntity).filter_by(
             uathUsername=username).one()
@@ -102,6 +79,17 @@ def find_auth_by_username(username):
         print "Unable to find row in find_auth_by_username()"
 
     return None
+
+def find_auth_by_api_key(api_key):
+    """ Fetch the auth object for the specified username
+
+    :rtype UserAuthEntity
+    """
+    username = 'admin'
+    # auth = sess.query(UserAuthEntity).filter_by(uathApiKey=api_key).one()
+    auth = sess.query(UserAuthEntity).filter_by(
+        uathUsername=username).one()
+    return auth
 
 
 def find_role_by_username_and_projectid(username, project_id):
@@ -124,7 +112,6 @@ def find_role_by_userid_and_projectid(user_id, project_id):
 
     :rtype RoleEntity
     """
-    sess = get_session()
     try:
         pur = sess.query(ProjectUserRoleEntity).filter_by(
             usrID=user_id, prjID=project_id).one()
@@ -148,4 +135,3 @@ print auth.user
 
 role = find_role_by_username_and_projectid('admin', 2)
 print role
-#print role.users
