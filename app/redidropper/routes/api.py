@@ -10,19 +10,19 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
 from flask import request
 from flask import url_for
 from flask import redirect
-from flask_user import login_required, roles_required
 
 from managers import file_manager
 from managers import subject_manager
 from redidropper.main import app
 
-@app.route('/api/list_subject_files', methods=['POST', 'GET'])
-def list_subject_files(subject_id):
+@app.route('/api/list_subject_files/<subhect_id>', methods=['POST'])
+def list_subject_files(subject_id=None):
     return subject_manager.get_files(subject_id)
 
 
-@app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
+@app.route('/api/list_redcap_subjects', methods=['POST'])
 def list_redcap_subjects():
+    project_id = 1
     return subject_manager.get_redcap_subjects()
 
 

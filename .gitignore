@@ -5,7 +5,8 @@ vagrant/.vagrant
 *.swo
 private/
 app/instance/
-app/venv/
-app/htmlcov/
+venv/
+htmlcov/
 .coverage
 .idea/
+.coveralls.yml
