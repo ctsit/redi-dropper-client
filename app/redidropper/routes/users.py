@@ -11,7 +11,7 @@ Goal: Define the routes for the users
 from flask import render_template
 from flask import send_file
 from flask import abort
-
+from flask import jsonify
 
 from flask_login import login_required, current_user
 from flask_principal import Principal, Permission, RoleNeed

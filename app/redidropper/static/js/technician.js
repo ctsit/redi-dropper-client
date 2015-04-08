@@ -1,78 +1,3 @@
-
-// @TODO: move to a separate "utils" class
-function api_request(url, reqType, data, dataType, doCache) {
-    return $.ajax({
-        url: url,
-        type: reqType,
-        data: data,
-        dataType: dataType,
-        cache: doCache
-    });
-}
-
-
-function render_subject_files() {
-    var data = {"subject_id": "1"};
-    var request = api_request("/api/list_subject_files", "POST", data, "json", true);
-}
-
-
-function getProjectsList(){
-    return [{project_id:"1",project_name:"1st Project"},{project_id:"2",project_name:"2nd Project"}]
-}
-
-function getSubjectsList(){
-    return {
-        max_events:12,
-        subjects_data:
-            [
-            {subject_id:"1", subject_name:"Subject 1",
-                events:[{event_id:23,event_files:100}]
-            },
-            {subject_id: "2", subject_name: "Subject 2",
-                events:[
-                    {event_id:23,event_files:50}, {event_id:23,event_files:30},
-                    {event_id:23,event_files:30}, {event_id:23,event_files:30},
-                    {event_id:23,event_files:30}, {event_id:23,event_files:30}
-                ]
-            },
-            {subject_id:"3", subject_name:"Subject 3",
-                events:[
-                {event_id:23,event_files:30},
-                {event_id:23,event_files:30},
-                {event_id:23,event_files:30},
-                {event_id:23,event_files:30}]
-            },
-            {subject_id:"4", subject_name:"Subject 4",
-                events:[
-                {event_id:23,event_files:10}, {event_id:23,event_files:30},
-                {event_id:23,event_files:30}]
-            },
-            {subject_id:"5", subject_name:"Subject 5",
-                events:[
-                {event_id:23,event_files:16}]
-            },
-            {subject_id:"6",subject_name:"Subject 6",
-                events:[
-                {event_id:23,event_files:18}
-                ]
-            }
-    ]};
-}
-
-function getNewSubjectsList(){
-       return {
-        max_events:12,
-        subjects_data:
-            [
-                {subject_id:"7",subject_name:"Subject 7",events:[{event_id:23,event_files:100}]},
-                {subject_id:"8",subject_name:"Subject 8",events:[{event_id:23,event_files:50},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                {subject_id:"9",subject_name:"Subject 9",events:[{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                {subject_id:"10",subject_name:"Subject 10",events:[{event_id:23,event_files:10},{event_id:23,event_files:30},{event_id:23,event_files:30}]},
-                {subject_id:"11",subject_name:"Subject 11",events:[{event_id:23,event_files:16}]},
-                {subject_id:"12",subject_name:"Subject 12",events:[{event_id:23,event_files:18}]}
-            ]};
-}
 var SubjectsRow = React.createClass({
   getInitialState: function() {
     return {row_data:this.props.row_data,max_events:this.props.max_events};
@@ -117,53 +42,56 @@ var SubjectsRow = React.createClass({
 
 var SubjectsTable = React.createClass({
   getInitialState: function() {
-    return {subjects:getSubjectsList()};
+    return {subjects:[],max_events:this.props.max_events,no_of_pages:0};
   },
   changePage:function(i){
-    var data ;
-    if(i%2==0){
-        data= getSubjectsList();
-    }else{
-        data= getNewSubjectsList();
-    }
-    this.setState({subjects:data});
+    this.changeData(i,this.props.selected_project,this.state.max_events)
   },
-  componentWillMount:function(){
-    /*
-    var request = api_request("/api/list_redcap_subjects", "POST",{}, "json", true);
+  changeData:function(page_id,project_id,max_events){
     var _this=this;
+    var request = Utils.api_request("/api/list_of_subjects/"+page_id, "GET", {}, "json", true);
     request.success( function(json) {
-        console.log("success "+json);
-        _this.setState({subjects:json});
+        _this.setState({subjects:json.list_of_subjects,max_events:max_events,no_of_pages:json.total_pages});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
-    });*/
+    });
   },
-  render: function() {
-    var column_count = this.state.subjects.max_events;
-    var subjects_data=this.state.subjects.subjects_data;
+  componentWillMount:function(){
+    if(this.props.selected_project!=undefined){
+        this.changeData(1,this.props.selected_project,this.props.max_events);
+    }
+  },
+  componentWillReceiveProps:function(nextProps){
+    if(nextProps.selected_project!=undefined){
+        this.changeData(1,this.props.selected_project,nextProps.max_events);
+    }
+  },
+  render: function() { 
+    var table_rows= [];
+    var subjects_data=this.state.subjects;
     var row_count = subjects_data.length;
+    var column_count = this.state.max_events;
+
+    for(var i=0;i<row_count;i++){
+        table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
+    }
+
     var table_columns=[];
+
+    if(row_count!=0){
     table_columns.push(<th>Subject ID</th>);
     table_columns.push(<th>Name</th>);
     for(var i=1;i<=column_count;i++){
         table_columns.push(<th> Event {i}</th>);
     }
-
-    var table_rows= [];
-    for(var i=0;i<row_count;i++){
-        table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
     }
-
     var pagination ;
-    var no_of_pages = 10
-    if(this.state.subjects.length<3){
-
-    }else{
+    var no_of_pages = this.state.no_of_pages;
+    if(no_of_pages!=1||no_of_pages!=0){
         pagination=<SubjectsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
-    
     }
+
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
@@ -188,7 +116,7 @@ var SubjectsPagination =React.createClass({
     return {no_of_pages:this.props.no_of_pages,current_page:1};
   },
   componentWillReceiveProps:function(nextProps){
-       // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
+    this.setState({no_of_pages:nextProps.no_of_pages,current_page:this.state.current_page});
   },
   activateOnClick:function(i){
     this.setState({no_of_pages:this.state.no_of_pages,current_page:i});
@@ -245,18 +173,17 @@ var SubjectsPagination =React.createClass({
 
 var Technician = React.createClass({
   getInitialState: function() {
-    return {projects:getProjectsList(),selected_project:0,error:[]};
+    return {projects:[],selected_project:undefined,max_events:0};
   },
   componentWillMount:function(){
-    /*
-    var request = api_request("/api/list_redcap_subjects", "POST", data, "json", true);
+    var _this=this;
+    var request = Utils.api_request("/api/list_of_projects", "GET",{}, "json", true);
     request.success( function(json) {
-        this.setState({projects:json,selected_project:json[0].id});
+        _this.setState({projects:json.list_of_projects,selected_project:json.list_of_projects[0].project_id,max_events:json.max_events});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
     });
-    */
   },
   selectChanged:function() {
     console.log("select changed "+this.refs.project_select.getDOMNode().value);
@@ -287,7 +214,7 @@ var Technician = React.createClass({
         <br/>
         <h3>List of Subjects </h3>
         <br/>
-        <SubjectsTable selected_project={this.state.selected_project}/>
+        <SubjectsTable selected_project={this.state.selected_project} max_events={this.state.max_events}/>
     </div>
     );
   }

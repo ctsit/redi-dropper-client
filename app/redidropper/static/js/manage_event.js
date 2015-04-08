@@ -118,28 +118,19 @@ if(! r.support) {
 }
 });
 
-function api_request(url, reqType, data, dataType, doCache) {
-    return $.ajax({
-        url: url,
-        type: reqType,
-        data: data,
-        dataType: dataType,
-        cache: doCache
-    });
-}
-
-function get_subject_files(){
-    var data ={event_created_date:"20th Jan",list_of_files:[{file_id:"1",file_name:"test 1",file_size:"10MB"},{file_id:"2",file_name:"test 2",file_size:"20MB"},{file_id:"3",file_name:"test 3434",file_size:"30MB"}]};
-     return data;           
-}
-
 var EventFilesList = React.createClass({
   getInitialState: function() {
-    var data = get_subject_files();
-    return {list_of_files:data.list_of_files};
+    return {list_of_files:[]};
   },
-  componentWillReceiveProps:function(nextProps){
-       // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
+  componentWillMount:function(){
+    var _this=this;
+    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
+    request.success( function(json) {
+       _this.setState({list_of_files:json.list_of_files});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
   },
   render: function() {
     return (    

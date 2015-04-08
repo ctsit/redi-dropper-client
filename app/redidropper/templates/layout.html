@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/resumable.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js"></script>
 
@@ -80,7 +80,9 @@
                     <li>
                         <a href="{{ url_for('admin') }}">Project Users </a>
                     </li>
-
+                    <li>
+                        <a href="{{ url_for('admin_events') }}">List of Events</a>
+                    </li>
                     <li> -- Technician pages </li>
                     <li>
                         <a href="{{ url_for('technician') }}">List of Subjects</a>
