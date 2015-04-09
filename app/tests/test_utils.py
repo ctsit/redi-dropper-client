@@ -1,4 +1,4 @@
-from redidropper.utils import clean_int, allowed_file
+from redidropper import utils
 #import unittest
 #class TestUtils(unittest.TestCase):
 
@@ -24,7 +24,7 @@ def test_clean_int():
     ]
 
     for case in cases:
-        actual = clean_int(case['x'])
+        actual = utils.clean_int(case['x'])
         expected = case['exp']
         assert actual == expected
 
@@ -51,6 +51,12 @@ def test_allowed_file():
             ]
 
     for case in cases:
-        actual = allowed_file(case['x'])
+        actual = utils.allowed_file(case['x'])
         expected = case['exp']
         assert actual == expected
+
+def test_pack():
+    assert '{"info": "<\' weird || danger;\\\\==="}' \
+            == utils.pack("info", "<' weird || danger;\===")
+    assert '{"info": "msg"}' == utils.pack_info("msg")
+    assert '{"error": "msg"}' == utils.pack_error("msg")

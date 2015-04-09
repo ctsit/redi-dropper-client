@@ -18,6 +18,25 @@ FLASH_CATEGORY_ERROR = 'error'
 FLASH_CATEGORY_INFO = 'info'
 
 
+def clean_int(dangerous):
+    """
+    Return None for non-integer input
+    Warning: do not use the
+    """
+    if dangerous is None:
+        return None
+
+    dangerous = str(dangerous).strip()
+
+    if "" == dangerous:
+        return None
+
+    if not dangerous.isdigit():
+        return None
+
+    return int(dangerous)
+
+
 def allowed_file(filename):
     """
     Checks if the specified file name should be allowed for downloading
@@ -25,6 +44,9 @@ def allowed_file(filename):
     :rtype Boolean
     :return True if the filename is in the ALLOWED_EXTENSIONS whitelist
     """
+    if filename is None:
+        return False
+
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -44,7 +66,7 @@ def pack(msg_type, msg):
     Create a string represenation of dictionary
         {'msg_type': 'msg'}
     """
-    return '"{}": "{}"'.format(msg_type, json.dumps(msg))
+    return '{' + '"{}": {}'.format(msg_type, json.dumps(msg)) + '}'
 
 
 def pack_error(msg):
