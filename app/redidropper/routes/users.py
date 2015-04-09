@@ -66,11 +66,20 @@ def project_subject_files(project_id=None, subject_id=None):
 
 
 @app.route('/users/select_project')
+@login_required
+def select_project():
+    """ Render the page for project_selection """
+    return render_template('users/select_project.html')
+
+
 @app.route('/users/select_project/<project_id>')
 @login_required
-def select_project(project_id=None):
-    """ Render the page for project_selection """
-    return render_template('users/select_project.html', project_id=project_id)
+def select_project_id(project_id=None):
+    """ Redirect to the proper role homepage
+
+    @TODO: implement
+    """
+    return "selected: " + project_id
 
 
 @app.route('/users/researcher_one')

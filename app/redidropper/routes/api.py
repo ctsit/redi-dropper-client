@@ -11,10 +11,15 @@ from flask import request
 from flask import url_for
 from flask import redirect
 from flask import jsonify
+from flask import make_response
 
 from managers import file_manager
 from managers import subject_manager
+from redidropper import utils
 from redidropper.main import app
+
+from redidropper.models.all import UserEntity
+from redidropper.models import dao
 
 @app.route('/api/list_subject_files/<subject_id>', methods=['POST'])
 def list_subject_files(subject_id=None):
@@ -33,6 +38,25 @@ def api_upload():
     return file_manager.save_uploaded_file()
 
 
+@app.route('/api/save_user', methods=['POST'])
+def api_save_user():
+    """ Add New User to the database """
+    usrEmail = request.form['user_email']
+    usrFirst = request.form['user_first_name']
+    usrLast = request.form['user_last_name']
+    usrMI =  request.form['user_middle_name']
+    usrRole = request.form['user_role']
+
+    exists = False if dao.find_user_by_email(usrEmail) is None else True
+    if exists:
+        return make_response(
+            utils.pack_error("Sorry. This email is already taken"))
+
+    user = UserEntity(usrEmail, usrFirst, usrLast, usrMI)
+    usrID = dao.save_user(user)
+
+    print "saved user: {}".format(user)
+    return jsonify(data=user.usrID)
 
 @app.route('/api/users/list')
 def get_users_in_project():
