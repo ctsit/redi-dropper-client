@@ -10,11 +10,11 @@ Goal: Implement the DAO
 from sqlalchemy.orm.exc import NoResultFound
 from redidropper.main import app, db, db_session as sess
 
-from all import ProjectEntity
-from all import UserEntity
-from all import RoleEntity
-from all import UserAuthEntity
-from all import ProjectUserRoleEntity
+from redidropper.models.all import ProjectEntity
+from redidropper.models.all import UserEntity
+from redidropper.models.all import RoleEntity
+from redidropper.models.all import UserAuthEntity
+from redidropper.models.all import ProjectUserRoleEntity
 
 
 def find_user_by_id(user_id):
