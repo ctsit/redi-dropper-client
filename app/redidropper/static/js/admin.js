@@ -28,9 +28,10 @@ var AdminUsersTable = React.createClass({
             <tbody>
                 {this.state.list_of_users.map(function(record,i) {
                     var email;
-                    if(record.email_verified==0){
-                        email=<div>Verified</div>;
-                    }else if(record.email_verified==1){
+                    if(record.email_verified == 0) {
+                        email = <div>Verified</div>;
+                    }
+                    else if (record.email_verified == 1) {
                         email=<button className="btn btn-primary btn">Send Verification Email</button>;
                     }
                     
@@ -56,7 +57,7 @@ var AdminUsersPagination = React.createClass({
     return {total_pages:this.props.total_pages,current_page:1};
   },
   componentWillReceiveProps:function(nextProps){
-       // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
+       // 
   },
   activateOnClick:function(i){
     this.setState({total_pages:this.state.total_pages,current_page:i});
@@ -111,6 +112,32 @@ var AdminUsersPagination = React.createClass({
 
 
 var AddNewUserForm = React.createClass({
+  addUser:function(){
+    //Get the values entered by the user in the form
+    var user_email = this.refs.user_email.getDOMNode().value.trim();    
+    var user_first_name = this.refs.user_first_name.getDOMNode().value.trim();
+    var user_middle_name = this.refs.user_middle_name.getDOMNode().value.trim();
+    var user_last_name = this.refs.user_last_name.getDOMNode().value.trim();
+    var user_role = this.refs.user_role.getDOMNode().value.trim();
+
+    var data={  user_email      :  user_email,
+                user_first_name :  user_first_name,
+                user_middle_name:  user_middle_name,
+                user_last_name  :  user_last_name,
+                user_role       :  user_role };
+
+    var request = Utils.api_request("/api/save_user", "POST",data, "json", true);
+    
+    var _this=this;
+    
+    request.success( function(json) {
+        console.log('Response add user: ' + JSON.stringify(json));
+    });
+
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
   render:function(){
 
     return (  
@@ -119,21 +146,33 @@ var AddNewUserForm = React.createClass({
     <br/>
         <div className="form-horizontal">
          <div className="form-group">
-            <label for="inputEmail3" className="col-sm-2 control-label">Username</label>
-            <div className="col-sm-10">
-              <input type="text" className="form-control" id="admin-add-username" placeholder="Username"/>
+            <label for="inputEmail3" className="col-sm-4 control-label">Email</label>
+            <div className="col-sm-8">
+              <input type="email" className="form-control" ref="user_email" placeholder="Email"/>
             </div>
           </div>
           <div className="form-group">
-            <label for="inputEmail3" className="col-sm-2 control-label">Email</label>
-            <div className="col-sm-10">
-              <input type="text" className="form-control" id="admin-add-email" placeholder="Email"/>
+            <label for="inputEmail3" className="col-sm-4 control-label">First Name</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control" ref="user_first_name" placeholder="First Name"/>
             </div>
           </div>
           <div className="form-group">
-            <label for="inputEmail3" className="col-sm-2 control-label">Role</label>
-            <div className="col-sm-10">
-              <select id="admin-add-role" className="form-control">
+            <label for="inputEmail3" className="col-sm-4 control-label">Middle Name</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control" ref="user_middle_name" placeholder="Middle Name"/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label for="inputEmail3" className="col-sm-4 control-label">Last Name</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control" ref="user_last_name" placeholder="Last Name"/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label for="inputEmail3" className="col-sm-4 control-label">Role</label>
+            <div className="col-sm-8">
+              <select ref="user_role" className="form-control">
                   <option value="admin">Admin</option>
                   <option value="technician">Technician</option>
                   <option value="researcher">Researcher</option>
@@ -142,7 +181,7 @@ var AddNewUserForm = React.createClass({
           </div>
           <div className="form-group">
             <div className="col-sm-offset-2 col-sm-10">
-              <button id="admin-save" className="btn btn-primary btn">Save</button>
+              <button onClick={this.addUser} className="btn btn-primary btn">Add User to Project</button>
             </div>
           </div>
         </div>
@@ -154,7 +193,11 @@ var AddNewUserForm = React.createClass({
 
 var AdminUserManagement = React.createClass({
   getInitialState: function() {
-    return {list_of_users:undefined,total_pages:10};
+    return {
+        list_of_users: undefined,
+        total_pages: 10,
+        show_user_form: false
+    };
   },
   componentWillMount:function(){
     var request = Utils.api_request("/api/users/list", "GET", {}, "json", true);
@@ -168,15 +211,33 @@ var AdminUserManagement = React.createClass({
   },
   changePage:function(page_no) {
   },
+  toggleAddUserForm:function(){
+    //change the bool value of show_user_form variable to opposite 
+    var show_user_form = !this.state.show_user_form;
+    this.setState({
+        list_of_users   :  this.state.list_of_users,
+        total_pages     :  this.state.total_pages,
+        show_user_form  :  show_user_form
+    });
+  },
   render: function() {
     var total_pages = this.state.total_pages;
     var list_of_users=this.state.list_of_users;
     var pagination;
+    var show_user_form;
+    var button_text = "Add User";
 
     if(total_pages > 1) {
         pagination = <AdminUsersPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
+
+    if(this.state.show_user_form){
+      button_text="Close";
+      show_user_form=<AddNewUserForm onSubmit={this.addNewUser}/>
+    }
+
     var users_table;
+
     if(list_of_users == undefined) {
         //show some loading screen
     }
@@ -187,11 +248,13 @@ var AdminUserManagement = React.createClass({
         users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/> 
     }
     return (  
-        <div> 
-            {users_table}
-            {pagination}
-            <AddNewUserForm onSubmit={this.addNewUser}/>
-        </div>
+    <div>
+        <button onClick={this.toggleAddUserForm} className="btn btn-primary">{button_text}</button>
+        <br/>
+        {show_user_form}
+        {users_table}
+        {pagination}
+    </div>
     );
   }
 });

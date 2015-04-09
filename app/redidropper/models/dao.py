@@ -17,14 +17,25 @@ from redidropper.models.all import UserAuthEntity
 from redidropper.models.all import ProjectUserRoleEntity
 
 
+
+def save_user(user):
+    """
+    :param: user UserEntity object
+
+    :rtype int
+    :return the User.usrID for the inserted row
+    """
+    sess.add(user)
+    sess.commit()
+    return user.usrID
+    
+
 def find_user_by_id(user_id):
     """ Fetch the user object using the primary key
 
     :rtype: UserEntity
     """
-    #user = User("test@test.com", "usrFirst", "usrLast")
-    #sess.add(user)
-    # sess.commit()
+
     try:
         user = sess.query(UserEntity).filter_by(usrID=user_id).one()
         return user
