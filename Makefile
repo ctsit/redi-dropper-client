@@ -5,21 +5,22 @@ VAGR := VAGRANT_CWD=vagrant
 VAGR_SSH := $(VAGR) vagrant ssh
 
 help:
-	@echo "Available tasks"
-
-	@echo "run                 : run the flask application using the fabric python tool"
-	@echo "vup                 : start the testing VM"
-	@echo "vas                 : ssh into the testing VM"
-	@echo "vdown               : destroy the testing VM (all unsaved files will be lost)"
-	@echo "vprov               : re-provision the testing VM"
-	@echo "check_apache        : check if Apache is running in the testing VM"
-
+	@echo ""
+	@echo "Available tasks:"
+	@echo "\t run                 : run the flask application using the fabric python tool"
+	@echo "\t test                : run pytests"
+	@echo "\t vup                 : start the testing VM"
+	@echo "\t vas                 : ssh into the testing VM"
+	@echo "\t vdown               : destroy the testing VM (all unsaved files will be lost)"
+	@echo "\t vprov               : re-provision the testing VM"
+	@echo "\t check_apache        : check if Apache is running in the testing VM"
+	@echo ""
 
 run:
 	cd app && fab run
 
 test:
-	cd app && fab test
+	cd app && fab test_cov
 
 vup:
 	$(VAGR) vagrant up
@@ -39,5 +40,5 @@ check_apache:
 
 clean:
 	find . -type f -name "*.pyc" -print | xargs rm -f
-	rm -f app/.coverage
+	rm -f app/.coverage app/pylint.out
 	rm -rf app/htmlcov/
