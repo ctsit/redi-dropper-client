@@ -61,19 +61,22 @@ def flash_info(msg):
     flash(msg, FLASH_CATEGORY_INFO)
 
 
-def pack(msg_type, msg):
+def pack(data):
     """
-    Create a string represenation of dictionary
-        {'msg_type': 'msg'}
+    Create a string represenation of data
+    :param data -- dictionary
     """
-    return '{' + '"{}": {}'.format(msg_type, json.dumps(msg)) + '}'
+    #return '{' + '"{}": {}'.format(msg_type, json.dumps(msg)) + '}'
+    return json.dumps(data)
 
 
 def pack_error(msg):
     """ Format an error message to be json-friendly """
-    return pack('error', msg)
+    # return pack( {'status': 'error', 'message': json.dumps(msg)})
+    return pack( {'status': 'error', 'message': msg})
 
 
 def pack_info(msg):
     """ Format an info message to be json-friendly """
-    return pack('info', msg)
+    # return pack( {'status': 'info', 'message': json.dumps(msg)})
+    return pack( {'status': 'info', 'message': msg})

@@ -56,7 +56,6 @@ def test_allowed_file():
         assert actual == expected
 
 def test_pack():
-    assert '{"info": "<\' weird || danger;\\\\==="}' \
-            == utils.pack("info", "<' weird || danger;\===")
-    assert '{"info": "msg"}' == utils.pack_info("msg")
-    assert '{"error": "msg"}' == utils.pack_error("msg")
+    #assert '{"info": "<\' weird || danger;\\\\==="}' \ == utils.pack("info", "<' weird || danger;\===")
+    assert '{"status": "info", "message": "msg"}' == utils.pack_info("msg")
+    assert '{"status": "error", "message": "msg"}' == utils.pack_error("msg")
