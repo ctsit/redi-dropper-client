@@ -1,9 +1,18 @@
+// Implement two components
+//  AdminEventsTable - ...
+//  AdminEventsPagination - ...
+
 var AdminEventsTable = React.createClass({
   getInitialState: function() {
-    return {list_of_events:this.props.list_of_events};
+    return {
+        list_of_events: this.props.list_of_events
+    };
   },
   componentWillReceiveProps:function(nextProps){
-       this.setState({list_of_events:nextProps.list_of_events});
+       this.setState(
+               {
+                   list_of_events: nextProps.list_of_events
+                });
   },
   render: function() {
     return (
@@ -30,23 +39,27 @@ var AdminEventsTable = React.createClass({
     );
   }
 });
+
 var AdminEventsPagination =React.createClass({
   getInitialState: function() {
-    return {no_of_pages:this.props.no_of_pages,current_page:1};
+    return {
+        total_pages: this.props.total_pages,
+        current_page: 1
+    };
   },
   componentWillReceiveProps:function(nextProps){
        // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
   },
   activateOnClick:function(i){
-    this.setState({no_of_pages:this.state.no_of_pages,current_page:i});
+    this.setState({total_pages:this.state.total_pages,current_page:i});
     this.props.changePage(i);
   },
   nextPage:function(){
     var current_page=this.state.current_page;
-    if(current_page==this.state.no_of_pages){
+    if(current_page==this.state.total_pages){
         return;
     }else{
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page+1});
+        this.setState({total_pages:this.state.total_pages,current_page:current_page+1});
         this.props.changePage(current_page+1);
     }
   },
@@ -55,13 +68,13 @@ var AdminEventsPagination =React.createClass({
     if(current_page==1){
         return;
     }else{
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page-1});
+        this.setState({total_pages:this.state.total_pages,current_page:current_page-1});
         this.props.changePage(current_page-1);
     }
   },
   render: function() {
     var pages=[];
-    for(var i=1;i<=this.state.no_of_pages;i++){
+    for(var i=1;i<=this.state.total_pages;i++){
         if(i==this.state.current_page){
             pages.push(<li className="active"><a>{i}</a></li>);
         }else{
@@ -90,13 +103,13 @@ var AdminEventsPagination =React.createClass({
 
 var AdminEventsList = React.createClass({
   getInitialState: function() {
-    return {list_of_events:undefined,no_of_pages:0};
+    return {list_of_events:undefined,total_pages:0};
   },
   componentWillMount:function(){
     var _this=this;
     var request = Utils.api_request("/api/admin/events/1", "GET", {}, "json", true);
     request.success( function(json) {
-       _this.setState({list_of_events:json.list_of_events,no_of_pages:json.no_of_pages});
+       _this.setState({list_of_events:json.list_of_events,total_pages:json.total_pages});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
@@ -106,28 +119,29 @@ var AdminEventsList = React.createClass({
     var _this=this;
     var request = Utils.api_request("/api/admin/events/"+page_no, "GET", {}, "json", true);
     request.success( function(json) {
-       _this.setState({list_of_events:json.list_of_events,no_of_pages:json.no_of_pages});
+       _this.setState({list_of_events:json.list_of_events,total_pages:json.total_pages});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
     });
   },
   render: function() {
-    var no_of_pages=this.state.no_of_pages;
+    var total_pages = this.state.total_pages;
     var list_of_events=this.state.list_of_events;
     var pagination;
-    if(no_of_pages>1) {
-        pagination=<AdminEventsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
+
+    if(total_pages>1) {
+        pagination=<AdminEventsPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
     var events_table;
-    if(list_of_events==undefined) {
+    if(list_of_events == undefined) {
         //so some loading screen
     }
     else if(list_of_events.length == 0) {
-        events_table=<div>No data to display</div>;
+        events_table = <div>No data to display</div>;
     }
     else {
-        events_table=<AdminEventsTable list_of_events={this.state.list_of_events}/>
+        events_table = <AdminEventsTable list_of_events = {this.state.list_of_events}/>
     }
     return (
     <div>

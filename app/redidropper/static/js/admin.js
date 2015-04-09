@@ -1,3 +1,8 @@
+// Implements react componenst:
+//  AdminUsersTable - ...
+//  AdminUsersPagination - ..
+//  AddNewUserForm - ...
+
 var AdminUsersTable = React.createClass({
   getInitialState: function() {
     return {list_of_users:this.props.list_of_users};
@@ -46,23 +51,23 @@ var AdminUsersTable = React.createClass({
   }
 });
 
-var AdminUsersPagination =React.createClass({
+var AdminUsersPagination = React.createClass({
   getInitialState: function() {
-    return {no_of_pages:this.props.no_of_pages,current_page:1};
+    return {total_pages:this.props.total_pages,current_page:1};
   },
   componentWillReceiveProps:function(nextProps){
        // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
   },
   activateOnClick:function(i){
-    this.setState({no_of_pages:this.state.no_of_pages,current_page:i});
+    this.setState({total_pages:this.state.total_pages,current_page:i});
     this.props.changePage(i);
   },
   nextPage:function(){
     var current_page=this.state.current_page;
-    if(current_page==this.state.no_of_pages){
+    if(current_page==this.state.total_pages){
         return;
     }else{
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page+1});
+        this.setState({total_pages:this.state.total_pages,current_page:current_page+1});
         this.props.changePage(current_page+1);
     }
   },
@@ -71,13 +76,13 @@ var AdminUsersPagination =React.createClass({
     if(current_page==1){
         return;
     }else{
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page-1});
+        this.setState({total_pages:this.state.total_pages,current_page:current_page-1});
         this.props.changePage(current_page-1);
     }
   },
   render: function() {
     var pages=[];
-    for(var i=1;i<=this.state.no_of_pages;i++){
+    for(var i=1;i<=this.state.total_pages;i++){
         if(i==this.state.current_page){
             pages.push(<li className="active"><a>{i}</a></li>);
         }else{
@@ -149,41 +154,44 @@ var AddNewUserForm = React.createClass({
 
 var AdminUserManagement = React.createClass({
   getInitialState: function() {
-    return {list_of_users:undefined,no_of_pages:10};
+    return {list_of_users:undefined,total_pages:10};
   },
   componentWillMount:function(){
     var request = Utils.api_request("/api/users/list", "GET", {}, "json", true);
     var _this=this;
     request.success( function(json) {
-        _this.setState({list_of_users:json.users,no_of_pages:10});
+        _this.setState({list_of_users:json.users,total_pages:10});
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
     });
   },
-  changePage:function(page_no){
+  changePage:function(page_no) {
   },
   render: function() {
-    var no_of_pages=this.state.no_of_pages;
+    var total_pages = this.state.total_pages;
     var list_of_users=this.state.list_of_users;
     var pagination;
-    if(no_of_pages>1){
-        pagination=<AdminUsersPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
+
+    if(total_pages > 1) {
+        pagination = <AdminUsersPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
     var users_table;
-    if(list_of_users==undefined){
+    if(list_of_users == undefined) {
         //show some loading screen
-    }else if(list_of_users.length==0){
-        users_table=<div>No data to display</div>;
-    }else{
-        users_table=<AdminUsersTable list_of_users={this.state.list_of_users}/> 
+    }
+    else if (0 == list_of_users.length) {
+        users_table = <div>No data to display</div>;
+    }
+    else {
+        users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/> 
     }
     return (  
-    <div> 
-    {users_table}
-    {pagination}
-    <AddNewUserForm onSubmit={this.addNewUser}/>
-    </div>
+        <div> 
+            {users_table}
+            {pagination}
+            <AddNewUserForm onSubmit={this.addNewUser}/>
+        </div>
     );
   }
 });
