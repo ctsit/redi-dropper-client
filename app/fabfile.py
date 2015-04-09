@@ -61,6 +61,10 @@ def test_cov():
         --cov-report html \
         tests/""")
 
+@task
+def lint():
+    local("which pylint || sudo easy_install pylint")
+    local("pylint -f parseable redidropper | tee pylint.out")
 
 @task
 def run():
