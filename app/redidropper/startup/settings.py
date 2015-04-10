@@ -15,6 +15,9 @@ import os
 #   python import os; os.urandom(24)
 SECRET_KEY = os.getenv('SECRET_KEY', '4\xb0L\x9b\xf41[\x14B\xb3\x1d\xc5\xfeO\xd2;$o\x95X~\x06\xaf\x9d')
 
+# Set to True in order to view every redirect
+DEBUG_TB_INTERCEPT_REDIRECTS = False
+
 # Limit the max upload size for the app to 20 MB
 # @see https://pythonhosted.org/Flask-Uploads/
 DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024

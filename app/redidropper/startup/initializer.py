@@ -9,13 +9,14 @@ Goal: Init the application routes and read the settings
 
 import logging
 from logging import Formatter
+from flask_debugtoolbar import DebugToolbarExtension
+
 
 def do_init(app, db, extra_settings={}):
     """
     Initialize the app
     @see run.py
     """
-
     # Load content from  'redidropper/startup/settings.py' file
     app.config.from_object('redidropper.startup.settings')
 
@@ -32,7 +33,15 @@ def do_init(app, db, extra_settings={}):
     #from redidropper.models import UserAuthEntity
 
     configure_logging(app)
+
+    # @TODO: read port & debug status from the config
+    # http://flask.pocoo.org/docs/0.10/config/
+    app.debug = True
+    app.SERVER_NAME = 'localhost:5000'
+
+    toolbar = DebugToolbarExtension(app)
     return app
+
 
 def configure_logging(app):
     """
