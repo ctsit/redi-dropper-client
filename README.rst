@@ -14,8 +14,12 @@ RediDropper
     :target: https://travis-ci.org/ctsit/redi-dropper-client
     :alt: Build status
 
-.. image:: https://coveralls.io/repos/indera/redi-dropper-client/badge.svg?branch=develop
-    :target: https://coveralls.io/r/indera/redi-dropper-client
+.. image:: https://coveralls.io/repos/ctsit/redi-dropper-client/badge.svg?branch=master
+    :target: https://coveralls.io/r/ctsit/redi-dropper-client
+    :alt: Coverage status
+
+.. image:: https://coveralls.io/repos/ctsit/redi-dropper-client/badge.svg?branch=develop
+    :target: https://coveralls.io/r/ctsit/redi-dropper-client
     :alt: Coverage status
 
 Introduction

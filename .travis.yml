@@ -38,13 +38,12 @@ before_script:
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
     - pushd app
-    - fab test
     - fab test_cov
     - popd
 
 # __5a after_success
 after_success:
-    echo "OK."
+    - coveralls
 
 # __5b
 after_failure:
