@@ -8,7 +8,10 @@ Goal: Store helper functions not tied to a specific module
 """
 
 import json
-from flask import flash
+from flask import flash, request
+from hashlib import sha512, sha256
+import hmac
+import base64
 
 # @TODO: move to the configs
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff',
@@ -16,6 +19,62 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff',
 
 FLASH_CATEGORY_ERROR = 'error'
 FLASH_CATEGORY_INFO = 'info'
+
+
+
+def _get_remote_addr():
+    """ Return the utf-8 encoded request address """
+    address = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if address is not None:
+        address = address.encode('utf-8')
+    return address
+
+
+def _get_user_agent():
+    """ Return the utf-8 encoded request user agent """
+    user_agent = request.headers.get('User-Agent')
+    if user_agent is not None:
+        user_agent = user_agent.encode('utf-8')
+    return user_agent
+
+
+def _create_salt(username):
+    """ Get the first 16 bytes of the sha256(username:user_ip:user_agent) """
+    base = '{0}:{1}:{2}'.format(username, _get_remote_addr(), _get_user_agent())
+    if str is bytes:
+        base = unicode(base, 'utf-8', errors='replace')  # pragma: no cover
+    hasher = sha256()
+    hasher.update(base.encode('utf8'))
+    all64 = hasher.hexdigest()
+    return all64[0:16]
+
+
+def _generate_sha512_hmac(pepper, salt, data):
+    """ Generate the SHA512 HMAC -- for compatibility with Flask-Security
+    h = HMAC(pepper, salt+data)
+
+    Where
+        pepper: the global application key
+        salt:   the 128bit (16bytes) obtained from sha256(ip:agent:username)
+        data:   the data to be protected
+
+from passlib.context import CryptContext
+self.password_crypt_context = CryptContext(schemes='bcrypt')
+    """
+    payload = '{}:{}'.format(salt.encode('utf-8'), data.encode('utf-8'))
+    return base64.b64encode(hmac.new(pepper, payload, sha512).digest())
+
+
+def generate_auth(pepper, username, password):
+    """
+    Return the salt and hashed password to be stored in the database.
+    Execute once when the user account is created.
+
+    Note: requires a request context.
+    """
+    salt = _create_salt(username)
+    hashed_pass = _generate_sha512_hmac(pepper, salt, password)
+    return (salt, hashed_pass)
 
 
 def clean_int(dangerous):
