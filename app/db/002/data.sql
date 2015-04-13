@@ -85,18 +85,18 @@ WHERE
 ;
 
 
-INSERT INTO UserAuth (usrID, uathUsername, uathPassword)
+INSERT INTO UserAuth (usrID, uathUsername, uathSalt, uathPassword)
 SELECT
-    usrID, 'admin', 'password'
+    usrID, 'admin', 'dc2d541d7eedf358', 'BDG5oBbbke3moM5injIQHejvfs0gYjQZZJFnJc33dnPfMXRhCXNb80qPcdtYgW7QLoUhSpEDdafjLwL5o1gr7w=='
 FROM
     User
 WHERE
     usrEmail = 'admin@example.com'
 ;
 
-INSERT INTO UserAuth (usrID, uathUsername, uathPassword)
+INSERT INTO UserAuth (usrID, uathUsername, uathSalt, uathPassword)
 SELECT
-    usrID, 'technician', 'password'
+    usrID, 'technician', '71b67ec3450e2997', 'ilShN/pCKkLvHKc1eelH3ua0KKeO0RMghVCHs6q1iBRfjZ2b+m/u1q1S9V6F8BXlX4yHhkskn5ayJnW3fACLFw=='
 FROM
     User
 WHERE
