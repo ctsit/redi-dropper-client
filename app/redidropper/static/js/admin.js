@@ -28,10 +28,10 @@ var AdminUsersTable = React.createClass({
             <tbody>
                 {this.state.list_of_users.map(function(record,i) {
                     var email;
-                    if(record.email_verified == 0) {
+                    if(record.email_verified == 1) {
                         email = <div>Verified</div>;
                     }
-                    else if (record.email_verified == 1) {
+                    else if (record.email_verified == 0) {
                         email=<button className="btn btn-primary btn">Send Verification Email</button>;
                     }
                     
@@ -114,13 +114,15 @@ var AdminUsersPagination = React.createClass({
 var AddNewUserForm = React.createClass({
   addUser:function(){
     //Get the values entered by the user in the form
+    var username = this.refs.username.getDOMNode().value.trim();
     var user_email = this.refs.user_email.getDOMNode().value.trim();    
     var user_first_name = this.refs.user_first_name.getDOMNode().value.trim();
     var user_middle_name = this.refs.user_middle_name.getDOMNode().value.trim();
     var user_last_name = this.refs.user_last_name.getDOMNode().value.trim();
     var user_role = this.refs.user_role.getDOMNode().value.trim();
 
-    var data={  user_email      :  user_email,
+    var data={  username        :  username,
+                user_email      :  user_email,
                 user_first_name :  user_first_name,
                 user_middle_name:  user_middle_name,
                 user_last_name  :  user_last_name,
@@ -132,6 +134,9 @@ var AddNewUserForm = React.createClass({
     
     request.success( function(json) {
         console.log('Response add user: ' + JSON.stringify(json));
+        var data={'id':json.data,'username':username,'email':user_email,'date_added':'20th Jan','role':user_role,'email_verified':'0'};
+            
+        _this.props.addNewUser(data);
     });
 
     request.fail(function (jqXHR, textStatus, error) {
@@ -145,6 +150,12 @@ var AddNewUserForm = React.createClass({
     <h3> Add New User </h3>
     <br/>
         <div className="form-horizontal">
+        <div className="form-group">
+            <label for="inputEmail3" className="col-sm-4 control-label">Username</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control" ref="username" placeholder="username"/>
+            </div>
+          </div>
          <div className="form-group">
             <label for="inputEmail3" className="col-sm-4 control-label">Email</label>
             <div className="col-sm-8">
@@ -211,6 +222,15 @@ var AdminUserManagement = React.createClass({
   },
   changePage:function(page_no) {
   },
+  addNewUser:function(data){
+    var list_of_users = this.state.list_of_users;
+    list_of_users.unshift(data);
+    this.setState({
+        list_of_users   :  list_of_users,
+        total_pages     :  this.state.total_pages,
+        show_user_form  :  false
+    });
+  },
   toggleAddUserForm:function(){
     //change the bool value of show_user_form variable to opposite 
     var show_user_form = !this.state.show_user_form;
@@ -233,7 +253,7 @@ var AdminUserManagement = React.createClass({
 
     if(this.state.show_user_form){
       button_text="Close";
-      show_user_form=<AddNewUserForm onSubmit={this.addNewUser}/>
+      show_user_form=<AddNewUserForm addNewUser={this.addNewUser}/>
     }
 
     var users_table;
@@ -251,9 +271,13 @@ var AdminUserManagement = React.createClass({
     <div>
         <button onClick={this.toggleAddUserForm} className="btn btn-primary">{button_text}</button>
         <br/>
-        {show_user_form}
-        {users_table}
-        {pagination}
+        <div className="row">
+          {show_user_form}
+        </div>
+        <div className="row">
+          {users_table}
+          {pagination}
+        </div>
     </div>
     );
   }

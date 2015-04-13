@@ -65,6 +65,7 @@ def api_upload():
 @app.route('/api/save_user', methods=['POST'])
 def api_save_user():
     """ Add New User to the database """
+    username = request.form['username']
     usrEmail = request.form['user_email']
     usrFirst = request.form['user_first_name']
     usrLast = request.form['user_last_name']
