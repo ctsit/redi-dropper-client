@@ -7,6 +7,9 @@ Goal: Store helper functions not tied to a specific module
     Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
+import os
+import time
+
 import json
 from flask import flash, request
 from hashlib import sha512, sha256
@@ -38,9 +41,11 @@ def _get_user_agent():
     return user_agent
 
 
-def _create_salt(username):
-    """ Get the first 16 bytes of the sha256(username:user_ip:user_agent) """
-    base = '{0}:{1}:{2}'.format(username, _get_remote_addr(), _get_user_agent())
+def _create_salt():
+    """ Get the first 16 bytes of the sha256(rand:user_ip:user_agent) """
+    rand = base64.b64encode(os.urandom(24))
+
+    base = '{0}:{1}:{2}'.format(rand, _get_remote_addr(), _get_user_agent())
     if str is bytes:
         base = unicode(base, 'utf-8', errors='replace')  # pragma: no cover
     hasher = sha256()
@@ -55,7 +60,7 @@ def _generate_sha512_hmac(pepper, salt, data):
 
     Where
         pepper: the global application key
-        salt:   the 128bit (16bytes) obtained from sha256(ip:agent:username)
+        salt:   the 128bit (16bytes) obtained from sha256(rand:ip:agent)
         data:   the data to be protected
 
 from passlib.context import CryptContext
@@ -65,16 +70,37 @@ self.password_crypt_context = CryptContext(schemes='bcrypt')
     return base64.b64encode(hmac.new(pepper, payload, sha512).digest())
 
 
-def generate_auth(pepper, username, password):
+def generate_auth(pepper, password):
     """
     Return the salt and hashed password to be stored in the database.
     Execute once when the user account is created.
 
     Note: requires a request context.
     """
-    salt = _create_salt(username)
+    salt = _create_salt()
     hashed_pass = _generate_sha512_hmac(pepper, salt, password)
     return (salt, hashed_pass)
+
+
+def is_valid_auth(pepper, salt, candidate_password, correct_hash):
+    """
+    Return ``True`` if the candidate_password hashes to the same
+    value stored in the database as correct_hash.
+
+    :param pepper: the global application security key
+    :param salt: the user-specific salt
+    :param candidate_password
+
+
+    :rtype Boolean
+    :return password validity status
+    """
+    assert pepper is not None
+    assert salt is not None
+    assert candidate_password is not None
+    candidate_hash = _generate_sha512_hmac(pepper, salt, candidate_password)
+    #print("hash: {}".format(candidate_hash))
+    return correct_hash == candidate_hash
 
 
 def clean_int(dangerous):

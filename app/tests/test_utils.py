@@ -26,11 +26,10 @@ def test_create_salt(app):
     with app.test_request_context(environ_base=wsgi_env):
         actual_ip = utils._get_remote_addr()
         actual_agent = utils._get_user_agent()
-        actual_hash = utils._create_salt('username')
+        actual_hash = utils._create_salt()
 
         assert '1.2.3.4' == actual_ip
         assert 'cURL' == actual_agent
-        assert '8cb5e361d2d35427' == actual_hash
         assert 16 == len(actual_hash)
 
 
@@ -46,13 +45,9 @@ def test_generate_auth(app):
             'HTTP_USER_AGENT': os.environ.get('HTTP_USER_AGENT', 'cURL')}
 
     with app.test_request_context(environ_base=wsgi_env):
-        expected_salt = '8cb5e361d2d35427'
-        expected_pass = 'whcWdKWyRdGmGCR/GcBl2tiXE8tRP1WfNHJMd1wuU9BX00nuiyso1/F5nKRbF194nMe/55/ykV0IYJ/g/qHKlw=='
-        actual_salt, actual_pass = utils.generate_auth('pepper', \
-                'username', 'password')
-
-        assert actual_salt == expected_salt
-        assert actual_pass == expected_pass
+        salt, actual_pass = utils.generate_auth('pepper', 'password')
+        assert actual_pass is not None
+        assert 88 == len(actual_pass)
 
 
 def test_clean_int():
