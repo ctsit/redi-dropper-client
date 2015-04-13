@@ -3,6 +3,9 @@ The 'fabfile.py' is used by Fabric and must reside in the
 application root directory.
 
 @see http://docs.fabfile.org/en/latest/tutorial.html
+
+@TODO add deploy task
+http://flask.pocoo.org/docs/0.10/patterns/fabric/#fabric-deployment
 """
 
 from __future__ import with_statement
@@ -36,8 +39,10 @@ def reset_db():
     """
     if not confirm("Do you want to drop all tables and start from scratch?"):
         abort("Aborting at user request.")
-    local('PYTHONPATH=. python redidropper/startup/db_manager.py')
-
+    #local('PYTHONPATH=. python redidropper/startup/db_manager.py')
+    local('sudo mysql < db/001/downgrade.sql && sudo mysql < db/001/upgrade.sql')
+    local('sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql')
+    local('sudo mysql < db/002/data.sql')
 
 @task
 def test():
