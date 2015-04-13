@@ -62,7 +62,7 @@ class UserAuthEntity(db.Model):
         """ Set the manadatory fields """
         self.usrID = usrID
         self.uathUsername = uathUsername
-        #self.uathSalt = uathSalt
+        self.uathSalt = 'Sample salt'
         self.uathPassword = 'password'
 
 

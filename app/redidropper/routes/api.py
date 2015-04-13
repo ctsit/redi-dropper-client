@@ -93,7 +93,8 @@ def api_save_user():
     usrID = dao.save_username(userAuth)
 
     print "saved user: {}".format(user)
-    return jsonify(pack_success_result(user.usrID))
+    return make_response(pack_success_result(user.usrID))
+
 
 @app.route('/api/users/list')
 def api_get_users_in_project():
