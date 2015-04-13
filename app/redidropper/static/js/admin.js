@@ -112,6 +112,12 @@ var AdminUsersPagination = React.createClass({
 
 
 var AddNewUserForm = React.createClass({
+  getInitialState:function(){
+    return {error:""};
+  },
+  clearError:function(){
+    this.setState({error:""});
+  },
   addUser:function(){
     //Get the values entered by the user in the form
     var username = this.refs.username.getDOMNode().value.trim();
@@ -120,6 +126,40 @@ var AddNewUserForm = React.createClass({
     var user_middle_name = this.refs.user_middle_name.getDOMNode().value.trim();
     var user_last_name = this.refs.user_last_name.getDOMNode().value.trim();
     var user_role = this.refs.user_role.getDOMNode().value.trim();
+
+    if ( username == "") {
+      this.setState({error:"Username cannot be empty"});
+      return;
+    }
+    if ( user_email == "") {
+      this.setState({error:"Email cannot be empty"}); 
+      return;
+    }
+    if ( username.length < 6) {
+      this.setState({error:"Username cannot be less than 6 charecters"}); 
+      return;
+    }
+
+    if(!Utils.validateEmail(user_email)){
+      this.setState({error:"Invalid Email address"}); 
+      return;
+    }
+    if ( user_first_name == "") {
+      this.setState({error:"First name cannot be empty"}); 
+      return;
+    }
+    if ( user_last_name == "") {
+      this.setState({error:"Last name cannot be empty"}); 
+      return;
+    }
+    if ( user_role == "") {
+      this.setState({error:"Please select a role for this user"}); 
+      return;
+    }
+    if (user_middle_name.length>1 ){
+      this.setState({error:"Middle name should not be more than 1 charecter"});
+      return; 
+    }
 
     var data={  username        :  username,
                 user_email      :  user_email,
@@ -133,22 +173,35 @@ var AddNewUserForm = React.createClass({
     var _this=this;
     
     request.success( function(json) {
-        console.log('Response add user: ' + JSON.stringify(json));
-        var data={'id':json.data,'username':username,'email':user_email,'date_added':'20th Jan','role':user_role,'email_verified':'0'};
-            
-        _this.props.addNewUser(data);
+        console.log(JSON.stringify(json));
+        if(json.status=="success"){
+          var data={'id':json.data,'username':username,'email':user_email,'date_added':'20th Jan','role':user_role,'email_verified':'0'};  
+          _this.props.addNewUser(data);
+        }else{
+          _this.setState({error:json.message});
+          return;
+        }
     });
 
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
+        _this.setState({error:"There was some unknown error.Try Again"});
+        return;
     });
   },
   render:function(){
-
+    var error;
+    if (this.state.error!=""){
+      error=<div className="alert alert-danger alert-dismissible">
+              <button type="button" onClick={this.clearError} className="close">&times;</button>
+              {this.state.error}
+            </div>
+    }
     return (  
     <div className="col-sm-5">
     <h3> Add New User </h3>
     <br/>
+    {error}
         <div className="form-horizontal">
         <div className="form-group">
             <label for="inputEmail3" className="col-sm-4 control-label">Username</label>
@@ -184,6 +237,7 @@ var AddNewUserForm = React.createClass({
             <label for="inputEmail3" className="col-sm-4 control-label">Role</label>
             <div className="col-sm-8">
               <select ref="user_role" className="form-control">
+                  <option value="">Select a Role</option>
                   <option value="admin">Admin</option>
                   <option value="technician">Technician</option>
                   <option value="researcher">Researcher</option>

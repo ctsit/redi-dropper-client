@@ -15,6 +15,10 @@ array_keys:function (obj) {
         list.push(key);
     }
     return list;
+},
+validateEmail:function(email) {
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
 }
 
 }
