@@ -9,7 +9,7 @@ Goal: Store helper functions not tied to a specific module
 
 import os
 import time
-
+import datetime
 import json
 from flask import flash, request
 from hashlib import sha512, sha256
@@ -167,4 +167,13 @@ def pack_info(msg):
     return pack( {'status': 'info', 'message': msg})
 
 def pack_success_result(data):
+    """ Format a success message to be json-friendly """
     return pack( {'status': 'success', 'data': data})
+
+
+def get_db_friendly_date_time():
+    """
+    :rtype: string
+    :return current time in format: "2014-06-24 01:23:24"
+    """
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

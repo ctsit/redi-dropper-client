@@ -18,7 +18,8 @@ from redidropper.routes.managers import file_manager, subject_manager, \
         log_manager
 from redidropper.main import app
 
-from redidropper.utils import clean_int, pack_error, pack_success_result
+from redidropper.utils import clean_int, pack_error, pack_success_result, \
+        generate_auth
 from redidropper.models.all import UserEntity
 from redidropper.models.all import UserAuthEntity
 from redidropper.models import dao
@@ -67,33 +68,38 @@ def api_upload():
 @app.route('/api/save_user', methods=['POST'])
 def api_save_user():
     """ Add New User to the database """
-    usrName = request.form['username']
-    usrEmail = request.form['user_email']
-    usrFirst = request.form['user_first_name']
-    usrLast = request.form['user_last_name']
-    usrMI =  request.form['user_middle_name']
-    usrRole = request.form['user_role']
+    username = request.form['username']
+    email = request.form['user_email']
+    first = request.form['user_first_name']
+    last = request.form['user_last_name']
+    minitial =  request.form['user_middle_name']
+    role = request.form['user_role']
 
-    exists = False if dao.find_user_by_email(usrEmail) is None else True
-    if exists:
+    email_exists = False if dao.find_user_by_email(email) is None \
+            else True
+    username_exists = False if dao.find_auth_by_username(username) is None \
+            else True
+
+    if email_exists:
         return make_response(
-            pack_error("Sorry. This email is already taken"))
+            pack_error("Sorry. This email is already taken."))
 
-
-    exists = False if dao.find_auth_by_username(usrName) is None else True
-
-    if exists:
+    if username_exists:
         return make_response(
-            pack_error("Sorry. This Username is already taken"))
+            pack_error("Sorry. This username is already taken."))
 
-    user = UserEntity(usrEmail, usrFirst, usrLast, usrMI)
-    usrID = dao.save_user(user)
+    user = UserEntity(email=email, first=first, last=last, minitial=minitial)
+    user_id = dao.save_user(user)
+    app.logger.debug("saved user: {}".format(user))
 
-    userAuth = UserAuthEntity(usrID,usrName)
-    usrID = dao.save_username(userAuth)
+    password = 'password'
+    salt, hashed_pass = generate_auth(app.config['SECRET_KEY'], password)
+    auth = UserAuthEntity(user_id=user_id, username=username, salt=salt, \
+            password=hashed_pass)
+    uath_id = dao.save_username(auth)
+    app.logger.debug("saved auth: {}".format(auth))
+    return make_response(pack_success_result(user.usrID))
 
-    print "saved user: {}".format(user)
-    return jsonify(pack_success_result(user.usrID))
 
 @app.route('/api/users/list')
 def api_get_users_in_project():

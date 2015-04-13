@@ -11,6 +11,7 @@ Goal: Store table models
 
 from flask_login import UserMixin as LoginUserMixin
 from redidropper.main import db
+from redidropper.utils import get_db_friendly_date_time
 #Base = declarative_base()
 
 ROLE_ADMIN = 'admin'
@@ -25,13 +26,20 @@ class ProjectEntity(db.Model):
     prjUrlHost = db.Column(db.String(255), nullable=False)
     prjUrlPath = db.Column(db.String(255), nullable=False)
     prjApiKey = db.Column(db.String(255), nullable=False)
-    prjUrlPath = db.Column(db.String(255), nullable=False)
     prjAddedAt = db.Column(db.DateTime(), nullable=False, \
             server_default='0000-00-00 00:00:00')
     prjModifiedAt = db.Column(db.TIMESTAMP(), nullable=False, \
             server_default='CURRENT_TIMESTAMP')
 
     __table_args__ = (db.UniqueConstraint('prjUrlHost', 'prjUrlPath'), )
+
+    def __init__(self, name=None, host=None, path=None, \
+            api_key=None, added=None):
+        self.prjName = name
+        self.prjUrlHost = host
+        self.prjUrlPath = path
+        self.prjApiKey = api_key
+        self.prjAddedAt = added
 
     def __repr__(self):
         return "<ProjectEntity (prjID: {}, prjName: {}, prjUrlHost: {})>" \
@@ -58,12 +66,15 @@ class UserAuthEntity(db.Model):
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
 
-    def __init__(self, usrID=None, uathUsername=None, uathSalt=None, uathPassword=None):
+    def __init__(self, user_id, username, salt=None, password=None, \
+            password_token=None, email_token=None):
         """ Set the manadatory fields """
-        self.usrID = usrID
-        self.uathUsername = uathUsername
-        #self.uathSalt = uathSalt
-        self.uathPassword = 'password'
+        self.usrID = user_id
+        self.uathUsername = username
+        self.uathSalt = salt
+        self.uathPassword = password
+        self.uathPasswordResetToken = password_token
+        self.uathEmailConfirmationToken = email_token
 
 
     def __repr__(self):
@@ -119,25 +130,29 @@ class UserEntity(db.Model, LoginUserMixin):
                                 lazy='joined')
 
 
-    def __init__(self, usrEmail, usrFirst, usrLast, usrMI='', usrIsActive=1):
+    def __init__(self, email, first='', last='', minitial='', is_active=1):
         """ Instantiate a UserEntity to be persisted """
-        self.usrEmail = usrEmail
-        self.usrFirst = usrFirst
-        self.usrLast = usrLast
-        self.usrMI = usrMI
-        self.usrIsActive = usrIsActive
+        self.usrEmail = email
+        self.usrFirst = first
+        self.usrLast = last
+        self.usrMI = minitial
+        self.usrAddedAt = get_db_friendly_date_time()
+        self.usrIsActive = is_active
 
     def get_id(self):
         """ The id encrypted in the session """
         return unicode(self.usrID)
 
+
     def is_active(self):
         """ An user can be blocked by setting a flag in the database """
         return self.usrIsActive
 
+
     def is_anonymous(self):
         """ Flag instances of valid users """
         return False
+
 
     def is_authenticated(self):
         """ Returns True if the user is authenticated, i.e. they have provided
@@ -197,7 +212,7 @@ class ProjectUserRoleEntity(db.Model):
         return unicode(self.purID)
 
     # Don't allow more than one role for a specific user for a specific project
-    __table_args__ = (db.UniqueConstraint('prjID', 'usrID', name='project_user'), )
+    __table_args__ = (db.UniqueConstraint('prjID', 'usrID', name='prjID'), )
 
     def __repr__(self):
         return "<ProjectUserRoleEntity (\n\t" \
