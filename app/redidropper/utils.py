@@ -80,3 +80,6 @@ def pack_info(msg):
     """ Format an info message to be json-friendly """
     # return pack( {'status': 'info', 'message': json.dumps(msg)})
     return pack( {'status': 'info', 'message': msg})
+
+def pack_success_result(data):
+    return pack( {'status': 'success', 'data': data})

@@ -56,6 +56,15 @@ class UserAuthEntity(db.Model):
     # @OneToOne
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
+
+    def __init__(self, usrID=None, uathUsername=None, uathSalt=None, uathPassword=None):
+        """ Set the manadatory fields """
+        self.usrID = usrID
+        self.uathUsername = uathUsername
+        #self.uathSalt = uathSalt
+        self.uathPassword = 'password'
+
+
     def __repr__(self):
         return "<UserAuthEntity (\n\t" \
                 "authID: {0}, uathUsername: {1}, uathModifiedAt: {2}, \n\t" \

@@ -17,8 +17,10 @@ from flask import make_response
 from redidropper.routes.managers import file_manager, subject_manager, \
         log_manager
 from redidropper.main import app
-from redidropper.utils import clean_int, pack_error
+
+from redidropper.utils import clean_int, pack_error, pack_success_result
 from redidropper.models.all import UserEntity
+from redidropper.models.all import UserAuthEntity
 from redidropper.models import dao
 
 
@@ -65,7 +67,7 @@ def api_upload():
 @app.route('/api/save_user', methods=['POST'])
 def api_save_user():
     """ Add New User to the database """
-    username = request.form['username']
+    usrName = request.form['username']
     usrEmail = request.form['user_email']
     usrFirst = request.form['user_first_name']
     usrLast = request.form['user_last_name']
@@ -75,13 +77,23 @@ def api_save_user():
     exists = False if dao.find_user_by_email(usrEmail) is None else True
     if exists:
         return make_response(
-            utils.pack_error("Sorry. This email is already taken"))
+            pack_error("Sorry. This email is already taken"))
+
+
+    exists = False if dao.find_auth_by_username(usrName) is None else True
+
+    if exists:
+        return make_response(
+            pack_error("Sorry. This Username is already taken"))
 
     user = UserEntity(usrEmail, usrFirst, usrLast, usrMI)
     usrID = dao.save_user(user)
 
+    userAuth = UserAuthEntity(usrID,usrName)
+    usrID = dao.save_username(userAuth)
+
     print "saved user: {}".format(user)
-    return jsonify(data=user.usrID)
+    return jsonify(pack_success_result(user.usrID))
 
 @app.route('/api/users/list')
 def api_get_users_in_project():

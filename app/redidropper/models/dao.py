@@ -28,7 +28,17 @@ def save_user(user):
     sess.add(user)
     sess.commit()
     return user.usrID
-    
+
+def save_username(userAuth):
+    """
+    :param: user UserAuthEntity object
+
+    :rtype int
+    :return the User.usrID for the inserted row
+    """
+    sess.add(userAuth)
+    sess.commit()
+    return userAuth.usrID
 
 def find_user_by_id(user_id):
     """ Fetch the user object using the primary key
