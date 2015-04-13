@@ -73,6 +73,7 @@ CREATE TABLE UserAuth (
     uathID integer unsigned NOT NULL AUTO_INCREMENT,
     usrID integer unsigned NOT NULL,
     uathUsername varchar(255) NOT NULL,
+    uathSalt varchar(255) NOT NULL,
     uathPassword varchar(255) NOT NULL,
     uathPasswordResetToken varchar(255) NOT NULL DEFAULT '',
     uathEmailConfirmationToken varchar(255) NOT NULL DEFAULT '',

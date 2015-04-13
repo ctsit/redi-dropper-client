@@ -102,8 +102,11 @@ def index():
             utils.flash_error("No such account")
             return redirect('/')
 
+        #salt = utils._create_salt(); print "salt: " + salt
+
         # @TODO: hash before comparing
-        if password == auth.uathPassword:
+        if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt, \
+                password, auth.uathPassword):
             # Keep the user info in the session using Flask-Login
             user = auth.user
             # Pass remember=True to remember

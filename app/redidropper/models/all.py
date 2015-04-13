@@ -45,6 +45,7 @@ class UserAuthEntity(db.Model):
     uathID = db.Column(db.Integer, primary_key=True)
     usrID = db.Column(db.Integer, db.ForeignKey('User.usrID'), nullable=False)
     uathUsername = db.Column(db.String(255), nullable=False, unique=True)
+    uathSalt = db.Column(db.String(255), nullable=False)
     uathPassword = db.Column(db.String(255), nullable=False)
     uathPasswordResetToken = db.Column(db.String(255), nullable=False, \
             server_default='')
