@@ -55,6 +55,24 @@ def find_user_by_id(user_id):
     return None
 
 
+def find_users_for_project(project_id):
+    """ Fetch the list of users for the specified project_id
+
+    :rtype: list
+    :return all UserEntity objects for project_id
+    """
+
+    try:
+        project_users = sess.query(ProjectUserRoleEntity).filter_by(prjID=project_id).all()
+        #print project_users
+        users = [puser.user for puser in project_users]
+        return users
+    except NoResultFound:
+        print "Unable to find users in find_users_for_project()"
+
+    return None
+
+
 def find_project_user_role(project_id, user_id):
     """ Fetch the user object using the unique key
 

@@ -14,6 +14,9 @@ from flask import make_response
 from flask import jsonify
 from flask import make_response
 
+from sqlalchemy.orm.exc import NoResultFound
+from redidropper.main import app, db, db_session as sess
+
 from redidropper.routes.managers import file_manager, subject_manager, \
         log_manager
 from redidropper.main import app
@@ -65,6 +68,7 @@ def api_upload():
     """
     return make_response(file_manager.save_uploaded_file(), 200)
 
+
 @app.route('/api/save_user', methods=['POST'])
 def api_save_user():
     """ Add New User to the database """
@@ -101,18 +105,21 @@ def api_save_user():
     return make_response(pack_success_result(user.usrID))
 
 
-@app.route('/api/users/list')
+@app.route('/api/list_users')
 def api_get_users_in_project():
     """
 
     :rtype: Response
     :return
     """
-    data = [{'id':'123','username':'test1','email':'test1@gmail.com','date_added':'20th Jan','role':'admin','email_verified':'1'},
-            {'id':'239','username':'test2','email':'test2@gmail.com','date_added':'20th Jan','role':'technician','email_verified':'0'},
-            {'id':'326','username':'test3','email':'test3@gmail.com','date_added':'20th Jan','role':'technician','email_verified':'1'},
-            {'id':'123','username':'test4','email':'test4@gmail.com','date_added':'20th Jan','role':'researcher','email_verified':'0'}]
-    return jsonify(users=data)
+    project_id = 1
+    users = dao.find_users_for_project(project_id)
+
+    if users is None:
+        return make_response(pack_error("no users found"))
+
+    lista = [i.serialize for i in users]
+    return make_response(pack_success_result(lista))
 
 
 @app.route('/api/admin/events/<page_num>')

@@ -177,3 +177,9 @@ def get_db_friendly_date_time():
     :return current time in format: "2014-06-24 01:23:24"
     """
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]

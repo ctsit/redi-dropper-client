@@ -11,7 +11,9 @@ Goal: Store table models
 
 from flask_login import UserMixin as LoginUserMixin
 from redidropper.main import db
-from redidropper.utils import get_db_friendly_date_time
+from redidropper.utils import get_db_friendly_date_time, \
+    dump_datetime
+
 #Base = declarative_base()
 
 ROLE_ADMIN = 'admin'
@@ -91,6 +93,10 @@ class UserEntity(db.Model, LoginUserMixin):
     Implements the functions as required by:
         https://flask-login.readthedocs.org/en/latest/
     """
+    visible_props = ['usrID', 'usrEmail', 'usrFirst', 'usrLast', 'usrMI', \
+        'usrAddedAt', 'usrIsActive'
+    ]
+
     __tablename__ = 'User'
     usrID = db.Column(db.Integer, primary_key=True)
     usrEmail = db.Column(db.String(255), nullable=False, unique=True)
@@ -160,6 +166,28 @@ class UserEntity(db.Model, LoginUserMixin):
         (Only authenticated users will fulfill the criteria of login_required.)
         """
         return True
+
+    @property
+    def to_visible(self):
+        """
+        Helper for exposing only "secure" class attributes as a dictionary
+        """
+        return dict( [(key, val) for key, val in self.__dict__.items() \
+                if key in UserEntity.visible_props])
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'usrID':    self.usrID,
+            'usrEmail': self.usrEmail,
+            'usrFirst': self.usrFirst,
+            'usrLast':  self.usrLast,
+            'usrMI':    self.usrMI,
+            'usrAddedAt': dump_datetime(self.usrAddedAt),
+            'usrIsActive': self.usrIsActive
+        }
+
 
     def __repr__(self):
         return "<UserEntity (usrID: {}, usrEmail: {})>" \
