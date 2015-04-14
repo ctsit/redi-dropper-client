@@ -3,6 +3,11 @@ USE RediDropper;
 
 DELETE FROM Version where verID = '002';
 
+DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS EventType;
+DROP TABLE IF EXISTS WebSession;
+DROP TABLE IF EXISTS UserAgent;
+
 DROP VIEW  IF EXISTS ProjectUserRoleView;
 DROP TABLE IF EXISTS UserAuth;
 DROP TABLE IF EXISTS ProjectUserRole;

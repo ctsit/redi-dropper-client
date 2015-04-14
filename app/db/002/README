@@ -77,3 +77,115 @@ WHERE
 | ADRC TEST | researcher_two@example.com | Researcher 2 | researcher_two | NULL         | NULL         |
 +-----------+----------------------------+--------------+----------------+--------------+--------------+
 4 rows in set (0.00 sec)
+
+
+-- subjects for which we can store files
+desc Subject;
++-------------+----------------------+------+-----+---------------------+----------------+
+| Field       | Type                 | Null | Key | Default             | Extra          |
++-------------+----------------------+------+-----+---------------------+----------------+
+| sbjID       | int(10) unsigned     | NO   | PRI | NULL                | auto_increment |
+| prjID       | smallint(5) unsigned | NO   | MUL | NULL                |                |
+| sbjRedcapID | varchar(255)         | NO   | MUL | NULL                |                |
+| sbjAddedAt  | datetime             | NO   | MUL | 0000-00-00 00:00:00 |                |
++-------------+----------------------+------+-----+---------------------+----------------+
+4 rows in set (0.01 sec)
+
+
+-- what files have been uploaded
+desc SubjectFile;
++----------------+----------------------+------+-----+---------+----------------+
+| Field          | Type                 | Null | Key | Default | Extra          |
++----------------+----------------------+------+-----+---------+----------------+
+| sfID           | int(10) unsigned     | NO   | PRI | NULL    | auto_increment |
+| sbjID          | int(10) unsigned     | NO   | MUL | NULL    |                |
+| sfEventNumber  | smallint(5) unsigned | NO   |     | NULL    |                |
+| sfFileName     | varchar(255)         | NO   | MUL | NULL    |                |
+| sfFileCheckSum | varchar(32)          | NO   |     | NULL    |                |
+| sfUploadDate   | date                 | NO   | MUL | NULL    |                |
+| usrID          | int(10) unsigned     | NO   | MUL | NULL    |                |
++----------------+----------------------+------+-----+---------+----------------+
+
+
+
+select * from Subject natural join SubjectFile;
++-------+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
+| sbjID | prjID | sbjRedcapID | sbjAddedAt          | sfID | sfEventNumber | sfFileName | sfFileCheckSum                   | sfUploadDate | usrID |
++-------+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
+|     1 |     1 | 001         | 2015-04-14 14:38:19 |    1 |             1 | file.png   | 098f6bcd4621d373cade4e832627b4f6 | 2015-04-14   |     1 |
++-------+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
+1 row in set (0.00 sec)
+
+
+
+-- browser data
+desc UserAgent;
++-------------+------------------+------+-----+---------+----------------+
+| Field       | Type             | Null | Key | Default | Extra          |
++-------------+------------------+------+-----+---------+----------------+
+| uaID        | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| uaUserAgent | varchar(32768)   | NO   |     |         |                |
+| uaHash      | varchar(32)      | NO   | UNI | NULL    |                |
+| uaPlatform  | varchar(255)     | NO   | MUL | NULL    |                |
+| uaBrowser   | varchar(255)     | NO   | MUL | NULL    |                |
+| uaVersion   | varchar(255)     | NO   |     | NULL    |                |
+| uaLanguage  | varchar(255)     | NO   | MUL | NULL    |                |
++-------------+------------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+
+-- web session data
+desc WebSession;
++-------------+------------------+------+-----+---------------------+----------------+
+| Field       | Type             | Null | Key | Default             | Extra          |
++-------------+------------------+------+-----+---------------------+----------------+
+| webID       | int(10) unsigned | NO   | PRI | NULL                | auto_increment |
+| webSessID   | varchar(255)     | NO   |     |                     |                |
+| usrID       | int(10) unsigned | NO   | MUL | 0                   |                |
+| webIP       | varchar(15)      | NO   |     |                     |                |
+| webDateTime | datetime         | NO   | MUL | 0000-00-00 00:00:00 |                |
+| uaID        | int(10) unsigned | YES  | MUL | NULL                |                |
++-------------+------------------+------+-----+---------------------+----------------+
+6 rows in set (0.01 sec)
+
+
+-- what events to log
+desc EventType;
++-----------------+------------------+------+-----+---------+----------------+
+| Field           | Type             | Null | Key | Default | Extra          |
++-----------------+------------------+------+-----+---------+----------------+
+| evttID          | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| evttType        | varchar(255)     | NO   | UNI | NULL    |                |
+| evttDescription | text             | NO   |     | NULL    |                |
++-----------------+------------------+------+-----+---------+----------------+
+3 rows in set (0.01 sec)
+
+
+-- examples of events
+select * from EventType;
++--------+-----------------+-----------------+
+| evttID | evttType        | evttDescription |
++--------+-----------------+-----------------+
+|      1 | account_created |                 |
+|      2 | login           |                 |
+|      3 | logout          |                 |
+|      4 | login_error     |                 |
+|      5 | file_uploaded   |                 |
+|      6 | file_downloaded |                 |
++--------+-----------------+-----------------+
+6 rows in set (0.00 sec)
+
+
+-- Store important events
+desc Event;
++-------------+------------------+------+-----+---------------------+----------------+
+| Field       | Type             | Null | Key | Default             | Extra          |
++-------------+------------------+------+-----+---------------------+----------------+
+| evtID       | int(10) unsigned | NO   | PRI | NULL                | auto_increment |
+| evttID      | int(10) unsigned | NO   | MUL | NULL                |                |
+| evtIP       | varchar(15)      | NO   | MUL |                     |                |
+| webID       | int(10) unsigned | NO   | MUL | NULL                |                |
+| evtDateTime | datetime         | NO   | MUL | 0000-00-00 00:00:00 |                |
+| evtDetails  | text             | NO   |     | NULL                |                |
++-------------+------------------+------+-----+---------------------+----------------+
+6 rows in set (0.00 sec)
