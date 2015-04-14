@@ -2,7 +2,7 @@
 USE RediDropper;
 
 INSERT INTO Version (verID, verInfo)
-    VALUES('002', 'Create tables: User, Role, Project, ProjectUserRole')
+    VALUES('002', 'Create tables: User, UserAuth, Role, Project, ProjectUserRole')
 ;
 
 
@@ -100,6 +100,95 @@ FROM
     LEFT JOIN UserAuth USING(usrID)
 WHERE
     usrIsActive
+;
+
+
+CREATE TABLE Subject (
+    sbjID int(10) unsigned NOT NULL AUTO_INCREMENT,
+    prjID smallint unsigned NOT NULL,
+    sbjRedcapID varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+    sbjAddedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+ PRIMARY KEY (sbjID),
+ UNIQUE KEY(prjID, sbjRedcapID),
+ KEY (sbjRedcapID),
+ KEY (sbjAddedAt),
+ CONSTRAINT `fk_Subject_prjID` FOREIGN KEY (prjID) REFERENCES Project (prjID) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+
+CREATE TABLE SubjectFile (
+    sfID int(10) unsigned NOT NULL AUTO_INCREMENT,
+    sbjID int(10) unsigned NOT NULL,
+    sfEventNumber smallint unsigned NOT NULL,
+    sfFileName varchar(255) NOT NULL,
+    sfFileCheckSum varchar(32) NOT NULL,
+    sfUploadDate date NOT NULL,
+    usrID integer unsigned NOT NULL,
+ PRIMARY KEY(sfID),
+ UNIQUE KEY (sbjID, sfEventNumber, sfFileName),
+ KEY (sfFileName),
+ KEY (sfUploadDate),
+ KEY (usrID),
+ CONSTRAINT `fk_SubjectFile_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+
+-- user agent parsing http://werkzeug.pocoo.org/docs/0.10/utils/
+CREATE TABLE UserAgent (
+    uaID int(10) unsigned NOT NULL AUTO_INCREMENT,
+    uaUserAgent varchar(32768) NOT NULL DEFAULT '',
+    uaHash varchar(32) NOT NULL,
+    uaPlatform varchar(255) NOT NULL,
+    uaBrowser varchar(255) NOT NULL,
+    uaVersion varchar(255) NOT NULL,
+    uaLanguage varchar(255) NOT NULL,
+ PRIMARY KEY (uaID),
+ UNIQUE KEY (uaHash),
+ KEY uaPlatform (uaPlatform),
+ KEY (uaBrowser, uaVersion),
+ KEY (uaLanguage)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+CREATE TABLE WebSession (
+    webID integer unsigned NOT NULL AUTO_INCREMENT,
+    webSessID varchar(255) NOT NULL DEFAULT '',
+    usrID integer unsigned NOT NULL DEFAULT '0',
+    webIP varchar(15) NOT NULL DEFAULT '',
+    webDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    uaID int(10) unsigned DEFAULT NULL,
+ PRIMARY KEY (webID),
+ KEY (usrID),
+ KEY (webDateTime),
+ KEY (uaID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+CREATE TABLE EventType (
+    evttID integer unsigned NOT NULL AUTO_INCREMENT,
+    evttType varchar(255) NOT NULL,
+    evttDescription text NOT NULL,
+ PRIMARY KEY (evttID),
+ UNIQUE KEY (evttType)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
+
+CREATE TABLE Event (
+    evtID integer unsigned NOT NULL AUTO_INCREMENT,
+    evttID integer unsigned NOT NULL,
+    evtIP varchar(15) NOT NULL DEFAULT '',
+    webID integer unsigned NOT NULL,
+    evtDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    evtDetails text NOT NULL,
+ PRIMARY KEY (evtID),
+ KEY (evttID),
+ KEY (evtIP),
+ KEY (webID),
+ KEY (evtDateTime),
+ CONSTRAINT `fk_Event_webID` FOREIGN KEY (webID) REFERENCES WebSession (webID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
 

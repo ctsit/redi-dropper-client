@@ -84,7 +84,6 @@ WHERE
     AND rolName = 'researcher_two'
 ;
 
-
 INSERT INTO UserAuth (usrID, uathUsername, uathSalt, uathPassword)
 SELECT
     usrID, 'admin', 'dc2d541d7eedf358', 'BDG5oBbbke3moM5injIQHejvfs0gYjQZZJFnJc33dnPfMXRhCXNb80qPcdtYgW7QLoUhSpEDdafjLwL5o1gr7w=='
@@ -113,4 +112,37 @@ WHERE
     prjName = 'PMP TEST'
     AND usrEmail = 'admin@example.com'
     AND rolName = 'technician'
+;
+
+-- Subjects
+INSERT INTO Subject (prjID, sbjRedcapID, sbjAddedAt)
+SELECT
+    prjID, '001', NOW() FROM Project WHERE prjID = 1
+;
+
+INSERT INTO Subject (prjID, sbjRedcapID, sbjAddedAt)
+SELECT
+    prjID, '002', NOW() FROM Project WHERE prjID = 1
+;
+
+
+-- Subject Files
+INSERT INTO SubjectFile 
+    (sbjID, sfEventNumber, sfFileName, sfFileCheckSum, sfUploadDate, usrID)
+SELECT
+    1, 1, 'file.png', md5('test'), NOW(), 1
+;
+
+-- Logging
+
+-- add event types
+INSERT INTO EventType
+    (evttType, evttDescription)
+VALUES
+    ('account_created', ''),
+    ('login', ''),
+    ('logout', ''),
+    ('login_error', ''),
+    ('file_uploaded', ''),
+    ('file_downloaded', '')
 ;
