@@ -175,8 +175,8 @@ class UserEntity(db.Model, LoginUserMixin):
         return dict( [(key, val) for key, val in self.__dict__.items() \
                 if key in UserEntity.visible_props])
 
-    @property
-    def serialize(self):
+    #@property
+    def serialize(self, project_id):
         """Return object data in easily serializeable format"""
         return {
             'usrID':    self.usrID,

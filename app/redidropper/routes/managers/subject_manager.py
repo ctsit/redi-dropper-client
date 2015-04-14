@@ -7,6 +7,9 @@ Goal: Implement subject-specific logic
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
+from redidropper.main import app, db, db_session as sess
+from redidropper.models.all import UserEntity
+
 def get_files(subject_id):
     """ Fetch the list of files for the specified subject_id """
     data = [
@@ -116,7 +119,7 @@ def delete_subjects(subjects):
     return 0
 
 
-def get_project_subjects_on_page(project_id, page_num):
+def get_project_subjects_on_page(project_id, page_num, per_page):
     """
     @TODO: implement
     """
