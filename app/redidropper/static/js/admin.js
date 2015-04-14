@@ -36,7 +36,7 @@ var AdminUsersTable = React.createClass({
                     }
                     
                     return <tr>
-                                <td>{record.id}</td>
+                                <td>{record.usrID}</td>
                                 <td>{record.username}</td>
                                 <td>{record.email}</td>
                                 <td>{record.role}</td>
@@ -265,10 +265,14 @@ var AdminUserManagement = React.createClass({
     };
   },
   componentWillMount:function(){
-    var request = Utils.api_request("/api/users/list", "GET", {}, "json", true);
+    var request = Utils.api_request("/api/list_users", "GET", {}, "json", true);
     var _this=this;
     request.success( function(json) {
-        _this.setState({list_of_users:json.users,total_pages:10});
+      if(json.status=="success"){
+        _this.setState({list_of_users:json.data,total_pages:10});
+      }else{
+
+      }
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);

@@ -86,7 +86,7 @@ WHERE
 
 INSERT INTO UserAuth (usrID, uathUsername, uathSalt, uathPassword)
 SELECT
-    usrID, 'admin', 'dc2d541d7eedf358', 'BDG5oBbbke3moM5injIQHejvfs0gYjQZZJFnJc33dnPfMXRhCXNb80qPcdtYgW7QLoUhSpEDdafjLwL5o1gr7w=='
+    usrID, 'admin', 'dc2d541d7eedf358', 'T0hgkGvsw8P5UPYL22bn9Ez4MDdqqDBZ48QfydAankYHkwMjeim5j4G64R/QcrVO4BZ96veIDDHWriVfmRmS+Q=='
 FROM
     User
 WHERE
@@ -95,7 +95,7 @@ WHERE
 
 INSERT INTO UserAuth (usrID, uathUsername, uathSalt, uathPassword)
 SELECT
-    usrID, 'technician', '71b67ec3450e2997', 'ilShN/pCKkLvHKc1eelH3ua0KKeO0RMghVCHs6q1iBRfjZ2b+m/u1q1S9V6F8BXlX4yHhkskn5ayJnW3fACLFw=='
+    usrID, 'technician', '71b67ec3450e2997', '/ezLEEurS8q8bQju/Sk5BfU0dK+2/nptUSTlICsPBO8C/wW+VF6WzGGOOVyVI/Bk6tRjlOZunjMB13M3vUxrlg=='
 FROM
     User
 WHERE
