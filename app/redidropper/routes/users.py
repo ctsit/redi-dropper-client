@@ -18,7 +18,6 @@ from flask_principal import Principal, Permission, RoleNeed
 
 from redidropper.main import app
 from redidropper.routes.managers import file_manager
-from redidropper.models.all import ProjectUserRoleEntity
 from redidropper.models import dao
 
 from pages import ProjectRolePermission
@@ -34,7 +33,6 @@ principals = Principal(app)
 @login_required
 def admin():
     """ Render the technician's home page """
-    #pur = ProjectUserRoleEntity.query.filter_by(usrID='1', prjID='1').first()
     project_id = 1
     user_id = current_user.get_id()
     pur = dao.find_project_user_role(project_id=project_id, user_id=user_id)
