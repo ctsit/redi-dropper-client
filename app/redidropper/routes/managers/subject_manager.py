@@ -7,7 +7,7 @@ Goal: Implement subject-specific logic
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-from redidropper.main import app, db, db_session as sess
+from redidropper.main import app, db
 from redidropper.models.all import UserEntity
 
 def get_files(subject_id):

@@ -12,9 +12,13 @@ from redidropper.startup import initializer
 
 
 # Configures routes, models
-initializer.do_init(app, db)
+app = initializer.do_init(app, db)
 
 
 if __name__ == "__main__":
+    from redidropper.startup import database_manager
+
     # run the server if executed from the command line
-    app.run()
+    with database_manager.session_scope() as session:
+        app.db_session = session
+        app.run()

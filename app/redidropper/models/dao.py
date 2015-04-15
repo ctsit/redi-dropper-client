@@ -8,7 +8,7 @@ Goal: Implement the DAO
 """
 
 from sqlalchemy.orm.exc import NoResultFound
-from redidropper.main import app, db, db_session as sess
+from redidropper.main import app, db
 
 from redidropper.models.all import ProjectEntity
 from redidropper.models.all import UserEntity
@@ -17,28 +17,31 @@ from redidropper.models.all import UserAuthEntity
 from redidropper.models.all import ProjectUserRoleEntity
 
 
-
 def save_user(user):
     """
     :param: user UserEntity object
 
     :rtype int
-    :return the User.usrID for the inserted row
+    :return the inserted User
     """
+    sess = app.db_session
     sess.add(user)
     sess.commit()
-    return user.usrID
+    return user
 
-def save_username(userAuth):
+
+def save_auth(auth):
     """
     :param: user UserAuthEntity object
 
     :rtype int
-    :return the User.usrID for the inserted row
+    :return the inserted UserAuth object
     """
-    sess.add(userAuth)
+    sess = app.db_session
+    sess.add(auth)
     sess.commit()
-    return userAuth.usrID
+    return auth
+
 
 def find_user_by_id(user_id):
     """ Fetch the user object using the primary key
@@ -46,6 +49,7 @@ def find_user_by_id(user_id):
     :rtype: UserEntity
     """
 
+    sess = app.db_session
     try:
         user = sess.query(UserEntity).filter_by(usrID=user_id).one()
         return user
@@ -62,6 +66,7 @@ def find_users_for_project(project_id):
     :return all UserEntity objects for project_id
     """
 
+    sess = app.db_session
     try:
         project_users = sess.query(ProjectUserRoleEntity).filter_by(prjID=project_id).all()
         #print project_users
@@ -81,6 +86,7 @@ def find_project_user_role(project_id, user_id):
 
     :rtype: ProjectUserRoleEntity
     """
+    sess = app.db_session
     try:
         pur = sess.query(ProjectUserRoleEntity).filter_by( \
                 prjID=project_id, usrID=user_id).one()
@@ -96,6 +102,7 @@ def find_user_by_email(email):
 
     :rtype: UserEntity
     """
+    sess = app.db_session
     try:
         user = sess.query(UserEntity).filter_by(usrEmail=email).one()
         return user
@@ -110,6 +117,7 @@ def find_auth_by_username(username):
 
     :rtype UserAuthEntity
     """
+    sess = app.db_session
     try:
         auth = sess.query(UserAuthEntity).filter_by(
             uathUsername=username).one()
@@ -119,11 +127,13 @@ def find_auth_by_username(username):
 
     return None
 
+
 def find_auth_by_api_key(api_key):
     """ Fetch the auth object for the specified username
 
     :rtype UserAuthEntity
     """
+    sess = app.db_session
     username = 'admin'
     # auth = sess.query(UserAuthEntity).filter_by(uathApiKey=api_key).one()
     auth = sess.query(UserAuthEntity).filter_by(
@@ -136,7 +146,6 @@ def find_role_by_username_and_projectid(username, project_id):
 
     :rtype RoleEntity
     """
-    # translate the username into usrID
     try:
         user_id = find_auth_by_username(username).usrID
         return find_role_by_userid_and_projectid(user_id, project_id)
@@ -151,6 +160,7 @@ def find_role_by_userid_and_projectid(user_id, project_id):
 
     :rtype RoleEntity
     """
+    sess = app.db_session
     try:
         pur = sess.query(ProjectUserRoleEntity).filter_by(
             usrID=user_id, prjID=project_id).one()
@@ -161,7 +171,7 @@ def find_role_by_userid_and_projectid(user_id, project_id):
 
     return None
 
-
+"""
 print "==========="
 user = find_user_by_email('admin@example.com')
 print user
@@ -174,3 +184,4 @@ print auth.user
 
 role = find_role_by_username_and_projectid('admin', 2)
 print role
+"""

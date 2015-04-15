@@ -91,7 +91,6 @@ def is_valid_auth(pepper, salt, candidate_password, correct_hash):
     :param salt: the user-specific salt
     :param candidate_password
 
-
     :rtype Boolean
     :return password validity status
     """
@@ -99,7 +98,6 @@ def is_valid_auth(pepper, salt, candidate_password, correct_hash):
     assert salt is not None
     assert candidate_password is not None
     candidate_hash = _generate_sha512_hmac(pepper, salt, candidate_password)
-    print("pepper {}, salt {}, hash: {}".format(pepper, salt, candidate_hash))
     return correct_hash == candidate_hash
 
 
