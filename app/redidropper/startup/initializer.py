@@ -1,5 +1,5 @@
 """
-Goal: Init the application routes and read the settings
+Goal: Load settings, configure logging, load application routing
 
 @authors:
   Andrei Sura             <sura.andrei@gmail.com>
@@ -7,41 +7,56 @@ Goal: Init the application routes and read the settings
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-import os
+import os, sys
+import pprint
 import logging
 from logging import Formatter
 from flask_debugtoolbar import DebugToolbarExtension
+from redidropper.startup.config import LOG_LEVEL
 
 DEFAULT_CONFIG = 'redidropper.startup.config'
 REDIDROPPER_CONFIG = 'REDIDROPPER_CONFIG'
 
+
 def do_init(app, db, extra_settings={}):
     """
-    Initialize the app
+    Initialize the app.
+
+    @TODO: remove the `db` paramter if not used
     @see run.py
+
+    :rtype Flask
+    :return the initialized application object
     """
-    print("Load default config from object: {}".format(DEFAULT_CONFIG))
     app.config.from_object(DEFAULT_CONFIG)
+    configure_logging(app, LOG_LEVEL)
+    app.logger.info("Loaded default config from: {}".format(DEFAULT_CONFIG))
+    print get_config_summary(app)
 
     # Override with values stored in `REDIDROPPER_CONFIG` file
     #   cp startup/application.cfg.example startup/application.cfg
     #   export REDIDROPPER_CONFIG=~/git/redi-dropper-client/app/redidropper/startup/application.cfg
-    app_config = os.environ[REDIDROPPER_CONFIG] if REDIDROPPER_CONFIG in os.environ else None
+    if REDIDROPPER_CONFIG in os.environ:
+        app_config = os.environ[REDIDROPPER_CONFIG]
 
-    if app_config:
         if os.access(app_config, os.R_OK):
-            print("Loading application config from: {}" .format(app_config))
             app.config.from_envvar(REDIDROPPER_CONFIG)
+            app.logger.info("Loaded app config from: {}" .format(app_config))
+            print get_config_summary(app)
         else:
-            print('The specified config file: {} is not readable' \
-                    .format(app_config))
+            app.logger.error("The app config file: {} is not readable. " \
+                    "Using default config only is unsafe.".format(app_config))
+            sys.exit()
     else:
-        print("No `REDIROPPER_CONFIG` environment variable set. " \
-                "Using the default: {}".format(DEFAULT_CONFIG))
+        app.logger.error("The `REDIROPPER_CONFIG` environment " \
+                "variable is not set.")
+        app.logger.info("Please create a config file and set the " \
+                "environment variable appropriately.")
+        sys.exit()
 
     if len(extra_settings):
         # Override with special settings (example: tests/conftest.py)
-        print("Load extra application using do_init()")
+        app.logger.info("Load extra config params using do_init()")
         app.config.update(extra_settings)
 
     # load routes
@@ -49,29 +64,33 @@ def do_init(app, db, extra_settings={}):
     from redidropper.routes import users
     from redidropper.routes import api
 
-    configure_logging(app)
     if not app.testing:
         # When runing tests there is no need to for the debugtoolbar
         DebugToolbarExtension(app)
     return app
 
 
-def configure_logging(app):
+def configure_logging(app, debug_level):
     """
     Set the log location and formatting
     @see http://flask.pocoo.org/docs/0.10/errorhandling/
     """
     handler = logging.StreamHandler()
     fmt = Formatter(
-        '%(asctime)s %(levelname)s: %(message)s ' \
-            '[in %(pathname)s:%(lineno)d]'
+            '%(asctime)s %(levelname)s: %(message)s [%(filename)s +%(lineno)d]'
     )
     handler.setFormatter(fmt)
-    if app.debug:
-        print "Logging.setLevel(DEBUG)"
-        handler.setLevel(logging.DEBUG)
-    else:
-        print "Logging.setLevel(INFO)"
-        handler.setLevel(logging.INFO)
-
+    handler.setLevel(debug_level)
+    print("configure_logging() set debug level to: {}".format(debug_level))
     app.logger.addHandler(handler)
+
+
+def get_config_summary(app):
+    """ Helper method for debugging configuration """
+    data = {
+            "Debug mode": app.debug,
+            "Secret key length": len(app.config['SECRET_KEY']),
+            "Database host/db": "{}/{}" \
+                    .format(app.config['DB_HOST'], app.config['DB_NAME']),
+    }
+    return data
