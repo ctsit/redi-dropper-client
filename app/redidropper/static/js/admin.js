@@ -7,11 +7,11 @@ var AdminUsersTable = React.createClass({
   getInitialState: function() {
     return {list_of_users:this.props.list_of_users};
   },
-  componentWillReceiveProps:function(nextProps){
-       this.setState({list_of_users:nextProps.list_of_users});
+  componentWillReceiveProps: function(nextProps) {
+       this.setState({list_of_users: nextProps.list_of_users});
   },
   render: function() {
-    return (    
+    return (
     <div className="table-responsive" >
         <table className="table table-striped">
             <thead>
@@ -29,31 +29,32 @@ var AdminUsersTable = React.createClass({
             </thead>
             <tbody>
                 {this.state.list_of_users.map(function(record,i) {
-                    var email;
+                    var emailButton;
+
                     if(record.email_verified == 1) {
-                        email = <div>Verified</div>;
+                        emailButton = <div>Verified</div>;
                     }
                     else if (record.email_verified == 0) {
-                        email=<button className="btn btn-primary btn">Send Verification Email</button>;
+                        emailButton = <button className="btn btn-primary btn">Send Verification Email</button>;
                     }
                     var active;
                     if(record.usrIsActive) {
                         active = <button className="btn btn-primary btn">Activate</button>;
                     }
-                    else{
-                        active=<button className="btn btn-primary btn">Deactivate</button>;
+                    else {
+                        active = <button className="btn btn-primary btn">Deactivate</button>;
                     }
                     return <tr>
                                 <td>{record.usrID}</td>
-                                <td>{record.usrName}</td>
+                                <td>{record.uathUsername}</td>
                                 <td>{record.usrFirst}</td>
                                 <td>{record.usrLast}</td>
                                 <td>{record.usrEmail}</td>
-                                <td>{record.role}</td>
+                                <td>{record.rolName}</td>
                                 <td>{record.usrAddedAt[0]}</td>
-                                <td>{email}</td>
+                                <td>{emailButton}</td>
                                 <td>{active}</td>
-                            </tr>           
+                            </tr>
                 })}
             </tbody>
         </table>
@@ -64,39 +65,42 @@ var AdminUsersTable = React.createClass({
 
 var AdminUsersPagination = React.createClass({
   getInitialState: function() {
-    return {total_pages:this.props.total_pages,current_page:1};
+    return {total_pages:this.props.total_pages, current_page:1};
   },
-  componentWillReceiveProps:function(nextProps){
-       // 
+  componentWillReceiveProps: function(nextProps) {
+       //
   },
-  activateOnClick:function(i){
-    this.setState({total_pages:this.state.total_pages,current_page:i});
+  activateOnClick: function(i) {
+    this.setState({total_pages: this.state.total_pages, current_page: i});
     this.props.changePage(i);
   },
-  nextPage:function(){
-    var current_page=this.state.current_page;
-    if(current_page==this.state.total_pages){
+  nextPage: function() {
+    var current_page = this.state.current_page;
+    if(current_page == this.state.total_pages) {
         return;
-    }else{
-        this.setState({total_pages:this.state.total_pages,current_page:current_page+1});
-        this.props.changePage(current_page+1);
+    }
+    else {
+        this.setState({total_pages: this.state.total_pages, current_page: current_page + 1});
+        this.props.changePage(current_page + 1);
     }
   },
-  prevPage:function(){
+  prevPage: function() {
     var current_page=this.state.current_page;
-    if(current_page==1){
+    if(current_page==1) {
         return;
-    }else{
-        this.setState({total_pages:this.state.total_pages,current_page:current_page-1});
-        this.props.changePage(current_page-1);
+    }
+    else {
+        this.setState({total_pages: this.state.total_pages, current_page: current_page - 1});
+        this.props.changePage(current_page - 1);
     }
   },
   render: function() {
     var pages=[];
-    for(var i=1;i<=this.state.total_pages;i++){
-        if(i==this.state.current_page){
+    for(var i=1;i<=this.state.total_pages;i++) {
+        if(i==this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
-        }else{
+        }
+        else {
             pages.push(<li><a onClick={this.activateOnClick.bind(null,i)}>{i}</a></li>);
         }
     }
@@ -115,81 +119,93 @@ var AdminUsersPagination = React.createClass({
           </a>
         </li>
       </ul>
-    </nav>  
+    </nav>
     );
   }
 });
 
 
 var AddNewUserForm = React.createClass({
-  getInitialState:function(){
+  getInitialState: function() {
     return {error:""};
   },
-  clearError:function(){
+  clearError: function() {
     this.setState({error:""});
   },
-  addUser:function(){
+  addUser: function() {
     //Get the values entered by the user in the form
-    var username = this.refs.username.getDOMNode().value.trim();
-    var user_email = this.refs.user_email.getDOMNode().value.trim();    
-    var user_first_name = this.refs.user_first_name.getDOMNode().value.trim();
-    var user_middle_name = this.refs.user_middle_name.getDOMNode().value.trim();
-    var user_last_name = this.refs.user_last_name.getDOMNode().value.trim();
-    var user_role = this.refs.user_role.getDOMNode().value.trim();
+    var uathUsername    = this.refs.username.getDOMNode().value.trim();
+    var usrEmail        = this.refs.user_email.getDOMNode().value.trim();
+    var usrFirst        = this.refs.user_first_name.getDOMNode().value.trim();
+    var usrMI           = this.refs.user_middle_name.getDOMNode().value.trim();
+    var usrLast         = this.refs.user_last_name.getDOMNode().value.trim();
+    var rolName         = this.refs.user_role.getDOMNode().value.trim();
 
-    if ( username == "") {
-      this.setState({error:"Username cannot be empty"});
-      return;
-    }
-    if ( user_email == "") {
-      this.setState({error:"Email cannot be empty"}); 
-      return;
-    }
-    if ( username.length < 6) {
-      this.setState({error:"Username cannot be less than 6 charecters"}); 
+    if (uathUsername.length < 6) {
+      this.setState({error:"Username cannot be less than 6 characters."});
       return;
     }
 
-    if(!Utils.validateEmail(user_email)){
-      this.setState({error:"Invalid Email address"}); 
+    if (usrEmail == "") {
+      this.setState({error:"Email cannot be empty."});
       return;
-    }
-    if ( user_first_name == "") {
-      this.setState({error:"First name cannot be empty"}); 
-      return;
-    }
-    if ( user_last_name == "") {
-      this.setState({error:"Last name cannot be empty"}); 
-      return;
-    }
-    if ( user_role == "") {
-      this.setState({error:"Please select a role for this user"}); 
-      return;
-    }
-    if (user_middle_name.length>1 ){
-      this.setState({error:"Middle name should not be more than 1 charecter"});
-      return; 
     }
 
-    var data={  usrName     :  username,
-                usrEmail    :  user_email,
-                usrFirst    :  user_first_name,
-                usrMI       :  user_middle_name,
-                usrLast     :  user_last_name,
-                usrRole     :  user_role };
+    if(! Utils.validateEmail(usrEmail)) {
+      this.setState({error:"Invalid email address."});
+      return;
+    }
+    if (usrFirst == "") {
+      this.setState({error:"First name cannot be empty."});
+      return;
+    }
+    if (usrLast == "") {
+      this.setState({error:"Last name cannot be empty."});
+      return;
+    }
+    if (usrMI.length > 1) {
+      this.setState({error:"Middle name should be one character long."});
+      return;
+    }
 
-    var request = Utils.api_request("/api/save_user", "POST",data, "json", true);
-    
-    var _this=this;
-    
+    if (rolName == "") {
+      this.setState({error:"Please select a role for this user."});
+      return;
+    }
+
+    var data = {
+                "uathUsername":  uathUsername,
+                "usrEmail"    :  usrEmail,
+                "usrFirst"    :  usrFirst,
+                "usrMI"       :  usrMI,
+                "usrLast"     :  usrLast,
+                "rolName"     :  rolName
+    };
+
+    console.log('send: ' + data)
+    var request = Utils.api_post_json("/api/save_user", data);
+    var _this = this;
+
     request.success( function(json) {
-        console.log(JSON.stringify(json));
-        if(json.status=="success"){
-          var data={'id':json.data,'username':username,'email':user_email,'date_added':'20th Jan','role':user_role,'email_verified':'0'};  
-          _this.props.addNewUser(data);
-        }else{
-          _this.setState({error:json.message});
-          return;
+        console.log("got back: " + JSON.stringify(json));
+
+        if(json.status == "success") {
+            var record = json.data;
+            if (record) {
+                var data = {
+                    'id'          : record.usrID,
+                    'username'    : record.uarhUsername,
+                    'email'       : record.usrEmail,
+                    'date_added'  : '',
+                    'role'        : record.rolName,
+                    'email_verified':'0'
+                };
+                _this.props.addNewUser(data);
+            }
+        }
+        else {
+            _this.setState({error:json.message});
+            return;
         }
     });
 
@@ -199,15 +215,15 @@ var AddNewUserForm = React.createClass({
         return;
     });
   },
-  render:function(){
+  render: function() {
     var error;
-    if (this.state.error!=""){
+    if (this.state.error!="") {
       error=<div className="alert alert-danger alert-dismissible">
               <button type="button" onClick={this.clearError} className="close">&times;</button>
               {this.state.error}
             </div>
     }
-    return (  
+    return (
     <div className="col-sm-5">
     <h3> Add New User </h3>
     <br/>
@@ -275,13 +291,15 @@ var AdminUserManagement = React.createClass({
         error:"",
     };
   },
-  componentWillMount:function(){
-    var request = Utils.api_request("/api/list_users", "GET", {}, "json", true);
-    var _this=this;
+  componentWillMount: function() {
+    var request = Utils.api_post_json("/api/list_users", {'per_page': "10"});
+    var _this = this;
+
     request.success( function(json) {
-      if(json.status=="success"){
-        _this.setState({list_of_users:json.data,total_pages:10});
-      }else{
+      if (json.status == "success") {
+        _this.setState({list_of_users: json.data});
+      }
+      else {
         _this.setState({
             list_of_users   :  [],
             total_pages     :  this.state.total_pages,
@@ -294,9 +312,12 @@ var AdminUserManagement = React.createClass({
         console.log('Failed: ' + textStatus + error);
     });
   },
-  changePage:function(page_no) {
+
+  changePage: function(pageNum) {
+    console.log('Goto page: ' + pageNum);
   },
-  addNewUser:function(data){
+
+  addNewUser: function(data) {
     var list_of_users = this.state.list_of_users;
     list_of_users.unshift(data);
     this.setState({
@@ -305,8 +326,8 @@ var AdminUserManagement = React.createClass({
         show_user_form  :  false
     });
   },
-  toggleAddUserForm:function(){
-    //change the bool value of show_user_form variable to opposite 
+  toggleAddUserForm: function() {
+    //change the bool value of show_user_form variable to opposite
     var show_user_form = !this.state.show_user_form;
     this.setState({
         list_of_users   :  this.state.list_of_users,
@@ -325,7 +346,7 @@ var AdminUserManagement = React.createClass({
         pagination = <AdminUsersPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
 
-    if(this.state.show_user_form){
+    if(this.state.show_user_form) {
       button_text="Close";
       show_user_form=<AddNewUserForm addNewUser={this.addNewUser}/>
     }
@@ -334,7 +355,8 @@ var AdminUserManagement = React.createClass({
 
     if(list_of_users == undefined) {
         //show some loading screen
-    }else if(this.state.error!=""){
+    }
+    else if(this.state.error!="") {
       users_table = <div className="alert alert-danger">Error : {this.state.error} .
                                                          Refresh the page</div>
     }
@@ -342,9 +364,9 @@ var AdminUserManagement = React.createClass({
         users_table = <div>No data to display</div>;
     }
     else {
-        users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/> 
+        users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/>
     }
-    return (  
+    return (
     <div>
         <button onClick={this.toggleAddUserForm} className="btn btn-primary">{button_text}</button>
         <br/>
