@@ -19,9 +19,8 @@ from redidropper.models.project_user_role_entity import ProjectUserRoleEntity
 def save_user(user):
     """
     :param: user UserEntity object
-
-    :rtype int
-    :return the inserted User
+    :rtype User
+    :return the inserted object
     """
     sess = app.db_session
     sess.add(user)
@@ -32,14 +31,23 @@ def save_user(user):
 def save_auth(auth):
     """
     :param: user UserAuthEntity object
-
-    :rtype int
-    :return the inserted UserAuth object
+    :rtype UserAuth
+    :return the inserted object
     """
-    sess = app.db_session
-    sess.add(auth)
-    sess.commit()
+    app.db_session.add(auth)
+    app.db_session.commit()
     return auth
+
+
+def save_project_user_role(pur):
+    """
+    :param: user ProjectUserRoleEntity object
+    :rtype ProjectUserRoleEntity
+    :return the inserted object
+    """
+    app.db_session.add(pur)
+    app.db_session.commit()
+    return pur
 
 
 def find_user_by_id(user_id):
@@ -67,8 +75,8 @@ def find_users_for_project(project_id):
 
     sess = app.db_session
     try:
-        project_users = sess.query(ProjectUserRoleEntity).filter_by(prjID=project_id).all()
-        #print project_users
+        project_users = sess.query(ProjectUserRoleEntity) \
+                .filter_by(prjID=project_id).all()
         users = [puser.user for puser in project_users]
         return users
     except NoResultFound:
@@ -138,6 +146,23 @@ def find_auth_by_api_key(api_key):
     auth = sess.query(UserAuthEntity).filter_by(
         uathUsername=username).one()
     return auth
+
+
+def find_role_by_role_name(role_name):
+    """ Fetch the role object for the specified role_name
+
+    :rtype RoleEntity
+    """
+    sess = app.db_session
+    try:
+        pur = sess.query(RoleEntity).filter_by(
+            rolName=role_name).one()
+        return pur
+
+    except NoResultFound:
+        print "Unable to find row in find_role_by_role_name()"
+
+    return None
 
 
 def find_role_by_username_and_projectid(username, project_id):

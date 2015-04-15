@@ -99,6 +99,7 @@ class UserEntity(db.Model, LoginUserMixin):
     #@property
     def serialize(self, project_id):
         """Return object data in easily serializeable format"""
+
         return {
             'usrID':    self.usrID,
             'usrEmail': self.usrEmail,
@@ -106,7 +107,9 @@ class UserEntity(db.Model, LoginUserMixin):
             'usrLast':  self.usrLast,
             'usrMI':    self.usrMI,
             'usrAddedAt': dump_datetime(self.usrAddedAt),
-            'usrIsActive': self.usrIsActive
+            'usrIsActive': self.usrIsActive,
+            'uathUsername': '' if self.auth is None else self.auth.uathUsername,
+            'rolName': '' if self.role is None else self.role.rolName,
         }
 
 

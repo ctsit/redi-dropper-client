@@ -31,6 +31,13 @@ class ProjectUserRoleEntity(db.Model):
     # Don't allow more than one role for a specific user for a specific project
     __table_args__ = (db.UniqueConstraint('prjID', 'usrID', name='prjID'), )
 
+
+    def __init__(self, project_id, user_id, role_id):
+        self.prjID = project_id
+        self.usrID = user_id
+        self.rolID = role_id
+
+
     def __repr__(self):
         return "<ProjectUserRoleEntity (\n\t" \
             "purID: {0.purID!r}, \n\t" \

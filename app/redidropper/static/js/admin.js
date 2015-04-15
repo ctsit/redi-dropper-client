@@ -85,8 +85,8 @@ var AdminUsersPagination = React.createClass({
     }
   },
   prevPage: function() {
-    var current_page=this.state.current_page;
-    if(current_page==1) {
+    var current_page = this.state.current_page;
+    if (current_page == 1) {
         return;
     }
     else {
@@ -95,9 +95,9 @@ var AdminUsersPagination = React.createClass({
     }
   },
   render: function() {
-    var pages=[];
-    for(var i=1;i<=this.state.total_pages;i++) {
-        if(i==this.state.current_page) {
+    var pages = [];
+    for (var i = 1; i <= this.state.total_pages; i++) {
+        if (i == this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
         }
         else {
@@ -286,7 +286,7 @@ var AdminUserManagement = React.createClass({
   getInitialState: function() {
     return {
         list_of_users: undefined,
-        total_pages: 10,
+        total_pages: 3,
         show_user_form: false,
         error:"",
     };
@@ -337,7 +337,7 @@ var AdminUserManagement = React.createClass({
   },
   render: function() {
     var total_pages = this.state.total_pages;
-    var list_of_users=this.state.list_of_users;
+    var list_of_users = this.state.list_of_users;
     var pagination;
     var show_user_form;
     var button_text = "Add User";
