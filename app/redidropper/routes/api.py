@@ -118,7 +118,7 @@ def api_get_users_in_project():
     if users is None:
         return make_response(pack_error("no users found"))
 
-    lista = [i.serialize for i in users]
+    lista = [i.serialize(project_id) for i in users]
     return make_response(pack_success_result(lista))
 
 
@@ -175,5 +175,6 @@ def list_subjects(page_num):
     :return
     """
     project_id = 1
-    total_pages, list_of_subjects = subject_manager.get_project_subjects_on_page(project_id, page_num)
+    per_page=1
+    total_pages, list_of_subjects = subject_manager.get_project_subjects_on_page(project_id, page_num,per_page)
     return jsonify(total_pages=total_pages, list_of_subjects=list_of_subjects)

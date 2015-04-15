@@ -99,7 +99,7 @@ def is_valid_auth(pepper, salt, candidate_password, correct_hash):
     assert salt is not None
     assert candidate_password is not None
     candidate_hash = _generate_sha512_hmac(pepper, salt, candidate_password)
-    #print("hash: {}".format(candidate_hash))
+    print("pepper {}, salt {}, hash: {}".format(pepper, salt, candidate_hash))
     return correct_hash == candidate_hash
 
 

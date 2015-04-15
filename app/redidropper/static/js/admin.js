@@ -18,6 +18,8 @@ var AdminUsersTable = React.createClass({
                 <tr>
                     <th>ID</th>
                     <th>Username</th>
+                    <th>First name</th>
+                    <th>Last name</th>
                     <th>Email</th>
                     <th>Role</th>
                     <th>Date Added</th>
@@ -34,15 +36,23 @@ var AdminUsersTable = React.createClass({
                     else if (record.email_verified == 0) {
                         email=<button className="btn btn-primary btn">Send Verification Email</button>;
                     }
-                    
+                    var active;
+                    if(record.usrIsActive) {
+                        active = <button className="btn btn-primary btn">Activate</button>;
+                    }
+                    else{
+                        active=<button className="btn btn-primary btn">Deactivate</button>;
+                    }
                     return <tr>
                                 <td>{record.usrID}</td>
-                                <td>{record.username}</td>
-                                <td>{record.email}</td>
+                                <td>{record.usrName}</td>
+                                <td>{record.usrFirst}</td>
+                                <td>{record.usrLast}</td>
+                                <td>{record.usrEmail}</td>
                                 <td>{record.role}</td>
-                                <td>{record.date_added}</td>
+                                <td>{record.usrAddedAt[0]}</td>
                                 <td>{email}</td>
-                                <td><button className="btn btn-primary btn user-update">Update</button>   <button className="btn btn-primary btn">Remove</button></td>
+                                <td>{active}</td>
                             </tr>           
                 })}
             </tbody>
@@ -161,12 +171,12 @@ var AddNewUserForm = React.createClass({
       return; 
     }
 
-    var data={  username        :  username,
-                user_email      :  user_email,
-                user_first_name :  user_first_name,
-                user_middle_name:  user_middle_name,
-                user_last_name  :  user_last_name,
-                user_role       :  user_role };
+    var data={  usrName     :  username,
+                usrEmail    :  user_email,
+                usrFirst    :  user_first_name,
+                usrMI       :  user_middle_name,
+                usrLast     :  user_last_name,
+                usrRole     :  user_role };
 
     var request = Utils.api_request("/api/save_user", "POST",data, "json", true);
     
@@ -261,7 +271,8 @@ var AdminUserManagement = React.createClass({
     return {
         list_of_users: undefined,
         total_pages: 10,
-        show_user_form: false
+        show_user_form: false,
+        error:"",
     };
   },
   componentWillMount:function(){
@@ -271,7 +282,12 @@ var AdminUserManagement = React.createClass({
       if(json.status=="success"){
         _this.setState({list_of_users:json.data,total_pages:10});
       }else{
-
+        _this.setState({
+            list_of_users   :  [],
+            total_pages     :  this.state.total_pages,
+            show_user_form  :  false,
+            error           :  json.message
+        });
       }
     });
     request.fail(function (jqXHR, textStatus, error) {
@@ -318,6 +334,9 @@ var AdminUserManagement = React.createClass({
 
     if(list_of_users == undefined) {
         //show some loading screen
+    }else if(this.state.error!=""){
+      users_table = <div className="alert alert-danger">Error : {this.state.error} .
+                                                         Refresh the page</div>
     }
     else if (0 == list_of_users.length) {
         users_table = <div>No data to display</div>;
@@ -333,6 +352,7 @@ var AdminUserManagement = React.createClass({
           {show_user_form}
         </div>
         <div className="row">
+          <br/>
           {users_table}
           {pagination}
         </div>
