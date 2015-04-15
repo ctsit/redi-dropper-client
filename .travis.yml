@@ -45,7 +45,7 @@ script:
 
 # __5a after_success
 after_success:
-    - coveralls
+    - coveralls -v
 
 # __5b
 after_failure:
