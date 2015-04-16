@@ -7,9 +7,10 @@
 
 <script src="js.js"></script>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<link href="style_custom.css" rel="stylesheet" type="text/css" />
 
  <meta charset=utf-8 />
- <title>Contact</title>
+ <title>Upload Result </title>
 </head>
 <body>
   
@@ -23,8 +24,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
      </a>
-
-    <a class="navbar-brand" href="0_login.html">REDIDropper</a>
+    <a class="navbar-brand" href="1_login.html">REDIDropper</a>
    </div>
    <div id="slidemenu">
      
@@ -38,7 +38,7 @@
     <ul class="nav navbar-nav">
      <li><a href="0_login.html">Home</a></li>
      <li><a href="about.html">About</a></li>
-     <li class="active"><a href="contact.html">Contact</a></li>
+     <li><a href="contact.html">Contact</a></li>
 
      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Start Upload <b class="caret"></b></a>
       <ul class="dropdown-menu">
@@ -56,14 +56,26 @@
  </div>
   
   
- <!--wrap the page content do not style this-->
- <div id="page-content">
-  <div class="container">
-      <p class="lead"> Contact us </p>
-   </div>
-  <!-- /.container -->
-  
- </div>
- <!-- /#page-content -->
+    <div id="page-content">
+        <div class="container">
+
+            <ol class="breadcrumb">
+                <li class="prev-page"> <a href="1_select_subject.html">Select subject </a></li>
+                <li class="prev-page"> <a href="2_select_event.html">Select event </a> </li>
+                <li class="prev-page"> <a href="3_select_files.html">Select files </a> </li>
+                <li class="current-page"> Upload Result </li>
+            </ol>
+
+            <p>Success! All files have been uploaded. </p>
+
+            <form method="POST" action="5_dashboard.html" role="form">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Go to Dashboard</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /#page-content -->
 </body>
 </html>

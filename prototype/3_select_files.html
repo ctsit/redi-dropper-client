@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,9 +7,10 @@
 
 <script src="js.js"></script>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<link href="style_custom.css" rel="stylesheet" type="text/css" />
 
  <meta charset=utf-8 />
- <title>Login</title>
+ <title>Select Files </title>
 </head>
 <body>
   
@@ -36,20 +36,18 @@
           </form>
      
     <ul class="nav navbar-nav">
-     <li class="active"><a href="1_login.html">Home</a></li>
+     <li><a href="0_login.html">Home</a></li>
      <li><a href="about.html">About</a></li>
      <li><a href="contact.html">Contact</a></li>
 
      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Start Upload <b class="caret"></b></a>
       <ul class="dropdown-menu">
-       <li><a href="#">1. Select subject</a></li>
-       <li><a href="#">2. Select event</a></li>
-       <li><a href="#">3. Select File</a></li>
-       <li class="divider"></li>
-       <li class="dropdown-header">Nav header</li>
-       <li><a href="#">a</a></li>
-       <li><a href="#">b</a></li>
-       <li><a href="#">c</a></li>
+       <li><a href="1_select_subject.html"> 1. Select subject</a></li>
+       <li><a href="2_select_event.html">   2. Select event</a></li>
+       <li><a href="3_select_files.html">   3. Select files</a></li>
+       <li><a href="4_upload_result.html">  4. Upload result </a></li>
+       <li><a href="5_dashboard.html">  Dashboard </a></li>
+
       </ul>
      </li>
     </ul>
@@ -59,36 +57,29 @@
  </div>
   
   
-  <!--wrap the page content do not style this-->
- <div id="page-content">
-  <div class="container" >
+    <div id="page-content">
+        <div class="container">
 
-   <div class="starter-template">
-    <h1>Welcome! </h1>
-    <p class="lead">This is the REDI Dropper Application. Please login.</p>
-   </div>
-  
-   <div class="row">
-    <div class="col-xs-12 col-md-3 col-sm-4 col-sm-offset-4 col-md-offset-4 col-lg-3 col-lg-offset-4">
+            <ol class="breadcrumb">
+                <li class="prev-page"> <a href="1_select_subject.html">Select subject </a></li>
+                <li class="prev-page"> <a href="2_select_event.html">Select event </a> </li>
+                <li class="current-page"> Select Files</li>
+                <li class="next-page"> Upload Result </li>
+            </ol>
 
-     <form method="POST" action="/" role="form" class="login-form">
-      <div class="form-group  ">
-       <input class="form-control" id="username" name="username" placeholder="Username" type="text" value="">
-      </div>
-      <div class="form-group  ">
-       <input class="form-control" id="password" name="password" placeholder="Password" type="password" value="">
-      </div>
-      <button type="submit" class="btn btn-default">Login </button>
-     </form>
+            <form method="POST" action="4_upload_result.html" role="form">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="file_name" placeholder="bla.png"> 
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Start Upload</button>
+                </div>
+            </form>
+
+        </div>
+        <!-- /.container -->
     </div>
-    <!-- /.row -->
-</div> 
-    
-  </div>
-  <!-- /.container -->
-  
- </div>
- <!-- /#page-content -->
-
+    <!-- /#page-content -->
 </body>
 </html>

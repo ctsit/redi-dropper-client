@@ -1,0 +1,17 @@
+
+.breadcrumb>li+li:before {color: rgba(204, 204, 204, 1); content: "\2192\00a0";}
+
+.prev-page {
+    font-weight: bold;
+}
+
+.current-page {
+    font-weight: bold;
+}
+
+.next-page {
+    color: gray;    
+}
+
+
+
