@@ -99,6 +99,7 @@ class UserEntity(db.Model, LoginUserMixin):
     #@property
     def serialize(self, project_id):
         """Return object data in easily serializeable format"""
+        self.role = self.roles[0]
 
         return {
             'usrID':    self.usrID,
