@@ -93,3 +93,16 @@ def virtualenv(venv_name):
     """ Activate a context """
     with prefix('source ~/.virtualenvs/'+venv_name+'/bin/activate'):
         yield
+
+@task
+def cov():
+	# https://pytest.org/latest/example/pythoncollection.html
+    local('python setup.py nosetests')
+
+@task
+def clean():
+    """
+    Remove generated files
+    """
+    local('rm -f coverage.xml nosetests.xml')
+    local('find . -type f -name "*.pyc" -print | xargs rm -f')

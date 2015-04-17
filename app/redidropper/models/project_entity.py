@@ -20,6 +20,7 @@ class ProjectEntity(db.Model):
 
     __table_args__ = (db.UniqueConstraint('prjUrlHost', 'prjUrlPath'), )
 
+
     def __init__(self, name=None, host=None, path=None, \
             api_key=None, added=None):
         self.prjName = name
@@ -28,8 +29,7 @@ class ProjectEntity(db.Model):
         self.prjApiKey = api_key
         self.prjAddedAt = added
 
+
     def __repr__(self):
         return "<ProjectEntity (prjID: {}, prjName: {}, prjUrlHost: {})>" \
             .format(self.prjID, self.prjName, self.prjUrlHost)
-
-
