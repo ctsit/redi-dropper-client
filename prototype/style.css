@@ -1,134 +1,146 @@
-/* adjust body when menu is open */
-body.slide-active {
-    overflow-x: hidden
-}
-/*first child of #page-content so it doesn't shift around*/
-.no-margin-top {
-    margin-top: 0px!important
-}
-/*wrap the entire page content but not nav inside this div if not a fixed top, don't add any top padding */
-#page-content {
-    position: relative;
-    padding-top: 70px;
-    left: 0;
-}
-#page-content.slide-active {
-    padding-top: 0
+/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+/* Toggle Styles */
+
+.logo-name{
+    font-size:20px;
+    color: #9d9d9d;
+    margin-left: 20px;
 }
 
+.main-content { padding-top: 120px; }
 
-
-/* put toggle bars on the left :: not using button */
-#slide-nav .navbar-toggle {
-    cursor: pointer;
-    position: relative;
-    line-height: 0;
-    float: left;
-    margin: 0;
-    width: 30px;
-    height: 40px;
-    padding: 10px 0 0 0;
-    border: 0;
-    background: transparent;
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
-/* icon bar prettyup - optional */
-#slide-nav .navbar-toggle > .icon-bar {
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+.navbar-black {
+  background-color: #000;
+  border-color: #000;
+}
+
+.icon-white{
+    color: #fff;
+}
+
+.navbar{
+    border-radius: 0px;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    background: #000;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+#page-content-wrapper {
     width: 100%;
+    position: absolute;
+    padding: 15px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
     display: block;
-    height: 3px;
-    margin: 5px 0 0 0;
+    text-decoration: none;
+    color: #999999;
 }
-#slide-nav .navbar-toggle.slide-active .icon-bar {
-    background: orange
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
 }
-.navbar-header {
-    position: relative
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
 }
-/* un fix the navbar when active so that all the menu items are accessible */
-.navbar.navbar-fixed-top.slide-active {
-    position: relative
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
 }
-/* do not use importants, just stick it in max width since these classes are not shared between sizes */
-@media (max-width:767px) { 
-    #slide-nav .container {
-        margin: 0!important;
-        padding: 0!important;
-      height:100%;
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
     }
-    #slide-nav .navbar-header {
-        margin: 0 auto;
-        padding: 0 15px;
-    }
-    #slide-nav .navbar.slide-active {
-        position: absolute;
-        width: 80%;
-        top: -1px;
-        z-index: 1000;
-    }
-    #slide-nav #slidemenu {
-        background: #f7f7f7;
-        left: -100%;
-        width: 80%;
-        min-width: 0;
-        position: absolute;
+
+    #wrapper.toggled {
         padding-left: 0;
-        z-index: 2;
-        top: -8px;
-        margin: 0;
     }
-    #slide-nav #slidemenu .navbar-nav {
-        min-width: 0;
-        width: 100%;
-        margin: 0;
+
+    #sidebar-wrapper {
+        width: 250px;
     }
-    #slide-nav #slidemenu .navbar-nav .dropdown-menu li a {
-        min-width: 0;
-        width: 80%;
-        white-space: normal;
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
     }
-    #slide-nav {
-        border-top: 0
+
+    #page-content-wrapper {
+        padding: 0px;
+        position: relative;
     }
-    #slide-nav.navbar-inverse #slidemenu {
-        background: #333
-    }
-    /* this is behind the navigation but the navigation is not inside it so that the navigation is accessible and scrolls*/
-    #navbar-height-col {
-        position: fixed;
-        top: 0;
-        height: 100%;
-      bottom:0;
-        width: 80%;
-        right: -70%;
-        background: #f7f7f7;
-    }
-    #navbar-height-col.inverse {
-        background: #333;
-        z-index: 1;
-        border: 0;
-    }
-    #slide-nav .navbar-form {
-        width: 100%;
-        margin: 8px 0;
-        text-align: center;
-        overflow: hidden;
-        /*fast clearfixer*/
-    }
-    #slide-nav .navbar-form .form-control {
-        text-align: center
-    }
-    #slide-nav .navbar-form .btn {
-        width: 100%
-    }
-}
-@media (min-width:768px) { 
-    #page-content {
-        left: 0!important
-    }
-    .navbar.navbar-fixed-top.slide-active {
-        position: fixed
-    }
-    .navbar-header {
-        left: 0!important
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
     }
 }

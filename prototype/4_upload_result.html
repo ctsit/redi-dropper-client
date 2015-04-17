@@ -55,9 +55,7 @@
   </div>
  </div>
   
-  
-    <div id="page-content">
-        <div class="container">
+        <div class="container main-content">
 
             <ol class="breadcrumb">
                 <li class="prev-page"> <a href="1_select_subject.html">Select subject </a></li>
@@ -66,16 +64,65 @@
                 <li class="current-page"> Upload Result </li>
             </ol>
 
-            <p>Success! All files have been uploaded. </p>
+            <p></p>
 
-            <form method="POST" action="5_dashboard.html" role="form">
+               <form method="POST" action="5_dashboard.html" role="form">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Go to Dashboard</button>
                 </div>
             </form>
+
+            <div class="panel panel-default">
+   <div class="panel-heading">
+      <strong>Success! All files have been uploaded. </strong>
+   </div>
+   <div class="panel-body">
+      <p> File Details </p>
+      <div id="event-files-list">
+         <div class="table-responsive" data-reactid=".0">
+            <table id="technician-table" class="table table-striped" data-reactid=".0.0">
+               <thead data-reactid=".0.0.0">
+                  <tr data-reactid=".0.0.0.0">
+                     <th data-reactid=".0.0.0.0.0">ID</th>
+                     <th data-reactid=".0.0.0.0.1">Name</th>
+                     <th data-reactid=".0.0.0.0.2">No. of Files</th>
+                     <th data-reactid=".0.0.0.0.3"></th>
+                  </tr>
+               </thead>
+               <tbody id="technician-table-body" data-reactid=".0.0.1">
+                  <tr data-reactid=".0.0.1.0">
+                     <td data-reactid=".0.0.1.0.0">123</td>
+                     <td data-reactid=".0.0.1.0.1">test1</td>
+                     <td data-reactid=".0.0.1.0.2">20 Mb</td>
+                     <td data-reactid=".0.0.1.0.3"><a href="/download_file/undefined" class="btn btn-primary btn" data-reactid=".0.0.1.0.3.0">Download File</a></td>
+                  </tr>
+                  <tr data-reactid=".0.0.1.1">
+                     <td data-reactid=".0.0.1.1.0">239</td>
+                     <td data-reactid=".0.0.1.1.1">test2</td>
+                     <td data-reactid=".0.0.1.1.2">10 Mb</td>
+                     <td data-reactid=".0.0.1.1.3"><a href="/download_file/undefined" class="btn btn-primary btn" data-reactid=".0.0.1.1.3.0">Download File</a></td>
+                  </tr>
+                  <tr data-reactid=".0.0.1.2">
+                     <td data-reactid=".0.0.1.2.0">326</td>
+                     <td data-reactid=".0.0.1.2.1">test3</td>
+                     <td data-reactid=".0.0.1.2.2">30 Mb</td>
+                     <td data-reactid=".0.0.1.2.3"><a href="/download_file/undefined" class="btn btn-primary btn" data-reactid=".0.0.1.2.3.0">Download File</a></td>
+                  </tr>
+                  <tr data-reactid=".0.0.1.3">
+                     <td data-reactid=".0.0.1.3.0">123</td>
+                     <td data-reactid=".0.0.1.3.1">test4</td>
+                     <td data-reactid=".0.0.1.3.2">100 Mb</td>
+                     <td data-reactid=".0.0.1.3.3"><a href="/download_file/undefined" class="btn btn-primary btn" data-reactid=".0.0.1.3.3.0">Download File</a></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+</div>
+
+         
         </div>
         <!-- /.container -->
-    </div>
-    <!-- /#page-content -->
+
 </body>
 </html>
