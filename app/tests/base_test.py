@@ -1,16 +1,34 @@
 """
 Goal: set the environment for tests
+
+
+Docs:
+https://pythonhosted.org/Flask-SQLAlchemy/quickstart.html
+
+The only things you need to know compared to plain SQLAlchemy are:
+
+SQLAlchemy gives you access to the following things:
+ - all the functions and classes from sqlalchemy and sqlalchemy.orm
+ - a preconfigured scoped session called session
+ - the metadata
+ - the engine
+ - a SQLAlchemy.create_all() and SQLAlchemy.drop_all() methods to create and
+    drop tables according to the models
+ - a Model baseclass that is a configured declarative base
+ - The Model declarative base class behaves like a regular Python class but has
+    a query attribute attached that can be used to query the model
+ - You have to commit the session, but you don't have to remove it at the end
+    of the request, Flask-SQLAlchemy does that for you.
 """
+
 from flask.ext.testing import TestCase
 from redidropper.main import app, db
-#from . import app, db
-
 
 class BaseTestCase(TestCase):
     """ Base class for all tests"""
 
     def create_app(self):
-        """ override the default config with the test config """ 
+        """ override the default config with the test config """
         app.config.from_object('config.TestConfig')
         return app
 
