@@ -51,11 +51,23 @@ def test():
     """
     local('py.test --tb=short -s tests/')
 
-
 @task
 def test_cov():
+    """ Alias for coverage"""
+    coverage()
+
+@task
+def cov():
+    """ Alias for coverage"""
+    coverage()
+
+@task
+def coverage():
     """
     Run the automated test suite using py.test
+
+    # https://pytest.org/latest/example/pythoncollection.html
+    local('python setup.py nosetests')
     """
     local("""
     py.test \
@@ -95,14 +107,9 @@ def virtualenv(venv_name):
         yield
 
 @task
-def cov():
-	# https://pytest.org/latest/example/pythoncollection.html
-    local('python setup.py nosetests')
-
-@task
 def clean():
     """
     Remove generated files
     """
-    local('rm -f coverage.xml nosetests.xml')
+    local('rm -rf cover/ htmlcov/ .coverage coverage.xml nosetests.xml')
     local('find . -type f -name "*.pyc" -print | xargs rm -f')

@@ -11,23 +11,22 @@ class RoleEntity(db.Model):
     """ Stores possible user roles """
 
     __tablename__ = 'Role'
-    rolID = db.Column(db.Integer, primary_key=True)
-    rolName = db.Column(db.String(255), nullable=False, unique=True)
-    rolDescription = db.Column(db.String(255), nullable=False)
+    id = db.Column("rolID", db.Integer, primary_key=True)
+    name = db.Column("rolName", db.String(255), nullable=False, unique=True)
+    description = db.Column("rolDescription", db.String(255), nullable=False)
+
 
     def is_admin(self):
         """ helper for checking role """
-        return ROLE_ADMIN == self.rolName
+        return ROLE_ADMIN == self.name
 
 
     def is_technician(self):
         """ helper for checking role """
-        return ROLE_TECHNICIAN == self.rolName
+        return ROLE_TECHNICIAN == self.name
 
 
     def __repr__(self):
         """ implements friendly representation """
         return "<RoleEntity (rolID: {}, rolName: {})>" \
-            .format(self.rolID, self.rolName)
-
-
+            .format(self.id, self.name)

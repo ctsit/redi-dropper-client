@@ -41,7 +41,7 @@
               </button>
               <a class="navbar-brand" href="{{ url_for('index') }}"
                     title="Research Electronic Data Uploader">
-                    <img alt="RED-Dropper" style="height: 2em; width: 2em;" src="/static/img/redd.png">
+                    <img alt="RED-Dropper" style="height: 2em; width: 2em;" src="">
               </a>
             </div>
 
@@ -49,8 +49,6 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% for link in [
                         ("index", "Home"),
-                        ("about", "About"),
-                        ("contact", "Contact"),
                     ] %}
                         {{ render_nav_link(link[0], link[1]) }}
                     {% endfor %}
@@ -72,16 +70,13 @@
                         Hi, {{ current_user.usrEmail }}
                     </li>
 
-                    <li>
-                        <a href="{{ url_for('select_project') }}">Select Project</a>
-                    </li>
-
                     <li> -- Admin pages </li>
                     <li>
                         <a href="{{ url_for('admin') }}">Project Users </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('admin_events') }}">List of Events</a>
+                        <a href="{{ url_for('logs') }}">Logs</a>
+
                     </li>
                     <li> -- Technician pages </li>
                     <li>

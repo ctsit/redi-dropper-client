@@ -24,7 +24,8 @@ class DefaultConfig(object):
     DB_PASS = ''
     DB_HOST = ''
     DB_NAME = ''
-    SQLALCHEMY_DATABASE_URI = "mysql..."
+    SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}' \
+            .format(DB_USER, DB_PASS, DB_HOST, DB_NAME)
 
 
 class DebugConfig(DefaultConfig):

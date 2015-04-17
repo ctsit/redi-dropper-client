@@ -6,6 +6,14 @@ Introduction
 
 This folder is dedicated to storing the code for REDI-Dropper Client Application.
 
+Functional Specifications
+-------------------------
+https://docs.google.com/document/d/1EQnPwvKQLCYa7ifHXaHCr4lEJK7QcX7VDJOQvEtkbk8/edit
+
+Technical Specifications
+------------------------
+@TODO:
+
 
 Workflow
 --------

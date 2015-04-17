@@ -15,6 +15,7 @@ from flask import jsonify
 
 from flask_login import login_required, current_user
 from flask_principal import Principal, Permission, RoleNeed
+from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN
 
 from redidropper.main import app
 from redidropper.routes.managers import file_manager
@@ -25,14 +26,17 @@ from pages import ProjectRolePermission
 principals = Principal(app)
 
 # define a permission
-#admin_permission = Permission(RoleNeed('admin'))
-#@admin_permission.require()
+perm_admin = Permission(RoleNeed(ROLE_ADMIN))
+perm_admin_or_technician = Permission(RoleNeed(ROLE_ADMIN), \
+        RoleNeed(ROLE_TECHNICIAN))
 
 
-@app.route('/users/admin')
-@login_required
+#@perm_admin.require()
+@app.route('/admin')
+@perm_admin_or_technician.require()
 def admin():
     """ Render the technician's home page """
+    """
     project_id = 1
     user_id = current_user.get_id()
     pur = dao.find_project_user_role(project_id=project_id, user_id=user_id)
@@ -42,11 +46,14 @@ def admin():
         return render_template('users/admin.html')
 
     abort(403)
+    """
+    return render_template('admin.html')
 
-@app.route('/users/admin/events')
-def admin_events():
-    """ Render the technician's home page """
-    return render_template('users/admin_events.html')
+@app.route('/logs')
+@login_required
+def logs():
+    """ Render the logs for the user """
+    return render_template('logs.html')
 
 @app.route('/users/technician')
 @login_required
@@ -63,21 +70,6 @@ def project_subject_files(project_id=None, subject_id=None):
             subject_id=subject_id, project_id=project_id)
 
 
-@app.route('/users/select_project')
-@login_required
-def select_project():
-    """ Render the page for project_selection """
-    return render_template('users/select_project.html')
-
-
-@app.route('/users/select_project/<project_id>')
-@login_required
-def select_project_id(project_id=None):
-    """ Redirect to the proper role homepage
-
-    @TODO: implement
-    """
-    return "selected: " + project_id
 
 
 @app.route('/users/researcher_one')

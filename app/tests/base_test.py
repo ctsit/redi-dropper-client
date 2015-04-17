@@ -21,7 +21,7 @@ SQLAlchemy gives you access to the following things:
     of the request, Flask-SQLAlchemy does that for you.
 """
 
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 from redidropper.main import app, db
 
 class BaseTestCase(TestCase):

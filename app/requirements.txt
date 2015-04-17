@@ -1,12 +1,15 @@
 # Usage: pip install -r requirements.txt
 # @TODO: add developer-specific requirements
 
+# http://docs.sqlalchemy.org/en/rel_1_0/changelog/migration_10.html
+SQLAlchemy==1.0.0
 
 # Flask Framework
 Flask==0.10.1
 Flask-Login==0.2.11
 Flask-Mail==0.9.1
 Flask-Principal==0.4.0
+Flask-Security==1.7.4
 Flask-SQLAlchemy==2.0
 Flask-WTF==0.10.2
 MySQL-python==1.2.5
