@@ -128,7 +128,7 @@ def index():
             app.logger.info('Incorrect pass')
             utils.flash_error("Incorrect password.")
 
-    return render_template('pages/index.html', form=form)
+    return render_template('index.html', form=form)
 
 
 @identity_loaded.connect_via(app)
@@ -207,14 +207,3 @@ def logout():
                           identity=AnonymousIdentity())
     return redirect(request.args.get('next') or '/')
 
-
-@app.route('/about')
-def about():
-    """ Render the about page """
-    return render_template('pages/about.html')
-
-
-@app.route('/contact')
-def contact():
-    """ Render the contact page """
-    return render_template('pages/contact.html')
