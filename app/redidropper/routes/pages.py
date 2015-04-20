@@ -78,6 +78,7 @@ def unauthorized():
 class LoginForm(Form):
     """ Declare the validation rules for the login form """
 
+    email_id = TextField('email Address')
     username = TextField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField(
         'Password', [
