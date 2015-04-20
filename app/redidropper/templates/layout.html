@@ -16,6 +16,7 @@
     <link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/fileupload.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/start_upload.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/resumable.js') }}"></script>
@@ -36,31 +37,32 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
-                {% for link in [
-                        ("index", "Home"),
-                    ] %}
-                        {{ render_nav_link(link[0], link[1]) }}
-                    {% endfor %}
+                {% for link in user_links %}
+                    {{ render_nav_link(link[0], link[1]) }}
+                {% endfor %}
 
-                    {% if current_user.is_authenticated() %}
-                        {{ render_nav_link('logout', 'Logout') }}
-                    {% endif %}
             </ul>
         </div>
          <div id="page-content-wrapper">
                 <nav class="navbar navbar-black">
           <div class="container-fluid">
+
+
             <div class="navbar-header">
+
               <div class="navbar-brand" href="#">
+                {% if current_user.is_authenticated() %}
+                    <i id="menu-toggle" class="fa fa-bars fa-lg icon-white"></i>
+                {% endif %}
                 <span>
-                <i id="menu-toggle" class="fa fa-bars fa-lg icon-white"></i>
-                <a class="logo-name">Redi Dropper</a>
+                    <a class="logo-name">Redi Dropper</a>
                 </span>
               </div>
             </div>
+
           </div>
             </nav>
-            <div class="col-sm-12 col-md-12 main-content">
+            <div class="col-sm-12 col-md-12 col-lg-12 main-content">
 
                     {% block content %}
                     {% endblock %}

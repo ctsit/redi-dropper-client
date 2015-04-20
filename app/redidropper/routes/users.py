@@ -49,17 +49,45 @@ def admin():
     """
     return render_template('admin.html')
 
+
+
 @app.route('/logs')
 @login_required
 def logs():
     """ Render the logs for the user """
     return render_template('logs.html')
 
+
+def get_user_links():
+    current_role = 'admin'
+    all_pages = [
+        ('index', 'Home'), \
+        ('technician', 'Dashboard'), \
+        ('start_upload', 'Start Upload'),
+        ('logout', 'Logout'), \
+    ]
+
+    pages = {
+        'admin': all_pages,
+        'technician': all_pages,
+    }
+    return pages[current_role]
+
+
 @app.route('/users/technician')
 @login_required
 def technician():
     """ Render the technician's home page """
-    return render_template('users/technician.html', current_user=current_user)
+    user_links = get_user_links()
+    return render_template('users/technician.html', current_user=current_user, \
+        user_links=user_links)
+
+@app.route('/users/start_upload')
+@login_required
+def start_upload():
+    """ Render the Start Upload page """
+    user_links = get_user_links()
+    return render_template('users/start_upload.html',user_links=user_links)
 
 @app.route('/users/project')
 @app.route('/users/project/<project_id>/subject/<subject_id>')
