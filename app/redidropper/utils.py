@@ -8,8 +8,7 @@ Goal: Store helper functions not tied to a specific module
 """
 
 import os
-import time
-import datetime
+from datetime import datetime, timedelta
 import json
 from flask import flash, request
 from hashlib import sha512, sha256
@@ -22,7 +21,6 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff',
 
 FLASH_CATEGORY_ERROR = 'error'
 FLASH_CATEGORY_INFO = 'info'
-
 
 
 def _get_remote_addr():
@@ -149,24 +147,22 @@ def pack(data):
     Create a string represenation of data
     :param data -- dictionary
     """
-    #return '{' + '"{}": {}'.format(msg_type, json.dumps(msg)) + '}'
     return json.dumps(data)
 
 
 def pack_error(msg):
     """ Format an error message to be json-friendly """
-    # return pack( {'status': 'error', 'message': json.dumps(msg)})
-    return pack( {'status': 'error', 'message': msg})
+    return pack({'status': 'error', 'message': msg})
 
 
 def pack_info(msg):
     """ Format an info message to be json-friendly """
-    # return pack( {'status': 'info', 'message': json.dumps(msg)})
-    return pack( {'status': 'info', 'message': msg})
+    return pack({'status': 'info', 'message': msg})
+
 
 def pack_success_result(data):
     """ Format a success message to be json-friendly """
-    return pack( {'status': 'success', 'data': data})
+    return pack({'status': 'success', 'data': data})
 
 
 def get_db_friendly_date_time():
@@ -176,8 +172,18 @@ def get_db_friendly_date_time():
     """
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+
 def dump_datetime(value):
     """Deserialize datetime object into string form for JSON processing."""
     if value is None:
         return None
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+
+
+def get_expiration_date(offset_days):
+    """
+    :param offset_days: how many days to shift versus today
+    :rtype datetime
+    :return the date computed with offset_days
+    """
+    return datetime.now() + timedelta(days=offset_days)
