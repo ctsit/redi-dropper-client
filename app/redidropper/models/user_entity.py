@@ -63,6 +63,21 @@ class UserEntity(db.Model, CRUDMixin, LoginUserMixin):
         if you expect more than a handful of items for this relationship.
     """
 
+    def is_active(self):
+        """ An user can be blocked by setting a flag in the database """
+        return self.is_active
+
+    def is_anonymous(self):
+        """ Flag instances of valid users """
+        return False
+
+    def is_authenticated(self):
+        """ Returns True if the user is authenticated, i.e. they have provided
+        valid credentials.
+        (Only authenticated users will fulfill the criteria of login_required.)
+        """
+        return True
+
     def get_id(self):
         """ The id encrypted in the session """
         return unicode(self.id)
