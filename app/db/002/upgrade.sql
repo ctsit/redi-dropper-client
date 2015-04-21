@@ -77,9 +77,12 @@ CREATE TABLE Subject (
     sbjID int(10) unsigned NOT NULL AUTO_INCREMENT,
     sbjRedcapID varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
     sbjAddedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    sbjLastCheckedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    sbjWasDeleted tinyint NOT NULL DEFAULT 0,
  PRIMARY KEY (sbjID),
  UNIQUE KEY(sbjRedcapID),
- KEY (sbjAddedAt)
+ KEY (sbjAddedAt),
+ KEY(sbjLastCheckedAt)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
@@ -97,6 +100,7 @@ CREATE TABLE SubjectFile (
  KEY (sfFileName),
  KEY (sfUploadDate),
  KEY (usrID),
+ CONSTRAINT `fk_SubjectFile_sbjID` FOREIGN KEY (sbjID) REFERENCES Subject (sbjID),
  CONSTRAINT `fk_SubjectFile_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
@@ -120,7 +124,7 @@ ORDER BY
 
 -- user agent parsing http://werkzeug.pocoo.org/docs/0.10/utils/
 CREATE TABLE UserAgent (
-    uaID int(10) unsigned NOT NULL AUTO_INCREMENT,
+    uaID integer unsigned NOT NULL AUTO_INCREMENT,
     uaUserAgent varchar(32768) NOT NULL DEFAULT '',
     uaHash varchar(32) NOT NULL,
     uaPlatform varchar(255) NOT NULL,
@@ -141,11 +145,12 @@ CREATE TABLE WebSession (
     usrID integer unsigned NOT NULL DEFAULT '0',
     webIP varchar(15) NOT NULL DEFAULT '',
     webDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    uaID int(10) unsigned DEFAULT NULL,
+    uaID integer unsigned NOT NULL DEFAULT '0',
  PRIMARY KEY (webID),
  KEY (usrID),
  KEY (webDateTime),
- KEY (uaID)
+ KEY (uaID),
+ CONSTRAINT `fk_WebSession_uaID` FOREIGN KEY (uaID) REFERENCES UserAgent (uaID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
@@ -170,6 +175,7 @@ CREATE TABLE Event (
  KEY (evtIP),
  KEY (webID),
  KEY (evtDateTime),
+ CONSTRAINT `fk_Event_evttID` FOREIGN KEY (evttID) REFERENCES EventType (evttID),
  CONSTRAINT `fk_Event_webID` FOREIGN KEY (webID) REFERENCES WebSession (webID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;

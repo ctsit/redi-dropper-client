@@ -25,6 +25,7 @@ VALUES
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
       SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'technician@example.com' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_one@example.com' AND rolName = 'researcher_one'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_two@example.com' AND rolName = 'researcher_two'
@@ -131,11 +132,14 @@ VALUES
     ('file_downloaded', '')
 ;
 
+INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaLanguage)
+    VALUES ('Firefox 123', md5('Firefox 123'), 'OS X', 'Firefox', '123', 'EN')
+;
 
-INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime)
+INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime, uaID)
 VALUES
-    (md5('ha'), 1, '192.168.1.1', NOW()),
-    (md5('ha2'), 1, '172.27.1.100', NOW())
+    (md5('ha'), 1, '192.168.1.1', NOW(), 1),
+    (md5('ha2'), 1, '172.27.1.100', NOW(), 1)
 ;
 
 
