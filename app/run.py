@@ -16,9 +16,10 @@ app = initializer.do_init(app, db)
 
 
 if __name__ == "__main__":
-    from redidropper.database import db_manager
+    app.run()
 
+    # from redidropper.database import db_manager
     # run the server if executed from the command line
-    with db_manager.session_scope() as session:
-        app.db_session = session
-        app.run()
+    # with db_manager.session_scope() as session:
+    #    app.db_session = session
+    #    app.run()

@@ -13,8 +13,8 @@ Goal: Define the routes for general pages
 
 import hashlib
 import base64
-#from collections import namedtuple
-from functools import partial
+# from collections import namedtuple
+# from functools import partial
 
 from flask import current_app
 from flask import redirect
@@ -24,36 +24,14 @@ from flask import session
 from flask import url_for
 from wtforms import Form, TextField, PasswordField, validators
 
-from flask_login import LoginManager, AnonymousUserMixin, \
-        login_user, logout_user, current_user
+from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_principal import \
-    Identity, AnonymousIdentity, identity_changed, identity_loaded, \
-    Permission, Need #, UserNeed, RoleNeed
+    Identity, AnonymousIdentity, identity_changed, identity_loaded, RoleNeed
 
 from redidropper.main import app
 from redidropper import utils
-from redidropper.models import dao
-#from redidropper.models.all import UserAuthEntity
+from redidropper.models.user_entity import UserEntity
 
-#ProjectRoleNeed = namedtuple('project_role', ['role', 'value'])
-PROJECT_ROLE_NEED = partial(Need, 'role')
-
-#AdminProjectRoleNeed = partial(ProjectRoleNeed, 'admin')
-#TechnicianProjectRoleNeed = partial(ProjectRoleNeed, 'technician')
-#BlogPostNeed = namedtuple('blog_post', ['method', 'value'])
-#EditiBlogPostNeed = partial(BlogPostNeed, 'edit')
-
-class ProjectRolePermission(Permission):
-    """ Custom permission object """
-
-    def __init__(self, pur_id):
-        """ Create a permission object using the ProjectUserRole.purID column"""
-        need = PROJECT_ROLE_NEED(unicode(pur_id))
-        super(ProjectRolePermission, self).__init__(need)
-
-
-# load the Principal extension
-#principals = Principal(app)
 
 # set the login manager for the app
 login_manager = LoginManager(app)
@@ -63,9 +41,9 @@ login_manager.session_protection = "strong"
 
 
 @login_manager.user_loader
-def load_user(userid):
+def load_user(user_id):
     """Return the user from the database"""
-    return dao.find_user_by_id(userid)
+    return UserEntity.get_by_id(user_id)
 
 
 @login_manager.unauthorized_handler
@@ -77,7 +55,8 @@ def unauthorized():
 
 class LoginForm(Form):
     """ Declare the validation rules for the login form """
-
+    # email = TextField('Email', [validators.Length(min=4, max=25)])
+    email = TextField('Email')
     username = TextField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField(
         'Password', [
@@ -91,24 +70,21 @@ def index():
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
-        username = form.username.data.strip() if form.username.data else ""
-        password = form.password.data.strip()
+        email = form.email.data.strip() if form.email.data else "admin@example.com"
+        password = form.password.data.strip() if form.password.data else ""
 
-        auth = dao.find_auth_by_username(username)
+        app.logger.debug("Checking email: {}".format(email))
+        user = UserEntity.query.filter_by(email=email).one()
 
-        if auth:
-            app.logger.debug("Found auth object: {}".format(auth))
+        if user:
+            app.logger.debug("Found user object: {}".format(user))
         else:
-            utils.flash_error("No such account")
-            return redirect('/')
+            utils.flash_error("No such email: {}".format(email))
+            return redirect(request.args.get('next') or url_for('index'))
 
-        #salt = utils._create_salt(); print "salt: " + salt
-
-        # @TODO: hash before comparing
-        if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt, \
-                password, auth.uathPassword):
+        # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt, password, auth.uathPassword):
+        if '' == user.password_hash:
             # Keep the user info in the session using Flask-Login
-            user = auth.user
             # Pass remember=True to remember
             # Pass force=True to ignore is_active=false
             login_user(user, remember=False, force=False)
@@ -117,12 +93,7 @@ def index():
             identity_changed.send(current_app._get_current_object(),
                                   identity=Identity(user.get_id()))
 
-            project_id = 1
-            role = dao.find_role_by_username_and_projectid(
-                username,
-                project_id)
-            app.logger.info('Role {}'.format(role))
-            utils.flash_info('Role {}'.format(role))
+            app.logger.info('Log login event for: {}'.format(user))
             return redirect(request.args.get('next') or url_for('technician'))
         else:
             app.logger.info('Incorrect pass')
@@ -137,24 +108,21 @@ def on_identity_loaded(sender, identity):
     @TODO: add unit tests
         http://stackoverflow.com/questions/16712321/unit-testing-a-flask-principal-application
     """
-    #app.logger.debug("identity_loaded signal sender: {}".format(sender))
+    # app.logger.debug("identity_loaded signal sender: {}".format(sender))
 
     if type(current_user) == 'AnonymousUserMixin':
         return
 
     identity.user = current_user
 
-    # Add the UserNeed to the identity
-    #try:
-    #    identity.provides.add(UserNeed(current_user.get_id()))
-    #except AttributeError as ae:
-    #    app.logger.error("Error for signal identity_loaded: {}".format(ae))
+    if hasattr(current_user, 'roles'):
+        for role in current_user.roles:
+            identity.provides.add(RoleNeed(role.name))
 
-    try:
-        for proj_role in current_user.project_roles:
-            identity.provides.add(PROJECT_ROLE_NEED(proj_role.get_id()))
-    except AttributeError as error:
-        app.logger.error("Error for signal identity_loaded: {}".format(error))
+    # try:
+    #     identity.provides.add(UserNeed(current_user.get_id()))
+    # except AttributeError as ae:
+    #     app.logger.error("Error for signal identity_loaded: {}".format(ae))
 
 
 @login_manager.request_loader
@@ -183,11 +151,8 @@ def load_user_from_request(req):
         m = hashlib.md5()
         m.update(api_key)
         app.logger.debug("trying api_key: {}".format(m.digest()))
-        #auth = UserAuthEntity.query.filter_by(uathApiKey=api_key).first()
-        auth = dao.find_auth_by_api_key(api_key)
-
-        if auth and auth.user:
-            return auth.user
+        user = UserEntity.query.filter_by(api_key=api_key).one()
+        return user
 
     # finally, return None if neither of the api_keys is valid
     return None
@@ -206,4 +171,3 @@ def logout():
     identity_changed.send(current_app._get_current_object(),
                           identity=AnonymousIdentity())
     return redirect(request.args.get('next') or '/')
-

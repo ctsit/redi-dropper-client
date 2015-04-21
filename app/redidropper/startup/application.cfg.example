@@ -14,4 +14,8 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 SECRET_KEY = '41a6622cd15b11035aa24461e5edd9ec0748740fd0cbd617'
 
 DB_USER = 'redidropper'
-DB_PASS = 'securepass'
+DB_PASS = 'insecurepassword'
+DB_HOST = 'localhost'
+DB_NAME = 'RediDropper'
+SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}' \
+            .format(DB_USER, DB_PASS, DB_HOST, DB_NAME)

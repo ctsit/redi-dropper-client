@@ -13,41 +13,7 @@ from redidropper.main import app, db
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.user_auth_entity import UserAuthEntity
 from redidropper.models.role_entity import RoleEntity
-from redidropper.models.project_user_role_entity import ProjectUserRoleEntity
 
-
-def save_user(user):
-    """
-    :param: user UserEntity object
-    :rtype User
-    :return the inserted object
-    """
-    sess = app.db_session
-    sess.add(user)
-    sess.commit()
-    return user
-
-
-def save_auth(auth):
-    """
-    :param: user UserAuthEntity object
-    :rtype UserAuth
-    :return the inserted object
-    """
-    app.db_session.add(auth)
-    app.db_session.commit()
-    return auth
-
-
-def save_project_user_role(pur):
-    """
-    :param: user ProjectUserRoleEntity object
-    :rtype ProjectUserRoleEntity
-    :return the inserted object
-    """
-    app.db_session.add(pur)
-    app.db_session.commit()
-    return pur
 
 
 def find_user_by_id(user_id):
@@ -62,44 +28,6 @@ def find_user_by_id(user_id):
         return user
     except NoResultFound:
         print "Unable to find row in find_user_by_id()"
-
-    return None
-
-
-def find_users_for_project(project_id):
-    """ Fetch the list of users for the specified project_id
-
-    :rtype: list
-    :return all UserEntity objects for project_id
-    """
-
-    sess = app.db_session
-    try:
-        project_users = sess.query(ProjectUserRoleEntity) \
-                .filter_by(prjID=project_id).all()
-        users = [puser.user for puser in project_users]
-        return users
-    except NoResultFound:
-        print "Unable to find users in find_users_for_project()"
-
-    return None
-
-
-def find_project_user_role(project_id, user_id):
-    """ Fetch the user object using the unique key
-
-    :project_id the project
-    :user_id the user
-
-    :rtype: ProjectUserRoleEntity
-    """
-    sess = app.db_session
-    try:
-        pur = sess.query(ProjectUserRoleEntity).filter_by( \
-                prjID=project_id, usrID=user_id).one()
-        return pur
-    except NoResultFound:
-        print "Unable to find row in find_project_user_role()"
 
     return None
 

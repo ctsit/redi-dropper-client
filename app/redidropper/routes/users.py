@@ -7,47 +7,37 @@ Goal: Define the routes for the users
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-#from flask import request
+# from flask import request
 from flask import render_template
 from flask import send_file
-from flask import abort
-from flask import jsonify
 
 from flask_login import login_required, current_user
 from flask_principal import Principal, Permission, RoleNeed
-from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN
 
+from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN
 from redidropper.main import app
 from redidropper.routes.managers import file_manager
-from redidropper.models import dao
 
-from pages import ProjectRolePermission
+# from pages import ProjectRolePermission
 # load the Principal extension
 principals = Principal(app)
 
 # define a permission
 perm_admin = Permission(RoleNeed(ROLE_ADMIN))
-perm_admin_or_technician = Permission(RoleNeed(ROLE_ADMIN), \
-        RoleNeed(ROLE_TECHNICIAN))
+perm_admin_or_technician = Permission(RoleNeed(ROLE_ADMIN),
+                                      RoleNeed(ROLE_TECHNICIAN))
 
 
-#@perm_admin.require()
 @app.route('/admin')
-@perm_admin_or_technician.require()
+@perm_admin.require()
 def admin():
-    """ Render the technician's home page """
-    """
-    project_id = 1
-    user_id = current_user.get_id()
-    pur = dao.find_project_user_role(project_id=project_id, user_id=user_id)
-    permission = ProjectRolePermission(pur.get_id())
-
-    if pur.role.is_admin() and permission.can():
-        return render_template('users/admin.html')
-
+    """ Render the technician's home page
+    @perm_admin_or_technician.require()
+    from flask import abort
     abort(403)
     """
     return render_template('admin.html')
+
 
 @app.route('/logs')
 @login_required
@@ -55,21 +45,21 @@ def logs():
     """ Render the logs for the user """
     return render_template('logs.html')
 
+
 @app.route('/users/technician')
 @login_required
 def technician():
     """ Render the technician's home page """
     return render_template('users/technician.html', current_user=current_user)
 
+
 @app.route('/users/project')
 @app.route('/users/project/<project_id>/subject/<subject_id>')
 @login_required
 def project_subject_files(project_id=None, subject_id=None):
     """ Render the project subject files page """
-    return render_template('users/project_subject_files.html', \
-            subject_id=subject_id, project_id=project_id)
-
-
+    return render_template('users/project_subject_files.html',
+                           subject_id=subject_id, project_id=project_id)
 
 
 @app.route('/users/researcher_one')
@@ -84,6 +74,7 @@ def researcher_one():
 def researcher_two():
     """ Render the researcher's home page """
     return render_template('users/researcher_two.html')
+
 
 @app.route('/users/manage_event')
 @app.route('/users/manage_event/<event_id>')

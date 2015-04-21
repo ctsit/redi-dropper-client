@@ -16,18 +16,14 @@ from flask import make_response
 from flask_login import login_required
 
 from sqlalchemy.orm.exc import NoResultFound
-from redidropper.main import app, db
+from redidropper.main import app
 
 from redidropper.routes.managers import file_manager, subject_manager, \
         log_manager
-from redidropper.main import app
-
-from redidropper.utils import clean_int, pack_error, pack_success_result, \
-        generate_auth
+from redidropper.utils import clean_int, pack_error, pack_success_result
 
 from redidropper.models.user_entity import UserEntity
-from redidropper.models.user_auth_entity import UserAuthEntity
-from redidropper.models.project_user_role_entity import ProjectUserRoleEntity
+from redidropper.models.user_role_entity import UserRoleEntity
 from redidropper.models import dao
 
 
@@ -84,59 +80,42 @@ def api_save_user():
 
     email_exists = False if dao.find_user_by_email(email) is None \
             else True
-    username_exists = False if dao.find_auth_by_username(username) is None \
-            else True
 
     if email_exists:
         return make_response(
             pack_error("Sorry. This email is already taken."))
 
-    if username_exists:
-        return make_response(
-            pack_error("Sorry. This username is already taken."))
-
-
-    user = UserEntity(email=email, first=first, last=last, minitial=minitial)
-    user = dao.save_user(user)
-    app.logger.debug("saved user: {}".format(user))
-
     # @TODO: fix hardcoded values
-    project_id = 1
-    password = 'password'
-    salt, hashed_pass = generate_auth(app.config['SECRET_KEY'], password)
-    auth = UserAuthEntity(user_id=user.usrID, username=username, salt=salt, \
-            password=hashed_pass)
-    auth = dao.save_auth(auth)
-
-    if auth:
-        user.auth = auth
-        app.logger.debug("saved auth: {}".format(auth))
+    #password = 'password'
+    #salt, hashed_pass = generate_auth(app.config['SECRET_KEY'], password)
+    user = UserEntity.create(email=email, first=first, last=last, \
+            minitial=minitial,
+            password_hash="")
+    app.logger.debug("saved user: {}".format(user))
 
     role = dao.find_role_by_role_name(role_name)
 
     if role:
-        pur = ProjectUserRoleEntity(project_id, user.usrID, role.rolID)
-        pur = dao.save_project_user_role(pur)
-        app.logger.debug("saved pur: {}".format(pur))
+        user_role = UserRoleEntity.create(user_id=user.id, role_id=role.id)
+        app.logger.debug("saved user role mapping: {}".format(user_role))
 
-    return make_response(pack_success_result(user.serialize(project_id)))
+    return make_response(pack_success_result(user.serialize()))
 
 
 @app.route('/api/list_users', methods=['GET', 'POST'])
 @login_required
-def api_get_users_in_project():
+def api_list_users():
     """
 
     :rtype: Response
     :return
     """
-    project_id = 1
-    users = dao.find_users_for_project(project_id)
+    users = UserEntity.query().all()
 
     if users is None:
         return make_response(pack_error("no users found"))
 
-    lista = [i.serialize(project_id) for i in users]
+    lista = [i.serialize() for i in users]
     return make_response(pack_success_result(lista))
 
 
