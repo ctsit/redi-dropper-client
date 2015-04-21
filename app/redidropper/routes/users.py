@@ -62,7 +62,6 @@ def get_user_links():
     return pages[current_role]
 
 
->>>>>>> 73d7c3502604695028d259f16491fe111b3edc9b
 @app.route('/users/technician')
 @login_required
 def technician():

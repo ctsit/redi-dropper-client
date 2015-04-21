@@ -1,18 +1,5 @@
-
-function getListOfSubjects(){
-    var data =[{subject_id:123,subject_name:"ab"},
-              {subject_id:123,subject_name:"abc"},
-              {subject_id:123,subject_name:"abc1"},
-              {subject_id:123,subject_name:"abc12"},
-              {subject_id:123,subject_name:"abc123"},
-              {subject_id:123,subject_name:"abc1234"},
-              {subject_id:123,subject_name:"abc12345"},
-              {subject_id:123,subject_name:"abc123456"}];
-
-    return data;          
-}
-
-
+// @TODO: document
+//
 
 var SubjectsList = React.createClass({
   getInitialState: function() {
@@ -21,11 +8,11 @@ var SubjectsList = React.createClass({
   componentWillMount:function(){
     this.updateSubjectsList('');
   },
-  updateSubjectsList:function(subject_name){
+  updateSubjectsList:function(subject_name) {
     var _this=this;
     var url= "/api/find_subject";
     
-    var request = Utils.api_request(url,"POST",{name:subject_name}, "json", true);
+    var request = Utils.api_post_json(url,{name:subject_name});
     request.success( function(json) {
        _this.setState({list_of_subjects:json.data});
     });
@@ -35,14 +22,9 @@ var SubjectsList = React.createClass({
     
   },
   subjectChanged: function() {
-    var subject_name= this.refs.subject_name.getDOMNode().value.trim();
-    
-    if(subject_name.length>2){
-
-        this.updateSubjectsList(subject_name);       
-    
-    }
-    
+    var subject_name = this.refs.subject_name.getDOMNode().value.trim();
+    this.updateSubjectsList(subject_name);       
+    if (subject_name.length > 2) { }
   },
   render: function() {
     return (
