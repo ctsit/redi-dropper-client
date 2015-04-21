@@ -42,7 +42,20 @@ def api_list_subject_files(subject_id=None):
     data = subject_manager.get_files(subject_id)
     return jsonify(data)
 
+def search_subject(subject_name):
+    subject_list = ['a', 'dgc','bcd','ab', 'abc', 'bac','cad']
+    matching = [s for s in subject_list if subject_name in s]
+    return matching
 
+@app.route('/api/find_subject', methods=['POST'])
+def find_subject():
+    """
+    :rtype: Response
+    :return the list of subjects in json format
+    """
+    subject_name = request.form['name']
+    data = search_subject(subject_name)
+    return jsonify(data=data)
 
 @app.route('/api/list_redcap_subjects', methods=['POST'])
 @login_required

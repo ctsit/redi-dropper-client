@@ -99,6 +99,9 @@ def index():
             app.logger.info('Incorrect pass')
             utils.flash_error("Incorrect password.")
 
+    if current_user.is_authenticated():
+        return redirect(request.args.get('next') or url_for('technician'))
+        
     return render_template('index.html', form=form)
 
 
