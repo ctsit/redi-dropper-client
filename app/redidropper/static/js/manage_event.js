@@ -12,6 +12,8 @@ $(document).ready(function() {
 var file_select = document.getElementById("file-select");
 var file_drop = document.getElementById('file-drop');
 
+console.log("File Select "+file_select);
+
 if(! (file_select && file_drop)) {
    return;
 }
@@ -117,7 +119,7 @@ if(! r.support) {
     });
 }
 });
-
+/*
 var EventFilesList = React.createClass({
   getInitialState: function() {
     return {list_of_files:[]};
@@ -162,3 +164,4 @@ var EventFilesList = React.createClass({
 });
 
 React.render(<EventFilesList/>, document.getElementById("event-files-list"));
+*/

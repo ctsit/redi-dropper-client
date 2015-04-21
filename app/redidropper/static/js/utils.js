@@ -14,6 +14,10 @@ api_post_json: function(url, data) {
     return Utils.api_request(url, 'POST', data, 'json', true);
 },
 
+api_get_json: function(url, data) {
+    return Utils.api_request(url, 'GET', data, 'json', true);
+},
+
 array_keys: function (obj) {
     list = [];
     for (var key in obj) {

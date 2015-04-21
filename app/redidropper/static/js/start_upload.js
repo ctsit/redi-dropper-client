@@ -1,5 +1,109 @@
 // @TODO: document
 //
+var EventFilesList = React.createClass({
+  getInitialState: function() {
+    return {list_of_files:[]};
+  },
+  componentWillMount:function(){
+    var _this=this;
+    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
+    request.success( function(json) {
+       _this.setState({list_of_files:json.list_of_files});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
+  render: function() {
+    return (    
+    <div className="table-responsive" >
+        <table id="technician-table" className="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>No. of Files</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="technician-table-body">
+                {this.state.list_of_files.map(function(record,i) {
+                    var add_url="/download_file/"+record.id;
+                    return <tr>
+                                <td>{record.file_id}</td>
+                                <td>{record.file_name}</td>
+                                <td>{record.file_size}</td>
+                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
+                            </tr>           
+                })}
+            </tbody>
+        </table>
+    </div>
+    );
+  }
+});
+
+
+// @TODO: document
+//
+var FilesUpload = React.createClass({
+  componentWillMount:function(){
+    $("#upload-files").show();
+  },
+  render: function() {
+    return (    
+    <div className="table-responsive" >
+       
+    </div>
+    );
+  }
+});
+var EventsList = React.createClass({
+  getInitialState: function() {
+    return {list_of_events:[]};
+  },
+  componentWillMount:function(){
+    var _this=this;
+    var url= "/api/list_events";
+    
+    var request = Utils.api_post_json(url,{subject_id:'a'});
+    request.success( function(json) {
+       _this.setState({list_of_events:json.data});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
+  render: function() {
+    var rows =[];
+    var _this=this;
+    {this.state.list_of_events.map(function(record,i) {
+        var callback=_this.props.eventSelected.bind(null,record);
+        rows.push(<tr>
+                    <td>{i+1}</td>
+                    <td onClick={callback}>{record}</td>
+                  </tr>
+                  );           
+    })}
+    return (
+    <div>  
+    <div className="table-responsive" >
+        <table id="event-table" className="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Event</th>
+                </tr>
+            </thead>
+            <tbody id="subject-table-body">
+                {rows}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    );
+  }
+});
 
 var SubjectsList = React.createClass({
   getInitialState: function() {
@@ -27,6 +131,17 @@ var SubjectsList = React.createClass({
     if (subject_name.length > 2) { }
   },
   render: function() {
+    var rows =[];
+    var _this=this;
+    {this.state.list_of_subjects.map(function(record,i) {
+        var callback=_this.props.subjectSelected.bind(null,record);
+        rows.push(<tr>
+                    <td>{i+1}</td>
+                    <td onClick={callback}>{record}</td>
+                  </tr>
+                  );           
+    })}
+
     return (
     <div>
     <div className="form-group ">
@@ -45,12 +160,7 @@ var SubjectsList = React.createClass({
                 </tr>
             </thead>
             <tbody id="subject-table-body">
-                {this.state.list_of_subjects.map(function(record,i) {
-                    return <tr>
-                                <td>{i+1}</td>
-                                <td>{record}</td>
-                            </tr>           
-                })}
+               {rows}
             </tbody>
         </table>
     </div>
@@ -59,4 +169,60 @@ var SubjectsList = React.createClass({
   }
 });
 
-React.render(<SubjectsList/>, document.getElementById("subjects-list"));
+var Display = React.createClass({
+  getInitialState: function() {
+    var tabs=["Subjects","Events","Files","Upload Result"];
+    return {current_tab:0,tabs:tabs,subject_id:"",event_id:""};
+  },
+  changeTab:function(i){
+    this.setState({current_tab:i})
+  },
+  subjectSelected:function(subject_id){
+    this.setState({current_tab:1,subject_id:subject_id})
+  },
+  eventSelected:function(event_id){
+    this.setState({current_tab:2,event_id:event_id})
+  },
+  render: function() {
+    var display ;
+    var breadcrumbs=[];
+    var current_tab = this.state.current_tab;
+    var tabs = this.state.tabs;
+
+    for(var i =0 ;i<tabs.length;i++){
+      var tab_class;
+      if(current_tab==i){
+        breadcrumbs.push(<li className={tab_class}>{tabs[i]}</li>);
+      }else if(current_tab>i){
+        breadcrumbs.push(<li className={tab_class} 
+                             onClick={this.changeTab.bind(null,i)}>
+                              {tabs[i]}
+                         </li>);
+      }else if(current_tab<i){
+        breadcrumbs.push(<li className={"next-page"}>{tabs[i]}</li>);
+      }
+    }
+
+    if(current_tab==0){
+      display = <SubjectsList subjectSelected={this.subjectSelected}/>;
+    }else if(current_tab==1){
+      display = <EventsList eventSelected={this.eventSelected}/>;
+    }else if(current_tab==2){
+      display = <FilesUpload />;
+    }
+    
+
+    return (
+    <div>
+        <div className="container">
+          <ol className="breadcrumb">
+            {breadcrumbs}
+          </ol>
+          {display}
+        </div>
+    </div>
+    );
+  }
+});
+
+React.render(<Display/>, document.getElementById("start-upload"));

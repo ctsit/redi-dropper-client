@@ -42,10 +42,22 @@ def api_list_subject_files(subject_id=None):
     data = subject_manager.get_files(subject_id)
     return jsonify(data)
 
-def search_subject(subject_name):
+def search_subject(redcap_subject_id):
+    """ TODO: execute a query here """
     subject_list = ['a', 'dgc','bcd','ab', 'abc', 'bac','cad']
-    matching = [s for s in subject_list if subject_name in s]
+    matching = [s for s in subject_list if redcap_subject_id in s]
     return matching
+
+def search_events(redcap_subject_id):
+    data = {
+        "a": [1, 2, 3],
+        "ab": [1, 2, 3, 4],
+        "abc": [1, 2, 3, 4],
+        "bac": [1, 2],
+        "bcd": [1, 2, 3, 4, 5],
+    }
+    return data[redcap_subject_id]
+
 
 @app.route('/api/find_subject', methods=['POST'])
 def find_subject():
@@ -53,8 +65,18 @@ def find_subject():
     :rtype: Response
     :return the list of subjects in json format
     """
-    subject_name = request.form['name']
-    data = search_subject(subject_name)
+    redcap_subject_id = request.form['name']
+    data = search_subject(redcap_subject_id)
+    return jsonify(data=data)
+
+@app.route('/api/list_events', methods=['POST'])
+def list_events():
+    """
+    :rtype: Response
+    :return the list of subjects in json format
+    """
+    redcap_subject_id = request.form['subject_id']
+    data = search_events(redcap_subject_id)
     return jsonify(data=data)
 
 @app.route('/api/list_redcap_subjects', methods=['POST'])
