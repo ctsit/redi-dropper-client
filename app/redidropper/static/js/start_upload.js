@@ -97,7 +97,11 @@ var EventsList = React.createClass({
         var callback=_this.props.eventSelected.bind(null,record);
         rows.push(<tr>
                     <td>{i+1}</td>
-                    <td onClick={callback}>{record}</td>
+                    <td><button 
+                        className="btn white" 
+                        onClick={callback}>{record}
+                        </button>
+                    </td>
                   </tr>
                   );           
     })}
@@ -153,7 +157,11 @@ var SubjectsList = React.createClass({
         var callback=_this.props.subjectSelected.bind(null,record);
         rows.push(<tr>
                     <td>{i+1}</td>
-                    <td onClick={callback}>{record}</td>
+                    <td><button 
+                        className="btn white" 
+                        onClick={callback}>{record}
+                        </button>
+                    </td>
                   </tr>
                   );           
     })}
@@ -220,14 +228,13 @@ var Display = React.createClass({
     for(var i =0 ;i<tabs.length;i++){
       var tab_class;
       if(current_tab==i){
-        breadcrumbs.push(<li className={tab_class}>{tabs[i]}</li>);
+        breadcrumbs.push(<li><a>{tabs[i]}</a></li>);
       }else if(current_tab>i){
-        breadcrumbs.push(<li className={tab_class} 
-                             onClick={this.changeTab.bind(null,i)}>
-                              {tabs[i]}
+        breadcrumbs.push(<li className="prev-page" onClick={this.changeTab.bind(null,i)}>
+                              <a>{tabs[i]}</a>
                          </li>);
       }else if(current_tab<i){
-        breadcrumbs.push(<li className={"next-page"}>{tabs[i]}</li>);
+        breadcrumbs.push(<li className="next-page"><a>{tabs[i]}</a></li>);
       }
     }
 
@@ -245,14 +252,16 @@ var Display = React.createClass({
     
     return (
     <div>
-        <div className="container">
-          <ol className="breadcrumb">
-            {breadcrumbs}
-          </ol>
+          <div id="crumbs">
+            <ul>
+              {breadcrumbs}
+            </ul>
+          </div>
+          <br/>
+          <br/>
           {subject_id}
           {event_id}
           {display}
-        </div>
     </div>
     );
   }
