@@ -151,7 +151,7 @@ var AddNewUserForm = React.createClass({
       return;
     }
 
-    if(! Utils.validateEmail(usrEmail)) {
+    if(! Utils.validate_email(usrEmail)) {
       this.setState({error:"Invalid email address."});
       return;
     }

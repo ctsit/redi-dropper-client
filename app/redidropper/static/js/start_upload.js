@@ -43,17 +43,33 @@ var EventFilesList = React.createClass({
   }
 });
 
-
-// @TODO: document
-//
 var FilesUpload = React.createClass({
+  getInitialState:function(){
+    return {show_button:false}
+  },
   componentWillMount:function(){
-    $("#upload-files").show();
+    var _this=this;
+    var r = Utils.get_resumable_instance();
+    r.on('complete', function() {
+       _this.setState({show_button:true});
+    });
+    r.on('uploadStart', function() {
+      if(_this.state.show_button){
+        _this.setState({show_button:false});
+      }
+    });
   },
   render: function() {
+    var button;
+    if(this.state.show_button){
+      button = <button className="btn btn-defualt" 
+                       onClick={this.props.showFiles}>
+                       Show Files
+                </button>;
+    }
     return (    
     <div className="table-responsive" >
-       
+      {button}
     </div>
     );
   }
@@ -183,11 +199,23 @@ var Display = React.createClass({
   eventSelected:function(event_id){
     this.setState({current_tab:2,event_id:event_id})
   },
+  showFiles:function(){
+    this.setState({current_tab:3})
+  },
   render: function() {
     var display ;
+    var subject_id;
+    var event_id
     var breadcrumbs=[];
     var current_tab = this.state.current_tab;
     var tabs = this.state.tabs;
+
+    if(this.state.subject_id!=""){
+      subject_id = <h3>Subject Id : {this.state.subject_id}</h3>;
+    }
+    if(this.state.event_id!=""){
+      event_id = <h3>Event Id : {this.state.event_id}</h3>;
+    }
 
     for(var i =0 ;i<tabs.length;i++){
       var tab_class;
@@ -203,21 +231,26 @@ var Display = React.createClass({
       }
     }
 
+    $("#upload-files").hide();
     if(current_tab==0){
       display = <SubjectsList subjectSelected={this.subjectSelected}/>;
     }else if(current_tab==1){
       display = <EventsList eventSelected={this.eventSelected}/>;
     }else if(current_tab==2){
-      display = <FilesUpload />;
+      $("#upload-files").show();
+      display = <FilesUpload showFiles={this.showFiles}/>;
+    }else if(current_tab==3){
+      display = <EventFilesList />;
     }
     
-
     return (
     <div>
         <div className="container">
           <ol className="breadcrumb">
             {breadcrumbs}
           </ol>
+          {subject_id}
+          {event_id}
           {display}
         </div>
     </div>

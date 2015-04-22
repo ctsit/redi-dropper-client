@@ -1,13 +1,6 @@
 $(document).ready(function() {
     // Max chunk size is set to 10MB
-    var r = new Resumable({
-        target:'/api/upload',
-        chunkSize: 10*1024*1024,
-        simultaneousUploads: 4,
-        testChunks: false,
-        throttleProgressCallbacks: 1,
-        maxFileSize: 1 * 1024 * 1024 * 1024 // 1 GB max
-});
+var r = Utils.get_resumable_instance();
 
 var file_select = document.getElementById("file-select");
 var file_drop = document.getElementById('file-drop');
@@ -17,6 +10,7 @@ console.log("File Select "+file_select);
 if(! (file_select && file_drop)) {
    return;
 }
+
 
 if(! r.support) {
     console.log("Resumable.js is Not Supported.");
@@ -119,6 +113,7 @@ if(! r.support) {
     });
 }
 });
+
 /*
 var EventFilesList = React.createClass({
   getInitialState: function() {
