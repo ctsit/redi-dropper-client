@@ -23,11 +23,11 @@ var SubjectsRow = React.createClass({
     render: function() {
         var column_count = this.state.max_events;
         var table_columns = [];
-        var row_data=this.state.row_data;
+        var row_data = this.state.row_data;
         var events_count=row_data.events.length;
 
         for(var i = 0; i < events_count; i++) {
-            var view_files_url="/users/manage_event/"+row_data.events[i].event_id;
+            var view_files_url = "/users/manage_event/"+row_data.events[i].event_id;
             if (row_data.events[i].event_files != 0) {
                 table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
             }
@@ -61,9 +61,9 @@ var SubjectsTable = React.createClass({
         };
     },
     changePage: function(i) {
-        this.changeData(i, this.props.selected_project, this.state.max_events)
+        this.changeData(i, this.state.max_events)
     },
-    changeData: function(page_num, project_id, max_events) {
+    changeData: function(page_num, max_events) {
         // if needed we will allow the user to select how many rows to display per page
         var per_page = 10
         var data = {'per_page': per_page, 'page_num': page_num}
@@ -71,21 +71,21 @@ var SubjectsTable = React.createClass({
         var _this = this;
         var request = Utils.api_post_json("/api/list_of_subjects", data);
         request.success( function(json) {
-            _this.setState({subjects:json.list_of_subjects,max_events:max_events,no_of_pages:json.total_pages});
+            _this.setState({
+                subjects: json.list_of_subjects,
+                max_events: max_events,
+                no_of_pages: json.total_pages
+            });
         });
         request.fail(function (jqXHR, textStatus, error) {
             console.log('Failed: ' + textStatus + error);
         });
     },
     componentWillMount: function() {
-        if(this.props.selected_project!=undefined) {
-            this.changeData(1,this.props.selected_project,this.props.max_events);
-        }
+        this.changeData(1, this.props.max_events);
     },
     componentWillReceiveProps: function(nextProps) {
-        if(nextProps.selected_project!=undefined) {
-            this.changeData(1,this.props.selected_project,nextProps.max_events);
-        }
+        this.changeData(1, nextProps.max_events);
     },
     render: function() { 
         var table_rows = [];
@@ -97,7 +97,7 @@ var SubjectsTable = React.createClass({
             table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
         }
 
-        var table_columns=[];
+        var table_columns = [];
 
         if (row_count != 0) {
             table_columns.push(<th>Subject ID</th>);
@@ -196,35 +196,36 @@ var SubjectsPagination =React.createClass({
 
 
 var Technician = React.createClass({
-  getInitialState: function() {
-    return {projects:[],selected_project:undefined,max_events:0};
-  },
-  componentWillMount: function() {
-    var _this=this;
-    var request = Utils.api_request("/api/list_of_projects", "GET",{}, "json", true);
-    request.success( function(json) {
-        _this.setState({projects:json.list_of_projects,selected_project:json.list_of_projects[0].project_id,max_events:json.max_events});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  selectChanged: function() {
-    console.log("select changed "+this.refs.project_select.getDOMNode().value);
-    var new_selected_value = this.refs.project_select.getDOMNode().value;
-    this.setState({projects:this.state.projects,selected_project:new_selected_value});
-  },
-  changePage: function() {
+    getInitialState: function() {
+        // return {projects:[],selected_project:undefined,max_events:0};
+        return {max_events: 0};
+    },
+    componentWillMount: function() {
+        /*
+        var _this = this;
+        var request = Utils.api_request("/api/list_of_projects", "GET",{}, "json", true);
+        request.success( function(json) {
+            _this.setState({
+                max_events: json.max_events
+            });
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+        */
+    },
+    selectChanged: function() {
+        /*
+        console.log("select changed "+this.refs.project_select.getDOMNode().value);
+        var new_selected_value = this.refs.project_select.getDOMNode().value;
+        this.setState({ects,selected_project:new_selected_value});
+        */
+    },
+    changePage: function() {
 
-  },
-  render: function() {
-
-    return (
-    <div>
-    <div className="row">
-        <div className="col-sm-4">
-            <h3> Project Name </h3>
-        </div>
+    },
+    render: function() {
+        /*
         <div className="col-sm-4">
             <select onChange={this.selectChanged}  className="form-control" ref="project_select">
                 {this.state.projects.map(function(record,i) {
@@ -232,13 +233,20 @@ var Technician = React.createClass({
                 })};
             </select>
         </div>
+        */
+    return (
+    <div>
+    <div className="row">
+        <div className="col-sm-4">
+            <h3> Project: ADRC </h3>
+        </div>
         <div className="col-sm-4">
         </div>
     </div>
         <br/>
         <h3>List of Subjects </h3>
         <br/>
-        <SubjectsTable selected_project={this.state.selected_project} max_events={this.state.max_events}/>
+        <SubjectsTable max_events={this.state.max_events}/>
     </div>
     );
   }
