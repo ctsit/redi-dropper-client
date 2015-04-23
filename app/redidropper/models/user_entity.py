@@ -2,7 +2,11 @@
 ORM for User table
 """
 
-from flask_login import UserMixin as LoginUserMixin
+from flask_login import UserMixin
+
+# flask_security expands the flask_login UserMixin class with:
+#   is_active(), get_auth_token, has_role()
+# from flask_security import UserMixin
 from redidropper.main import db
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.models.role_entity import RoleEntity
@@ -10,7 +14,7 @@ from redidropper.models.user_role_entity import UserRoleEntity
 from redidropper.utils import dump_datetime
 
 
-class UserEntity(db.Model, CRUDMixin, LoginUserMixin):
+class UserEntity(db.Model, UserMixin, CRUDMixin):
     """ Stores the basic information about the user.
 
     Implements the functions as required by:
@@ -98,10 +102,10 @@ class UserEntity(db.Model, CRUDMixin, LoginUserMixin):
             'usrFirst': self.first,
             'usrLast':  self.last,
             'usrMI':    self.minitial,
+            'usrIsActive': str(self.is_active()),
             'usrAddedAt': dump_datetime(self.added_at),
-            'usrIsActive': self.is_active,
-            'usrEmailConfirmedAt': self.email_confirmed_at,
-            'usrAccessExpiresAt:': self.access_expires_at,
+            'usrEmailConfirmedAt': dump_datetime(self.email_confirmed_at),
+            'usrAccessExpiresAt:': dump_datetime(self.access_expires_at),
         }
 
     def __repr__(self):

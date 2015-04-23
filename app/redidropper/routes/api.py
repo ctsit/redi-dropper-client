@@ -145,7 +145,7 @@ def api_list_users():
     :rtype: Response
     :return
     """
-    users = UserEntity.query().all()
+    users = UserEntity.query.all()
 
     if users is None:
         return make_response(pack_error("no users found"))

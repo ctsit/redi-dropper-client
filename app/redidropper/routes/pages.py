@@ -13,9 +13,6 @@ Goal: Define the routes for general pages
 
 import hashlib
 import base64
-# from collections import namedtuple
-# from functools import partial
-
 from flask import current_app
 from flask import redirect
 from flask import render_template
@@ -24,7 +21,8 @@ from flask import session
 from flask import url_for
 from wtforms import Form, TextField, PasswordField, validators
 
-from flask_login import LoginManager, login_user, logout_user, current_user
+from flask_login import LoginManager
+from flask_login import login_user, logout_user, current_user
 from flask_principal import \
     Identity, AnonymousIdentity, identity_changed, identity_loaded, RoleNeed
 
@@ -35,6 +33,15 @@ from redidropper.models.user_entity import UserEntity
 
 # set the login manager for the app
 login_manager = LoginManager(app)
+
+# class AnonymousUser(AnonymousUserMixin):
+#   """ fix AttributeError: 'AnonymousUserMixin' object has no attribute 'id'"""
+#
+#     def __init__(self):
+#         """ ha """
+#         self.id = None
+#         self.roles = ()
+# login_manager.anonymous_user = AnonymousUser
 
 # Possible options: strong, basic, None
 login_manager.session_protection = "strong"
@@ -54,10 +61,11 @@ def unauthorized():
 
 
 class LoginForm(Form):
+
     """ Declare the validation rules for the login form """
     # email = TextField('Email', [validators.Length(min=4, max=25)])
     email = TextField('Email')
-    username = TextField('Username', [validators.Length(min=4, max=25)])
+    # username = TextField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField(
         'Password', [
             validators.Required(), validators.Length(
@@ -70,8 +78,10 @@ def index():
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
-        email = form.email.data.strip() if form.email.data else "admin@example.com"
+        email = form.email.data.strip(
+            ) if form.email.data else "admin@example.com"
         password = form.password.data.strip() if form.password.data else ""
+        app.logger.debug("{} password: {}".format(email, password))
 
         app.logger.debug("Checking email: {}".format(email))
         user = UserEntity.query.filter_by(email=email).one()
@@ -82,7 +92,8 @@ def index():
             utils.flash_error("No such email: {}".format(email))
             return redirect(request.args.get('next') or url_for('index'))
 
-        # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt, password, auth.uathPassword):
+        # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt,
+        # password, auth.uathPassword):
         if '' == user.password_hash:
             # Keep the user info in the session using Flask-Login
             # Pass remember=True to remember
@@ -101,7 +112,7 @@ def index():
 
     if current_user.is_authenticated():
         return redirect(request.args.get('next') or url_for('technician'))
-        
+
     return render_template('index.html', form=form)
 
 
@@ -120,6 +131,7 @@ def on_identity_loaded(sender, identity):
 
     if hasattr(current_user, 'roles'):
         for role in current_user.roles:
+            app.logger.debug("Found role: {}".format(role))
             identity.provides.add(RoleNeed(role.name))
 
     # try:

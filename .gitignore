@@ -15,7 +15,7 @@ nosetests.xml
 *.egg-info
 mock-*
 nosexcover-*
-
+.ropeproject/
 .idea/
 .coveralls.yml
 pylint.out
