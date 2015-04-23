@@ -13,10 +13,9 @@ import sys
 import logging
 from logging import Formatter
 from flask_debugtoolbar import DebugToolbarExtension
-from redidropper.config import LOG_LEVEL
+from config import LOG_LEVEL
 
-# DEFAULT_CONFIG = 'redidropper.startup.config'
-DEFAULT_CONFIG = 'redidropper.config.DefaultConfig'
+DEFAULT_CONFIG = 'config.DefaultConfig'
 REDIDROPPER_CONFIG = 'REDIDROPPER_CONFIG'
 
 
