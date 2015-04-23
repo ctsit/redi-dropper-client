@@ -12,7 +12,10 @@
     margin-left: 20px;
 }
 
-.main-content { padding-top: 50px;text-align: center; }
+.main-content {
+    padding-top: 5px;
+    text-align: center;
+}
 
 #wrapper {
     padding-left: 0;
