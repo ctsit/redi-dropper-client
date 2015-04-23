@@ -2,6 +2,7 @@
 Goal: test insert/search projects
 """
 
+from sqlalchemy.orm.exc import NoResultFound
 from .base_test import BaseTestCase
 from redidropper.main import db
 from redidropper import utils
@@ -33,7 +34,7 @@ class TestUserRole(BaseTestCase):
 
         db.session.add(role_admin)
         # before commit the primary key does not exist
-        assert role_admin.id is None
+        self.assertIsNone(role_admin.id)
 
         # after commit the primary key is generated
         db.session.commit()
@@ -69,23 +70,39 @@ class TestUserRole(BaseTestCase):
                                  added_at=added_date,
                                  modified_at=added_date,
                                  access_expires_at=access_end_date)
-        assert 1 == user.id
-        assert "admin@example.com" == user.email
+        self.assertEqual(1, user.id)
+        self.assertEqual("admin@example.com", user.email)
 
+        with self.assertRaises(NoResultFound):
+            UserEntity.query.filter_by(email="admin@example.com2").one()
+
+        found = UserEntity.query.filter_by(email="admin@example.com").one()
+        self.assertIsNotNone(found)
+
+        # two unbound objects ...
         role_admin = self.get_role(ROLE_ADMIN)
         role_tech = self.get_role(ROLE_TECHNICIAN)
+
+        # save them to the database...
         db.session.add(role_admin)
         db.session.add(role_tech)
+        db.session.commit()
 
+        saved_role = RoleEntity.query.filter_by(name=ROLE_ADMIN).one()
+        self.assertEqual(1, saved_role.id)
+        print saved_role
+
+        # ...then use them
         user.roles.append(role_admin)
         user.roles.append(role_tech)
 
         user_roles = UserRoleEntity.query.all()
         print user_roles
-        assert 2 == len(user_roles)
+        self.assertEqual(2, len(user_roles))
 
         user_role = UserRoleEntity.get_by_id(1)
-        assert 1 == user_role.id
+        self.assertEqual(1, user_role.id)
+        self.assertEqual(ROLE_ADMIN, user_role.role.name)
 
     def test_view_roles(self):
         """ @TODO: add test for viewing users """

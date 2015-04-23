@@ -131,7 +131,7 @@ def on_identity_loaded(sender, identity):
 
     if hasattr(current_user, 'roles'):
         for role in current_user.roles:
-            app.logger.debug("Found role: {}".format(role))
+            # app.logger.debug("Found role: {}".format(role))
             identity.provides.add(RoleNeed(role.name))
 
     # try:
