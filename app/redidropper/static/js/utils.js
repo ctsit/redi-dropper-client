@@ -1,7 +1,7 @@
-/* 
-* Contains Methods which are used through out the application
-* Written in module pattern
-* Returns a singleton instance of Resumable Js
+/*
+* Goal: Store methods which are used throughout the application.
+*
+* Returns a singleton instance of ResumableJs.
 */
 
 var Utils = (function() {
@@ -34,28 +34,28 @@ var Utils = (function() {
         return re.test(email);
     }
 
-    return { 
+   return {
         // public interface
-        api_post_json: function (url,data) {
+        api_post_json: function(url, data) {
             return api_request_private(url, 'POST', data, 'json', true);
         },
-        api_get_json: function (url,data) {
+        api_get_json: function(url, data) {
             return api_request_private(url, 'GET', data, 'json', true);
         },
-        api_request:function(url, reqType, data, dataType, doCache){
+        api_request: function(url, reqType, data, dataType, doCache) {
             return api_request_private(url, reqType, data, dataType, doCache);
         },
-        get_resumable_instance:function(){
-            if(!resumable_instance){
+        get_resumable_instance: function() {
+            if (! resumable_instance) {
                 create_resumable_instance();
             }
             return resumable_instance;
         },
-        validate_email:function(email){
+        validate_email: function(email) {
             return validate_email_private(email);
+        },
+        print_r: function(o) {
+            return JSON.stringify(o, null, '\t').replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;');
         }
     };
-
 })();
-
-

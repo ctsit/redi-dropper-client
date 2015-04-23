@@ -103,8 +103,8 @@ var EventsList = React.createClass({
     var rows = [];
     var _this = this;
     {
-        this.state.list_of_events.map(function(record,i) {
-        var callback=_this.props.eventSelected.bind(null, record);
+        this.state.list_of_events.map(function(record, i) {
+        var callback = _this.props.eventSelected.bind(null, record);
         rows.push(
             <tr>
                 <td>{i+1}</td>
