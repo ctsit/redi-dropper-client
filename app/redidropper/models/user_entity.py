@@ -92,20 +92,26 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         return dict([(key, val) for key, val in self.__dict__.items()
                     if key in UserEntity.visible_props])
 
+    """
+    def __init__(self, **kwargs):
+        super(UserEntity, self).__init__(**kwargs)
+    """
+
     # @property
     def serialize(self):
         """Return object data in easily serializeable format"""
 
         return {
-            'usrID':    self.id,
-            'usrEmail': self.email,
-            'usrFirst': self.first,
-            'usrLast':  self.last,
-            'usrMI':    self.minitial,
-            'usrIsActive': str(self.is_active()),
-            'usrAddedAt': dump_datetime(self.added_at),
-            'usrEmailConfirmedAt': dump_datetime(self.email_confirmed_at),
-            'usrAccessExpiresAt:': dump_datetime(self.access_expires_at),
+            'id': self.id,
+            'email': self.email,
+            'roles': [r.name for r in self.roles],
+            'first': self.first,
+            'last': self.last,
+            'minitial': self.minitial,
+            'is_active': True,
+            'added_at': dump_datetime(self.added_at),
+            'email_confirmed_at': dump_datetime(self.email_confirmed_at),
+            'access_expires_at:': dump_datetime(self.access_expires_at),
         }
 
     def __repr__(self):
