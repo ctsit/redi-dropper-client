@@ -180,18 +180,16 @@ def api_list_users():
 
 @app.route('/api/list_logs', methods=['GET', 'POST'])
 @login_required
-def api_list_logs(per_page, page_num):
+def api_list_logs():
     """
-    @app.route('/api/list_logs/<per_page>/<page_num>', methods=['GET', 'POST'])
-    @app.route('/api/list_logs/<per_page>', defaults={'page_num': 1})
     Render the specified page of event logs
     @TODO: show user-specific logs for non-admins?
 
     :rtype: string
     :return the json list of logs
     """
-    per_page = get_safe_int(per_page)
-    page_num = get_safe_int(page_num)
+    per_page = get_safe_int(request.form.get('per_page'))
+    page_num = get_safe_int(request.form.get('page_num'))
     logs, total_pages = log_manager.get_logs(per_page, page_num)
     # logs_list = [x.to_visible() for x in logs]
     return jsonify(list_of_events=logs, total_pages=total_pages)
@@ -200,7 +198,7 @@ def api_list_logs(per_page, page_num):
 @app.route('/api/list_of_files', methods=['GET', 'POST'])
 @app.route('/api/list_of_files/<event_id>', methods=['GET', 'POST'])
 @login_required
-def api_list_event_files(event_id):
+def api_list_event_files(event_id=1):
     """
 
     :rtype: Response
@@ -229,3 +227,26 @@ def api_list_subjects():
     total_pages, list_of_subjects = \
         subject_manager.get_subjects_on_page(per_page, page_num)
     return jsonify(total_pages=total_pages, list_of_subjects=list_of_subjects)
+
+
+@app.route('/api')
+def api():
+    """ Display the list of valid paths under /api/ """
+
+    html = """
+<html>
+<h2> List of API calls </h2>
+<ol>
+
+<li> Logs: <a href="https://localhost:5000/api/list_logs?per_page=5&page_num=1">
+        /api/list_logs?per_page=5&page_num=1</a>
+
+<li> Files (for an event): <a href="https://localhost:5000/api/list_of_files/1">
+        /api/list_of_files/1</a>
+
+<li> Subjects: <a href="https://localhost:5000/api/list_of_subjects?per_page=1">
+        /api/list_of_subjects?per_page=1</a>
+</ol>
+</html>
+    """
+    return make_response(html)

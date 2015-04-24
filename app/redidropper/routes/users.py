@@ -53,29 +53,51 @@ def logs():
     return render_template('logs.html', user_links=get_user_links())
 
 
+def get_highest_role():
+    """ If a user has more than one role pick the `highest` role """
+    roles = current_user.get_roles()
+
+    if ROLE_ADMIN in roles:
+        return ROLE_ADMIN
+    if ROLE_TECHNICIAN in roles:
+        return ROLE_TECHNICIAN
+    if ROLE_RESEARCHER_ONE in roles:
+        return ROLE_RESEARCHER_ONE
+    if ROLE_RESEARCHER_TWO in roles:
+        return ROLE_RESEARCHER_TWO
+    return None
+
+
 def get_user_links():
-    current_role = 'admin'
-    all_pages = [
-        # ('index', 'Home'),
-        ('admin', 'Admin'),
-        ('logs', 'Logs'),
-        ('technician', 'Technician'),
-        ('researcher_one', 'Researcher 1'),
-        ('researcher_two', 'Researcher 2'),
-        ('start_upload', 'Start Upload'),
-        ('logout', 'Logout'),
-    ]
-
     pages = {
-        'admin': all_pages,
-        'technician': all_pages,
+        'admin': ('admin', 'Manage Users'),
+        'logs': ('logs', 'View Logs'),
+        'dashboard': ('dashboard', 'Dashboard'),
+        'res_one': ('researcher_one', 'Researcher 1'),
+        'res_two': ('researcher_two', 'Researcher 2'),
+        'start_upload': ('start_upload', 'Start Upload'),
+        'logout': ('logout', 'Logout'),
     }
-    return pages[current_role]
+    role = get_highest_role()
+    print "highest role: {}".format(role)
+
+    if ROLE_ADMIN == role:
+        links = [pages['admin'], pages['start_upload'], pages['dashboard'],
+                 pages['logs']]
+    elif ROLE_TECHNICIAN == role:
+        links = [pages['start_upload'], pages['dashboard']]
+    elif ROLE_RESEARCHER_ONE == role:
+        links = [pages['res_one']]
+    elif ROLE_RESEARCHER_TWO == role:
+        links = [pages['res_two']]
+
+    links.append(pages['logout'])
+    return links
 
 
-@app.route('/technician')
+@app.route('/dashboard')
 @perm_admin_or_technician.require()
-def technician():
+def dashboard():
     """ Render the technician's home page """
     # return render_template('users/technician.html', current_user=current_user,
     return render_template('users/technician.html', user_links=get_user_links())

@@ -80,6 +80,10 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         """ The id encrypted in the session """
         return unicode(self.id)
 
+    def get_roles(self):
+        """ Return text representation of user roles """
+        return [role.name for role in self.roles]
+
     """
     @property
     def to_visible(self):
