@@ -14,7 +14,8 @@ if(! (file_select && file_drop)) {
 
 if(! r.support) {
     console.log("Resumable.js is Not Supported.");
-}else {
+}
+else {
     console.log("Resumable.js Works");
     r.assignBrowse(document.getElementById('file-select'));
     r.assignDrop(document.getElementById('file-drop'));

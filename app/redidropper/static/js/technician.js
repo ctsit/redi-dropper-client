@@ -116,7 +116,7 @@ var SubjectsTable = React.createClass({
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
-        <table id="technician-table" className="table table-striped">
+        <table id="technician-table" className="table table-striped table-curved">
             <thead>
                 <tr>
                     {table_columns}
@@ -132,7 +132,7 @@ var SubjectsTable = React.createClass({
   }
 });
 
-var SubjectsPagination =React.createClass({
+var SubjectsPagination = React.createClass({
   getInitialState: function() {
     return {no_of_pages:this.props.no_of_pages,current_page:1};
   },

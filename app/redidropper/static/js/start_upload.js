@@ -19,7 +19,7 @@ var EventFilesList = React.createClass({
   render: function() {
     return (
     <div className="table-responsive" >
-        <table id="technician-table" className="table table-striped">
+        <table id="technician-table" className="table table-striped table-curved">
             <thead>
                 <tr>
                     <th># </th>
@@ -121,7 +121,7 @@ var EventsList = React.createClass({
     return (
     <div>
     <div className="table-responsive" >
-        <table id="event-table" className="table table-striped">
+        <table id="event-table" className="table table-striped table-curved">
             <thead>
                 <tr>
                     <th># </th>
@@ -193,7 +193,7 @@ var SubjectsList = React.createClass({
                 type="text" />
     </div>
     <div className="table-responsive" >
-        <table id="subject-table" className="table table-striped">
+        <table id="subject-table" className="table table-striped table-curved">
             <thead>
                 <tr>
                     <th> # </th>

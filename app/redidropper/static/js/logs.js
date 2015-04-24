@@ -8,7 +8,7 @@ var AdminEventsTable = React.createClass({
         list_of_events: this.props.list_of_events
     };
   },
-  componentWillReceiveProps:function(nextProps){
+  componentWillReceiveProps: function(nextProps) {
        this.setState(
                {
                    list_of_events: nextProps.list_of_events
@@ -17,22 +17,26 @@ var AdminEventsTable = React.createClass({
   render: function() {
     return (
     <div className="table-responsive" >
-        <table className="table table-striped">
+        <table className="table table-striped table-curved">
             <thead>
                 <tr>
-                    <th>Event Name</th>
-                    <th>Username</th>
-                    <th>Timestamp</th>
+                    <th> # </th>
+                    <th> Event Name</th>
+                    <th> Username</th>
+                    <th> Timestamp</th>
                 </tr>
             </thead>
             <tbody>
-                {this.state.list_of_events.map(function(record,i) {
-                    return <tr>
+                {
+                    this.state.list_of_events.map(function(record,i) {
+                    return  <tr>
+                                <td>{ i+1 }</td>
                                 <td>{record.event_id}</td>
                                 <td>{record.username}</td>
                                 <td>{record.timestamp}</td>
                             </tr>
-                })}
+                    })
+                }
             </tbody>
         </table>
     </div>
@@ -47,25 +51,25 @@ var AdminEventsPagination =React.createClass({
         current_page: 1
     };
   },
-  componentWillReceiveProps:function(nextProps){
+  componentWillReceiveProps: function(nextProps) {
        // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
   },
-  activateOnClick:function(i){
+  activateOnClick: function(i) {
     this.setState({total_pages:this.state.total_pages,current_page:i});
     this.props.changePage(i);
   },
-  nextPage:function(){
+  nextPage: function() {
     var current_page=this.state.current_page;
-    if(current_page==this.state.total_pages){
+    if(current_page==this.state.total_pages) {
         return;
     }else{
         this.setState({total_pages:this.state.total_pages,current_page:current_page+1});
         this.props.changePage(current_page+1);
     }
   },
-  prevPage:function(){
+  prevPage: function() {
     var current_page=this.state.current_page;
-    if(current_page==1){
+    if(current_page==1) {
         return;
     }else{
         this.setState({total_pages:this.state.total_pages,current_page:current_page-1});
@@ -74,8 +78,8 @@ var AdminEventsPagination =React.createClass({
   },
   render: function() {
     var pages=[];
-    for(var i=1;i<=this.state.total_pages;i++){
-        if(i==this.state.current_page){
+    for(var i=1;i<=this.state.total_pages;i++) {
+        if(i==this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
         }else{
             pages.push(<li><a onClick={this.activateOnClick.bind(null,i)}>{i}</a></li>);
@@ -103,23 +107,37 @@ var AdminEventsPagination =React.createClass({
 
 var AdminEventsList = React.createClass({
   getInitialState: function() {
-    return {list_of_events:undefined,total_pages:0};
+    return {
+        list_of_events: undefined,
+        total_pages: 0,
+        per_page: 10
+    };
   },
-  componentWillMount:function(){
-    var _this=this;
-    var request = Utils.api_request("/api/admin/events/1", "GET", {}, "json", true);
+  componentWillMount: function() {
+    var _this = this;
+    var request_data = {'per_page': this.state.per_page, 'page_num': '1'};
+    var request = Utils.api_post_json("/api/list_logs", request_data);
+
     request.success( function(json) {
-       _this.setState({list_of_events:json.list_of_events,total_pages:json.total_pages});
+       _this.setState({
+           list_of_events: json.list_of_events,
+           total_pages: json.total_pages
+       });
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
     });
   },
-  changePage:function(page_no) {
-    var _this=this;
-    var request = Utils.api_request("/api/admin/events/"+page_no, "GET", {}, "json", true);
-    request.success( function(json) {
-       _this.setState({list_of_events:json.list_of_events,total_pages:json.total_pages});
+  changePage: function(page_num) {
+    var _this = this;
+    var request_data = {'per_page': this.state.per_page, 'page_num': page_num};
+    var request = Utils.api_post_json("/api/list_logs", request_data);
+
+    request.success(function(json) {
+       _this.setState({
+           list_of_events: json.list_of_events,
+           total_pages:json.total_pages
+       });
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
@@ -127,11 +145,11 @@ var AdminEventsList = React.createClass({
   },
   render: function() {
     var total_pages = this.state.total_pages;
-    var list_of_events=this.state.list_of_events;
+    var list_of_events = this.state.list_of_events;
     var pagination;
 
-    if(total_pages>1) {
-        pagination=<AdminEventsPagination total_pages={total_pages} changePage={this.changePage}/>;
+    if(total_pages > 1) {
+        pagination = <AdminEventsPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
     var events_table;
     if(list_of_events == undefined) {

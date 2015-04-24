@@ -51,7 +51,7 @@ var AdminUsersTable = React.createClass({
 
         return (
     <div className="table-responsive">
-        <table className="table table-striped">
+        <table className="table table-striped table-curved">
             <thead>
                 <tr>
                     <th className="text-center"> # </th>
