@@ -25,8 +25,8 @@ def refresh_redcap_subjects(project_id):
     Communicate with REDCap to get the updated list of subjects
     then insert/delete the new/removed subjects.
     """
-    fresh_set = set(get_fresh_list_of_subjects_for_project(project_id))
-    stale_set = set(get_stale_list_of_subjects_for_project(project_id))
+    fresh_set = set(get_fresh_list_of_subjects())
+    stale_set = set(get_stale_list_of_subjects())
 
     new_subjects = list(fresh_set.difference(stale_set))
     deleted_subjects = list(stale_set.difference(fresh_set))
@@ -36,7 +36,7 @@ def refresh_redcap_subjects(project_id):
     return (insert_count, delete_count)
 
 
-def get_fresh_list_of_subjects_for_project(project_id):
+def get_fresh_list_of_subjects():
     """ Communicate with REDCap to get the updated list of subjects
 
     :rtype: list
@@ -72,7 +72,7 @@ class SubjectEntity(object):
                 if key in SubjectEntity.visible_props])
 
 
-def get_stale_list_of_subjects_for_project(project_id):
+def get_stale_list_of_subjects():
     """ Fetch the set of subjects for the specified project_id
     @TODO: implement
 
@@ -119,7 +119,7 @@ def delete_subjects(subjects):
     return 0
 
 
-def get_project_subjects_on_page(project_id, per_page=10, page_num=1):
+def get_subjects_on_page(per_page=10, page_num=1):
     """
     @TODO: implement
     """

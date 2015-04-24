@@ -7,7 +7,7 @@ Goal: Implement logs-specific logic
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-def get_logs(project_id, page_num):
+def get_logs(per_page=10, page_num=1):
     """
     @TODO: implement
     """
