@@ -15,15 +15,13 @@ from redidropper.utils import dump_datetime
 
 
 class UserEntity(db.Model, UserMixin, CRUDMixin):
-    """ Stores the basic information about the user.
 
+    """ Stores the basic information about the user.
     Implements the functions as required by:
         https://flask-login.readthedocs.org/en/latest/
     """
     __tablename__ = 'User'
 
-    visible_props = ['id', 'email', 'first', 'last', 'minitial',
-                     'added_at', 'is_activeusrIsActive']
     id = db.Column("usrID", db.Integer, primary_key=True)
     email = db.Column("usrEmail", db.String(255), nullable=False, unique=True)
     first = db.Column("usrFirst", db.String(255), nullable=False)
@@ -46,10 +44,6 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
                               nullable=False, server_default='')
 
     # @OneToMany
-    # roles = db.relationship('RoleEntity', \
-    #        secondary='UserRole', \
-    #        backref=db.backref('user'))
-
     roles = db.relationship(RoleEntity,
                             secondary=UserRoleEntity.__tablename__,
                             backref=db.backref('users'),
@@ -86,18 +80,21 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         """ The id encrypted in the session """
         return unicode(self.id)
 
+    """
     @property
     def to_visible(self):
-        """ Helper for exposing only "secure" attributes as a dictionary """
+    visible_props = ['id', 'email', 'first', 'last', 'minitial',
+                     'added_at', 'modified_at', 'email_confirmed_at',
+                     'is_active', 'access_expires_at']
+
         return dict([(key, val) for key, val in self.__dict__.items()
                     if key in UserEntity.visible_props])
-
+    """
     """
     def __init__(self, **kwargs):
         super(UserEntity, self).__init__(**kwargs)
     """
 
-    # @property
     def serialize(self):
         """Return object data in easily serializeable format"""
 

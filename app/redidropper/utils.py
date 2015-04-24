@@ -118,6 +118,24 @@ def clean_int(dangerous):
     return int(dangerous)
 
 
+def get_safe_int(unsafe, default=1, min_allowed=1, max_allowed=None):
+    """ Helper method for reading the user input
+
+    :param unsafe: the user input to be interpreted as in
+    :param default: the default to use if there was a problem converting the int
+    :param min_allowed: the minimum value to use
+    :param max_allowed: the maximum value to use (ignores None value)
+    """
+    unsafe = clean_int(unsafe)
+    if unsafe is None:
+        unsafe = default
+    elif unsafe < min_allowed:
+        unsafe = min_allowed
+    elif max_allowed is not None and unsafe > max_allowed:
+        unsafe = max_allowed
+    return unsafe
+
+
 def allowed_file(filename):
     """
     Checks if the specified file name should be allowed for downloading
@@ -187,3 +205,15 @@ def get_expiration_date(offset_days):
     :return the date computed with offset_days
     """
     return datetime.now() + timedelta(days=offset_days)
+
+
+def compute_text_md5(text):
+    """ Compute md5sum as hexdigest
+
+    :param text: the input string
+    :rtype string
+    """
+    import hashlib
+    m = hashlib.md5()
+    m.update(text)
+    return m.hexdigest()

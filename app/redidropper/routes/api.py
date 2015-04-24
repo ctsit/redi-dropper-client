@@ -19,24 +19,22 @@ from redidropper.main import app
 
 from redidropper.routes.managers import file_manager, subject_manager, \
     log_manager
-from redidropper.utils import clean_int, pack_error, pack_success_result, \
+from redidropper.utils import get_safe_int, pack_error, pack_success_result, \
     get_expiration_date
 
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
 
-@app.route('/api/list_subject_files/<subject_id>', methods=['POST', 'GET'])
+@app.route('/api/list_subject_files', methods=['POST', 'GET'])
+@app.route('/api/list_subject_files/<int:subject_id>', methods=['POST', 'GET'])
 @login_required
 def api_list_subject_files(subject_id=None):
     """
     :rtype: Response
     :return the list of subjects in json format
     """
-    subject_id = clean_int(subject_id)
-    if subject_id is None:
-        return make_response(pack_error("invalid subject id"))
-
+    # return make_response(pack_error("invalid subject id"))
     data = subject_manager.get_files(subject_id)
     return jsonify(data)
 
@@ -48,17 +46,6 @@ def search_subject(redcap_subject_id):
     return matching
 
 
-def search_events(redcap_subject_id):
-    data = {
-        "a": [1, 2, 3],
-        "ab": [1, 2, 3, 4],
-        "abc": [1, 2, 3, 4],
-        "bac": [1, 2],
-        "bcd": [1, 2, 3, 4, 5],
-    }
-    return data[redcap_subject_id]
-
-
 @app.route('/api/find_subject', methods=['POST'])
 def find_subject():
     """
@@ -68,6 +55,18 @@ def find_subject():
     redcap_subject_id = request.form['name']
     data = search_subject(redcap_subject_id)
     return jsonify(data=data)
+
+
+def search_events(redcap_subject_id):
+    """ @TODO: implement """
+    data = {
+        "a": [1, 2, 3],
+        "ab": [1, 2, 3, 4],
+        "abc": [1, 2, 3, 4],
+        "bac": [1, 2],
+        "bcd": [1, 2, 3, 4, 5],
+    }
+    return data[redcap_subject_id]
 
 
 @app.route('/api/list_events', methods=['POST'])
@@ -88,9 +87,7 @@ def api_list_redcap_subjects():
     :rtype: Response
     :return the list of subjects in json format
     """
-    project_id = 1
-    subjects = subject_manager.get_stale_list_of_subjects_for_project(
-        project_id)
+    subjects = subject_manager.get_stale_list_of_subjects()
     subjects_list = [x.to_visible() for x in subjects]
     return jsonify(data=subjects_list)
 
@@ -161,14 +158,13 @@ def api_save_user():
 @login_required
 def api_list_users():
     """
-
+    @TODo: use the page_num in the query
     :rtype: Response
     :return
     """
-    per_page = clean_int(request.form['per_page'])
-    if per_page is None or per_page < 10:
-        per_page = 10
-    per_page = float(per_page)
+    per_page = get_safe_int(request.form.get('per_page'))
+    page_num = get_safe_int(request.form.get('page_num'))
+    app.logger.debug("Show page {} of users".format(page_num))
 
     users = UserEntity.query.all()
     # users = UserEntity.query.filter(UserEntity.id >= 14).all()
@@ -177,29 +173,31 @@ def api_list_users():
         return make_response(pack_error("no users found"))
 
     list_of_users = [i.serialize() for i in users]
-    total_pages = math.ceil(len(list_of_users)/per_page)
+    total_pages = math.ceil(len(list_of_users)/float(per_page))
     data = {"total_pages": total_pages, "list_of_users": list_of_users}
     return make_response(pack_success_result(data))
 
 
-@app.route('/api/admin/events/<page_num>', methods=['GET', 'POST'])
+@app.route('/api/list_logs', methods=['GET', 'POST'])
 @login_required
-def api_list_logs(page_num):
+def api_list_logs(per_page, page_num):
     """
+    @app.route('/api/list_logs/<per_page>/<page_num>', methods=['GET', 'POST'])
+    @app.route('/api/list_logs/<per_page>', defaults={'page_num': 1})
+    Render the specified page of event logs
+    @TODO: show user-specific logs for non-admins?
 
-    :rtype: Response
-    :return
+    :rtype: string
+    :return the json list of logs
     """
-    page_num = clean_int(page_num)
-    if page_num is None:
-        return make_response(pack_error("invalid page number"))
-
-    project_id = 1
-    logs, total_pages = log_manager.get_logs(project_id, page_num)
+    per_page = get_safe_int(per_page)
+    page_num = get_safe_int(page_num)
+    logs, total_pages = log_manager.get_logs(per_page, page_num)
     # logs_list = [x.to_visible() for x in logs]
     return jsonify(list_of_events=logs, total_pages=total_pages)
 
 
+@app.route('/api/list_of_files', methods=['GET', 'POST'])
 @app.route('/api/list_of_files/<event_id>', methods=['GET', 'POST'])
 @login_required
 def api_list_event_files(event_id):
@@ -225,12 +223,9 @@ def api_list_subjects():
     :rtype: Response
     :return json
     """
-    project_id = 1
-    per_page = request.form.get('per_page')
-    page_num = request.form.get('page_num')
+    per_page = get_safe_int(request.form.get('per_page'))
+    page_num = get_safe_int(request.form.get('page_num'))
 
     total_pages, list_of_subjects = \
-        subject_manager.get_project_subjects_on_page(project_id,
-                                                     per_page,
-                                                     page_num)
+        subject_manager.get_subjects_on_page(per_page, page_num)
     return jsonify(total_pages=total_pages, list_of_subjects=list_of_subjects)

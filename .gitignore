@@ -19,3 +19,6 @@ nosexcover-*
 .idea/
 .coveralls.yml
 pylint.out
+
+server.crt
+server.key
