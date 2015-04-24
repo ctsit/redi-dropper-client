@@ -50,7 +50,7 @@ def admin():
 @perm_admin_or_technician.require()
 def logs():
     """ Render the logs for the user """
-    return render_template('logs.html')
+    return render_template('logs.html', user_links=get_user_links())
 
 
 def get_user_links():
@@ -77,9 +77,8 @@ def get_user_links():
 @perm_admin_or_technician.require()
 def technician():
     """ Render the technician's home page """
-    user_links = get_user_links()
-    return render_template('users/technician.html', current_user=current_user,
-                           user_links=user_links)
+    # return render_template('users/technician.html', current_user=current_user,
+    return render_template('users/technician.html', user_links=get_user_links())
 
 
 @app.route('/start_upload')
@@ -87,8 +86,8 @@ def technician():
 def start_upload():
     """ Render the Start Upload page """
     # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
-    user_links = get_user_links()
-    return render_template('users/start_upload.html', user_links=user_links)
+    return render_template('users/start_upload.html',
+                           user_links=get_user_links())
 
 
 # @app.route('/subject')
@@ -104,14 +103,16 @@ def start_upload():
 @perm_researcher_one.require()
 def researcher_one():
     """ Render the researcher's home page """
-    return render_template('users/researcher_one.html')
+    return render_template('users/researcher_one.html',
+                           user_links=get_user_links())
 
 
 @app.route('/researcher_two')
 @perm_researcher_two.require()
 def researcher_two():
     """ Render the researcher's home page """
-    return render_template('users/researcher_two.html')
+    return render_template('users/researcher_two.html',
+                           user_links=get_user_links())
 
 
 # @app.route('/users/manage_event')
@@ -122,7 +123,8 @@ def researcher_two():
 #     return render_template('users/manage_event.html', event_id=event_id)
 
 
-@app.route("/users/download_file/<file_id>")
+@app.route("/download_file")
+@app.route("/download_file/<file_id>")
 @login_required
 def download_file(file_id):
     """ Download a file using the database id """
