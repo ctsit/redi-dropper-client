@@ -1,12 +1,16 @@
-# Goal: @TODO
-#
-# @authors:
-#   Andrei Sura             <sura.andrei@gmail.com>
-#   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
-#   Sanath Pasumarthy       <sanath@ufl.edu>
-#
+"""
+Goal: Implement code specific to file handling on server side
 
-# bcrypt http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
+
+@TODO: read
+    https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
+    https://pypi.python.org/pypi/bleach
+    bcrypt http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
+"""
 #
 
 import os
@@ -26,17 +30,18 @@ logger = app.logger
 class FileChunk(object):
     """ Properties storage for a file chunk """
 
-    def __init__(self, request):
+    def __init__(self):
         # @TODO: !!! add size checks for user input
-        self.number     = int(request.form['resumableChunkNumber'])
-        self.size       = int(request.form['resumableChunkSize'])
+        self.number = int(request.form['resumableChunkNumber'])
+        self.size = int(request.form['resumableChunkSize'])
         self.total_size = int(request.form['resumableTotalSize'])
-        self.uniqueid   = request.form['resumableIdentifier']
-        self.file_name  = secure_filename(request.form['resumableFilename'])
-        self.afile      = request.files['file']
-        self.total_parts= int(max(math.floor(self.total_size/self.size), 1))
+        self.uniqueid = request.form['resumableIdentifier']
+        self.file_name = secure_filename(request.form['resumableFilename'])
+        self.afile = request.files['file']
+        self.total_parts = int(max(math.floor(self.total_size/self.size), 1))
 
-    def __str__(self):
+    def __repr__(self):
+        """ Implement an unambiguous representation """
         return "FileChunk <{} out of {} for file: {} ({} out of {} bytes)>" \
             .format(self.number,
                     self.total_parts,
@@ -47,17 +52,32 @@ class FileChunk(object):
 
 
 def get_chunk_path(file_name, chunk_number):
+    """ Helper for building path to temp dir """
     name = "{}.part{}".format(file_name, chunk_number)
     return os.path.join(app.config['INCOMING_TEMP_DIR'], name)
 
 
 def get_file_path(file_name):
+    """ Helper for building path to saved files dir """
     return os.path.join(app.config['INCOMING_SAVED_DIR'], file_name)
+
+
+def get_file_path_from_id(file_id):
+    """" Get file path from the database for the specified file id
+
+    @TODO: implement
+    """
+    files = {
+            1: "example_1.tgz",
+            2: "example_2.tgz"
+    }
+    file_path = get_file_path(files[file_id])
+    return file_path
 
 
 def save_uploaded_file():
     """ Receives files on the server side """
-    fchunk = FileChunk(request)
+    fchunk = FileChunk()
     logger.info("Uploading {}".format(fchunk)) 
 
     file_name = fchunk.file_name
@@ -96,6 +116,7 @@ def save_uploaded_file():
 
 
 def all_chunks_received(fchunk):
+    """ Return True when all file pieces are received """
     done = False
     file_name = fchunk.file_name
 
@@ -113,11 +134,15 @@ def all_chunks_received(fchunk):
 
 
 def verify_file_integrity(fchunk):
-    logger.debug("Verify md5sum...")
+    """
+    @TODO: implemenet
+    """
+    logger.debug("Verify md5sum...{}".format(fchunk))
     pass
 
 
 def delete_temp_files(fchunk):
+    """ Delete file chunks after all received and merged """
     file_name = fchunk.file_name
     logger.debug("Removing {} file chunks for: {}" \
             .format(fchunk.total_parts, file_name))
@@ -128,6 +153,7 @@ def delete_temp_files(fchunk):
 
 
 def merge_files(fchunk):
+    """ Reconstruct the original file from chunks """
     file_name = fchunk.file_name
     file_path = get_file_path(file_name)
     logger.debug("Saving file: {} consisting of {} chunks." \
@@ -139,8 +165,3 @@ def merge_files(fchunk):
         chunk_path = get_chunk_path(file_name, i)
         tempfile = open(chunk_path, "r")
         f.write(tempfile.read())
-
-def get_file_path_from_id(file_id):
-    #get file path from database
-    file_path="/Users/sanathkumarpasumarthy/.redidropper/incoming/saved/example.tgz"
-    return file_path

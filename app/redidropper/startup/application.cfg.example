@@ -1,0 +1,21 @@
+"""
+Goal: Override configs for developers
+"""
+
+SERVER_NAME = 'localhost:5000'
+
+DEBUG = True
+
+# Set to True in order to view every redirect
+DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+# Generate with: python import os; os.urandom(24)
+#   or python -c 'import os, binascii; x = os.urandom(24); y = binascii.hexlify(x); print y, len(y)'
+SECRET_KEY = '41a6622cd15b11035aa24461e5edd9ec0748740fd0cbd617'
+
+DB_USER = 'redidropper'
+DB_PASS = 'insecurepassword'
+DB_HOST = 'localhost'
+DB_NAME = 'RediDropper'
+SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}' \
+            .format(DB_USER, DB_PASS, DB_HOST, DB_NAME)

@@ -1,16 +1,19 @@
-# Init the Flask Singletons 'app' and 'db'
-# used by ../run.py
-import sys
+"""
+Goal: Init the Flask Singletons 'app' and 'db'
+used by ../run.py
+
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
+"""
 
 try:
     from flask import Flask
-except ImportError, e:
-    sys.exit("Missing required package: Flask")
-
-try:
     from flask_sqlalchemy import SQLAlchemy
-except ImportError, e:
-    sys.exit("Missing required package: SQLAlchemy")
+except ImportError, error:
+    import sys
+    sys.exit("Missing required package: {}".format(error))
 
 
 # The WSGI compliant web-application object
