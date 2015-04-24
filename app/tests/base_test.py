@@ -24,7 +24,9 @@ SQLAlchemy gives you access to the following things:
 from flask_testing import TestCase
 from redidropper.main import app, db
 
+
 class BaseTestCase(TestCase):
+
     """ Base class for all tests"""
 
     def create_app(self):
@@ -32,11 +34,9 @@ class BaseTestCase(TestCase):
         app.config.from_object('config.TestConfig')
         return app
 
-
     def setUp(self):
         """ create all tables """
         db.create_all()
-
 
     def tearDown(self):
         """ remove all tables """

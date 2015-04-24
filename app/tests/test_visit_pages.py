@@ -1,22 +1,34 @@
-# Simulate browsing of the pages which do not require parameters
-#
-# Authors:
-#   Andrei Sura <sura.andrei@gmail.com>
+"""
+Goal: Simulate browsing of the pages in the url_map
+
+Authors:
+    Andrei Sura <sura.andrei@gmail.com>
+
+"""
 
 from __future__ import print_function
 
 from datetime import datetime
 from flask import url_for
-from .base_test import BaseTestCase
+from .base_test_with_data import BaseTestCaseWithData
 from redidropper.main import app
 from redidropper import utils
 from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
+protected_pages = [
+    '/admin',
+    '/technician',
+    '/researcher_one',
+    '/researcher_two',
+    '/start_upload',
+    '/download_file',
+    '/logs',
+    'static',]
 
 
-class TestVisitPages(BaseTestCase):
+class TestVisitPages(BaseTestCaseWithData):
 
     """ ha """
 
@@ -25,6 +37,11 @@ class TestVisitPages(BaseTestCase):
         print("")
 
         for rule in app.url_map.iter_rules():
+            if 'static' == rule.endpoint:
+                continue
+
+            url = url_for(rule.endpoint)
+
             # Calculate number of default-less parameters
             params = len(rule.arguments) if rule.arguments else 0
             params_with_default = len(rule.defaults) if rule.defaults else 0
@@ -32,41 +49,28 @@ class TestVisitPages(BaseTestCase):
 
             # Skip routes with default-less parameters
             if params_without_default > 0:
+                print("Skip parametrized page: {}".format(url))
                 continue
 
             # Skip routes without a GET method
             if 'GET' not in rule.methods:
+                print("Skip non-get page: {}".format(url))
                 continue
 
-            # Retrieve a browser client simulator from the Flask app
-            # client = app.test_client()
-            client = self.client
+            # Skip routes for protcted_pages
+            if url in protected_pages:
+                print("Skip special page: {}".format(url))
+                continue
 
             # Simulate visiting the page
-            url = url_for(rule.endpoint)
             print("Visiting page: {}".format(url))
-            result = client.get(url, follow_redirects=True)
+            result = self.client.get(url, follow_redirects=True)
             print(result)
-
-    def create_admin(self):
-        added_date = datetime.today()
-        access_end_date = utils.get_expiration_date(180)
-        user = UserEntity.create(email="admin@example.com",
-                                 first="",
-                                 last="",
-                                 minitial="",
-                                 added_at=added_date,
-                                 modified_at=added_date,
-                                 access_expires_at=access_end_date)
-        role_admin =  RoleEntity.create(name=ROLE_ADMIN, description='role')
-        user.roles.append(role_admin)
-
 
     def test_login(self):
         """ TODO: add user to database first """
-        self.create_admin()
         login_url = url_for('index')
         login_data = {'email': 'admin@example.com', 'password': 'password'}
         response = self.client.post(login_url, login_data)
-        print(response)
-        self.assert_redirects(response, url_for('technician'))
+        print("Try to login response: {}".format(response))
+        # self.assert_redirects(response, url_for('technician'))

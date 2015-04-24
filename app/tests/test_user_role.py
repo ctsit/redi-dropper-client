@@ -1,5 +1,5 @@
 """
-Goal: test insert/search projects
+Goal: test insert/search user, role, user role
 """
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -15,6 +15,7 @@ from datetime import datetime
 
 
 class TestUserRole(BaseTestCase):
+
     """ test basic operations for User, Role, UserRole entities """
 
     def get_role(self, role):
@@ -90,14 +91,12 @@ class TestUserRole(BaseTestCase):
 
         saved_role = RoleEntity.query.filter_by(name=ROLE_ADMIN).one()
         self.assertEqual(1, saved_role.id)
-        print saved_role
 
         # ...then use them
         user.roles.append(role_admin)
         user.roles.append(role_tech)
 
         user_roles = UserRoleEntity.query.all()
-        print user_roles
         self.assertEqual(2, len(user_roles))
 
         user_role = UserRoleEntity.get_by_id(1)
