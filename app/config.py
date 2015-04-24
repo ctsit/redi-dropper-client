@@ -13,11 +13,17 @@ import logging
 _basedir = os.path.abspath(os.path.dirname(__file__))
 LOG_LEVEL = logging.DEBUG
 
+
 class DefaultConfig(object):
+
     """ Default configuration data """
 
     # @see http://flask.pocoo.org/docs/0.10/config/
     SERVER_NAME = 'localhost:5000'
+
+    # the browser will not send a cookie with the secure flag set over an
+    # unencrypted HTTP request
+    SESSION_COOKIE_SECURE = True
 
     DEBUG = False
     TESTING = False
@@ -33,8 +39,9 @@ class DefaultConfig(object):
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
-    MAX_CONTENT_LENGTH = os.getenv('REDI_DROPPER_MAX_CONTENT_LENGTH', DEFAULT_MAX_CONTENT_LENGTH)
-
+    MAX_CONTENT_LENGTH = os.getenv(
+        'REDI_DROPPER_MAX_CONTENT_LENGTH',
+        DEFAULT_MAX_CONTENT_LENGTH)
 
     # THREADS_PER_PAGE = 8
     CSRF_ENABLED = True
@@ -42,19 +49,21 @@ class DefaultConfig(object):
 
     # http://effbot.org/librarybook/os-path.htm
     # @TODO: add code to check for valid paths
-    INCOMING_TEMP_DIR  = os.getenv('REDI_DROPPER_INCOMING_TEMP_DIR', \
-            os.path.expanduser('~/.redidropper/temp'))
+    INCOMING_TEMP_DIR = os.getenv('REDI_DROPPER_INCOMING_TEMP_DIR',
+                                  os.path.expanduser('~/.redidropper/temp'))
 
-    INCOMING_SAVED_DIR = os.getenv('REDI_DROPPER_NCOMING_SAVED_DIR',\
-            os.path.expanduser('~/.redidropper/saved'))
+    INCOMING_SAVED_DIR = os.getenv('REDI_DROPPER_NCOMING_SAVED_DIR',
+                                   os.path.expanduser('~/.redidropper/saved'))
 
- 
+
 class DebugConfig(DefaultConfig):
+
     """ Extra flag for debugging """
     DEBUG = True
 
 
 class TestConfig(DefaultConfig):
+
     """ Configuration for running tests """
     TESTING = True
     CSRF_ENABLED = False
