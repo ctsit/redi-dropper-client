@@ -1,5 +1,169 @@
-// @TODO: document
+// Goal: Implement the simple navigation between tabs
+//  
+//  Subject > Events > Files
 //
+// Components used:
+//
+//      __1 SubjectsList
+//      __2 EventsList
+//      __3 FilesUpload
+//      # EventFilesList
+//      
+//
+
+
+// ============ __1 SubjectsList
+var SubjectsList = React.createClass({
+    getInitialState: function() {
+        return {
+            list_of_subjects: [],
+            upload_status: '',
+        };
+    },
+
+    componentWillMount: function() {
+        // this.updateSubjectsList('');
+        this.updateUploadStatus();
+    },
+
+    updateUploadStatus: function() {
+        var upload_count = Utils.getQueryVar('upload_count');
+        if (upload_count) {
+            var msg = "Success! Total files uploaded: " + upload_count;
+            this.setState({
+                upload_status: msg
+            });
+        }
+    },
+
+    updateSubjectsList: function(subject_name) {
+        var _this = this;
+        var url = "/api/find_subject";
+        var request = Utils.api_post_json(url, {name: subject_name});
+
+        request.success( function(json) {
+            _this.setState({
+                list_of_subjects:json.data
+            });
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+    },
+
+  subjectChanged: function() {
+    this.updateUploadStatus();
+    var subject_name = this.refs.subject_name.getDOMNode().value.trim();
+    this.updateSubjectsList(subject_name);
+    if (subject_name.length > 2) { }
+  },
+
+  render: function() {
+    var rows = [];
+    var _this = this;
+
+    var visible_status;
+
+    if (this.state.upload_status) {
+        visible_status = <div className="alert alert-success" role="alert">
+            {this.state.upload_status}
+        </div>
+    }
+
+    {
+        this.state.list_of_subjects.map(function(record, i) {
+        var callback = _this.props.subjectSelected.bind(null, record);
+        rows.push(
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={callback}>
+                        {record}
+                        </button>
+                </td>
+              </tr>
+        );
+    })}
+
+    return (
+    <div>
+        {visible_status}
+
+    <div className="form-group">
+        <input className="form-control"
+                ref="subject_name"
+                onChange={this.subjectChanged}
+                placeholder="Please type a Subject ID"
+                type="text" />
+    </div>
+    <div className="table-responsive" >
+        <table id="subject-table" className="table table-striped table-curved">
+            <thead>
+            </thead>
+            <tbody id="subject-table-body">
+               {rows}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    );
+  }
+});
+
+// ============ __2  EventsList
+var EventsList = React.createClass({
+  getInitialState: function() {
+    return {list_of_events: []};
+  },
+  componentWillMount: function() {
+    var _this = this;
+    var url = "/api/list_events";
+    var request = Utils.api_post_json(url, {subject_id: 'a'});
+
+    request.success( function(json) {
+       _this.setState({list_of_events:json.data});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
+  render: function() {
+    var rows = [];
+    var _this = this;
+    {
+        this.state.list_of_events.map(function(record, i) {
+        var callback = _this.props.eventSelected.bind(null, record);
+        rows.push(
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={callback}>
+                        {record}
+                    </button>
+                </td>
+            </tr>
+        );
+    })}
+    return (
+    <div>
+    <div className="table-responsive">
+        <table id="event-table" className="table table-striped table-curved">
+            <thead>
+                <tr>
+                </tr>
+            </thead>
+            <tbody id="subject-table-body">
+                {rows}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    );
+  }
+});
+
+/**
+// ============ __4 EventFilesList
 var EventFilesList = React.createClass({
   getInitialState: function() {
     return {list_of_files:[]};
@@ -50,26 +214,34 @@ var EventFilesList = React.createClass({
     );
   }
 });
+*/
 
+// ============ __3 FilesUpload
 var FilesUpload = React.createClass({
   getInitialState: function() {
-    return {show_button: false}
+    return {upload_completed: false}
   },
   componentWillMount: function() {
-    var _this=this;
-    var r = Utils.get_resumable_instance();
-    r.on('complete', function() {
-       _this.setState({show_button: true});
+    var _this = this;
+    var resumable = Utils.get_resumable_instance();
+
+    resumable.on('complete', function() {
+        _this.setState({upload_completed: true});
+        // NavController.changeTab(0);
+        // window.location.replace("/start_upload?upload_count=" + resumable.files.length);
+        // getInitialState
     });
-    r.on('uploadStart', function() {
-      if (_this.state.show_button) {
-        _this.setState({show_button: false});
+
+    resumable.on('uploadStart', function() {
+      if (_this.state.upload_completed) {
+        _this.setState({upload_completed: false});
       }
     });
   },
   render: function() {
+    // return (<br/>);
     var button;
-    if(this.state.show_button) {
+    if (this.state.upload_completed) {
       button = <button className="btn btn-default"
                        onClick={this.props.showFiles}>
                        Show Files
@@ -83,154 +255,29 @@ var FilesUpload = React.createClass({
   }
 });
 
-var EventsList = React.createClass({
-  getInitialState: function() {
-    return {list_of_events: []};
-  },
-  componentWillMount: function() {
-    var _this = this;
-    var url = "/api/list_events";
-    var request = Utils.api_post_json(url, {subject_id: 'a'});
 
-    request.success( function(json) {
-       _this.setState({list_of_events:json.data});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    var rows = [];
-    var _this = this;
-    {
-        this.state.list_of_events.map(function(record, i) {
-        var callback = _this.props.eventSelected.bind(null, record);
-        rows.push(
-            <tr>
-                <td>{i+1}</td>
-                <td>
-                    <button className="btn btn-info btn-lg"
-                        onClick={callback}>
-                        {record}
-                        <span className="glyphicon glyphicon-step-forward"></span>
-                    </button>
-                </td>
-            </tr>
-        );
-    })}
-    return (
-    <div>
-    <div className="table-responsive" >
-        <table id="event-table" className="table table-striped table-curved">
-            <thead>
-                <tr>
-                    <th># </th>
-                    <th>Event</th>
-                </tr>
-            </thead>
-            <tbody id="subject-table-body">
-                {rows}
-            </tbody>
-        </table>
-    </div>
-    </div>
-    );
-  }
-});
-
-var SubjectsList = React.createClass({
-  getInitialState: function() {
-    return {list_of_subjects:[]};
-  },
-  componentWillMount: function() {
-    this.updateSubjectsList('');
-  },
-  updateSubjectsList: function(subject_name) {
-    var _this=this;
-    var url= "/api/find_subject";
-    var request = Utils.api_post_json(url,{name:subject_name});
-
-    request.success( function(json) {
-       _this.setState({list_of_subjects:json.data});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  subjectChanged: function() {
-    var subject_name = this.refs.subject_name.getDOMNode().value.trim();
-    this.updateSubjectsList(subject_name);
-    if (subject_name.length > 2) { }
-  },
-  render: function() {
-    var rows = [];
-    var _this = this;
-    {
-        this.state.list_of_subjects.map(function(record, i) {
-        var callback=_this.props.subjectSelected.bind(null, record);
-        rows.push(
-            <tr>
-                <td>{i+1}</td>
-                <td> yes </td>
-                <td>
-                    <button className="btn btn-info btn-lg"
-                        onClick={callback}>
-                        {record}
-                        <span className="glyphicon glyphicon-step-forward"></span>
-                        </button>
-                </td>
-              </tr>
-        );
-    })}
-
-    return (
-    <div>
-    <div className="form-group">
-        <input className="form-control"
-                ref="subject_name"
-                onChange={this.subjectChanged}
-                placeholder="Please Enter a Subject ID to search"
-                type="text" />
-    </div>
-    <div className="table-responsive" >
-        <table id="subject-table" className="table table-striped table-curved">
-            <thead>
-                <tr>
-                    <th> # </th>
-                    <th> Active </th>
-                    <th> REDCap Subject ID</th>
-                </tr>
-            </thead>
-            <tbody id="subject-table-body">
-               {rows}
-            </tbody>
-        </table>
-    </div>
-    </div>
-    );
-  }
-});
-
-var Display = React.createClass({
+// ============ __0 Display
+var NavController = React.createClass({
     getInitialState: function() {
         var tabs = [
             "Subjects",
             "Events",
             "Files",
-                "Event Folder"
+            // "Event Folder"
         ];
         return {
             current_tab: 0,
             tabs: tabs,
             subject_id: "",
-            event_id: ""
+            event_id: "",
+            upload_status: ""
         };
     },
     changeTab: function(i) {
-        this.setState({current_tab:i})
+        this.setState({current_tab: i})
     },
     subjectSelected: function(subject_id) {
-        this.setState({current_tab: 1, subject_id: subject_id})
+        this.setState({current_tab: 1, subject_id: subject_id, upload_status: ""})
     },
     eventSelected: function(event_id) {
         this.setState({current_tab: 2, event_id: event_id})
@@ -239,26 +286,26 @@ var Display = React.createClass({
         this.setState({current_tab: 3})
     },
     render: function() {
-        var display ;
-        var subject_id;
-        var event_id
-            var breadcrumbs = [];
+        var visible_tab;
+        var selected_subject_id;
+        var selected_event_id
+        var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
         if(this.state.subject_id != "") {
-            subject_id = <h3>Subject Id : {this.state.subject_id}</h3>;
+            selected_subject_id = <h3>Selected subject ID: {this.state.subject_id}</h3>;
         }
         if(this.state.event_id != "") {
-            event_id = <h3>Event Id : {this.state.event_id}</h3>;
+            selected_event_id = <h3>Selected event ID: {this.state.event_id}</h3>;
         }
 
-        for(var i = 0 ;i < tabs.length; i++) {
+        for(var i = 0; i < tabs.length; i++) {
             var tab_class;
             if(current_tab == i) {
                 breadcrumbs.push(<li><a>{tabs[i]}</a></li>);
             }
-            else if(current_tab>i) {
+            else if(current_tab > i) {
                 breadcrumbs.push(
                         <li className="prev-page" onClick={this.changeTab.bind(null, i)}>
                         <a>{tabs[i]}</a>
@@ -271,35 +318,38 @@ var Display = React.createClass({
 
         $("#upload-files").hide();
         if(current_tab == 0) {
-            display = <SubjectsList subjectSelected = {this.subjectSelected}/>;
+            visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
         else if(current_tab == 1) {
-            display = <EventsList eventSelected = {this.eventSelected}/>;
+            visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
         else if(current_tab == 2) {
             $("#upload-files").show();
-            display = <FilesUpload showFiles = {this.showFiles}/>;
+            visible_tab = <FilesUpload showFiles = {this.showFiles}/>;
         }
+        /*
         else if(current_tab == 3) {
-            display = <EventFilesList />;
+            visible_tab = <EventFilesList />;
         }
+        */
 
         return (
             <div>
-                <div id="crumbs">
-                    <ul>
-                        {breadcrumbs}
-                    </ul>
+                <div className="panel-heading">
+                    <div id="crumbs">
+                        <ul>
+                            {breadcrumbs}
+                        </ul>
+                    </div>
+                    {selected_subject_id}
+                    {selected_event_id}
                 </div>
-
-                <br/>
-                <br/>
-                {subject_id}
-                {event_id}
-                {display}
+                <div className="panel-body">
+                    {visible_tab}
+                </div>
             </div>
         );
     }
 });
 
-React.render(<Display/>, document.getElementById("start-upload"));
+React.render(<NavController/>, document.getElementById("start-upload"));
