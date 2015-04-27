@@ -11,7 +11,9 @@ ROLE_TECHNICIAN = 'technician'
 ROLE_RESEARCHER_ONE = 'researcher_one'
 ROLE_RESEARCHER_TWO = 'researcher_two'
 
+
 class RoleEntity(db.Model, CRUDMixin):  # RoleMixin
+
     """ Stores possible user roles """
     __tablename__ = 'Role'
 
