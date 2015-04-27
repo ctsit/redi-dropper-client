@@ -35,12 +35,10 @@ var SubjectsList = React.createClass({
             });
         }
     },
-
     updateSubjectsList: function(subject_name) {
         var _this = this;
         var url = "/api/find_subject";
         var request = Utils.api_post_json(url, {name: subject_name});
-
         request.success( function(json) {
             _this.setState({
                 list_of_subjects:json.data
@@ -54,8 +52,9 @@ var SubjectsList = React.createClass({
   subjectChanged: function() {
     this.updateUploadStatus();
     var subject_name = this.refs.subject_name.getDOMNode().value.trim();
-    this.updateSubjectsList(subject_name);
-    if (subject_name.length > 2) { }
+    if (subject_name.length > 0) {
+        this.updateSubjectsList(subject_name);
+    }
   },
 
   render: function() {
@@ -219,37 +218,22 @@ var EventFilesList = React.createClass({
 // ============ __3 FilesUpload
 var FilesUpload = React.createClass({
   getInitialState: function() {
-    return {upload_completed: false}
+    return {};
   },
   componentWillMount: function() {
-    var _this = this;
     var resumable = Utils.get_resumable_instance();
 
     resumable.on('complete', function() {
-        _this.setState({upload_completed: true});
-        // NavController.changeTab(0);
-        // window.location.replace("/start_upload?upload_count=" + resumable.files.length);
-        // getInitialState
+        $("#upload-complete-button").show();
     });
 
     resumable.on('uploadStart', function() {
-      if (_this.state.upload_completed) {
-        _this.setState({upload_completed: false});
-      }
+      $("#upload-complete-button").hide();
     });
   },
   render: function() {
-    // return (<br/>);
-    var button;
-    if (this.state.upload_completed) {
-      button = <button className="btn btn-default"
-                       onClick={this.props.showFiles}>
-                       Show Files
-                </button>;
-    }
     return (
     <div className="table-responsive" >
-      {button}
     </div>
     );
   }
@@ -259,6 +243,9 @@ var FilesUpload = React.createClass({
 // ============ __0 Display
 var NavController = React.createClass({
     getInitialState: function() {
+        //Add Listner for the url change
+        window.onhashchange = this.urlChanged;
+
         var tabs = [
             "Subjects",
             "Events",
@@ -269,21 +256,38 @@ var NavController = React.createClass({
             current_tab: 0,
             tabs: tabs,
             subject_id: "",
-            event_id: "",
-            upload_status: ""
+            event_id: ""
         };
     },
     changeTab: function(i) {
-        this.setState({current_tab: i})
+        this.setState({current_tab: i});
     },
     subjectSelected: function(subject_id) {
-        this.setState({current_tab: 1, subject_id: subject_id, upload_status: ""})
+        this.setState({current_tab: 1, subject_id: subject_id});
     },
     eventSelected: function(event_id) {
-        this.setState({current_tab: 2, event_id: event_id})
+        this.setState({current_tab: 2, event_id: event_id});
     },
     showFiles: function() {
-        this.setState({current_tab: 3})
+        this.setState({current_tab: 3});
+    },
+    urlChanged:function (){
+      var hash_value=location.hash;
+      var current_tab = this.state.current_tab;
+
+      //check whether the current state is not equal to hash value
+      if("#"+this.state.tabs[current_tab]!=hash_value){
+        //State has to be changed
+        if(hash_value=="#Subjects"){
+          
+          this.setState({current_tab: 0});
+        }else if(hash_value=="#Events"&&this.state.current_tab==2){
+          //The condition 'this.state.current_tab==2' is to avoid
+          //state changes for forward button click from subjects tab
+          
+          this.setState({current_tab: 1});
+        }
+      }
     },
     render: function() {
         var visible_tab;
@@ -317,13 +321,19 @@ var NavController = React.createClass({
         }
 
         $("#upload-files").hide();
+        $("#upload-complete-button").hide();
+        
         if(current_tab == 0) {
+            window.location.hash = 'Subjects';
             visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
         else if(current_tab == 1) {
+
+            window.location.hash = 'Events';
             visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
         else if(current_tab == 2) {
+            window.location.hash = 'Files';
             $("#upload-files").show();
             visible_tab = <FilesUpload showFiles = {this.showFiles}/>;
         }
