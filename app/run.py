@@ -25,6 +25,8 @@ def get_ssl_context(app):
     import os.path
     import ssl
 
+    ssl_context = None
+
     if app.debug:
         if os.path.isfile(ssl_public_key_file) and \
                 os.path.isfile(ssl_private_key_file):
