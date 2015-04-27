@@ -12,6 +12,7 @@ from redidropper import utils
 from redidropper.main import app, db
 from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN, \
     ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
+from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 from redidropper.models.subject_entity import SubjectEntity
@@ -52,18 +53,27 @@ class BaseTestCaseWithData(BaseTestCase):
             last_checked_at=added_date,
             was_deleted=0)
 
+        # == Create events
+        evt = EventEntity.create(redcap_arm='Arm 1', redcap_event='Event 1',
+                          added_at=added_date)
+        evt2 = EventEntity.create(redcap_arm='Arm 1', redcap_event='Event 2',
+                           added_at=added_date)
+
+        assert evt.id is not None
+
         files = [
-            {'name': 'a.png', 'size': '1MB', },
-            {'name': 'b.png', 'size': '2MB', },
-            {'name': 'c.png', 'size': '3MB', },
-            {'name': 'd.png', 'size': '100MB', },
+            {'name': 'a.png', 'size': '1MB', 'event': evt.id},
+            {'name': 'b.png', 'size': '2MB', 'event': evt.id},
+            {'name': 'c.png', 'size': '3MB', 'event': evt2.id},
+            {'name': 'd.png', 'size': '4MB', 'event': evt2.id},
+            {'name': 'e.png', 'size': '5MB', 'event': evt2.id},
         ]
 
         # Create subject files
         for fdata in files:
             subject_file = SubjectFileEntity.create(
                 subject_id=subject.id,
-                event_number=1,
+                event_id=fdata['event'],
                 file_name=fdata['name'],
                 file_check_sum=utils.compute_text_md5(fdata['name']),
                 uploaded_at=added_date,

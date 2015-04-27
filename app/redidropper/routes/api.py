@@ -154,7 +154,7 @@ def api_save_user():
     return make_response(pack_success_result(user.serialize()))
 
 
-@app.route('/api/list_users', methods=['POST'])
+@app.route('/api/list_users', methods=['POST', 'GET'])
 @login_required
 def api_list_users():
     """
