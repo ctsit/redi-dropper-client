@@ -44,8 +44,33 @@ VALUES
 ;
 
 
+-- REDCap event
+INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
+        SELECT 'Arm 1', '01', NOW()
+UNION   SELECT 'Arm 1', '02', NOW()
+UNION   SELECT 'Arm 1', '03', NOW()
+UNION   SELECT 'Arm 1', '04', NOW()
+UNION   SELECT 'Arm 1', '05', NOW()
+UNION   SELECT 'Arm 1', '06', NOW()
+UNION   SELECT 'Arm 1', '07', NOW()
+UNION   SELECT 'Arm 1', '08', NOW()
+UNION   SELECT 'Arm 1', '09', NOW()
+UNION   SELECT 'Arm 1', '10', NOW()
+UNION   SELECT 'Arm 1', '11', NOW()
+UNION   SELECT 'Arm 1', '12', NOW()
+UNION   SELECT 'Arm 1', '13', NOW()
+UNION   SELECT 'Arm 1', '14', NOW()
+UNION   SELECT 'Arm 1', '15', NOW()
+UNION   SELECT 'Arm 1', '16', NOW()
+UNION   SELECT 'Arm 1', '17', NOW()
+UNION   SELECT 'Arm 1', '18', NOW()
+UNION   SELECT 'Arm 1', '19', NOW()
+UNION   SELECT 'Arm 1', '20', NOW()
+;
+
+
 -- Subject Files
-INSERT INTO SubjectFile (sbjID, sfEventNumber, sfFileName, sfFileCheckSum, sfUploadDate, usrID)
+INSERT INTO SubjectFile (sbjID, evtID, sfFileName, sfFileCheckSum, sfUploadDate, usrID)
         SELECT 1, 1, 'file.png',  md5('a'), NOW(), 1
 UNION   SELECT 1, 1, 'file2.png', md5('b'), NOW(), 1
 UNION   SELECT 1, 1, 'file3.png', md5('c'), NOW(), 1
@@ -123,8 +148,8 @@ UNION   SELECT 4,13, 'fileH.png', md5('q'), NOW(), 2
 -- Logging
 
 -- add event types
-INSERT INTO EventType
-    (evttType, evttDescription)
+INSERT INTO LogType
+    (logtType, logtDescription)
 VALUES
     ('account_created', ''),
     ('login', ''),
@@ -145,11 +170,11 @@ VALUES
 ;
 
 
-INSERT INTO Event (evttID, evtIP, webID, evtDateTime)
-      SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'account_created'
-UNION SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'login'
-UNION SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'logout'
-UNION SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'login_error'
-UNION SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'file_uploaded'
-UNION SELECT evttID, '1.2.3.4', 1, NOW() FROM EventType WHERE evttType = 'file_downloaded'
+INSERT INTO Log (logtID, logIP, webID, logDateTime)
+      SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'account_created'
+UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'login'
+UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'logout'
+UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'login_error'
+UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'file_uploaded'
+UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'file_downloaded'
 ;

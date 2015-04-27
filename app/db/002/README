@@ -1,23 +1,6 @@
 This schema change adds tables for user management.
 
 show tables from RediDropper;
-+-----------------------+
-| Tables_in_redidropper |
-+-----------------------+
-| Event                 |
-| EventType             |
-| Role                  |
-| Subject               |
-| SubjectFile           |
-| User                  |
-| UserAgent             |
-| UserRole              |
-| Version               |
-| WebSession            |
-| subject_file_view     |
-| user_role_view        |
-+-----------------------+
-12 rows in set (0.00 sec)
 
 -- View available roles
 SELECT * FROM Role;
@@ -135,22 +118,10 @@ select * from WebSession;
 2 rows in set (0.00 sec)
 
 
--- what events to log
-desc EventType;
-+-----------------+------------------+------+-----+---------+----------------+
-| Field           | Type             | Null | Key | Default | Extra          |
-+-----------------+------------------+------+-----+---------+----------------+
-| evttID          | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
-| evttType        | varchar(255)     | NO   | UNI | NULL    |                |
-| evttDescription | text             | NO   |     | NULL    |                |
-+-----------------+------------------+------+-----+---------+----------------+
-3 rows in set (0.01 sec)
-
-
--- examples of events
-select * from EventType;
+-- examples of log events
+select * from LogType;
 +--------+-----------------+-----------------+
-| evttID | evttType        | evttDescription |
+| logtID | logtType        | logtDescription |
 +--------+-----------------+-----------------+
 |      1 | account_created |                 |
 |      2 | login           |                 |
@@ -162,31 +133,15 @@ select * from EventType;
 6 rows in set (0.00 sec)
 
 
--- Store important events
-desc Event;
-+-------------+------------------+------+-----+---------------------+----------------+
-| Field       | Type             | Null | Key | Default             | Extra          |
-+-------------+------------------+------+-----+---------------------+----------------+
-| evtID       | int(10) unsigned | NO   | PRI | NULL                | auto_increment |
-| evttID      | int(10) unsigned | NO   | MUL | NULL                |                |
-| evtIP       | varchar(15)      | NO   | MUL |                     |                |
-| webID       | int(10) unsigned | NO   | MUL | NULL                |                |
-| evtDateTime | datetime         | NO   | MUL | 0000-00-00 00:00:00 |                |
-| evtDetails  | text             | NO   |     | NULL                |                |
-+-------------+------------------+------+-----+---------------------+----------------+
-6 rows in set (0.00 sec)
-
-
-select * from Event;
+select * from Log;
 +-------+--------+---------+-------+---------------------+------------+
-| evtID | evttID | evtIP   | webID | evtDateTime         | evtDetails |
+| logID | logtID | logIP   | webID | logDateTime         | logDetails |
 +-------+--------+---------+-------+---------------------+------------+
-|     1 |      1 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     2 |      2 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     3 |      3 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     4 |      4 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     5 |      5 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     6 |      6 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
+|     1 |      1 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     2 |      2 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     3 |      3 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     4 |      4 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     5 |      5 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     6 |      6 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
 +-------+--------+---------+-------+---------------------+------------+
 6 rows in set (0.00 sec)
-
