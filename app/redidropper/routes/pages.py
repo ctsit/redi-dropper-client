@@ -132,7 +132,7 @@ def get_role_landing_page():
     if ROLE_ADMIN in roles:
         role_landing_page = url_for('admin')
     elif ROLE_TECHNICIAN in roles:
-        role_landing_page = url_for('dashboard')
+        role_landing_page = url_for('start_upload')
     elif ROLE_RESEARCHER_ONE in roles:
         role_landing_page = url_for('researcher_one')
     elif ROLE_RESEARCHER_TWO in roles:

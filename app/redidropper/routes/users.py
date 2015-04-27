@@ -99,8 +99,7 @@ def get_user_links():
 @perm_admin_or_technician.require()
 def dashboard():
     """ Render the technician's home page """
-    # return render_template('users/technician.html', current_user=current_user,
-    return render_template('users/technician.html', user_links=get_user_links())
+    return render_template('dashboard.html', user_links=get_user_links())
 
 
 @app.route('/start_upload')
@@ -108,7 +107,7 @@ def dashboard():
 def start_upload():
     """ Render the Start Upload page """
     # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
-    return render_template('users/start_upload.html',
+    return render_template('start_upload.html',
                            user_links=get_user_links())
 
 
@@ -125,7 +124,7 @@ def start_upload():
 @perm_researcher_one.require()
 def researcher_one():
     """ Render the researcher's home page """
-    return render_template('users/researcher_one.html',
+    return render_template('researcher_one.html',
                            user_links=get_user_links())
 
 
@@ -133,7 +132,7 @@ def researcher_one():
 @perm_researcher_two.require()
 def researcher_two():
     """ Render the researcher's home page """
-    return render_template('users/researcher_two.html',
+    return render_template('researcher_two.html',
                            user_links=get_user_links())
 
 
