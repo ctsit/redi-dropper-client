@@ -2,15 +2,19 @@
 
 {% block content %}
 
-    <h1>Subjects Dashboard</h1>
+    <div class="container">
+        <h1>Subjects Dashboard</h1>
 
-    <div id="event-alert" class="alert alert-danger" role="alert" hidden>
-        Unable to complete the operation.
-        Please add files to the previous events.
+        <!--
+        <div id="event-alert" class="alert alert-danger" role="alert" hidden>
+            Unable to complete the operation.
+            Please add files to the previous events.
+        </div>
+        -->
+
+        <!-- used by react -->
+        <div id="dashboard"> </div>
     </div>
-
-	<div id="dashboard">
-	</div>
 
     <script type="text/jsx" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 

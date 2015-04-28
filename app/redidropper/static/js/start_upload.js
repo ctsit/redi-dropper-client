@@ -47,12 +47,12 @@ var SubjectsList = React.createClass({
     var _this = this;
 
     this.state.list_of_subjects.map(function(record, i) {
-        var callback = _this.props.subjectSelected.bind(null, record);
+        var selectSubject = _this.props.subjectSelected.bind(null, record);
         rows.push(
             <tr>
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
-                        onClick={callback}>
+                        onClick={selectSubject}>
                         {record}
                         </button>
                 </td>

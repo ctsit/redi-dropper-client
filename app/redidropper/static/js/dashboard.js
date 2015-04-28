@@ -37,19 +37,25 @@ var SubjectsRow = React.createClass({
                 table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
             }
         }
-        var new_event = "/users/manage_event/new";
+        var new_event = "/start_upload/" + row_data.id;
         table_columns.push(<td><a href={new_event}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
 
         for (i = events_count + 2; i <= column_count; i++) {
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
+
+        var selectSubject = null;
         return (
-                <tr>
-                <td>{row_data.subject_id}</td>
-                <td>{row_data.subject_name}</td>
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={selectSubject}>
+                        Select subject {row_data.id}
+                    </button>
+                </td>
                 {table_columns}
-                </tr>
-               );
+            </tr>
+       );
     }
 });
 
@@ -67,7 +73,7 @@ var SubjectsTable = React.createClass({
     },
     changeData: function(page_num, max_events) {
         // if needed we will allow the user to select how many rows to display per page
-        var per_page = 10;
+        var per_page = 4;
         var data = {'per_page': per_page, 'page_num': page_num};
 
         var _this = this;
@@ -101,13 +107,10 @@ var SubjectsTable = React.createClass({
         }
 
         var table_columns = [];
+        // table_columns.push(<th>Subject ID</th>);
 
-        if (row_count !== 0) {
-            table_columns.push(<th>Subject ID</th>);
-            table_columns.push(<th>Name</th>);
-            for (i = 1; i <= column_count; i++) {
-                table_columns.push(<th> Event {i}</th>);
-            }
+        for (i = 1; i <= column_count; i++) {
+            table_columns.push(<th> Event {i}</th>);
         }
         var pagination;
         var no_of_pages = this.state.no_of_pages;
@@ -119,7 +122,7 @@ var SubjectsTable = React.createClass({
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
-        <table id="technician-table" className="table table-striped table-curved">
+        <table id="technician-table" className="table table-curved">
             <thead>
                 <tr>
                     {table_columns}
@@ -254,16 +257,6 @@ var Technician = React.createClass({
         */
     return (
     <div>
-    <div className="row">
-        <div className="col-sm-4">
-            <h3> Project: ADRC </h3>
-        </div>
-        <div className="col-sm-4">
-        </div>
-    </div>
-        <br/>
-        <h3>List of Subjects </h3>
-        <br/>
         <SubjectsTable max_events={this.state.max_events}/>
     </div>
     );
