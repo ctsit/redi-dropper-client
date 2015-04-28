@@ -22,6 +22,8 @@ from redidropper.routes.managers import file_manager, subject_manager, \
 from redidropper.utils import get_safe_int, pack_error, pack_success_result, \
     get_expiration_date
 
+from redidropper.models.subject_entity import SubjectEntity
+from redidropper.models.subject_file_entity import SubjectFileEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
@@ -69,7 +71,7 @@ def search_events(redcap_subject_id):
     return data[redcap_subject_id]
 
 
-@app.route('/api/list_events', methods=['POST'])
+@app.route('/api/list_events', methods=['POST', 'GET'])
 def list_events():
     """
     :rtype: Response
@@ -78,18 +80,6 @@ def list_events():
     redcap_subject_id = request.form['subject_id']
     data = search_events(redcap_subject_id)
     return jsonify(data=data)
-
-
-@app.route('/api/list_redcap_subjects', methods=['POST'])
-@login_required
-def api_list_redcap_subjects():
-    """
-    :rtype: Response
-    :return the list of subjects in json format
-    """
-    subjects = subject_manager.get_stale_list_of_subjects()
-    subjects_list = [x.to_visible() for x in subjects]
-    return jsonify(data=subjects_list)
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -212,21 +202,43 @@ def api_list_event_files(event_id=1):
     return jsonify(list_of_files=data, event_created_date="20th Jan")
 
 
-@app.route('/api/list_of_subjects', methods=['GET', 'POST'])
+@app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
 @login_required
-def api_list_subjects():
+def api_list_redcap_subjects():
+    """
+    :rtype: Response
+    :return the list of subjects in json format
+    """
+    subjects = subject_manager.get_stale_list_of_subjects()
+    subjects_list = [x.to_visible() for x in subjects]
+    return jsonify(data=subjects_list)
+
+
+@app.route('/api/list_local_subjects', methods=['GET', 'POST'])
+@login_required
+def api_list_local_subjects():
     """
     Render the table of subjects and their file counts
+
+    @see http://pythonhosted.org/Flask-SQLAlchemy/api.html
+        #flask.ext.sqlalchemy.BaseQuery.paginate
+    paginate(page, per_page=20, error_out=True)
 
     :rtype: Response
     :return json
     """
-    per_page = get_safe_int(request.form.get('per_page'))
-    page_num = get_safe_int(request.form.get('page_num'))
+    if 'POST' == request.method:
+        per_page = get_safe_int(request.form.get('per_page'))
+        page_num = get_safe_int(request.form.get('page_num'))
+    else:
+        per_page = get_safe_int(request.args.get('per_page'))
+        page_num = get_safe_int(request.args.get('page_num'))
 
-    total_pages, list_of_subjects = \
-        subject_manager.get_subjects_on_page(per_page, page_num)
-    return jsonify(total_pages=total_pages, list_of_subjects=list_of_subjects)
+    pagination = SubjectEntity.query.paginate(page_num, per_page, False)
+    items = [i.serialize() for i in pagination.items]
+    app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
+    return jsonify(total_pages=pagination.pages,
+                   list_of_subjects=items)
 
 
 @app.route('/api')
