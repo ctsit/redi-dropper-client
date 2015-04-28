@@ -70,7 +70,7 @@ var EventsTable = React.createClass({
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={callback}>
-                        {record}
+                        {record.unique_event_name}
                     </button>
                 </td>
             </tr>
@@ -366,10 +366,10 @@ var Dashboard = React.createClass({
         var tabs = this.state.tabs;
 
         if(this.state.subject_id !== "") {
-            selected_subject_id = " Subject ID :"+this.state.subject_id;
+            selected_subject_id = "Subject ID: " + this.state.subject_id;
         }
         if(this.state.event_id !== "") {
-            selected_event_id = "Event ID :"+this.state.event_id;
+            selected_event_id = "Event ID: " + this.state.event_id.unique_event_name;
         }
 
         for(var i = 0; i < tabs.length; i++) {

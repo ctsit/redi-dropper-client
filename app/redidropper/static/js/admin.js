@@ -7,29 +7,57 @@ var AdminUsersTable = React.createClass({
     getInitialState: function() {
         return {list_of_users: this.props.list_of_users};
     },
+    componentDidMount: function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function(nextProps) {
         this.setState({list_of_users: nextProps.list_of_users});
     },
     render: function() {
         var rows = [];
         this.state.list_of_users.map(function(record, i) {
-            var emailButton, active, roles;
+            var emailButton, expireButton, deactivateButton, roles, expirationDate;
+            expirationDate = record.access_expires_at[0];
 
             if (record.roles) {
                 roles = record.roles.join(", ");
             }
-            if (!!record.email_confirmed_at) {
+            if (record.email_confirmed_at) {
                 emailButton = <div> {record.email_confirmed_at} </div>;
             }
             else {
-                emailButton = <button className="btn btn-primary btn">Send Verification Email</button>;
+                emailButton = <button
+                    className="btn btn-primary glyphicon glyphicon-envelope"
+                    data-toggle="tooltip" data-placement="top" title="Send Verification Email">
+                    </button>;
             }
 
-            if (record.is_active) {
-                active = <button className="btn btn-primary btn">Activate</button>;
+            if (record.is_expired) {
+                var title = "Expired on " + expirationDate + ". Extend access by 180 days.";
+                expireButton = <div>
+                    <button
+                        className="btn btn-primary glyphicon glyphicon-hourglass"
+                        data-toggle="tooltip"
+                        title={title}></button>
+                    </div>
             }
             else {
-                active = <button className="btn btn-primary btn">Deactivate</button>;
+                expireButton = <button
+                    className="btn btn-primary glyphicon glyphicon-ban-circle"
+                    data-toggle="tooltip"
+                    title="Expire Now"></button>
+            }
+            if (record.is_active) {
+                deactivateButton = <button
+                    className="btn btn-primary glyphicon glyphicon-remove-sign"
+                    data-toggle="tooltip"
+                    title="Deactivate Now"></button>
+            }
+            else {
+                deactivateButton = <button
+                    className="btn btn-primary glyphicon glyphicon-ok-sign"
+                    data-toggle="tooltip"
+                    title="Activate Now"></button>
             }
 
             rows.push(
@@ -41,10 +69,9 @@ var AdminUsersTable = React.createClass({
                     <td>{record.last}</td>
                     <td>{roles}</td>
                     <td>{record.added_at}</td>
-                    <td>{record.email_confirmed_at}</td>
-                    <td>{record.access_expires_at}</td>
                     <td>{emailButton}</td>
-                    <td>{active}</td>
+                    <td>{expireButton}</td>
+                    <td>{deactivateButton}</td>
                 </tr>
             );
         });
@@ -61,10 +88,9 @@ var AdminUsersTable = React.createClass({
                     <th className="text-center">Last name</th>
                     <th className="text-center">Role</th>
                     <th className="text-center">Date Added</th>
-                    <th className="text-center">Email Verified</th>
-                    <th className="text-center">Access Expires</th>
-                    <th className="text-center"></th>
-                    <th className="text-center"></th>
+                    <th className="text-center">Email Veridied on</th>
+                    <th className="text-center">Account Expiration</th>
+                    <th className="text-center">Account Status</th>
                 </tr>
             </thead>
             <tbody>

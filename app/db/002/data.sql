@@ -2,13 +2,16 @@
 USE RediDropper;
 
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
+SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
-INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt)
+INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
-    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end),
-    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end),
-    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end),
-    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end)
+    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW()),
+    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0, NULL),
+    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1, NULL),
+    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1, NULL),
+    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1, NULL),
+    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1, NULL)
 ;
 
 
@@ -25,6 +28,8 @@ VALUES
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
       SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_blocked@example.com' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_expired@example.com' AND rolName = 'admin'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_one'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_two'
@@ -46,26 +51,26 @@ VALUES
 
 -- REDCap event
 INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
-        SELECT 'Arm 1', '01', NOW()
-UNION   SELECT 'Arm 1', '02', NOW()
-UNION   SELECT 'Arm 1', '03', NOW()
-UNION   SELECT 'Arm 1', '04', NOW()
-UNION   SELECT 'Arm 1', '05', NOW()
-UNION   SELECT 'Arm 1', '06', NOW()
-UNION   SELECT 'Arm 1', '07', NOW()
-UNION   SELECT 'Arm 1', '08', NOW()
-UNION   SELECT 'Arm 1', '09', NOW()
-UNION   SELECT 'Arm 1', '10', NOW()
-UNION   SELECT 'Arm 1', '11', NOW()
-UNION   SELECT 'Arm 1', '12', NOW()
-UNION   SELECT 'Arm 1', '13', NOW()
-UNION   SELECT 'Arm 1', '14', NOW()
-UNION   SELECT 'Arm 1', '15', NOW()
-UNION   SELECT 'Arm 1', '16', NOW()
-UNION   SELECT 'Arm 1', '17', NOW()
-UNION   SELECT 'Arm 1', '18', NOW()
-UNION   SELECT 'Arm 1', '19', NOW()
-UNION   SELECT 'Arm 1', '20', NOW()
+        SELECT 'Arm 1', 'Event 01', NOW()
+UNION   SELECT 'Arm 1', 'Event 02', NOW()
+UNION   SELECT 'Arm 1', 'Event 03', NOW()
+UNION   SELECT 'Arm 1', 'Event 04', NOW()
+UNION   SELECT 'Arm 1', 'Event 05', NOW()
+UNION   SELECT 'Arm 1', 'Event 06', NOW()
+UNION   SELECT 'Arm 1', 'Event 07', NOW()
+UNION   SELECT 'Arm 1', 'Event 08', NOW()
+UNION   SELECT 'Arm 1', 'Event 09', NOW()
+UNION   SELECT 'Arm 1', 'Event 10', NOW()
+UNION   SELECT 'Arm 1', 'Event 11', NOW()
+UNION   SELECT 'Arm 1', 'Event 12', NOW()
+UNION   SELECT 'Arm 1', 'Event 13', NOW()
+UNION   SELECT 'Arm 1', 'Event 14', NOW()
+UNION   SELECT 'Arm 1', 'Event 15', NOW()
+UNION   SELECT 'Arm 1', 'Event 16', NOW()
+UNION   SELECT 'Arm 1', 'Event 17', NOW()
+UNION   SELECT 'Arm 1', 'Event 18', NOW()
+UNION   SELECT 'Arm 1', 'Event 19', NOW()
+UNION   SELECT 'Arm 1', 'Event 20', NOW()
 ;
 
 

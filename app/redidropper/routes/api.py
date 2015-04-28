@@ -23,7 +23,8 @@ from redidropper.utils import get_safe_int, pack_error, pack_success_result, \
     get_expiration_date
 
 from redidropper.models.subject_entity import SubjectEntity
-from redidropper.models.subject_file_entity import SubjectFileEntity
+# from redidropper.models.subject_file_entity import SubjectFileEntity
+from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
@@ -41,34 +42,28 @@ def api_list_subject_files(subject_id=None):
     return jsonify(data)
 
 
-def search_subject(redcap_subject_id):
-    """ TODO: execute a query here """
-    subject_list = ['a', 'dgc', 'bcd', 'ab', 'abc', 'bac', 'cad']
-    matching = [s for s in subject_list if redcap_subject_id in s]
-    return matching
-
-
 @app.route('/api/find_subject', methods=['POST'])
 def find_subject():
     """
     :rtype: Response
     :return the list of subjects in json format
     """
-    redcap_subject_id = request.form['name']
-    data = search_subject(redcap_subject_id)
-    return jsonify(data=data)
+    search_id = request.form['name']
+    matching = []
 
+    if search_id is not None:
+        # @TODO: optimize to return one column by default
+        # http://stackoverflow.com/questions/7533146/how-do-i-select-additional-manual-values-along-with-an-sqlalchemy-query
+        subject_list = SubjectEntity.query.filter(
+            SubjectEntity.redcap_id.like("%{}%".format(search_id))
+        ).all()
+        matching = [subject.redcap_id for subject in subject_list]
+        # matching = [found for found in matching if search_id in found]
+    else:
+        app.logger.debug("Invalid API call: "
+                         "no value provided for redcap_subject_id.")
 
-def search_events(redcap_subject_id):
-    """ @TODO: implement """
-    data = {
-        "a": [1, 2, 3],
-        "ab": [1, 2, 3, 4],
-        "abc": [1, 2, 3, 4],
-        "bac": [1, 2],
-        "bcd": [1, 2, 3, 4, 5],
-    }
-    return data[redcap_subject_id]
+    return jsonify(data=matching)
 
 
 @app.route('/api/list_events', methods=['POST', 'GET'])
@@ -77,9 +72,11 @@ def list_events():
     :rtype: Response
     :return the list of subjects in json format
     """
-    redcap_subject_id = request.form['subject_id']
-    data = search_events(redcap_subject_id)
-    return jsonify(data=data)
+    # redcap_subject_id = request.form['subject_id']
+    # if redcap_subject_id is not None:
+    events = EventEntity.query.all()
+    items = [i.serialize() for i in events]
+    return jsonify(data=items)
 
 
 @app.route('/api/upload', methods=['POST'])

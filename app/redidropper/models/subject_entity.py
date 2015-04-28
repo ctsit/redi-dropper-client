@@ -32,12 +32,16 @@ class SubjectEntity(db.Model, CRUDMixin):
         sbjRedcapID: {0.redcap_id}, sbjAddedAt: {0.added_at})>""".format(self)
 
     def serialize(self):
-        """Return object data for jsonification"""
+        """Return object data for jsonification
+
+        Note: There is some `residual jsx code` that expects the
+            `events` array to be sent
+        """
 
         return {
             'id': self.id,
             'events': [],
-            'events_dummy': [{'event_id': '1', 'event_files': '1'}],
+            # 'events': [{'event_id': '1', 'event_files': '1'}],
             # 'files': [f.name for f in self.files],
             'added_at': dump_datetime(self.added_at),
             'last_checked_at': dump_datetime(self.last_checked_at),
