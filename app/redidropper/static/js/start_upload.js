@@ -13,25 +13,14 @@
 var SubjectsList = React.createClass({
     getInitialState: function() {
         return {
-            list_of_subjects: [],
-            upload_status: ''
+            list_of_subjects: []
         };
     },
 
     componentWillMount: function() {
         // this.updateSubjectsList('');
-        this.updateUploadStatus();
     },
 
-    updateUploadStatus: function() {
-        var upload_count = Utils.getQueryVar('upload_count');
-        if (upload_count) {
-            var msg = "Success! Total files uploaded: " + upload_count;
-            this.setState({
-                upload_status: msg
-            });
-        }
-    },
     updateSubjectsList: function(subject_name) {
         var _this = this;
         var url = "/api/find_subject";
@@ -47,7 +36,6 @@ var SubjectsList = React.createClass({
     },
 
   subjectChanged: function() {
-    this.updateUploadStatus();
     var subject_name = this.refs.subject_name.getDOMNode().value.trim();
     if (subject_name.length > 0) {
         this.updateSubjectsList(subject_name);
@@ -57,14 +45,6 @@ var SubjectsList = React.createClass({
   render: function() {
     var rows = [];
     var _this = this;
-
-    var visible_status;
-
-    if (this.state.upload_status) {
-        visible_status = <div className="alert alert-success" role="alert">
-            {this.state.upload_status}
-        </div>
-    }
 
     this.state.list_of_subjects.map(function(record, i) {
         var callback = _this.props.subjectSelected.bind(null, record);
@@ -82,7 +62,6 @@ var SubjectsList = React.createClass({
 
     return (
     <div>
-        {visible_status}
 
     <div className="form-group">
         <input className="form-control"
