@@ -1,4 +1,99 @@
 // @TODO: add description
+var FilesList = React.createClass({
+  getInitialState: function() {
+    return {list_of_files:[]};
+  },
+  componentWillMount:function(){
+    var _this=this;
+    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
+    request.success( function(json) {
+       _this.setState({list_of_files:json.list_of_files});
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
+  render: function() {
+    return (    
+    <div className="table-responsive" >
+        <table id="technician-table" className="table table-striped">
+            <thead>
+                <tr>
+                    <th className="text-center">ID</th>
+                    <th className="text-center">Name</th>
+                    <th className="text-center">No. of Files</th>
+                    <th className="text-center"></th>
+                </tr>
+            </thead>
+            <tbody id="technician-table-body">
+                {this.state.list_of_files.map(function(record,i) {
+                    var add_url="/download_file/"+record.id;
+                    return <tr>
+                                <td>{record.file_id}</td>
+                                <td>{record.file_name}</td>
+                                <td>{record.file_size}</td>
+                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
+                            </tr>           
+                })}
+            </tbody>
+        </table>
+    </div>
+    );
+  }
+});
+
+var EventsTable = React.createClass({
+  getInitialState: function() {
+    return {list_of_events: []};
+  },
+  componentWillMount: function() {
+    var _this = this;
+    var url = "/api/list_events";
+    var request = Utils.api_post_json(url, {subject_id: 'a'});
+
+    request.success( function(json) {
+       _this.setState({
+           list_of_events: json.data
+       });
+    });
+    request.fail(function (jqXHR, textStatus, error) {
+        console.log('Failed: ' + textStatus + error);
+    });
+  },
+  render: function() {
+    var rows = [];
+    var _this = this;
+    this.state.list_of_events.map(function(record, i) {
+        var callback = _this.props.eventSelected.bind(null, record);
+        rows.push(
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={callback}>
+                        {record}
+                    </button>
+                </td>
+            </tr>
+        );
+    });
+
+    return (
+    <div>
+        <div className="table-responsive">
+            <table id="event-table" className="table table-striped table-curved">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody id="subject-table-body">
+                    {rows}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    );
+  }
+});
 
 var SubjectsRow = React.createClass({
     getInitialState: function() {
@@ -44,7 +139,7 @@ var SubjectsRow = React.createClass({
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
 
-        var selectSubject = null;
+        var selectSubject = this.props.subjectSelected.bind(null, row_data.id);
         return (
             <tr>
                 <td>
@@ -103,7 +198,7 @@ var SubjectsTable = React.createClass({
 
         var i;
         for(i = 0; i < row_count; i++) {
-            table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
+            table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count} subjectSelected = {this.props.subjectSelected}/>);
         }
 
         var table_columns = [];
@@ -216,51 +311,127 @@ var SubjectsPagination = React.createClass({
 });
 
 
-var Technician = React.createClass({
-    getInitialState: function() {
-        // return {projects:[],selected_project:undefined,max_events:0};
-        return {max_events: 0};
-    },
-    componentWillMount: function() {
-        /*
-        var _this = this;
-        var request = Utils.api_request("/api/list_of_projects", "GET",{}, "json", true);
-        request.success( function(json) {
-            _this.setState({
-                max_events: json.max_events
-            });
-        });
-        request.fail(function (jqXHR, textStatus, error) {
-            console.log('Failed: ' + textStatus + error);
-        });
-        */
-    },
-    selectChanged: function() {
-        /*
-        console.log("select changed "+this.refs.project_select.getDOMNode().value);
-        var new_selected_value = this.refs.project_select.getDOMNode().value;
-        this.setState({ects,selected_project:new_selected_value});
-        */
-    },
-    changePage: function() {
+var Dashboard = React.createClass({
+        getInitialState: function() {
+        //Add Listner for the url change
+        window.onhashchange = this.urlChanged;
 
+        var tabs = [
+            "Subjects",
+            "Events",
+            "Files"
+        ];
+        return {
+            current_tab: 0,
+            tabs: tabs,
+            subject_id: "",
+            event_id: ""
+        };
+    },
+    changeTab: function(i) {
+        this.setState({current_tab: i});
+    },
+    subjectSelected: function(subject_id) {
+        this.setState({current_tab: 1, subject_id: subject_id});
+    },
+    eventSelected: function(event_id) {
+        this.setState({current_tab: 2, event_id: event_id});
+    },
+    showFiles: function() {
+        this.setState({current_tab: 3});
+    },
+    urlChanged:function (){
+      var hash_value=location.hash;
+      var current_tab = this.state.current_tab;
+
+      //check whether the current state is not equal to hash value
+      if("#"+this.state.tabs[current_tab] !== hash_value) {
+        //State has to be changed
+        if(hash_value === "#Subjects") {
+          this.setState({current_tab: 0,event_id:""});
+        }
+        else if (hash_value === "#Events" && this.state.current_tab === 2) {
+          // The condition 'this.state.current_tab==2' is to avoid
+          // state changes for forward button click from subjects tab
+          this.setState({current_tab: 1});
+        }
+      }
     },
     render: function() {
-        /*
-        <div className="col-sm-4">
-            <select onChange={this.selectChanged}  className="form-control" ref="project_select">
-                {this.state.projects.map(function(record,i) {
-                        return <option value={record.project_name}>{record.project_name}</option>
-                })};
-            </select>
-        </div>
-        */
-    return (
-    <div>
-        <SubjectsTable max_events={this.state.max_events}/>
-    </div>
-    );
-  }
+        var visible_tab;
+        var selected_subject_id;
+        var selected_event_id;
+        var breadcrumbs = [];
+        var current_tab = this.state.current_tab;
+        var tabs = this.state.tabs;
+
+        if(this.state.subject_id !== "") {
+            selected_subject_id = " Subject ID :"+this.state.subject_id;
+        }
+        if(this.state.event_id !== "") {
+            selected_event_id = "Event ID :"+this.state.event_id;
+        }
+
+        for(var i = 0; i < tabs.length; i++) {
+            var tab_class;
+            if(current_tab === i) {
+                breadcrumbs.push(<li><a>{tabs[i]}</a></li>);
+            }
+            else if(current_tab > i) {
+                breadcrumbs.push(
+                        <li className="prev-page" onClick={this.changeTab.bind(null, i)}>
+                        <a>{tabs[i]}</a>
+                        </li>);
+            }
+            else if(current_tab < i) {
+                breadcrumbs.push(<li className="next-page"><a>{tabs[i]}</a></li>);
+            }
+        }
+
+        $("#upload-files").hide();
+        $("#upload-complete-button").hide();
+
+        if(current_tab === 0) {
+            window.location.hash = 'Subjects';
+            visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected}/>;
+        }
+        else if(current_tab === 1) {
+
+            window.location.hash = 'Events';
+            visible_tab = <EventsTable subject_id = {this.state.subject_id} eventSelected = {this.eventSelected}/>;
+        }
+        else if(current_tab === 2) {
+            window.location.hash = 'Files';
+            visible_tab = <FilesList subject_id = {this.state.subject_id} event_id = {this.state.event_id}/>;
+        }
+
+        return (
+            <div>
+                <div className="panel-heading">
+                    <div id="crumbs">
+                        <ul>
+                            {breadcrumbs}
+                        </ul>
+                    </div>
+                </div>
+                <div className="row">
+                <div className="col-md-offset-4 col-md-4 col-xs-12">
+                <table id="technician-table" className="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{selected_subject_id}</th>
+                        <th>{selected_event_id}</th>
+                     </tr>
+                </thead>
+                </table>
+                </div>
+                </div>
+                <div className="panel-body">
+                    {visible_tab}
+                </div>
+            </div>
+        );
+    }
 });
 
-React.render(<Technician/>, document.getElementById("dashboard"));
+React.render(<Dashboard/>, document.getElementById("dashboard"));

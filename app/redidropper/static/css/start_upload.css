@@ -47,7 +47,7 @@ th {
     display: block;
     float: left;
     height: 41px;
-    background: #3498db;
+    background: #2C3E50;
     text-align: center;
     padding: 8px 20px 0 40px;
     position: relative;
@@ -61,7 +61,7 @@ th {
     content: "";
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-left: 20px solid #3498db;
+    border-left: 20px solid #2C3E50;
     position: absolute; right: -20px; top: 0;
     z-index: 1;
 }
