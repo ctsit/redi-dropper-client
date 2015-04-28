@@ -117,39 +117,3 @@ def delete_subjects(subjects):
     for subj in subjects:
         print("Delete {}".format(subj))
     return 0
-
-
-def get_subjects_on_page(per_page=10, page_num=1):
-    """
-    @TODO: implement
-    """
-    total_pages = 3
-
-    if 1 == int(page_num):
-        list_of_subjects = [
-                {
-                'subject_id': '1', 'subject_name': 'Subject 1',
-                    'events':[{'event_id': '1', 'event_files': '10'}]
-                },
-                {
-                'subject_id': '2', 'subject_name': 'Subject 2',
-                    'events':[{'event_id': '2', 'event_files': '20'}]
-                }
-            ]
-    else:
-        list_of_subjects = [
-                {
-                'subject_id': '1', 'subject_name': 'Subject 1',
-                    'events':[{'event_id': '1', 'event_files': '10'}]
-                },
-                {
-                'subject_id': '2', 'subject_name': 'Subject 2',
-                    'events':[{'event_id': '2', 'event_files': '20'}]
-                },
-                       {
-                'subject_id': '3', 'subject_name': 'Subject 3',
-                    'events':[{'event_id': '3', 'event_files': '30'}]
-                }
-            ]
-
-    return (total_pages, list_of_subjects)

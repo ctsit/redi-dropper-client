@@ -2,13 +2,16 @@
 USE RediDropper;
 
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
+SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
-INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt)
+INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
-    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end),
-    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end),
-    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end),
-    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end)
+    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW()),
+    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0, NULL),
+    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1, NULL),
+    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1, NULL),
+    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1, NULL),
+    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1, NULL)
 ;
 
 

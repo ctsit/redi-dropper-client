@@ -59,7 +59,8 @@ class DefaultConfig(object):
 class DebugConfig(DefaultConfig):
 
     """ Extra flag for debugging """
-    DEBUG = True
+    DEBUG_TB_ENABLED = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class TestConfig(DefaultConfig):
