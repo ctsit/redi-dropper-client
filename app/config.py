@@ -27,6 +27,7 @@ class DefaultConfig(object):
 
     DEBUG = False
     TESTING = False
+    DEBUG_TB_ENABLED = False
 
     # Set to True in order to view every redirect in the debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False

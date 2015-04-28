@@ -108,12 +108,14 @@ var EventsList = React.createClass({
     var _this = this;
     this.state.list_of_events.map(function(record, i) {
         var callback = _this.props.eventSelected.bind(null, record);
+        var event_name = record.unique_event_name;
+
         rows.push(
             <tr>
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={callback}>
-                        {record}
+                        {event_name}
                     </button>
                 </td>
             </tr>
@@ -277,7 +279,7 @@ var NavController = React.createClass({
             selected_subject_id = <h3>Selected subject ID: {this.state.subject_id}</h3>;
         }
         if(this.state.event_id !== "") {
-            selected_event_id = <h3>Selected event ID: {this.state.event_id}</h3>;
+            selected_event_id = <h3>Selected event: {this.state.event_id.unique_event_name}</h3>;
         }
 
         for(var i = 0; i < tabs.length; i++) {
