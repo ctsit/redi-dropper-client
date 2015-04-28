@@ -29,10 +29,14 @@ class TestSubjectFile(BaseTestCase):
             redcap_id="001",
             added_at=added_date,
             last_checked_at=added_date,
-            was_deleted=0)
+            was_deleted=False)
 
         self.assertEquals(1, subject.id)
         self.assertEquals("001", subject.redcap_id)
+        self.assertIsNotNone(subject.added_at)
+        self.assertIsNotNone(subject.last_checked_at)
+        self.assertFalse(subject.was_deleted)
+        self.assertEqual(subject.added_at, subject.last_checked_at)
 
         subjects = SubjectEntity.query.all()
         self.assertEquals(1, len(subjects))

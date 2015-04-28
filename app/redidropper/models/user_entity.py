@@ -100,7 +100,7 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     """
 
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """Return object data for jsonification"""
 
         return {
             'id': self.id,
