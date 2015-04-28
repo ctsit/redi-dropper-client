@@ -28,6 +28,8 @@ VALUES
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
       SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_blocked@example.com' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_expired@example.com' AND rolName = 'admin'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_one'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_two'
