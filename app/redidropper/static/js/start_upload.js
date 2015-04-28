@@ -255,8 +255,7 @@ var NavController = React.createClass({
       if("#"+this.state.tabs[current_tab] !== hash_value) {
         //State has to be changed
         if(hash_value === "#Subjects") {
-          
-          this.setState({current_tab: 0});
+          this.setState({current_tab: 0,event_id:""});
         }
         else if (hash_value === "#Events" && this.state.current_tab === 2) {
           // The condition 'this.state.current_tab==2' is to avoid
@@ -274,10 +273,10 @@ var NavController = React.createClass({
         var tabs = this.state.tabs;
 
         if(this.state.subject_id !== "") {
-            selected_subject_id = <h3>Selected subject ID: {this.state.subject_id}</h3>;
+            selected_subject_id = " Subject ID :"+this.state.subject_id;
         }
         if(this.state.event_id !== "") {
-            selected_event_id = <h3>Selected event ID: {this.state.event_id}</h3>;
+            selected_event_id = "Event ID :"+this.state.event_id;
         }
 
         for(var i = 0; i < tabs.length; i++) {
@@ -304,7 +303,6 @@ var NavController = React.createClass({
             visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
         else if(current_tab === 1) {
-
             window.location.hash = 'Events';
             visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
@@ -327,8 +325,18 @@ var NavController = React.createClass({
                             {breadcrumbs}
                         </ul>
                     </div>
-                    {selected_subject_id}
-                    {selected_event_id}
+                </div>
+                <div className="row">
+                <div className="col-md-offset-4 col-md-4 col-xs-12">
+                <table id="technician-table" className="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{selected_subject_id}</th>
+                        <th>{selected_event_id}</th>
+                     </tr>
+                </thead>
+                </table>
+                </div>
                 </div>
                 <div className="panel-body">
                     {visible_tab}
