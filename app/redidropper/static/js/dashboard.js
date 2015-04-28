@@ -3,7 +3,7 @@
 var SubjectsRow = React.createClass({
     getInitialState: function() {
         return {
-            row_data: this.props.row_data, 
+            row_data: this.props.row_data,
             max_events: this.props.max_events
         };
     },
@@ -18,27 +18,29 @@ var SubjectsRow = React.createClass({
         $("#event-alert").show();
         setTimeout(function () {
             $("#event-alert").hide();
-        }, 1500)
+        }, 1500);
     },
     render: function() {
         var column_count = this.state.max_events;
         var table_columns = [];
         var row_data = this.state.row_data;
-        var events_count=row_data.events.length;
+        var events_count = row_data.events.length;
 
-        for(var i = 0; i < events_count; i++) {
+        var i;
+
+        for(i = 0; i < events_count; i++) {
             var view_files_url = "/users/manage_event/"+row_data.events[i].event_id;
-            if (row_data.events[i].event_files != 0) {
+            if (row_data.events[i].event_files !== 0) {
                 table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
             }
             else {
                 table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
             }
         }
-        var view_files_url="/users/manage_event/new";
-        table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+        var new_event = "/users/manage_event/new";
+        table_columns.push(<td><a href={new_event}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
 
-        for (var i = events_count + 2; i <= column_count; i++) {
+        for (i = events_count + 2; i <= column_count; i++) {
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
         return (
@@ -57,19 +59,19 @@ var SubjectsTable = React.createClass({
         return {
             subjects: [],
             max_events: this.props.max_events,
-            no_of_pages:0
+            no_of_pages: 0
         };
     },
     changePage: function(i) {
-        this.changeData(i, this.state.max_events)
+        this.changeData(i, this.state.max_events);
     },
     changeData: function(page_num, max_events) {
         // if needed we will allow the user to select how many rows to display per page
-        var per_page = 10
-        var data = {'per_page': per_page, 'page_num': page_num}
+        var per_page = 10;
+        var data = {'per_page': per_page, 'page_num': page_num};
 
         var _this = this;
-        var request = Utils.api_post_json("/api/list_of_subjects", data);
+        var request = Utils.api_post_json("/api/list_local_subjects", data);
         request.success( function(json) {
             _this.setState({
                 subjects: json.list_of_subjects,
@@ -87,29 +89,30 @@ var SubjectsTable = React.createClass({
     componentWillReceiveProps: function(nextProps) {
         this.changeData(1, nextProps.max_events);
     },
-    render: function() { 
+    render: function() {
         var table_rows = [];
         var subjects_data = this.state.subjects;
         var row_count = subjects_data.length;
         var column_count = this.state.max_events;
 
-        for(var i = 0; i < row_count; i++) {
+        var i;
+        for(i = 0; i < row_count; i++) {
             table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count}/>);
         }
 
         var table_columns = [];
 
-        if (row_count != 0) {
+        if (row_count !== 0) {
             table_columns.push(<th>Subject ID</th>);
             table_columns.push(<th>Name</th>);
-            for (var i = 1; i <= column_count; i++) {
+            for (i = 1; i <= column_count; i++) {
                 table_columns.push(<th> Event {i}</th>);
             }
         }
-        var pagination ;
+        var pagination;
         var no_of_pages = this.state.no_of_pages;
 
-        if (no_of_pages !=1 || no_of_pages != 0) {
+        if (no_of_pages !== 1 || no_of_pages !== 0) {
             pagination = <SubjectsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
         }
 
@@ -134,44 +137,59 @@ var SubjectsTable = React.createClass({
 
 var SubjectsPagination = React.createClass({
   getInitialState: function() {
-    return {no_of_pages:this.props.no_of_pages,current_page:1};
+    return {
+        no_of_pages: this.props.no_of_pages,
+        current_page: 1
+    };
   },
   componentWillReceiveProps: function(nextProps) {
-    this.setState({no_of_pages:nextProps.no_of_pages,current_page:this.state.current_page});
+    this.setState({
+        no_of_pages: nextProps.no_of_pages,
+        current_page: this.state.current_page
+    });
   },
   activateOnClick: function(i) {
-    this.setState({no_of_pages:this.state.no_of_pages,current_page:i});
+    this.setState({
+        no_of_pages: this.state.no_of_pages,
+        current_page: i
+    });
     this.props.changePage(i);
   },
   nextPage: function() {
-    var current_page=this.state.current_page;
-    if(current_page==this.state.no_of_pages) {
+    var current_page = this.state.current_page;
+    if (current_page === this.state.no_of_pages) {
         return;
     }
     else {
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page+1});
-        this.props.changePage(current_page+1);
+        this.setState({
+            no_of_pages: this.state.no_of_pages,
+            current_page: current_page+1
+        });
+        this.props.changePage(current_page + 1);
     }
   },
   prevPage: function() {
     var current_page = this.state.current_page;
-    if(current_page == 1) {
+    if (current_page === 1) {
         return;
     }
     else {
-        this.setState({no_of_pages:this.state.no_of_pages,current_page:current_page-1});
+        this.setState({
+            no_of_pages: this.state.no_of_pages,
+            current_page: current_page - 1
+        });
         this.props.changePage(current_page-1);
     }
   },
   render: function() {
     var pages = [];
-  
+
     for(var i = 1; i <= this.state.no_of_pages; i++) {
-        if(i == this.state.current_page) {
+        if(i === this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
         }
         else {
-            pages.push(<li><a onClick={this.activateOnClick.bind(null,i)}>{i}</a></li>);
+            pages.push(<li><a onClick={this.activateOnClick.bind(null, i)}>{i}</a></li>);
         }
     }
     return (
@@ -189,7 +207,7 @@ var SubjectsPagination = React.createClass({
           </a>
         </li>
       </ul>
-    </nav>  
+    </nav>
     );
   }
 });
@@ -252,4 +270,4 @@ var Technician = React.createClass({
   }
 });
 
-React.render(<Technician/>, document.getElementById("technician"));
+React.render(<Technician/>, document.getElementById("dashboard"));

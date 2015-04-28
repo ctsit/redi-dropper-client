@@ -1,5 +1,5 @@
 // Goal: Implement the simple navigation between tabs
-//  
+//
 //  Subject > Events > Files
 //
 // Components used:
@@ -8,16 +8,13 @@
 //      __2 EventsList
 //      __3 FilesUpload
 //      # EventFilesList
-//      
-//
-
 
 // ============ __1 SubjectsList
 var SubjectsList = React.createClass({
     getInitialState: function() {
         return {
             list_of_subjects: [],
-            upload_status: '',
+            upload_status: ''
         };
     },
 
@@ -41,7 +38,7 @@ var SubjectsList = React.createClass({
         var request = Utils.api_post_json(url, {name: subject_name});
         request.success( function(json) {
             _this.setState({
-                list_of_subjects:json.data
+                list_of_subjects: json.data
             });
         });
         request.fail(function (jqXHR, textStatus, error) {
@@ -69,8 +66,7 @@ var SubjectsList = React.createClass({
         </div>
     }
 
-    {
-        this.state.list_of_subjects.map(function(record, i) {
+    this.state.list_of_subjects.map(function(record, i) {
         var callback = _this.props.subjectSelected.bind(null, record);
         rows.push(
             <tr>
@@ -82,7 +78,7 @@ var SubjectsList = React.createClass({
                 </td>
               </tr>
         );
-    })}
+    });
 
     return (
     <div>
@@ -120,7 +116,9 @@ var EventsList = React.createClass({
     var request = Utils.api_post_json(url, {subject_id: 'a'});
 
     request.success( function(json) {
-       _this.setState({list_of_events:json.data});
+       _this.setState({
+           list_of_events: json.data
+       });
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
@@ -129,8 +127,7 @@ var EventsList = React.createClass({
   render: function() {
     var rows = [];
     var _this = this;
-    {
-        this.state.list_of_events.map(function(record, i) {
+    this.state.list_of_events.map(function(record, i) {
         var callback = _this.props.eventSelected.bind(null, record);
         rows.push(
             <tr>
@@ -142,7 +139,8 @@ var EventsList = React.createClass({
                 </td>
             </tr>
         );
-    })}
+    });
+
     return (
     <div>
     <div className="table-responsive">
@@ -249,8 +247,7 @@ var NavController = React.createClass({
         var tabs = [
             "Subjects",
             "Events",
-            "Files",
-            // "Event Folder"
+            "Files"
         ];
         return {
             current_tab: 0,
@@ -276,15 +273,15 @@ var NavController = React.createClass({
       var current_tab = this.state.current_tab;
 
       //check whether the current state is not equal to hash value
-      if("#"+this.state.tabs[current_tab]!=hash_value){
+      if("#"+this.state.tabs[current_tab] !== hash_value) {
         //State has to be changed
-        if(hash_value=="#Subjects"){
+        if(hash_value === "#Subjects") {
           
           this.setState({current_tab: 0});
-        }else if(hash_value=="#Events"&&this.state.current_tab==2){
-          //The condition 'this.state.current_tab==2' is to avoid
-          //state changes for forward button click from subjects tab
-          
+        }
+        else if (hash_value === "#Events" && this.state.current_tab === 2) {
+          // The condition 'this.state.current_tab==2' is to avoid
+          // state changes for forward button click from subjects tab
           this.setState({current_tab: 1});
         }
       }
@@ -292,21 +289,21 @@ var NavController = React.createClass({
     render: function() {
         var visible_tab;
         var selected_subject_id;
-        var selected_event_id
+        var selected_event_id;
         var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subject_id != "") {
+        if(this.state.subject_id !== "") {
             selected_subject_id = <h3>Selected subject ID: {this.state.subject_id}</h3>;
         }
-        if(this.state.event_id != "") {
+        if(this.state.event_id !== "") {
             selected_event_id = <h3>Selected event ID: {this.state.event_id}</h3>;
         }
 
         for(var i = 0; i < tabs.length; i++) {
             var tab_class;
-            if(current_tab == i) {
+            if(current_tab === i) {
                 breadcrumbs.push(<li><a>{tabs[i]}</a></li>);
             }
             else if(current_tab > i) {
@@ -322,17 +319,17 @@ var NavController = React.createClass({
 
         $("#upload-files").hide();
         $("#upload-complete-button").hide();
-        
-        if(current_tab == 0) {
+
+        if(current_tab === 0) {
             window.location.hash = 'Subjects';
             visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
-        else if(current_tab == 1) {
+        else if(current_tab === 1) {
 
             window.location.hash = 'Events';
             visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
-        else if(current_tab == 2) {
+        else if(current_tab === 2) {
             window.location.hash = 'Files';
             $("#upload-files").show();
             visible_tab = <FilesUpload showFiles = {this.showFiles}/>;
