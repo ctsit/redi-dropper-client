@@ -223,7 +223,7 @@ var FilesUpload = React.createClass({
 });
 
 
-// ============ __0 Display
+// ============ __0 NavController
 var NavController = React.createClass({
     getInitialState: function() {
         //Add Listner for the url change
@@ -280,8 +280,8 @@ var NavController = React.createClass({
     },
     render: function() {
         var visible_tab;
-        var selected_subject_id="";
-        var selected_event_id="";
+        var selected_subject_id;
+        var selected_event_id;
         var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
@@ -326,13 +326,9 @@ var NavController = React.createClass({
         else if(current_tab === 2) {
             window.location.hash = 'Files';
             $("#upload-files").show();
+            $("#files-list").empty();
             visible_tab = <FilesUpload showFiles = {this.showFiles}/>;
         }
-        /*
-        else if(current_tab == 3) {
-            visible_tab = <EventFilesList />;
-        }
-        */
 
         return (
             <div>
