@@ -1,11 +1,9 @@
 $(document).ready(function() {
     // Max chunk size is set to 10MB
-var r = Utils.get_resumable_instance();
+    var r = Utils.get_resumable_instance();
+    var file_select = document.getElementById("file-select");
+    var file_drop = document.getElementById('file-drop');
 
-var file_select = document.getElementById("file-select");
-var file_drop = document.getElementById('file-drop');
-
-console.log("File Select "+file_select);
 
 if(! (file_select && file_drop)) {
    return;
@@ -114,54 +112,3 @@ else {
     });
 }
 });
-
-/*
-var EventFilesList = React.createClass({
-  getInitialState: function() {
-    return {list_of_files:[]};
-  },
-  componentWillMount:function(){
-    var _this = this;
-    var request_data = { 'subject_id': '1', 'event_id': '2'};
-    var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
-
-    request.success( function(json) {
-        _this.setState({
-            list_of_files: json.data.subject_event_files
-        });
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    return (    
-    <div className="table-responsive" >
-        <table id="technician-table" className="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>No. of Files</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="technician-table-body">
-                {this.state.list_of_files.map(function(record,i) {
-                    var add_url="/download_file/"+record.id;
-                    return <tr>
-                                <td>{record.file_id}</td>
-                                <td>{record.file_name}</td>
-                                <td>{record.file_size}</td>
-                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
-                            </tr>           
-                })}
-            </tbody>
-        </table>
-    </div>
-    );
-  }
-});
-
-React.render(<EventFilesList/>, document.getElementById("event-files-list"));
-*/
