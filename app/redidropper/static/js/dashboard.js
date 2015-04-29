@@ -34,12 +34,15 @@ var SubjectsRow = React.createClass({
         var column_count = this.state.max_events;
         var table_columns = [];
         var row_data = this.state.row_data;
+        var events_count = 0;
+
+        /*
         var events_count = row_data.events.length;
 
         var i;
 
         for(i = 0; i < events_count; i++) {
-            var view_files_url = "/users/manage_event/"+row_data.events[i].event_id;
+            var view_files_url = "/" + row_data.events[i].event_id;
             if (row_data.events[i].event_files !== 0) {
                 table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
             }
@@ -49,12 +52,13 @@ var SubjectsRow = React.createClass({
         }
         var new_event = "/start_upload/" + row_data.id;
         table_columns.push(<td><a href={new_event}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
+        */
 
         for (i = events_count + 2; i <= column_count; i++) {
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
 
-        var selectSubject = this.props.subjectSelected.bind(null, row_data.id);
+        var selectSubject = this.props.subjectSelected.bind(null, row_data);
         return (
             <tr>
                 <td>
@@ -114,7 +118,10 @@ var SubjectsTable = React.createClass({
 
         var i;
         for(i = 0; i < row_count; i++) {
-            table_rows.push(<SubjectsRow row_data={subjects_data[i]} max_events={column_count} subjectSelected = {this.props.subjectSelected}/>);
+            table_rows.push(<SubjectsRow
+                    row_data = {subjects_data[i]}
+                    max_events = {column_count}
+                    subjectSelected = {this.props.subjectSelected}/>);
         }
 
         var table_columns = [];
@@ -156,59 +163,58 @@ var EventsTable = React.createClass({
             list_of_events: []
         };
     },
+
+    componentDidMount: function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    },
+
     componentWillMount: function() {
         var _this = this;
-        var url = "/api/list_events";
-        var request = Utils.api_post_json(url, {subject_id: 'a'});
+        var url = "/api/list_subject_events";
+        var request_data = {subject_id: this.props.subject_id};
+        var request = Utils.api_post_json(url, request_data);
 
         request.success( function(json) {
             _this.setState({
-                list_of_events: json.data.events
+                list_of_events: json.data.subject_events
             });
         });
         request.fail(function (jqXHR, textStatus, error) {
             console.log('Failed: ' + textStatus + error);
         });
     },
+
     render: function() {
         var rows = [];
         var _this = this;
 
-        
         this.state.list_of_events.map(function(record, i) {
             var eventSelected = _this.props.eventSelected.bind(null, record);
+            var title = "Files: " + record.file_names;
+
             rows.push(
             <tr>
+                <td> {i+1} </td>
+                <td> {record.unique_event_name} </td>
                 <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
+                    <button
+                        className="btn btn-primary btn-block"
+                        data-toggle="tooltip"
+                        title={title}
                         onClick={eventSelected}>
-                        {record.unique_event_name}
+                        {record.total_files}
                     </button>
                 </td>
             </tr>
             );
         });
 
-        /*
-        // show event names in column headings 
-        var table_columns = [];
-        var events_count = this.state.list_of_events.length;
-
-        for(i = 0; i < events_count; i++) {
-            var view_files_url = "/users/manage_event/"+row_data.events[i].event_id;
-            if (row_data.events[i].event_files !== 0) {
-                table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
-            }
-        }
-        */
-
-    return (
+        return (
         <div>
             <div className="table-responsive">
                 <table id="event-table" className="table table-striped table-curved">
                     <thead>
                         <tr>
-
                         </tr>
                     </thead>
                     <tbody id="subject-table-body">
@@ -217,7 +223,7 @@ var EventsTable = React.createClass({
                 </table>
             </div>
         </div>
-    );
+        );
     }
 });
 
@@ -230,7 +236,12 @@ var FilesList = React.createClass({
 
     componentWillMount: function() {
         var _this = this;
-        var request_data = {'subject_id': '1', 'event_id': '2'};
+        var request_data = {
+            subject_id: this.props.subject_id.id,
+            event_id: this.props.event_id.id
+        };
+        console.log(request_data);
+
         var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
 
         request.success(function(json) {
@@ -248,23 +259,29 @@ var FilesList = React.createClass({
             <table id="technician-table" className="table table-striped">
                 <thead>
                     <tr>
-                        <th className="text-center">ID</th>
-                        <th className="text-center">Name</th>
-                        <th className="text-center">File Count</th>
+                        <th className="text-center"> # </th>
+                        <th className="text-center"> File Name </th>
+                        <th className="text-center"> File Size </th>
+                        <th className="text-center"> Uploaded </th>
+                        <th className="text-center"> Uploaded By </th>
                         <th className="text-center"></th>
                     </tr>
                 </thead>
                 <tbody id="technician-table-body">
-                    {
-                        this.state.list_of_files.map(function(record, i) {
-                            var add_url = "/download_file/"+record.id;
-                            return <tr>
-                            <td>{record.file_id}</td>
-                                    <td>{record.file_name}</td>
-                                    <td>{record.file_size}</td>
-                                    <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
-                                </tr>
-                    })}
+                {
+                this.state.list_of_files.map(function(record, i) {
+                    var uploaded_at = record.uploaded_at[0] + " " + record.uploaded_at[1];
+                    var download_url = "/api/download_file?file_id=" + record.id;
+
+                    return <tr>
+                        <td> {i+1} </td>
+                        <td>{record.file_name}</td>
+                        <td>{record.file_size}</td>
+                        <td>{uploaded_at}</td>
+                        <td>{record.user_name}</td>
+                        <td><a href={download_url} className="btn btn-primary">Download File</a></td>
+                    </tr>
+                })}
                 </tbody>
             </table>
         </div>
@@ -357,8 +374,8 @@ var Dashboard = React.createClass({
 
         var tabs = [
             "Subjects",
-            "Events",
-            "Files"
+            "Subject Events",
+            "Subject Event Files"
         ];
         return {
             current_tab: 0,
@@ -370,7 +387,7 @@ var Dashboard = React.createClass({
     changeTab: function(i) {
         this.setState({
             current_tab: i
-            });
+        });
     },
     subjectSelected: function(subject_id) {
         this.setState({
@@ -412,15 +429,15 @@ var Dashboard = React.createClass({
       }
     },
     render: function() {
-        var visible_tab;
-        var selected_subject_id;
-        var selected_event_id;
+        var visible_tab,
+            selected_subject_id,
+            selected_event_id;
         var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
         if(this.state.subject_id !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subject_id;
+            selected_subject_id = "Subject ID: " + this.state.subject_id.id;
         }
         if(this.state.event_id !== "") {
             selected_event_id = "Event ID: " + this.state.event_id.unique_event_name;
@@ -447,7 +464,7 @@ var Dashboard = React.createClass({
 
         if (current_tab === 0) {
             window.location.hash = 'Subjects';
-            visible_tab = <SubjectsTable subjectSelected={this.subjectSelected} />;
+            visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected} />;
         }
         else if (current_tab === 1) {
             window.location.hash = 'Events';

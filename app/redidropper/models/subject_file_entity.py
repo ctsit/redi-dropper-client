@@ -46,6 +46,7 @@ class SubjectFileEntity(db.Model, CRUDMixin):
             'subject_id': self.subject_id,
             'event_id': self.event_id,
             'user_id': self.user_id,
+            'user_name': self.user.get_name(),
             # 'subject': self.subject.serialize(),
             # 'event': self.event.serialize(),
             # 'user': self.user.serialize(),

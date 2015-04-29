@@ -10,12 +10,13 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
 import math
 from datetime import datetime
 from flask import request
+from flask import send_file
 from flask import make_response
 from flask import render_template
 from flask_login import login_required
 
 # from sqlalchemy.orm.exc import NoResultFound
-from redidropper.main import app
+from redidropper.main import app, db
 
 from redidropper.routes.managers import file_manager, subject_manager, \
     log_manager
@@ -36,6 +37,8 @@ def api_list_subject_events():
     :rtype: Response
     :return the list of subjects in json format
     """
+    # from sqlalchemy.sql import text
+    from collections import namedtuple
 
     if 'POST' == request.method:
         subject_id = get_safe_int(request.form.get('subject_id'))
@@ -44,9 +47,31 @@ def api_list_subject_events():
     else:
         subject_id = get_safe_int(request.args.get('subject_id'))
 
-    print subject_id
-    events = []
-    events_ser = [i.serialize() for i in events]
+    query = """
+SELECT
+    evtID AS id
+    , evtRedcapArm AS redcap_arm
+    , evtRedcapEvent AS redcap_event
+    , LOWER(
+        REPLACE(
+            CONCAT(evtRedcapEvent, '_', evtRedcapArm),
+            ' ',
+            '_')
+    ) AS unique_event_name
+    , COUNT(sfID) AS total_files
+    , GROUP_CONCAT( CONCAT(sfFileName, ':', sfFileSize)) AS file_names
+FROM
+     Event
+    JOIN SubjectFile USING(evtID)
+WHERE
+    sbjID = :subject_id
+GROUP BY
+    evtID
+    """
+    result = db.session.execute(query, {'subject_id': subject_id})
+    Event = namedtuple('Event', result.keys())
+    events = [Event(*r) for r in result.fetchall()]
+    events_ser = [i._asdict() for i in events]
     return jsonify_success({'subject_events': events_ser})
 
 
@@ -60,7 +85,7 @@ def api_list_subject_event_files():
 
     if 'POST' == request.method:
         subject_id = get_safe_int(request.form.get('subject_id'))
-        event_id = get_safe_int(request.form.get(''))
+        event_id = get_safe_int(request.form.get('event_id'))
         # = get_safe_int(request.form.get(''))
         # = get_safe_int(request.args.get(''))
     else:
@@ -75,13 +100,18 @@ def api_list_subject_event_files():
     return jsonify_success({'subject_event_files': files_ser})
 
 
-@app.route('/api/find_subject', methods=['POST'])
+@app.route('/api/find_subject', methods=['POST', 'GET'])
 def find_subject():
     """
     :rtype: Response
     :return the list of subjects in json format
     """
-    search_id = request.form['name']
+
+    if 'POST' == request.method:
+        search_id = request.form['name']
+    else:
+        search_id = request.args.get('name')
+
     matching = []
 
     if search_id is not None:
@@ -112,7 +142,7 @@ def list_events():
     return jsonify_success({'events': events_ser})
 
 
-@app.route('/api/upload', methods=['POST'])
+@app.route('/api/upload', methods=['POST', 'GET'])
 @login_required
 def api_upload():
     """ Receives files on the server side
@@ -120,6 +150,22 @@ def api_upload():
     :return the status of the upload action in json format
     """
     return make_response(file_manager.save_uploaded_file(), 200)
+
+
+@app.route("/api/download_file", methods=['POST', 'GET'])
+@login_required
+def download_file():
+    """ Download a file using the database id """
+
+    if 'POST' == request.method:
+        file_id = request.form['file_id']
+    else:
+        file_id = request.args.get('file_id')
+
+    # 1 ==> example_1.tgz
+    file_path = file_manager.get_file_path_from_id(file_id)
+    print "serving file: " + file_path
+    return send_file(file_path, as_attachment=True)
 
 
 @app.route('/api/save_user', methods=['POST'])

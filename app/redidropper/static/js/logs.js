@@ -120,8 +120,8 @@ var AdminEventsList = React.createClass({
 
     request.success( function(json) {
        _this.setState({
-           list_of_events: json.list_of_events,
-           total_pages: json.total_pages
+           list_of_events: json.data.list_of_events,
+           total_pages: json.data.total_pages
        });
     });
     request.fail(function (jqXHR, textStatus, error) {
@@ -135,8 +135,8 @@ var AdminEventsList = React.createClass({
 
     request.success(function(json) {
        _this.setState({
-           list_of_events: json.list_of_events,
-           total_pages:json.total_pages
+           list_of_events: json.data.list_of_events,
+           total_pages: json.data.total_pages
        });
     });
     request.fail(function (jqXHR, textStatus, error) {

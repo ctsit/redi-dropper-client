@@ -9,7 +9,6 @@ Goal: Define the routes for the users
 
 # from flask import request
 from flask import render_template
-from flask import send_file
 
 from flask_login import login_required, current_user
 from flask_principal import Principal, Permission, RoleNeed
@@ -102,24 +101,6 @@ def dashboard():
     return render_template('dashboard.html', user_links=get_user_links())
 
 
-@app.route('/start_upload')
-@perm_admin_or_technician.require()
-def start_upload():
-    """ Render the Start Upload page """
-    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
-    return render_template('start_upload.html',
-                           user_links=get_user_links())
-
-
-# @app.route('/subject')
-# @app.route('/subject/<subject_id>')
-# @login_required
-# def list_subject_files(subject_id=None):
-#     """ Render the subject files page """
-#     return render_template('users/project_subject_files.html',
-#                            subject_id=subject_id)
-
-
 @app.route('/researcher_one')
 @perm_researcher_one.require()
 def researcher_one():
@@ -136,18 +117,10 @@ def researcher_two():
                            user_links=get_user_links())
 
 
-# @app.route('/users/manage_event')
-# @app.route('/users/manage_event/<event_id>')
-# @login_required
-# def manage_event(event_id=None):
-#     """ Render the upload screen """
-#     return render_template('users/manage_event.html', event_id=event_id)
-
-
-@app.route("/download_file")
-@app.route("/download_file/<file_id>")
-@login_required
-def download_file(file_id):
-    """ Download a file using the database id """
-    file_path = file_manager.get_file_path_from_id(file_id)
-    return send_file(file_path, as_attachment=True)
+@app.route('/start_upload')
+@perm_admin_or_technician.require()
+def start_upload():
+    """ Render the Start Upload page """
+    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
+    return render_template('start_upload.html',
+                           user_links=get_user_links())
