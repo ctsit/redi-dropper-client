@@ -102,24 +102,6 @@ def dashboard():
     return render_template('dashboard.html', user_links=get_user_links())
 
 
-@app.route('/start_upload')
-@perm_admin_or_technician.require()
-def start_upload():
-    """ Render the Start Upload page """
-    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
-    return render_template('start_upload.html',
-                           user_links=get_user_links())
-
-
-# @app.route('/subject')
-# @app.route('/subject/<subject_id>')
-# @login_required
-# def list_subject_files(subject_id=None):
-#     """ Render the subject files page """
-#     return render_template('users/project_subject_files.html',
-#                            subject_id=subject_id)
-
-
 @app.route('/researcher_one')
 @perm_researcher_one.require()
 def researcher_one():
@@ -136,12 +118,13 @@ def researcher_two():
                            user_links=get_user_links())
 
 
-# @app.route('/users/manage_event')
-# @app.route('/users/manage_event/<event_id>')
-# @login_required
-# def manage_event(event_id=None):
-#     """ Render the upload screen """
-#     return render_template('users/manage_event.html', event_id=event_id)
+@app.route('/start_upload')
+@perm_admin_or_technician.require()
+def start_upload():
+    """ Render the Start Upload page """
+    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
+    return render_template('start_upload.html',
+                           user_links=get_user_links())
 
 
 @app.route("/download_file")
