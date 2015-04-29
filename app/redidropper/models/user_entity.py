@@ -100,6 +100,9 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
                     if key in UserEntity.visible_props])
     """
 
+    def get_name(self):
+        return "{} {}".format(self.first, self.last)
+
     def serialize(self):
         """Return object data for jsonification"""
 

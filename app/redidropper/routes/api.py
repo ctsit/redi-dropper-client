@@ -15,7 +15,7 @@ from flask import render_template
 from flask_login import login_required
 
 # from sqlalchemy.orm.exc import NoResultFound
-from redidropper.main import app
+from redidropper.main import app, db
 
 from redidropper.routes.managers import file_manager, subject_manager, \
     log_manager
@@ -36,6 +36,8 @@ def api_list_subject_events():
     :rtype: Response
     :return the list of subjects in json format
     """
+    # from sqlalchemy.sql import text
+    from collections import namedtuple
 
     if 'POST' == request.method:
         subject_id = get_safe_int(request.form.get('subject_id'))
@@ -44,9 +46,31 @@ def api_list_subject_events():
     else:
         subject_id = get_safe_int(request.args.get('subject_id'))
 
-    print subject_id
-    events = []
-    events_ser = [i.serialize() for i in events]
+    query = """
+SELECT
+    evtID AS id
+    , evtRedcapArm AS redcap_arm
+    , evtRedcapEvent AS redcap_event
+    , LOWER(
+        REPLACE(
+            CONCAT(evtRedcapEvent, '_', evtRedcapArm),
+            ' ',
+            '_')
+    ) AS unique_event_name
+    , COUNT(sfID) AS total_files
+    , GROUP_CONCAT( CONCAT(sfFileName, ':', sfFileSize)) AS file_names
+FROM
+     Event
+    JOIN SubjectFile USING(evtID)
+WHERE
+    sbjID = :subject_id
+GROUP BY
+    evtID
+    """
+    result = db.session.execute(query, {'subject_id': subject_id})
+    Event = namedtuple('Event', result.keys())
+    events = [Event(*r) for r in result.fetchall()]
+    events_ser = [i._asdict() for i in events]
     return jsonify_success({'subject_events': events_ser})
 
 
@@ -60,7 +84,7 @@ def api_list_subject_event_files():
 
     if 'POST' == request.method:
         subject_id = get_safe_int(request.form.get('subject_id'))
-        event_id = get_safe_int(request.form.get(''))
+        event_id = get_safe_int(request.form.get('event_id'))
         # = get_safe_int(request.form.get(''))
         # = get_safe_int(request.args.get(''))
     else:
