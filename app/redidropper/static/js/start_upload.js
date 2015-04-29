@@ -47,6 +47,9 @@ var SubjectsList = React.createClass({
     var _this = this;
 
     this.state.list_of_subjects.map(function(record, i) {
+        // Wire the click on the button to the parent
+        // function subjectSelected() with the parameter record
+        // which allows the parent component to access record data
         var selectSubject = _this.props.subjectSelected.bind(null, record);
         rows.push(
             <tr>
@@ -239,7 +242,15 @@ var NavController = React.createClass({
         };
     },
     changeTab: function(i) {
-        this.setState({current_tab: i});
+        this.setState({
+          current_tab: i
+        }); 
+ 
+        if (0 === i) {
+          this.setState({
+            event_id: ""
+          });
+        }
     },
     subjectSelected: function(subject_id) {
         this.setState({current_tab: 1, subject_id: subject_id});
@@ -269,8 +280,8 @@ var NavController = React.createClass({
     },
     render: function() {
         var visible_tab;
-        var selected_subject_id;
-        var selected_event_id;
+        var selected_subject_id="";
+        var selected_event_id="";
         var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
@@ -303,6 +314,9 @@ var NavController = React.createClass({
 
         if(current_tab === 0) {
             window.location.hash = 'Subjects';
+            //By Passing the Subject selected function to the SubjectsList component
+            //We are allowing the SubjectsList component to execute it when 
+            // it is time to change the visible tab
             visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
         else if(current_tab === 1) {
