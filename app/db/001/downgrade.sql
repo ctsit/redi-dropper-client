@@ -1,7 +1,5 @@
 
-USE RediDropper;
-DROP TABLE Version;
-
+DROP DATABASE IF EXISTS RediDropper;
 REVOKE ALL PRIVILEGES ON RediDropper.* FROM 'redidropper'@'localhost';
 DROP USER 'redidropper'@'localhost';
-DROP DATABASE RediDropper;
+FLUSH PRIVILEGES;

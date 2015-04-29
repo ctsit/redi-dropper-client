@@ -75,7 +75,7 @@ UNION   SELECT 'Arm 1', 'Event 20', NOW()
 
 
 -- Subject Files
-INSERT INTO SubjectFile (sbjID, evtID, sfFileName, sfFileCheckSum, sfUploadDate, usrID)
+INSERT INTO SubjectFile (sbjID, evtID, sfFileName, sfFileCheckSum, sfUploadedAt, usrID)
         SELECT 1, 1, 'file.png',  md5('a'), NOW(), 1
 UNION   SELECT 1, 1, 'file2.png', md5('b'), NOW(), 1
 UNION   SELECT 1, 1, 'file3.png', md5('c'), NOW(), 1
