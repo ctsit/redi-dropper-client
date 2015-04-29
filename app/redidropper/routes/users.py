@@ -9,7 +9,6 @@ Goal: Define the routes for the users
 
 # from flask import request
 from flask import render_template
-from flask import send_file
 
 from flask_login import login_required, current_user
 from flask_principal import Principal, Permission, RoleNeed
@@ -125,12 +124,3 @@ def start_upload():
     # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
     return render_template('start_upload.html',
                            user_links=get_user_links())
-
-
-@app.route("/download_file")
-@app.route("/download_file/<file_id>")
-@login_required
-def download_file(file_id):
-    """ Download a file using the database id """
-    file_path = file_manager.get_file_path_from_id(file_id)
-    return send_file(file_path, as_attachment=True)

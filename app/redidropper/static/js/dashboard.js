@@ -271,7 +271,7 @@ var FilesList = React.createClass({
                 {
                 this.state.list_of_files.map(function(record, i) {
                     var uploaded_at = record.uploaded_at[0] + " " + record.uploaded_at[1];
-                    var add_url = "/download_file/" + record.id;
+                    var download_url = "/api/download_file?file_id=" + record.id;
 
                     return <tr>
                         <td> {i+1} </td>
@@ -279,7 +279,7 @@ var FilesList = React.createClass({
                         <td>{record.file_size}</td>
                         <td>{uploaded_at}</td>
                         <td>{record.user_name}</td>
-                        <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
+                        <td><a href={download_url} className="btn btn-primary">Download File</a></td>
                     </tr>
                 })}
                 </tbody>

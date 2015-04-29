@@ -7,7 +7,7 @@
 //      __1 SubjectsList
 //      __2 EventsList
 //      __3 FilesUpload
-//      # EventFilesList
+//      __4 NavController
 
 // ============ __1 SubjectsList
 var SubjectsList = React.createClass({
@@ -143,61 +143,6 @@ var EventsList = React.createClass({
   }
 });
 
-/**
-// ============ __4 EventFilesList
-var EventFilesList = React.createClass({
-  getInitialState: function() {
-    return {list_of_files:[]};
-  },
-  componentWillMount: function() {
-    var _this = this;
-
-    // @TODO: send subject and event
-    var request_data = { 'subject_id': '1', 'event_id': '2'};
-    var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
-    request.success( function(json) {
-       _this.setState({list_of_files: json.list_of_files});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    return (
-    <div className="table-responsive" >
-        <table id="technician-table" className="table table-striped table-curved">
-            <thead>
-                <tr>
-                    <th># </th>
-                    <th>File Name</th>
-                    <th>File Size </th>
-                    <th> MD5Sum</th>
-                    <th> Date Uploaded </th>
-                    <th> Uploader </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="technician-table-body">
-                {this.state.list_of_files.map(function(record, i) {
-                    var add_url="/download_file/" + record.id;
-                    return <tr>
-                                <td>{i+1}</td>
-                                <td>{record.file_name}</td>
-                                <td>{record.file_size}</td>
-                                <td> sum </td>
-                                <td> 2015-01-01 </td>
-                                <td> Technician 1</td>
-                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
-                            </tr>
-                })}
-            </tbody>
-        </table>
-    </div>
-    );
-  }
-});
-*/
-
 // ============ __3 FilesUpload
 var FilesUpload = React.createClass({
   getInitialState: function() {
@@ -223,7 +168,7 @@ var FilesUpload = React.createClass({
 });
 
 
-// ============ __0 NavController
+// ============ __4 NavController
 var NavController = React.createClass({
     getInitialState: function() {
         //Add Listner for the url change
