@@ -52,7 +52,7 @@ var AdminEventsPagination =React.createClass({
     };
   },
   componentWillReceiveProps: function(nextProps) {
-       // this.setState({list_of_files:nextProps.list_of_files,visibility:nextProps.visibility});
+
   },
   activateOnClick: function(i) {
     this.setState({total_pages:this.state.total_pages,current_page:i});

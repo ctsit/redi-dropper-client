@@ -11,7 +11,7 @@ import math
 from datetime import datetime
 from flask import request
 from flask import make_response
-from flask import jsonify
+from flask import render_template
 from flask_login import login_required
 
 # from sqlalchemy.orm.exc import NoResultFound
@@ -19,27 +19,60 @@ from redidropper.main import app
 
 from redidropper.routes.managers import file_manager, subject_manager, \
     log_manager
-from redidropper.utils import get_safe_int, pack_error, pack_success_result, \
+from redidropper.utils import get_safe_int, pack_error, jsonify_success, \
     get_expiration_date
 
 from redidropper.models.subject_entity import SubjectEntity
-# from redidropper.models.subject_file_entity import SubjectFileEntity
+from redidropper.models.subject_file_entity import SubjectFileEntity
 from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
 
-@app.route('/api/list_subject_files', methods=['POST', 'GET'])
-@app.route('/api/list_subject_files/<int:subject_id>', methods=['POST', 'GET'])
+@app.route('/api/list_subject_events', methods=['POST', 'GET'])
 @login_required
-def api_list_subject_files(subject_id=None):
+def api_list_subject_events():
     """
     :rtype: Response
     :return the list of subjects in json format
     """
-    # return make_response(pack_error("invalid subject id"))
-    data = subject_manager.get_files(subject_id)
-    return jsonify(data)
+
+    if 'POST' == request.method:
+        subject_id = get_safe_int(request.form.get('subject_id'))
+        # = get_safe_int(request.form.get(''))
+        # = get_safe_int(request.args.get(''))
+    else:
+        subject_id = get_safe_int(request.args.get('subject_id'))
+
+    print subject_id
+    events = []
+    events_ser = [i.serialize() for i in events]
+    return jsonify_success({'subject_events': events_ser})
+
+
+@app.route('/api/list_subject_event_files', methods=['POST', 'GET'])
+@login_required
+def api_list_subject_event_files():
+    """
+    :rtype: Response
+    :return the list of subjects in json format
+    """
+
+    if 'POST' == request.method:
+        subject_id = get_safe_int(request.form.get('subject_id'))
+        event_id = get_safe_int(request.form.get(''))
+        # = get_safe_int(request.form.get(''))
+        # = get_safe_int(request.args.get(''))
+    else:
+        subject_id = get_safe_int(request.args.get('subject_id'))
+        event_id = get_safe_int(request.args.get('event_id'))
+
+    # files = SubjectFileEntity.query.filter_by(s.redcap_id=redcap_id).all()
+    files = SubjectFileEntity \
+        .query.filter_by(subject_id=subject_id,
+                         event_id=event_id).all()
+    files_ser = [i.serialize() for i in files]
+    return jsonify_success({'subject_event_files': files_ser})
 
 
 @app.route('/api/find_subject', methods=['POST'])
@@ -63,7 +96,7 @@ def find_subject():
         app.logger.debug("Invalid API call: "
                          "no value provided for redcap_subject_id.")
 
-    return jsonify(data=matching)
+    return jsonify_success({'subjects': matching})
 
 
 @app.route('/api/list_events', methods=['POST', 'GET'])
@@ -75,8 +108,8 @@ def list_events():
     # redcap_subject_id = request.form['subject_id']
     # if redcap_subject_id is not None:
     events = EventEntity.query.all()
-    items = [i.serialize() for i in events]
-    return jsonify(data=items)
+    events_ser = [i.serialize() for i in events]
+    return jsonify_success({'events': events_ser})
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -138,7 +171,7 @@ def api_save_user():
     [user.roles.append(rol) for rol in user_roles]
     user = UserEntity.save(user)
     app.logger.debug("saved user: {}".format(user))
-    return make_response(pack_success_result(user.serialize()))
+    return jsonify_success({'user': user.serialize()})
 
 
 @app.route('/api/list_users', methods=['POST', 'GET'])
@@ -161,8 +194,8 @@ def api_list_users():
 
     list_of_users = [i.serialize() for i in users]
     total_pages = math.ceil(len(list_of_users)/float(per_page))
-    data = {"total_pages": total_pages, "list_of_users": list_of_users}
-    return make_response(pack_success_result(data))
+    return jsonify_success({"total_pages": total_pages,
+                            "list_of_users": list_of_users})
 
 
 @app.route('/api/list_logs', methods=['GET', 'POST'])
@@ -179,24 +212,7 @@ def api_list_logs():
     page_num = get_safe_int(request.form.get('page_num'))
     logs, total_pages = log_manager.get_logs(per_page, page_num)
     # logs_list = [x.to_visible() for x in logs]
-    return jsonify(list_of_events=logs, total_pages=total_pages)
-
-
-@app.route('/api/list_of_files', methods=['GET', 'POST'])
-@app.route('/api/list_of_files/<event_id>', methods=['GET', 'POST'])
-@login_required
-def api_list_event_files(event_id=1):
-    """
-
-    :rtype: Response
-    :return
-    """
-
-    data = [{'file_id': '123', 'file_name': 'test1', 'file_size': '20 Mb'},
-            {'file_id': '239', 'file_name': 'test2', 'file_size': '10 Mb'},
-            {'file_id': '326', 'file_name': 'test3', 'file_size': '30 Mb'},
-            {'file_id': '123', 'file_name': 'test4', 'file_size': '100 Mb'}]
-    return jsonify(list_of_files=data, event_created_date="20th Jan")
+    return jsonify_success(dict(list_of_events=logs, total_pages=total_pages))
 
 
 @app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
@@ -206,9 +222,9 @@ def api_list_redcap_subjects():
     :rtype: Response
     :return the list of subjects in json format
     """
-    subjects = subject_manager.get_stale_list_of_subjects()
+    subjects = subject_manager.get_fresh_list_of_subjects()
     subjects_list = [x.to_visible() for x in subjects]
-    return jsonify(data=subjects_list)
+    return jsonify_success({'subjects_list': subjects_list})
 
 
 @app.route('/api/list_local_subjects', methods=['GET', 'POST'])
@@ -234,28 +250,12 @@ def api_list_local_subjects():
     pagination = SubjectEntity.query.paginate(page_num, per_page, False)
     items = [i.serialize() for i in pagination.items]
     app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
-    return jsonify(total_pages=pagination.pages,
-                   list_of_subjects=items)
+    return jsonify_success(dict(total_pages=pagination.pages,
+                                list_of_subjects=items))
 
 
 @app.route('/api')
+@app.route('/api/')
 def api():
     """ Display the list of valid paths under /api/ """
-
-    html = """
-<html>
-<h2> List of API calls </h2>
-<ol>
-
-<li> Logs: <a href="https://localhost:5000/api/list_logs?per_page=5&page_num=1">
-        /api/list_logs?per_page=5&page_num=1</a>
-
-<li> Files (for an event): <a href="https://localhost:5000/api/list_of_files/1">
-        /api/list_of_files/1</a>
-
-<li> Subjects: <a href="https://localhost:5000/api/list_of_subjects?per_page=1">
-        /api/list_of_subjects?per_page=1</a>
-</ol>
-</html>
-    """
-    return make_response(html)
+    return render_template('api.html')

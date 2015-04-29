@@ -27,7 +27,7 @@ var SubjectsList = React.createClass({
         var request = Utils.api_post_json(url, {name: subject_name});
         request.success( function(json) {
             _this.setState({
-                list_of_subjects: json.data
+                list_of_subjects: json.data.subjects
             });
         });
         request.fail(function (jqXHR, textStatus, error) {
@@ -96,7 +96,7 @@ var EventsList = React.createClass({
 
     request.success( function(json) {
        _this.setState({
-           list_of_events: json.data
+           list_of_events: json.data.events
        });
     });
     request.fail(function (jqXHR, textStatus, error) {
@@ -150,7 +150,8 @@ var EventFilesList = React.createClass({
     var _this = this;
 
     // @TODO: send subject and event
-    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
+    var request_data = { 'subject_id': '1', 'event_id': '2'};
+    var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
     request.success( function(json) {
        _this.setState({list_of_files: json.list_of_files});
     });

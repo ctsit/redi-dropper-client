@@ -1,99 +1,14 @@
-// @TODO: add description
-var FilesList = React.createClass({
-  getInitialState: function() {
-    return {list_of_files:[]};
-  },
-  componentWillMount:function(){
-    var _this=this;
-    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
-    request.success( function(json) {
-       _this.setState({list_of_files:json.list_of_files});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    return (    
-    <div className="table-responsive" >
-        <table id="technician-table" className="table table-striped">
-            <thead>
-                <tr>
-                    <th className="text-center">ID</th>
-                    <th className="text-center">Name</th>
-                    <th className="text-center">No. of Files</th>
-                    <th className="text-center"></th>
-                </tr>
-            </thead>
-            <tbody id="technician-table-body">
-                {this.state.list_of_files.map(function(record,i) {
-                    var add_url="/download_file/"+record.id;
-                    return <tr>
-                                <td>{record.file_id}</td>
-                                <td>{record.file_name}</td>
-                                <td>{record.file_size}</td>
-                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
-                            </tr>           
-                })}
-            </tbody>
-        </table>
-    </div>
-    );
-  }
-});
-
-var EventsTable = React.createClass({
-  getInitialState: function() {
-    return {list_of_events: []};
-  },
-  componentWillMount: function() {
-    var _this = this;
-    var url = "/api/list_events";
-    var request = Utils.api_post_json(url, {subject_id: 'a'});
-
-    request.success( function(json) {
-       _this.setState({
-           list_of_events: json.data
-       });
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    var rows = [];
-    var _this = this;
-    this.state.list_of_events.map(function(record, i) {
-        var callback = _this.props.eventSelected.bind(null, record);
-        rows.push(
-            <tr>
-                <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
-                        onClick={callback}>
-                        {record.unique_event_name}
-                    </button>
-                </td>
-            </tr>
-        );
-    });
-
-    return (
-    <div>
-        <div className="table-responsive">
-            <table id="event-table" className="table table-striped table-curved">
-                <thead>
-                    <tr>
-                    </tr>
-                </thead>
-                <tbody id="subject-table-body">
-                    {rows}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    );
-  }
-});
+// Implements the UI for displaying subject event files
+//
+//  Components used:
+//
+//      SubjectsRow
+//      SubjectsTable
+//      SubjectsPagination
+//
+//      EventsTable
+//      FilesList
+//      Dashboard
 
 var SubjectsRow = React.createClass({
     getInitialState: function() {
@@ -145,7 +60,7 @@ var SubjectsRow = React.createClass({
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={selectSubject}>
-                        Select subject {row_data.id}
+                        Select subject: {row_data.id}
                     </button>
                 </td>
                 {table_columns}
@@ -156,6 +71,7 @@ var SubjectsRow = React.createClass({
 
 
 var SubjectsTable = React.createClass({
+
     getInitialState: function() {
         return {
             subjects: [],
@@ -169,13 +85,13 @@ var SubjectsTable = React.createClass({
     changeData: function(page_num, max_events) {
         // if needed we will allow the user to select how many rows to display per page
         var per_page = 4;
-        var data = {'per_page': per_page, 'page_num': page_num};
-
+        var request_data = {'per_page': per_page, 'page_num': page_num};
         var _this = this;
-        var request = Utils.api_post_json("/api/list_local_subjects", data);
+        var request = Utils.api_post_json("/api/list_local_subjects", request_data);
+
         request.success( function(json) {
             _this.setState({
-                subjects: json.list_of_subjects,
+                subjects: json.data.list_of_subjects,
                 max_events: max_events,
                 no_of_pages: json.total_pages
             });
@@ -233,81 +149,204 @@ var SubjectsTable = React.createClass({
   }
 });
 
-var SubjectsPagination = React.createClass({
-  getInitialState: function() {
-    return {
-        no_of_pages: this.props.no_of_pages,
-        current_page: 1
-    };
-  },
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-        no_of_pages: nextProps.no_of_pages,
-        current_page: this.state.current_page
-    });
-  },
-  activateOnClick: function(i) {
-    this.setState({
-        no_of_pages: this.state.no_of_pages,
-        current_page: i
-    });
-    this.props.changePage(i);
-  },
-  nextPage: function() {
-    var current_page = this.state.current_page;
-    if (current_page === this.state.no_of_pages) {
-        return;
-    }
-    else {
-        this.setState({
-            no_of_pages: this.state.no_of_pages,
-            current_page: current_page+1
-        });
-        this.props.changePage(current_page + 1);
-    }
-  },
-  prevPage: function() {
-    var current_page = this.state.current_page;
-    if (current_page === 1) {
-        return;
-    }
-    else {
-        this.setState({
-            no_of_pages: this.state.no_of_pages,
-            current_page: current_page - 1
-        });
-        this.props.changePage(current_page-1);
-    }
-  },
-  render: function() {
-    var pages = [];
 
-    for(var i = 1; i <= this.state.no_of_pages; i++) {
-        if(i === this.state.current_page) {
-            pages.push(<li className="active"><a>{i}</a></li>);
+var EventsTable = React.createClass({
+    getInitialState: function() {
+        return {
+            list_of_events: []
+        };
+    },
+    componentWillMount: function() {
+        var _this = this;
+        var url = "/api/list_events";
+        var request = Utils.api_post_json(url, {subject_id: 'a'});
+
+        request.success( function(json) {
+            _this.setState({
+                list_of_events: json.data.events
+            });
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+    },
+    render: function() {
+        var rows = [];
+        var _this = this;
+
+        
+        this.state.list_of_events.map(function(record, i) {
+            var eventSelected = _this.props.eventSelected.bind(null, record);
+            rows.push(
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={eventSelected}>
+                        {record.unique_event_name}
+                    </button>
+                </td>
+            </tr>
+            );
+        });
+
+        /*
+        // show event names in column headings 
+        var table_columns = [];
+        var events_count = this.state.list_of_events.length;
+
+        for(i = 0; i < events_count; i++) {
+            var view_files_url = "/users/manage_event/"+row_data.events[i].event_id;
+            if (row_data.events[i].event_files !== 0) {
+                table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
+            }
+        }
+        */
+
+    return (
+        <div>
+            <div className="table-responsive">
+                <table id="event-table" className="table table-striped table-curved">
+                    <thead>
+                        <tr>
+
+                        </tr>
+                    </thead>
+                    <tbody id="subject-table-body">
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+    }
+});
+
+var FilesList = React.createClass({
+    getInitialState: function() {
+        return {
+            list_of_files :[]
+        };
+    },
+
+    componentWillMount: function() {
+        var _this = this;
+        var request_data = {'subject_id': '1', 'event_id': '2'};
+        var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
+
+        request.success(function(json) {
+            _this.setState({
+                list_of_files: json.data.subject_event_files
+            });
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+    },
+    render: function() {
+        return (
+        <div className="table-responsive" >
+            <table id="technician-table" className="table table-striped">
+                <thead>
+                    <tr>
+                        <th className="text-center">ID</th>
+                        <th className="text-center">Name</th>
+                        <th className="text-center">File Count</th>
+                        <th className="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody id="technician-table-body">
+                    {
+                        this.state.list_of_files.map(function(record, i) {
+                            var add_url = "/download_file/"+record.id;
+                            return <tr>
+                            <td>{record.file_id}</td>
+                                    <td>{record.file_name}</td>
+                                    <td>{record.file_size}</td>
+                                    <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
+                                </tr>
+                    })}
+                </tbody>
+            </table>
+        </div>
+        );
+    }
+});
+
+var SubjectsPagination = React.createClass({
+    getInitialState: function() {
+        return {
+            no_of_pages: this.props.no_of_pages,
+            current_page: 1
+        };
+    },
+    componentWillReceiveProps: function(nextProps) {
+        this.setState({
+            no_of_pages: nextProps.no_of_pages,
+            current_page: this.state.current_page
+        });
+    },
+    activateOnClick: function(i) {
+        this.setState({
+            no_of_pages: this.state.no_of_pages,
+            current_page: i
+        });
+        this.props.changePage(i);
+    },
+    nextPage: function() {
+        var current_page = this.state.current_page;
+        if (current_page === this.state.no_of_pages) {
+            return;
         }
         else {
-            pages.push(<li><a onClick={this.activateOnClick.bind(null, i)}>{i}</a></li>);
+            this.setState({
+                no_of_pages: this.state.no_of_pages,
+                current_page: current_page+1
+            });
+            this.props.changePage(current_page + 1);
         }
+    },
+    prevPage: function() {
+        var current_page = this.state.current_page;
+        if (current_page === 1) {
+            return;
+        }
+        else {
+            this.setState({
+                no_of_pages: this.state.no_of_pages,
+                current_page: current_page - 1
+            });
+            this.props.changePage(current_page-1);
+        }
+    },
+    render: function() {
+        var pages = [];
+
+        for(var i = 1; i <= this.state.no_of_pages; i++) {
+            if(i === this.state.current_page) {
+                pages.push(<li className="active"><a>{i}</a></li>);
+            }
+            else {
+                pages.push(<li><a onClick={this.activateOnClick.bind(null, i)}>{i}</a></li>);
+            }
+        }
+        return (
+        <nav>
+          <ul className="pagination">
+            <li>
+              <a onClick={this.prevPage} aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {pages}
+            <li>
+              <a onClick={this.nextPage} aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        );
     }
-    return (
-    <nav>
-      <ul className="pagination">
-        <li>
-          <a onClick={this.prevPage} aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {pages}
-        <li>
-          <a onClick={this.nextPage} aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    );
-  }
 });
 
 
@@ -329,26 +368,41 @@ var Dashboard = React.createClass({
         };
     },
     changeTab: function(i) {
-        this.setState({current_tab: i});
+        this.setState({
+            current_tab: i
+            });
     },
     subjectSelected: function(subject_id) {
-        this.setState({current_tab: 1, subject_id: subject_id});
+        this.setState({
+            current_tab: 1,
+            subject_id: subject_id
+        });
     },
     eventSelected: function(event_id) {
-        this.setState({current_tab: 2, event_id: event_id});
+        this.setState({
+            current_tab: 2,
+            event_id: event_id
+        });
     },
     showFiles: function() {
-        this.setState({current_tab: 3});
+        this.setState({
+            current_tab: 3
+        });
     },
-    urlChanged:function (){
-      var hash_value=location.hash;
+
+    urlChanged: function() {
+      var hash_value = location.hash;
       var current_tab = this.state.current_tab;
 
       //check whether the current state is not equal to hash value
       if("#"+this.state.tabs[current_tab] !== hash_value) {
-        //State has to be changed
+
+        // State has to be changed
         if(hash_value === "#Subjects") {
-          this.setState({current_tab: 0,event_id:""});
+          this.setState({
+              current_tab: 0,
+              event_id: ""
+          });
         }
         else if (hash_value === "#Events" && this.state.current_tab === 2) {
           // The condition 'this.state.current_tab==2' is to avoid
@@ -391,16 +445,15 @@ var Dashboard = React.createClass({
         $("#upload-files").hide();
         $("#upload-complete-button").hide();
 
-        if(current_tab === 0) {
+        if (current_tab === 0) {
             window.location.hash = 'Subjects';
-            visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected}/>;
+            visible_tab = <SubjectsTable subjectSelected={this.subjectSelected} />;
         }
-        else if(current_tab === 1) {
-
+        else if (current_tab === 1) {
             window.location.hash = 'Events';
             visible_tab = <EventsTable subject_id = {this.state.subject_id} eventSelected = {this.eventSelected}/>;
         }
-        else if(current_tab === 2) {
+        else if (current_tab === 2) {
             window.location.hash = 'Files';
             visible_tab = <FilesList subject_id = {this.state.subject_id} event_id = {this.state.event_id}/>;
         }

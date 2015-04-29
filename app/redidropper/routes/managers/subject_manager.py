@@ -7,17 +7,7 @@ Goal: Implement subject-specific logic
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-from redidropper.main import app, db
-
-
-def get_files(subject_id):
-    """ Fetch the list of files for the specified subject_id """
-    data = [
-{"file_name": "123.jpg", "file_added": "today", "file_added_by": "technician 1"},
-{"file_name": "xyz.jpg", "file_added": "2015-01-01 01:02:03", "file_added_by": "technician 2"},
-{"file_name": "abc.jpg", "file_added": "today", "file_added_by": "technician 3"}
-]
-    return data
+# from redidropper.main import app, db
 
 
 def refresh_redcap_subjects(project_id):
@@ -42,57 +32,42 @@ def get_fresh_list_of_subjects():
     :rtype: list
     :return the subjects in the REDCap database
     """
-    data = []
+
+    data = [
+        RedcapSubject(1),
+        RedcapSubject(2),
+        RedcapSubject(3),
+        ]
+
     return data
 
 
-class SubjectEntity(object):
-    """ POPO for Subject table
-    @TODO: move to models
+class RedcapSubject(object):
     """
-    visible_props = ['subjID', 'subjFileCount', 'subjName']
+    Abstractization for subjects retrived via cURL from REDCap
+    """
 
-    def __init__(self, project_id, subject_id, file_count):
-        """
-        Create Subject
-        """
-        self.prjID = project_id
+    def __init__(self, subject_id):
+        """ Create Subject """
         self.subjID = subject_id
-        self.subjFileCount = file_count
-        self.subjName = "Name {}_{}".format(project_id, subject_id)
-
 
     @property
     def to_visible(self):
         """
         Helper for exposing only "secure" class attributes as a dictionary
-        @see http://stackoverflow.com/questions/7102754/jsonify-a-sqlalchemy-result-set-in-flask
         """
-        return dict( [(key, val) for key, val in self.__dict__.items() \
-                if key in SubjectEntity.visible_props])
+        return dict([(key, val) for key, val in self.__dict__.items()
+                    if key in RedcapSubject.visible_props])
 
 
 def get_stale_list_of_subjects():
-    """ Fetch the set of subjects for the specified project_id
-    @TODO: implement
+    """
 
     :rtype: list
     :return the subjects in the local database
     """
-    data = {
-        1: [
-            SubjectEntity(project_id, 1, 10),
-            SubjectEntity(project_id, 2, 20),
-            SubjectEntity(project_id, 3, 30),
-        ],
-        2: [
-            SubjectEntity(project_id, 1, 10),
-            SubjectEntity(project_id, 2, 20),
-            SubjectEntity(project_id, 3, 30),
-            SubjectEntity(project_id, 4, 40),
-        ],
-        }
-    return data[project_id]
+    data = []
+    return data
 
 
 def insert_subjects(subjects):

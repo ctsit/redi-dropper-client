@@ -121,10 +121,14 @@ var EventFilesList = React.createClass({
     return {list_of_files:[]};
   },
   componentWillMount:function(){
-    var _this=this;
-    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
+    var _this = this;
+    var request_data = { 'subject_id': '1', 'event_id': '2'};
+    var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
+
     request.success( function(json) {
-       _this.setState({list_of_files:json.list_of_files});
+        _this.setState({
+            list_of_files: json.data.subject_event_files
+        });
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);

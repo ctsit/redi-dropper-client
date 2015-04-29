@@ -5,7 +5,6 @@ ORM for RediDropper.SubjectFile table
 from redidropper.main import db
 from redidropper.utils import dump_datetime
 from redidropper.database.crud_mixin import CRUDMixin
-# from redidropper.models.event_entity import EventEntity
 
 
 class SubjectFileEntity(db.Model, CRUDMixin):
