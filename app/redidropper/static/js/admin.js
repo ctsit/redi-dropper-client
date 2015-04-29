@@ -140,7 +140,7 @@ var AdminUsersPagination = React.createClass({
             pages.push(<li className="active"><a>{i}</a></li>);
         }
         else {
-            pages.push(<li><a onClick={this.activateOnClick.bind(null,i)}>{i}</a></li>);
+            pages.push(<li><a onClick={this.activateOnClick.bind(null, i)}>{i}</a></li>);
         }
     }
     return (
@@ -334,7 +334,7 @@ var AdminUserManagement = React.createClass({
             list_of_users: undefined,
             total_pages: 1,
             show_user_form: false,
-            error: "",
+            error: ""
         };
     },
     componentWillMount: function() {
@@ -343,19 +343,20 @@ var AdminUserManagement = React.createClass({
         var _this = this;
 
         request.success( function(json) {
-            if (json.status == "success") {
-                state = {
+            if (json.status === "success") {
+                var state = {
                     list_of_users: json.data.list_of_users,
-                    total_pages: json.data.total_pages}
+                    total_pages: json.data.total_pages
+                }
                 console.log(state);
                 _this.setState(state);
             }
             else {
                 _this.setState({
-                    list_of_users   :  [],
-                    total_pages     :  this.state.total_pages,
-                    show_user_form  :  false,
-                    error           :  json.message
+                    list_of_users: [],
+                    total_pages: this.state.total_pages,
+                    show_user_form: false,
+                    error: json.message
                 });
             }
         });
@@ -372,9 +373,9 @@ var AdminUserManagement = React.createClass({
     var list_of_users = this.state.list_of_users;
     list_of_users.unshift(data);
     this.setState({
-        list_of_users   :  list_of_users,
-        total_pages     :  this.state.total_pages,
-        show_user_form  :  false
+        list_of_users: list_of_users,
+        total_pages: this.state.total_pages,
+        show_user_form: false
     });
   },
   toggleAddUserForm: function() {
@@ -411,7 +412,7 @@ var AdminUserManagement = React.createClass({
       users_table = <div className="alert alert-danger">Error : {this.state.error} .
                                                          Refresh the page</div>
     }
-    else if (0 == list_of_users.length) {
+    else if (0 === list_of_users.length) {
         users_table = <div>No data to display</div>;
     }
     else {
