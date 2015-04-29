@@ -259,3 +259,71 @@ def api_list_local_subjects():
 def api():
     """ Display the list of valid paths under /api/ """
     return render_template('api.html')
+
+@app.route('/api/activate_account', methods=['POST'])
+@login_required
+def api_activate_account():
+    """
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    user_id = request.form.get('user_id')
+    
+    #Change record in database for this user_id and send response
+    
+    return jsonify_success({"message":"Record updated"})
+
+
+@app.route('/api/deactivate_account', methods=['POST'])
+@login_required
+def api_deactivate_account():
+    """
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    user_id = request.form.get('user_id')
+    
+    #Change record in database for this user_id and send response
+    
+    return jsonify_success({"message":"Record updated"})
+
+
+@app.route('/api/send_verification_email', methods=['POST'])
+@login_required
+def api_send_verification_email():
+    """
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    user_id = request.form.get('user_id')
+    
+    #Send Verification Email to user_id
+    
+    return jsonify_success({"message":"Verification Email Sent"})
+
+
+@app.route('/api/expire_account', methods=['POST'])
+@login_required
+def api_expire_account():
+    """
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    user_id = request.form.get('user_id')
+    
+    #Change record in database for this user_id and send response
+    
+    return jsonify_success({"message":"Record updated"})
+
+@app.route('/api/extend_expiration_date', methods=['POST'])
+@login_required
+def api_extend_expiration_date():
+    """
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    user_id = request.form.get('user_id')
+    
+    #Change record in database for this user_id and send response
+    
+    return pack_error({"message":"Failed"})

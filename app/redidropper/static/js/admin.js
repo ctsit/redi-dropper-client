@@ -1,7 +1,201 @@
 // Implements react componenst:
+//  AdminUsersRow - ...
 //  AdminUsersTable - ...
 //  AdminUsersPagination - ..
 //  AddNewUserForm - ...
+
+var AdminUsersRow = React.createClass({
+    getInitialState: function() {
+        return {record: this.props.record,row_no:this.props.row_no};
+    },
+    componentWillReceiveProps: function(nextProps) {
+        this.setState({record: nextProps.record,row_no:nextProps.row_no});
+    },
+    sendEmailVerification:function(){
+        var record = this.state.record;
+        var data={"user_id":record.id}
+        var request = Utils.api_post_json("/api/send_verification_email", data);
+        request.success( function(json) {
+            if(json.status == "success") {
+                $("#show-message").text("Verification Email Sent")
+                                  .show().delay(1000).fadeOut('slow');
+            }else {
+                $("#show-message").text("Failed.Try Again")
+                                  .show().delay(1000).fadeOut('slow'); 
+            }
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            $("#show-message").text("Failed to Send Request.Try Again")
+                              .show().delay(1000).fadeOut('slow');     
+        });
+    },
+    deactivateAccount:function(){
+        var record = this.state.record;
+        var _this=this;
+        var data={"user_id":record.id}
+        var request = Utils.api_post_json("/api/deactivate_account", data);
+        request.success( function(json) {
+            if(json.status == "success") {
+                record.is_active=false;
+                $("#show-message").text("Account Deactivated")
+                                  .show().delay(1000).fadeOut('slow');
+                _this.setState({record:record});
+            }else {
+                $("#show-message").text("Failed.Try Again")
+                                  .show().delay(1000).fadeOut('slow'); 
+            }
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            $("#show-message").text("Failed to Send Request.Try Again")
+                              .show().delay(1000).fadeOut('slow');     
+        });
+    },
+    activateAccount:function(){
+        var record = this.state.record;
+        var _this=this;
+        var data={"user_id":record.id}
+        var request = Utils.api_post_json("/api/activate_account", data);
+        request.success( function(json) {
+            if(json.status == "success") {
+                record.is_active=true;
+                $("#show-message").text("Account Activated ")
+                                  .show().delay(1000).fadeOut('slow');
+                _this.setState({record:record});
+            }else {
+                $("#show-message").text("Failed.Try Again")
+                                  .show().delay(1000).fadeOut('slow');
+            }
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            $("#show-message").text("Failed to Send Request.Try Again")
+                              .show().delay(1000).fadeOut('slow');  
+        });
+    },
+    extendExpirationDate:function(){
+        var record = this.state.record;
+        var _this=this;
+        var data={"user_id":record.id}
+        var request = Utils.api_post_json("/api/extend_expiration_date", data);
+        request.success( function(json) {
+            if(json.status == "success") {
+                record.is_active=true;
+                $("#show-message").text("Expiration Date Extended")
+                                  .show().delay(1000).fadeOut('slow');
+                _this.setState({record:record});
+            }else {
+                $("#show-message").text("Failed.Try Again")
+                                  .show().delay(1000).fadeOut('slow');
+            }
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            $("#show-message").text("Failed to Send Request.Try Again")
+                              .show().delay(1000).fadeOut('slow');  
+        });
+    },
+    expireAccount:function(){
+        var record = this.state.record;
+        var _this=this;
+        var data={"user_id":record.id}
+        var request = Utils.api_post_json("/api/expire_account", data);
+        request.success( function(json) {
+            if(json.status == "success") {
+                record.is_active=true;
+                $("#show-message").text("Account Expired Successfully ")
+                                  .show().delay(1000).fadeOut('slow');
+                _this.setState({record:record});
+            }else {
+                $("#show-message").text("Failed.Try Again")
+                                  .show().delay(1000).fadeOut('slow');
+            }
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            $("#show-message").text("Failed to Send Request.Try Again")
+                              .show().delay(1000).fadeOut('slow');  
+        });
+    },
+    render:function(){
+            var record = this.state.record;
+            var row_no = this.state.row_no;
+            var display="";
+            expirationDate = record.access_expires_at[0];
+
+            if (record.roles) {
+                roles = record.roles.join(", ");
+            }
+            if (record.email_confirmed_at) {
+                emailButton = <div> {record.email_confirmed_at} </div>;
+            }
+            else {
+                emailButton = <button
+                    className="btn btn-primary"
+                    data-toggle="tooltip" 
+                    data-placement="top" 
+                    title="Send Verification Email"
+                    onClick={this.sendEmailVerification}>
+                        <i className="fa fa-envelope-o">
+                        </i>
+                    </button>;
+            }
+
+            if (record.is_expired) {
+                var title = "Expired on " + expirationDate + ". Extend access by 180 days.";
+                expireButton = <div>
+                    <button
+                        className="btn btn-primary"
+                        data-toggle="tooltip"
+                        title={title}
+                        onClick={this.extendExpirationDate}>
+                        Extend
+                    </button>
+                    </div>
+            }
+            else {
+                expireButton = <button
+                    className="btn btn-primary"
+                    data-toggle="tooltip"
+                    title="Expire Now"
+                    onClick={this.expireAccount}>
+                        Expire
+                    </button>
+            }
+            if (record.is_active) {
+                deactivateButton = <button
+                    className="btn btn-primary"
+                    data-toggle="tooltip"
+                    title="Deactivate Now"
+                    onClick={this.deactivateAccount}>
+                        Deactivate
+                    </button>
+            }
+            else {
+                deactivateButton = <button
+                    className="btn btn-primary"
+                    data-toggle="tooltip"
+                    title="Activate Now"
+                    onClick={this.activateAccount}>
+                        Activate
+                    </button>
+            }
+
+            display =   <tr>
+                            <td>{ row_no }</td>
+                            <td>{record.id}</td>
+                            <td>{record.email}</td>
+                            <td>{record.first}</td>
+                            <td>{record.last}</td>
+                            <td>{roles}</td>
+                            <td>{record.added_at}</td>
+                            <td>{emailButton}</td>
+                            <td>{expireButton}</td>
+                            <td>{deactivateButton}</td>
+                        </tr>;
+            return(
+                <div>
+                {display}
+                </div>
+            );
+    }
+});
 
 var AdminUsersTable = React.createClass({
     getInitialState: function() {
@@ -16,63 +210,9 @@ var AdminUsersTable = React.createClass({
     render: function() {
         var rows = [];
         this.state.list_of_users.map(function(record, i) {
-            var emailButton, expireButton, deactivateButton, roles, expirationDate;
-            expirationDate = record.access_expires_at[0];
-
-            if (record.roles) {
-                roles = record.roles.join(", ");
-            }
-            if (record.email_confirmed_at) {
-                emailButton = <div> {record.email_confirmed_at} </div>;
-            }
-            else {
-                emailButton = <button
-                    className="btn btn-primary glyphicon glyphicon-envelope"
-                    data-toggle="tooltip" data-placement="top" title="Send Verification Email">
-                    </button>;
-            }
-
-            if (record.is_expired) {
-                var title = "Expired on " + expirationDate + ". Extend access by 180 days.";
-                expireButton = <div>
-                    <button
-                        className="btn btn-primary glyphicon glyphicon-hourglass"
-                        data-toggle="tooltip"
-                        title={title}></button>
-                    </div>
-            }
-            else {
-                expireButton = <button
-                    className="btn btn-primary glyphicon glyphicon-ban-circle"
-                    data-toggle="tooltip"
-                    title="Expire Now"></button>
-            }
-            if (record.is_active) {
-                deactivateButton = <button
-                    className="btn btn-primary glyphicon glyphicon-remove-sign"
-                    data-toggle="tooltip"
-                    title="Deactivate Now"></button>
-            }
-            else {
-                deactivateButton = <button
-                    className="btn btn-primary glyphicon glyphicon-ok-sign"
-                    data-toggle="tooltip"
-                    title="Activate Now"></button>
-            }
-
             rows.push(
-                <tr>
-                    <td>{ i+1 }</td>
-                    <td>{record.id}</td>
-                    <td>{record.email}</td>
-                    <td>{record.first}</td>
-                    <td>{record.last}</td>
-                    <td>{roles}</td>
-                    <td>{record.added_at}</td>
-                    <td>{emailButton}</td>
-                    <td>{expireButton}</td>
-                    <td>{deactivateButton}</td>
-                </tr>
+                <AdminUsersRow record={record} row_no={i+1}>
+                </AdminUsersRow>
             );
         });
 
@@ -275,11 +415,11 @@ var AddNewUserForm = React.createClass({
     }
 
     return (
-<div className="col-sm-5">
+<div className="col-sm-offset-3 col-sm-6">
 
     {error}
     
-    <div className="form-horizontal" style={{"border": "solid 1px red"}}>
+    <div className="form-horizontal">
 
         <h3> Add New User </h3>
         <div className="form-group">

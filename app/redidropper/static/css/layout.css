@@ -1,0 +1,22 @@
+.custom-modal { /* The actual box, centered in the fixed-position div */
+    width:150%; /* Whatever width you want the box to be */
+    position:relative;
+    margin:0 auto;
+    /* Everything below is just visual styling */ 
+    background-color: #383838;
+    font-family: Calibri;
+    font-size: 20px;
+    color: #F0F0F0;
+    padding:10px;
+}
+
+.custom-main-modal-wrap { /* The div that shows/hides. */
+    z-index:80001; /* High z-index to ensure it appears above all content */
+}
+
+.custom-modal-offset { /* Fixed position to provide the vertical offset */
+    position:fixed;
+    top:15%;
+    right:10%;
+    z-index:80002; /* ensures box appears above overlay */
+}
