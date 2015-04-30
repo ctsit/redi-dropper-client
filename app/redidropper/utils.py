@@ -173,14 +173,9 @@ def pack_error(msg):
     return pack({'status': 'error', 'message': msg})
 
 
-def pack_info(msg):
-    """ Format an info message to be json-friendly """
-    return pack({'status': 'info', 'message': msg})
-
-"""
-def pack_success_result(data):
-    return pack({'status': 'success', 'data': data})
-"""
+def jsonify_error(data):
+    """ Format an error message to be json-friendly """
+    return jsonify({'status': 'error', 'data': data})
 
 
 def jsonify_success(data):

@@ -11,6 +11,8 @@ used by ../run.py
 try:
     from flask import Flask
     from flask_sqlalchemy import SQLAlchemy
+    from flask_mail import Mail
+
 except ImportError, error:
     import sys
     sys.exit("Missing required package: {}".format(error))
@@ -21,3 +23,7 @@ app = Flask(__name__)
 
 # The Object-Relationan-Mapping (ORM) object
 db = SQLAlchemy(app)
+
+# Allows to use email servers described in config as
+# MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
+mail = Mail()

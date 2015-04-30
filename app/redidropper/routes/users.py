@@ -16,7 +16,6 @@ from flask_principal import Principal, Permission, RoleNeed
 from redidropper.models.role_entity import \
     ROLE_ADMIN, ROLE_TECHNICIAN, ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
 from redidropper.main import app
-from redidropper.routes.managers import file_manager
 
 # @TODO: read https://pythonhosted.org/Flask-Security/api.html
 # from flask_security import roles_accepted
@@ -53,8 +52,17 @@ def logs():
 
 
 def get_highest_role():
-    """ If a user has more than one role pick the `highest` role """
-    roles = current_user.get_roles()
+    """ If a user has more than one role pick the `highest` role
+
+    :rtype string
+    :return the role name for the current_user or None
+    """
+
+    try:
+        roles = current_user.get_roles()
+    except Exception as exc:
+        app.logger.debug("get_highest_role() problem: {}".format(exc))
+        return None
 
     if ROLE_ADMIN in roles:
         return ROLE_ADMIN
@@ -68,6 +76,11 @@ def get_highest_role():
 
 
 def get_user_links():
+    """
+    :rtype list
+    :return the navigation menu options depending on the role or None if
+        the current_user doe not have a role
+    """
     pages = {
         'admin': ('admin', 'Manage Users'),
         'logs': ('logs', 'View Logs'),
@@ -78,6 +91,9 @@ def get_user_links():
         'logout': ('logout', 'Logout'),
     }
     role = get_highest_role()
+    if role is None:
+        return []
+
     print "highest role: {}".format(role)
 
     if ROLE_ADMIN == role:
@@ -124,3 +140,11 @@ def start_upload():
     # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
     return render_template('start_upload.html',
                            user_links=get_user_links())
+
+
+@app.route('/api')
+@app.route('/api/')
+def api():
+    """ Display the list of valid paths under /api/ """
+    # @TODO: protect with @perm_admin.require() when unit tests are fixed
+    return render_template('api.html', user_links=get_user_links())

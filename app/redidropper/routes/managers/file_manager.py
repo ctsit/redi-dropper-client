@@ -109,10 +109,10 @@ def save_uploaded_file():
         merge_files(fchunk)
         verify_file_integrity(fchunk)
         delete_temp_files(fchunk)
-        return utils.pack_info('File {} uploaded successfully.'
-                               .format(file_name))
+        return utils.jsonify_success('File {} uploaded successfully.'
+                                     .format(file_name))
     else:
-        return utils.pack_info('Request completed successfully.')
+        return utils.jsonify_success('Request completed successfully.')
 
 
 def all_chunks_received(fchunk):

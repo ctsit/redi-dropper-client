@@ -101,7 +101,18 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     """
 
     def get_name(self):
+        """
+        :rtype string
+        :return concat(first, ' ', last)
+        """
         return "{} {}".format(self.first, self.last)
+
+    def get_email_verification_token(self):
+        """
+        :rtype string
+        :return the email verification token stored in the database
+        """
+        return "token"
 
     def serialize(self):
         """Return object data for jsonification"""

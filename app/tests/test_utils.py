@@ -104,8 +104,5 @@ def test_allowed_file():
 
 
 def test_pack():
-
-    assert '{"message":"msg","status":"info"}' == utils.pack_info("msg") \
-        .replace(' ', '').replace('\n', '')
     assert '{"message":"msg","status":"error"}' == utils.pack_error("msg") \
         .replace(' ', '').replace('\n', '')
