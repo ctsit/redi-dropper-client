@@ -12,15 +12,15 @@ from datetime import datetime
 from flask import request
 from flask import send_file
 from flask import make_response
-from flask import render_template
 from flask_login import login_required
 
 # from sqlalchemy.orm.exc import NoResultFound
 from redidropper.main import app, db
+from redidropper import emails
 
 from redidropper.routes.managers import file_manager, subject_manager, \
     log_manager
-from redidropper.utils import get_safe_int, pack_error, jsonify_success, \
+from redidropper.utils import get_safe_int, jsonify_error, jsonify_success, \
     get_expiration_date
 
 from redidropper.models.subject_entity import SubjectEntity
@@ -28,6 +28,9 @@ from redidropper.models.subject_file_entity import SubjectFileEntity
 from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
+
+from redidropper.routes.users import perm_admin
+# , perm_admin_or_technician
 
 
 @app.route('/api/list_subject_events', methods=['POST', 'GET'])
@@ -188,8 +191,7 @@ def api_save_user():
         pass
 
     if email_exists:
-        return make_response(
-            pack_error("Sorry. This email is already taken."))
+        return jsonify_error("Sorry. This email is already taken.")
 
     # @TODO: fix hardcoded values
     # password = 'password'
@@ -236,7 +238,7 @@ def api_list_users():
     # users = UserEntity.query.filter(UserEntity.id >= 14).all()
 
     if users is None:
-        return make_response(pack_error("no users found"))
+        return jsonify_error("No users found.")
 
     list_of_users = [i.serialize() for i in users]
     total_pages = math.ceil(len(list_of_users)/float(per_page))
@@ -300,76 +302,119 @@ def api_list_local_subjects():
                                 list_of_subjects=items))
 
 
-@app.route('/api')
-@app.route('/api/')
-def api():
-    """ Display the list of valid paths under /api/ """
-    return render_template('api.html')
-
 @app.route('/api/activate_account', methods=['POST'])
-@login_required
+@perm_admin.require()
 def api_activate_account():
     """
+    Activate an user.
+    @TODO: should change expiration date too?
+
     :rtype: Response
     :return the success or failed in json format
     """
-    user_id = request.form.get('user_id')
-    
-    #Change record in database for this user_id and send response
-    
-    return jsonify_success({"message":"Record updated"})
+    user_id = get_safe_int(request.form.get('user_id'))
+    user = UserEntity.get_by_id(user_id)
+    user = UserEntity.update(user, active=True)
+    return jsonify_success({"message": "User activated."})
 
 
 @app.route('/api/deactivate_account', methods=['POST'])
-@login_required
+@perm_admin.require()
 def api_deactivate_account():
     """
+    De-activate an user.
+    @TODO: should change expiration date too?
+
     :rtype: Response
     :return the success or failed in json format
     """
-    user_id = request.form.get('user_id')
-    
-    #Change record in database for this user_id and send response
-    
-    return jsonify_success({"message":"Record updated"})
+    user_id = get_safe_int(request.form.get('user_id'))
+    user = UserEntity.get_by_id(user_id)
+    user = UserEntity.update(user, active=False)
+    return jsonify_success({"message": "User deactivated."})
 
 
-@app.route('/api/send_verification_email', methods=['POST'])
-@login_required
+@app.route('/api/send_verification_email', methods=['POST', 'GET'])
+@perm_admin.require()
 def api_send_verification_email():
     """
+    @TODO: allow POST only
+    @TODO: Send Verification Email to user_id
+
     :rtype: Response
     :return the success or failed in json format
     """
-    user_id = request.form.get('user_id')
-    
-    #Send Verification Email to user_id
-    
-    return jsonify_success({"message":"Verification Email Sent"})
+    user_id = get_safe_int(request.form.get('user_id'))
+    user = UserEntity.get_by_id(user_id)
+    user = UserEntity.get_by_id(1)
+    user.email = app.config['MAIL_SENDER_SUPPORT']
+
+    try:
+        emails.send_verification_email(user)
+        return jsonify_success({"message": "Verification email was sent."})
+    except Exception as exc:
+        details = "Connection config: {}/{}:{}".format(
+            app.config['MAIL_USERNAME'],
+            app.config['MAIL_SERVER'],
+            app.config['MAIL_PORT'])
+        app.logger.debug(details)
+        return jsonify_error({"message": "Unable to send email due: {} {}"
+                              .format(exc, details)})
+
+
+@app.route('/api/verify_email', methods=['POST', 'GET'])
+def api_verify_email():
+    """
+    @TODO: add column for verification hash
+
+    :rtype: Response
+    :return the success or failed in json format
+    """
+    token = request.form.get('tok')
+
+    # user = UserEntity.query.filter_by(email_token=token).first()
+    user = UserEntity.get_by_id(1)
+
+    if user is None:
+        app.logger.error("Attempt to verify email with incorrect token: {}"
+                         .format(token))
+        return jsonify_error("Sorry.")
+
+    app.logger.debug("Verified token {} for user {}".format(token, user.email))
+    # implement update User set usrEmailConfirmedAt = NOW()
+    return jsonify_success({"message": "Verification email was sent."})
 
 
 @app.route('/api/expire_account', methods=['POST'])
-@login_required
+@perm_admin.require()
 def api_expire_account():
     """
+    Change the `User.usrAccessExpiresAt` to today's date and 00:00:00 time
+    effectively blocking the user access.
+
     :rtype: Response
     :return the success or failed in json format
     """
-    user_id = request.form.get('user_id')
-    
-    #Change record in database for this user_id and send response
-    
-    return jsonify_success({"message":"Record updated"})
+    user_id = get_safe_int(request.form.get('user_id'))
+    user = UserEntity.get_by_id(user_id)
+    today = datetime.today()
+    today_start = datetime(today.year, today.month, today.day)
+    user = UserEntity.update(user, access_expires_at=today_start)
+    return jsonify_success({"message": "User access was expired."})
+
 
 @app.route('/api/extend_expiration_date', methods=['POST'])
-@login_required
+@perm_admin.require()
 def api_extend_expiration_date():
     """
+    Change the `User.usrAccessExpiresAt` to today's date + 180 days
+
     :rtype: Response
     :return the success or failed in json format
     """
     user_id = request.form.get('user_id')
-    
-    #Change record in database for this user_id and send response
-    
-    return pack_error({"message":"Failed"})
+    today_plus_180 = get_expiration_date(180)
+    user = UserEntity.get_by_id(user_id)
+    user = UserEntity.update(user, access_expires_at=today_plus_180)
+    return jsonify_success(
+        {"message": "Updated expiration date to {}".format(today_plus_180)})

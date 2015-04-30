@@ -113,11 +113,15 @@ var AdminUsersRow = React.createClass({
                               .show().delay(1000).fadeOut('slow');  
         });
     },
-    render:function(){
+    render: function() {
             var record = this.state.record;
             var row_no = this.state.row_no;
-            var display="";
-            expirationDate = record.access_expires_at[0];
+            var roles,
+                title,
+                emailButton,
+                expireButton,
+                display = "",
+                expirationDate = record.access_expires_at[0];
 
             if (record.roles) {
                 roles = record.roles.join(", ");
@@ -128,8 +132,8 @@ var AdminUsersRow = React.createClass({
             else {
                 emailButton = <button
                     className="btn btn-primary"
-                    data-toggle="tooltip" 
-                    data-placement="top" 
+                    data-toggle="tooltip"
+                    data-placement="top"
                     title="Send Verification Email"
                     onClick={this.sendEmailVerification}>
                         <i className="fa fa-envelope-o">
@@ -138,7 +142,7 @@ var AdminUsersRow = React.createClass({
             }
 
             if (record.is_expired) {
-                var title = "Expired on " + expirationDate + ". Extend access by 180 days.";
+                title = "Extend access by 180 days (expired on " + expirationDate + ")";
                 expireButton = <div>
                     <button
                         className="btn btn-primary"
@@ -150,10 +154,11 @@ var AdminUsersRow = React.createClass({
                     </div>
             }
             else {
+                title = "Expire Now (current expiration date: " + expirationDate + ")";
                 expireButton = <button
                     className="btn btn-primary"
                     data-toggle="tooltip"
-                    title="Expire Now"
+                    title={title}
                     onClick={this.expireAccount}>
                         Expire
                     </button>
@@ -224,13 +229,13 @@ var AdminUsersTable = React.createClass({
                     <th className="text-center"> # </th>
                     <th className="text-center">User ID</th>
                     <th className="text-center">User Email</th>
-                    <th className="text-center">First name</th>
-                    <th className="text-center">Last name</th>
+                    <th className="text-center">First <br /> Name</th>
+                    <th className="text-center">Last <br /> Name</th>
                     <th className="text-center">Role</th>
-                    <th className="text-center">Date Added</th>
-                    <th className="text-center">Email Veridied on</th>
-                    <th className="text-center">Account Expiration</th>
-                    <th className="text-center">Account Status</th>
+                    <th className="text-center">Date <br />Added</th>
+                    <th className="text-center">Email <br /> Verified</th>
+                    <th className="text-center">Account <br /> Expiration</th>
+                    <th className="text-center">Account <br /> Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -244,7 +249,10 @@ var AdminUsersTable = React.createClass({
 
 var AdminUsersPagination = React.createClass({
   getInitialState: function() {
-    return {total_pages:this.props.total_pages, current_page:1};
+    return {
+        total_pages: this.props.total_pages,
+        current_page: 1
+    };
   },
   componentWillReceiveProps: function(nextProps) {
        //
