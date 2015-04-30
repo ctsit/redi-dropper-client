@@ -191,7 +191,7 @@ def api_save_user():
         pass
 
     if email_exists:
-        return jsonify_error("Sorry. This email is already taken.")
+        return jsonify_error({'message': 'Sorry. This email is already taken.'})
 
     # @TODO: fix hardcoded values
     # password = 'password'
@@ -230,20 +230,19 @@ def api_list_users():
     :rtype: Response
     :return
     """
-    per_page = get_safe_int(request.form.get('per_page'))
-    page_num = get_safe_int(request.form.get('page_num'))
-    app.logger.debug("Show page {} of users".format(page_num))
+    if 'POST' == request.method:
+        per_page = get_safe_int(request.form.get('per_page'))
+        page_num = get_safe_int(request.form.get('page_num'))
+    else:
+        per_page = get_safe_int(request.args.get('per_page'))
+        page_num = get_safe_int(request.args.get('page_num'))
 
-    users = UserEntity.query.all()
+    # users = UserEntity.query.all()
     # users = UserEntity.query.filter(UserEntity.id >= 14).all()
-
-    if users is None:
-        return jsonify_error("No users found.")
-
-    list_of_users = [i.serialize() for i in users]
-    total_pages = math.ceil(len(list_of_users)/float(per_page))
-    return jsonify_success({"total_pages": total_pages,
-                            "list_of_users": list_of_users})
+    pagination = UserEntity.query.paginate(page_num, per_page, False)
+    items = [i.serialize() for i in pagination.items]
+    return jsonify_success({"total_pages": pagination.pages,
+                            "list_of_users": items})
 
 
 @app.route('/api/list_logs', methods=['GET', 'POST'])
@@ -256,8 +255,20 @@ def api_list_logs():
     :rtype: string
     :return the json list of logs
     """
-    per_page = get_safe_int(request.form.get('per_page'))
-    page_num = get_safe_int(request.form.get('page_num'))
+    if 'POST' == request.method:
+        per_page = get_safe_int(request.form.get('per_page'))
+        page_num = get_safe_int(request.form.get('page_num'))
+    else:
+        per_page = get_safe_int(request.args.get('per_page'))
+        page_num = get_safe_int(request.args.get('page_num'))
+
+    """
+    pagination = LogEntity.query.paginate(page_num, per_page, False)
+    items = [i.serialize() for i in pagination.items]
+    app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
+    return jsonify_success(dict(total_pages=pagination.pages,
+                                list_of_events=items))
+    """
     logs, total_pages = log_manager.get_logs(per_page, page_num)
     # logs_list = [x.to_visible() for x in logs]
     return jsonify_success(dict(list_of_events=logs, total_pages=total_pages))
@@ -297,7 +308,7 @@ def api_list_local_subjects():
 
     pagination = SubjectEntity.query.paginate(page_num, per_page, False)
     items = [i.serialize() for i in pagination.items]
-    app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
+    # app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
     return jsonify_success(dict(total_pages=pagination.pages,
                                 list_of_subjects=items))
 
@@ -334,7 +345,7 @@ def api_deactivate_account():
     return jsonify_success({"message": "User deactivated."})
 
 
-@app.route('/api/send_verification_email', methods=['POST', 'GET'])
+@app.route('/api/send_verification_email', methods=['POST'])
 @perm_admin.require()
 def api_send_verification_email():
     """
@@ -378,7 +389,7 @@ def api_verify_email():
     if user is None:
         app.logger.error("Attempt to verify email with incorrect token: {}"
                          .format(token))
-        return jsonify_error("Sorry.")
+        return jsonify_error({'message': 'Sorry.'})
 
     app.logger.debug("Verified token {} for user {}".format(token, user.email))
     # implement update User set usrEmailConfirmedAt = NOW()

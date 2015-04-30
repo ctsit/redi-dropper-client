@@ -35,11 +35,10 @@ var SubjectsRow = React.createClass({
         var table_columns = [];
         var row_data = this.state.row_data;
         var events_count = 0;
-
+        var i;
         /*
         var events_count = row_data.events.length;
 
-        var i;
 
         for(i = 0; i < events_count; i++) {
             var view_files_url = "/" + row_data.events[i].event_id;
@@ -97,7 +96,7 @@ var SubjectsTable = React.createClass({
             _this.setState({
                 subjects: json.data.list_of_subjects,
                 max_events: max_events,
-                no_of_pages: json.total_pages
+                no_of_pages: json.data.total_pages
             });
         });
         request.fail(function (jqXHR, textStatus, error) {
@@ -133,7 +132,7 @@ var SubjectsTable = React.createClass({
         var pagination;
         var no_of_pages = this.state.no_of_pages;
 
-        if (no_of_pages !== 1 || no_of_pages !== 0) {
+        if (no_of_pages > 1) {
             pagination = <SubjectsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
         }
 

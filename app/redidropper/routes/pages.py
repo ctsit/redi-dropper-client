@@ -35,15 +35,6 @@ from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN, \
 # set the login manager for the app
 login_manager = LoginManager(app)
 
-# class AnonymousUser(AnonymousUserMixin):
-#   """ fix AttributeError: 'AnonymousUserMixin' object has no attribute 'id'"""
-#
-#     def __init__(self):
-#         """ ha """
-#         self.id = None
-#         self.roles = ()
-# login_manager.anonymous_user = AnonymousUser
-
 # Possible options: strong, basic, None
 login_manager.session_protection = "strong"
 

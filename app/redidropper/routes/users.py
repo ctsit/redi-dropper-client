@@ -10,7 +10,7 @@ Goal: Define the routes for the users
 # from flask import request
 from flask import render_template
 
-from flask_login import login_required, current_user
+from flask_login import current_user
 from flask_principal import Principal, Permission, RoleNeed
 
 from redidropper.models.role_entity import \
