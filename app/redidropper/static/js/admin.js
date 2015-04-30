@@ -6,120 +6,143 @@
 
 var AdminUsersRow = React.createClass({
     getInitialState: function() {
-        return {record: this.props.record,row_no:this.props.row_no};
+        return {
+            record: this.props.record,
+            row_no: this.props.row_no
+        };
     },
     componentWillReceiveProps: function(nextProps) {
         this.setState({record: nextProps.record,row_no:nextProps.row_no});
     },
-    sendEmailVerification:function(){
+    sendEmailVerification: function() {
         var record = this.state.record;
-        var data={"user_id":record.id}
+        var data = {
+            "user_id": record.id
+        };
         var request = Utils.api_post_json("/api/send_verification_email", data);
+
         request.success( function(json) {
             if(json.status == "success") {
                 $("#show-message").text("Verification Email Sent")
                                   .show().delay(1000).fadeOut('slow');
-            }else {
+            }
+            else {
                 $("#show-message").text("Failed.Try Again")
-                                  .show().delay(1000).fadeOut('slow'); 
+                                  .show().delay(1000).fadeOut('slow');
             }
         });
         request.fail(function (jqXHR, textStatus, error) {
-            $("#show-message").text("Failed to Send Request.Try Again")
-                              .show().delay(1000).fadeOut('slow');     
+            $("#show-message").text("There was a problem with the request. Please try again.")
+                              .show().delay(1000).fadeOut('slow');
         });
     },
-    deactivateAccount:function(){
+
+    deactivateAccount: function() {
         var record = this.state.record;
-        var _this=this;
-        var data={"user_id":record.id}
+        var _this = this;
+        var data = {
+            "user_id": record.id
+        }
         var request = Utils.api_post_json("/api/deactivate_account", data);
         request.success( function(json) {
-            if(json.status == "success") {
-                record.is_active=false;
+            if(json.status === "success") {
+                record.is_active = false;
                 $("#show-message").text("Account Deactivated")
                                   .show().delay(1000).fadeOut('slow');
-                _this.setState({record:record});
-            }else {
-                $("#show-message").text("Failed.Try Again")
-                                  .show().delay(1000).fadeOut('slow'); 
+                _this.setState({record: record});
+            }
+            else {
+                $("#show-message").text("There was a problem with the request. Please try again.")
+                                  .show().delay(1000).fadeOut('slow');
             }
         });
         request.fail(function (jqXHR, textStatus, error) {
-            $("#show-message").text("Failed to Send Request.Try Again")
-                              .show().delay(1000).fadeOut('slow');     
+            $("#show-message").text("There was a problem with the request. Please try again.")
+                              .show().delay(1000).fadeOut('slow');
         });
     },
-    activateAccount:function(){
+
+    activateAccount: function(){
         var record = this.state.record;
-        var _this=this;
-        var data={"user_id":record.id}
+        var _this = this;
+        var data = {
+            "user_id": record.id
+        };
         var request = Utils.api_post_json("/api/activate_account", data);
+
         request.success( function(json) {
-            if(json.status == "success") {
-                record.is_active=true;
+            if(json.status === "success") {
+                record.is_active = true;
                 $("#show-message").text("Account Activated ")
                                   .show().delay(1000).fadeOut('slow');
-                _this.setState({record:record});
-            }else {
+                _this.setState({record: record});
+            }
+            else {
                 $("#show-message").text("Failed.Try Again")
                                   .show().delay(1000).fadeOut('slow');
             }
         });
         request.fail(function (jqXHR, textStatus, error) {
             $("#show-message").text("Failed to Send Request.Try Again")
-                              .show().delay(1000).fadeOut('slow');  
+                              .show().delay(1000).fadeOut('slow');
         });
     },
+
     extendExpirationDate:function(){
         var record = this.state.record;
-        var _this=this;
-        var data={"user_id":record.id}
+        var _this = this;
+        var data = {
+            "user_id": record.id};
         var request = Utils.api_post_json("/api/extend_expiration_date", data);
+
         request.success( function(json) {
-            if(json.status == "success") {
-                record.is_active=true;
+            if(json.status === "success") {
+                record.is_expired = false;
                 $("#show-message").text("Expiration Date Extended")
                                   .show().delay(1000).fadeOut('slow');
-                _this.setState({record:record});
-            }else {
+                _this.setState({record: record});
+            }
+            else {
                 $("#show-message").text("Failed.Try Again")
                                   .show().delay(1000).fadeOut('slow');
             }
         });
         request.fail(function (jqXHR, textStatus, error) {
             $("#show-message").text("Failed to Send Request.Try Again")
-                              .show().delay(1000).fadeOut('slow');  
+                              .show().delay(1000).fadeOut('slow');
         });
     },
-    expireAccount:function(){
+    expireAccount: function() {
         var record = this.state.record;
-        var _this=this;
-        var data={"user_id":record.id}
+        var _this = this;
+        var data = {"user_id": record.id};
         var request = Utils.api_post_json("/api/expire_account", data);
+
         request.success( function(json) {
             if(json.status == "success") {
-                record.is_active=true;
+                record.is_expired = true;
                 $("#show-message").text("Account Expired Successfully ")
                                   .show().delay(1000).fadeOut('slow');
-                _this.setState({record:record});
-            }else {
+                _this.setState({record: record});
+            }
+            else {
                 $("#show-message").text("Failed.Try Again")
                                   .show().delay(1000).fadeOut('slow');
             }
         });
         request.fail(function (jqXHR, textStatus, error) {
             $("#show-message").text("Failed to Send Request.Try Again")
-                              .show().delay(1000).fadeOut('slow');  
+                              .show().delay(1000).fadeOut('slow');
         });
     },
     render: function() {
             var record = this.state.record;
             var row_no = this.state.row_no;
             var roles,
-                title,
                 emailButton,
                 expireButton,
+                deactivateButton,
+                title = "",
                 display = "",
                 expirationDate = record.access_expires_at[0];
 
@@ -273,7 +296,7 @@ var AdminUsersPagination = React.createClass({
   },
   prevPage: function() {
     var current_page = this.state.current_page;
-    if (current_page == 1) {
+    if (current_page === 1) {
         return;
     }
     else {
@@ -284,7 +307,7 @@ var AdminUsersPagination = React.createClass({
   render: function() {
     var pages = [];
     for (var i = 1; i <= this.state.total_pages; i++) {
-        if (i == this.state.current_page) {
+        if (i === this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
         }
         else {
@@ -314,17 +337,19 @@ var AdminUsersPagination = React.createClass({
 
 var AddNewUserForm = React.createClass({
     getInitialState: function() {
-        return {error:""};
+        return {error: ""};
     },
+
     clearError: function() {
-        this.setState({error:""});
+        this.setState({error: ""});
     },
+
     addUser: function() {
         //Get the values entered by the user in the form
-        var usrEmail    = this.refs.user_email.getDOMNode().value.trim();
-        var usrFirst    = this.refs.user_first_name.getDOMNode().value.trim();
-        var usrMI       = this.refs.user_middle_name.getDOMNode().value.trim();
-        var usrLast     = this.refs.user_last_name.getDOMNode().value.trim();
+        var usrEmail = this.refs.user_email.getDOMNode().value.trim();
+        var usrFirst = this.refs.user_first_name.getDOMNode().value.trim();
+        var usrMI = this.refs.user_middle_name.getDOMNode().value.trim();
+        var usrLast  = this.refs.user_last_name.getDOMNode().value.trim();
         var roles = [];
 
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionsCollection
@@ -338,30 +363,30 @@ var AddNewUserForm = React.createClass({
         }
         console.log("roles: " + roles);
 
-        if (usrEmail == "") {
-            this.setState({error:"Email cannot be empty."});
+        if (usrEmail === "") {
+            this.setState({error: "Email cannot be empty."});
             return;
         }
 
         if(! Utils.validate_email(usrEmail)) {
-            this.setState({error:"Invalid email address."});
+            this.setState({error: "Invalid email address."});
             return;
         }
-        if (usrFirst == "") {
-            this.setState({error:"First name cannot be empty."});
+        if (usrFirst === "") {
+            this.setState({error: "First name cannot be empty."});
             return;
         }
         if (usrLast == "") {
-            this.setState({error:"Last name cannot be empty."});
+            this.setState({error: "Last name cannot be empty."});
             return;
         }
         if (usrMI.length > 1) {
-            this.setState({error:"Middle name should be one character long."});
+            this.setState({error: "Middle name should be one character long."});
             return;
         }
 
         if (roles.length < 1) {
-            this.setState({error:"Please select at least one role for this user."});
+            this.setState({error: "Please select at least one role for this user."});
             return;
         }
 
@@ -400,14 +425,15 @@ var AddNewUserForm = React.createClass({
             }
         }
         else {
-            _this.setState({error:json.message});
+            _this.setState({error: json.message});
             return;
         }
     });
 
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
-        _this.setState({error:"There was some unknown error.Try Again"});
+        _this.setState({
+            error: "There was some unknown error. Please try again."});
         return;
     });
   },
@@ -415,7 +441,7 @@ var AddNewUserForm = React.createClass({
     var error;
 
     // Add generic function for displaying errors
-    if (this.state.error != "") {
+    if (this.state.error !== "") {
       error = <div className="alert alert-danger alert-dismissible">
               <button type="button" onClick={this.clearError} className="close">&times;</button>
               {this.state.error}
@@ -426,7 +452,7 @@ var AddNewUserForm = React.createClass({
 <div className="col-sm-offset-3 col-sm-6">
 
     {error}
-    
+
     <div className="form-horizontal">
 
         <h3> Add New User </h3>
