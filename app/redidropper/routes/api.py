@@ -239,7 +239,8 @@ def api_list_users():
 
     # users = UserEntity.query.all()
     # users = UserEntity.query.filter(UserEntity.id >= 14).all()
-    pagination = UserEntity.query.paginate(page_num, per_page, False)
+    pagination = UserEntity.query.order_by(
+        db.desc(UserEntity.id)).paginate(page_num, per_page, False)
     items = [i.serialize() for i in pagination.items]
     return jsonify_success({"total_pages": pagination.pages,
                             "list_of_users": items})
