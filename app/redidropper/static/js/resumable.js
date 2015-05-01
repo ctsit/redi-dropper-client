@@ -5,7 +5,7 @@
 * Steffen Tiedemann Christensen, steffen@23company.com
 */
 
-(function(){
+(function() {
 "use strict";
 
   var Resumable = function(opts){
@@ -20,50 +20,52 @@
     // - FileList object type
     // - slicing files
     this.support = (
-                   (typeof(File)!=='undefined')
+                   (typeof (File) !== 'undefined')
                    &&
-                   (typeof(Blob)!=='undefined')
+                   (typeof (Blob) !== 'undefined')
                    &&
-                   (typeof(FileList)!=='undefined')
+                   (typeof (FileList) !== 'undefined')
                    &&
                    (!!Blob.prototype.webkitSlice||!!Blob.prototype.mozSlice||!!Blob.prototype.slice||false)
                    );
-    if(!this.support) return(false);
+    if(!this.support) {
+        return (false);
+    }
 
 
     // PROPERTIES
     var $ = this;
     $.files = [];
     $.defaults = {
-      chunkSize:1*1024*1024,
-      forceChunkSize:false,
-      simultaneousUploads:3,
-      fileParameterName:'file',
-      throttleProgressCallbacks:0.5,
-      query:{},
-      headers:{},
-      preprocess:null,
-      method:'multipart',
-      prioritizeFirstAndLastChunk:false,
-      target:'/',
-      testChunks:true,
-      generateUniqueIdentifier:null,
-      maxChunkRetries:undefined,
-      chunkRetryInterval:undefined,
-      permanentErrors:[400, 404, 415, 500, 501],
-      maxFiles:undefined,
-      withCredentials:false,
-      xhrTimeout:0,
-      maxFilesErrorCallback:function (files, errorCount) {
+      chunkSize: 1 * 1024 * 1024,
+      forceChunkSize: false,
+      simultaneousUploads: 3,
+      fileParameterName: 'file',
+      throttleProgressCallbacks: 0.5,
+      query: {},
+      headers: {},
+      preprocess: null,
+      method: 'multipart',
+      prioritizeFirstAndLastChunk: false,
+      target: '/',
+      testChunks: true,
+      generateUniqueIdentifier: null,
+      maxChunkRetries: undefined,
+      chunkRetryInterval: undefined,
+      permanentErrors: [400, 404, 415, 500, 501],
+      maxFiles: undefined,
+      withCredentials: false,
+      xhrTimeout: 0,
+      maxFilesErrorCallback: function (files, errorCount) {
         var maxFiles = $.getOpt('maxFiles');
         alert('Please upload ' + maxFiles + ' file' + (maxFiles === 1 ? '' : 's') + ' at a time.');
       },
-      minFileSize:1,
-      minFileSizeErrorCallback:function(file, errorCount) {
+      minFileSize: 1,
+      minFileSizeErrorCallback: function(file, errorCount) {
         alert(file.fileName||file.name +' is too small, please upload files larger than ' + $h.formatSize($.getOpt('minFileSize')) + '.');
       },
-      maxFileSize:undefined,
-      maxFileSizeErrorCallback:function(file, errorCount) {
+      maxFileSize: undefined,
+      maxFileSizeErrorCallback: function(file, errorCount) {
         alert(file.fileName||file.name +' is too large, please upload files less than ' + $h.formatSize($.getOpt('maxFileSize')) + '.');
       },
       fileType: [],
@@ -568,8 +570,8 @@
       // Computed properties
       var chunkSize = $.getOpt('chunkSize');
       $.loaded = 0;
-      $.startByte = $.offset*chunkSize;
-      $.endByte = Math.min($.fileObjSize, ($.offset+1)*chunkSize);
+      $.startByte = $.offset * chunkSize;
+      $.endByte = Math.min($.fileObjSize, ($.offset + 1) * chunkSize);
       if ($.fileObjSize-$.endByte < chunkSize && !$.getOpt('forceChunkSize')) {
         // The last chunk will be bigger than the chunk size, but less than 2*chunkSize
         $.endByte = $.fileObjSize;
@@ -585,7 +587,7 @@
         var testHandler = function(e){
           $.tested = true;
           var status = $.status();
-          if(status=='success') {
+          if(status == 'success') {
             $.callback(status, $.message());
             $.resumableObj.uploadNextChunk();
           } else {
@@ -600,8 +602,8 @@
         var params = [];
         var customQuery = $.getOpt('query');
 
-        if(typeof customQuery == 'function') customQuery = customQuery($.fileObj, $);
-        $h.each(customQuery, function(k,v){
+        if(typeof customQuery === 'function') customQuery = customQuery($.fileObj, $);
+        $h.each(customQuery, function(k, v) {
           params.push([encodeURIComponent(k), encodeURIComponent(v)].join('='));
         });
         // Add extra data to identify chunk
@@ -619,7 +621,7 @@
         $.xhr.timeout = $.getOpt('xhrTimeout');
         $.xhr.withCredentials = $.getOpt('withCredentials');
         // Add data from header options
-        $h.each($.getOpt('headers'), function(k,v) {
+        $h.each($.getOpt('headers'), function(k, v) {
           $.xhr.setRequestHeader(k, v);
         });
         $.xhr.send(null);
@@ -631,7 +633,7 @@
       };
 
       // send() uploads the actual data in a POST call
-      $.send = function(){
+      $.send = function() {
         var preprocess = $.getOpt('preprocess');
         if(typeof preprocess === 'function') {
           switch($.preprocessState) {
@@ -663,10 +665,11 @@
         // Done (either done, failed or retry)
         var doneHandler = function(e){
           var status = $.status();
-          if(status=='success'||status=='error') {
+          if(status === 'success' || status === 'error') {
             $.callback(status, $.message());
             $.resumableObj.uploadNextChunk();
-          } else {
+          }
+          else {
             $.callback('retry', $.message());
             $.abort();
             $.retries++;
@@ -698,12 +701,13 @@
         };
         // Mix in custom data
         var customQuery = $.getOpt('query');
+
         if(typeof customQuery == 'function') customQuery = customQuery($.fileObj, $);
         $h.each(customQuery, function(k,v){
           query[k] = v;
         });
 
-        var func   = ($.fileObj.file.slice ? 'slice' : ($.fileObj.file.mozSlice ? 'mozSlice' : ($.fileObj.file.webkitSlice ? 'webkitSlice' : 'slice'))),
+        var func = ($.fileObj.file.slice ? 'slice' : ($.fileObj.file.mozSlice ? 'mozSlice' : ($.fileObj.file.webkitSlice ? 'webkitSlice' : 'slice'))),
         bytes  = $.fileObj.file[func]($.startByte,$.endByte),
         data   = null,
         target = $.getOpt('target');
@@ -712,15 +716,16 @@
           // Add data from the query options
           data = bytes;
           var params = [];
-          $h.each(query, function(k,v){
+          $h.each(query, function(k, v) {
             params.push([encodeURIComponent(k), encodeURIComponent(v)].join('='));
           });
           target = $h.getTarget(params);
-        } else {
+        }
+        else {
           // Add data from the query options
           data = new FormData();
-          $h.each(query, function(k,v){
-            data.append(k,v);
+          $h.each(query, function(k, v) {
+            data.append(k, v);
           });
           data.append($.getOpt('fileParameterName'), bytes);
         }
@@ -729,35 +734,44 @@
         $.xhr.timeout = $.getOpt('xhrTimeout');
         $.xhr.withCredentials = $.getOpt('withCredentials');
         // Add data from header options
-        $h.each($.getOpt('headers'), function(k,v) {
+        $h.each($.getOpt('headers'), function(k, v) {
           $.xhr.setRequestHeader(k, v);
         });
         $.xhr.send(data);
       };
-      $.abort = function(){
+
+      $.abort = function() {
         // Abort and reset
-        if($.xhr) $.xhr.abort();
+        if($.xhr) {
+            $.xhr.abort();
+        }
         $.xhr = null;
       };
+
       $.status = function(){
         // Returns: 'pending', 'uploading', 'success', 'error'
         if($.pendingRetry) {
           // if pending retry then that's effectively the same as actively uploading,
           // there might just be a slight delay before the retry starts
-          return('uploading');
-        } else if(!$.xhr) {
-          return('pending');
-        } else if($.xhr.readyState<4) {
+          return ('uploading');
+        }
+        else if(!$.xhr) {
+          return ('pending');
+        }
+        else if($.xhr.readyState<4) {
           // Status is really 'OPENED', 'HEADERS_RECEIVED' or 'LOADING' - meaning that stuff is happening
           return('uploading');
-        } else {
-          if($.xhr.status==200) {
+        }
+        else {
+          if ($.xhr.status === 200) {
             // HTTP 200, perfect
-            return('success');
-          } else if($h.contains($.getOpt('permanentErrors'), $.xhr.status) || $.retries >= $.getOpt('maxChunkRetries')) {
+            return ('success');
+          }
+          else if($h.contains($.getOpt('permanentErrors'), $.xhr.status) || $.retries >= $.getOpt('maxChunkRetries')) {
             // HTTP 415/500/501, permanent error
             return('error');
-          } else {
+          }
+          else {
             // this should never happen, but we'll reset and queue a retry
             // a likely case for this would be 503 service unavailable
             $.abort();
