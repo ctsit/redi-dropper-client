@@ -30,6 +30,13 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     event = db.relationship('EventEntity', uselist=False, lazy='joined')
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
+    def get_full_path(self, prefix):
+        """
+        Build the full path using the database info and the prefix
+        @TODO: implement the naming convention
+        """
+        return os.path.join(prefix, self.file_name)
+
     def __repr__(self):
         return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id})>" \
             "usrID: {0.user_id}".format(self)

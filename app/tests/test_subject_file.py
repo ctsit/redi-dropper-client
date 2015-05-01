@@ -7,7 +7,6 @@ Authors:
 """
 
 from .base_test import BaseTestCase
-from redidropper.main import db
 from redidropper import utils
 
 from redidropper.models.event_entity import EventEntity

@@ -46,7 +46,7 @@ var Utils = (function() {
             return api_request_private(url, reqType, data, dataType, doCache);
         },
         get_resumable_instance: function() {
-            if (! resumable_instance) {
+            if (!resumable_instance) {
                 create_resumable_instance();
             }
             return resumable_instance;
@@ -55,7 +55,8 @@ var Utils = (function() {
             return validate_email_private(email);
         },
         print_r: function(o) {
-            return JSON.stringify(o, null, '\t').replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;');
+            // return JSON.stringify(o, null, '\t').replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;');
+            return JSON.stringify(o, null, '\t');
         },
 
         getAllQueryVarsFromUrl: function(url) {

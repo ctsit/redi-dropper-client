@@ -9,13 +9,11 @@ Goal: Implement code specific to file handling on server side
 @TODO: read
     https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
     https://pypi.python.org/pypi/bleach
-    bcrypt http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
 """
 #
 
 import os
-import math
-import logging
+# import math
 
 from flask import request
 from werkzeug import secure_filename
@@ -32,6 +30,10 @@ class FileChunk(object):
     """ Properties storage for a file chunk """
 
     def __init__(self):
+        """
+        Copy the request data about the file chunk into an object we can
+        pass around functions that need the data
+        """
         # @TODO: !!! add size checks for user input
         self.number = int(request.form['resumableChunkNumber'])
         self.size = int(request.form['resumableChunkSize'])
@@ -39,16 +41,16 @@ class FileChunk(object):
         self.uniqueid = request.form['resumableIdentifier']
         self.file_name = secure_filename(request.form['resumableFilename'])
         self.afile = request.files['file']
-        self.total_parts = int(max(math.floor(self.total_size / self.size), 1))
+        # self.total_parts = int(max(math.floor(self.total_size /self.size),1))
+        self.total_parts = int(request.form['resumableTotalChunks'])
+        self.subject_id = int(request.form['subject_id'])
+        self.event_id = int(request.form['event_id'])
 
     def __repr__(self):
         """ Implement an unambiguous representation """
-        return "FileChunk <{} out of {} for file: {} ({} out of {} bytes)>" \
-            .format(self.number,
-                    self.total_parts,
-                    self.file_name,
-                    self.size,
-                    self.total_size)
+        return "FileChunk <{0.number} out of {0.total_parts} for file:" \
+               "{0.file_name} ({0.size} out of {0.total_size} bytes)>" \
+               .format(self)
 
 
 def get_chunk_path(file_name, chunk_number):

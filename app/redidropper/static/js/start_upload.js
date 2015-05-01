@@ -9,6 +9,8 @@
 //      __3 FilesUpload
 //      __4 NavController
 
+// var Utils, React, $;
+
 // ============ __1 SubjectsList
 var SubjectsList = React.createClass({
     getInitialState: function() {
@@ -95,7 +97,7 @@ var EventsList = React.createClass({
   componentWillMount: function() {
     var _this = this;
     var url = "/api/list_events";
-    var request = Utils.api_post_json(url, {subject_id: 'a'});
+    var request = Utils.api_post_json(url, {});
 
     request.success( function(json) {
        _this.setState({
@@ -145,26 +147,37 @@ var EventsList = React.createClass({
 
 // ============ __3 FilesUpload
 var FilesUpload = React.createClass({
-  getInitialState: function() {
-    return {};
-  },
-  componentWillMount: function() {
-    var resumable = Utils.get_resumable_instance();
+    // Note: This component has access to the
+    //      subject_id
+    //      eventEntity
+    // values shared by the NavController component
 
-    resumable.on('complete', function() {
-        $("#upload-complete-button").show();
-    });
+    getInitialState: function() {
+        return {};
+    },
+    componentWillMount: function() {
+        var self = this;
+        var resumable = Utils.get_resumable_instance();
+        resumable.setExtraData({
+            'subject_id': self.props.subject_id,
+            'event_id': self.props.eventEntity.id
+        });
 
-    resumable.on('uploadStart', function() {
-      $("#upload-complete-button").hide();
-    });
-  },
-  render: function() {
-    return (
-    <div className="table-responsive" >
-    </div>
-    );
-  }
+        resumable.on('complete', function() {
+            console.log("Uploaded byte count: " + resumable.getSize());
+            $("#upload-complete-button").show();
+        });
+
+        resumable.on('uploadStart', function() {
+            $("#upload-complete-button").hide();
+        });
+    },
+    render: function() {
+        return (
+                <div className="table-responsive" >
+                </div>
+               );
+    }
 });
 
 
@@ -183,38 +196,47 @@ var NavController = React.createClass({
             current_tab: 0,
             tabs: tabs,
             subject_id: "",
-            event_id: ""
+            eventEntity: ""
         };
     },
     changeTab: function(i) {
         this.setState({
           current_tab: i
-        }); 
- 
-        if (0 === i) {
+        });
+
+        if (i === 0) {
           this.setState({
-            event_id: ""
+            eventEntity: ""
           });
         }
     },
     subjectSelected: function(subject_id) {
-        this.setState({current_tab: 1, subject_id: subject_id});
+        this.setState({
+            current_tab: 1,
+            subject_id: subject_id
+        });
     },
-    eventSelected: function(event_id) {
-        this.setState({current_tab: 2, event_id: event_id});
+    eventSelected: function(eventEntity) {
+        this.setState({
+            current_tab: 2,
+            eventEntity: eventEntity
+        });
     },
     showFiles: function() {
         this.setState({current_tab: 3});
     },
-    urlChanged:function (){
-      var hash_value=location.hash;
+    urlChanged: function () {
+      var hash_value = location.hash;
       var current_tab = this.state.current_tab;
 
       //check whether the current state is not equal to hash value
-      if("#"+this.state.tabs[current_tab] !== hash_value) {
+      if("#" + this.state.tabs[current_tab] !== hash_value) {
         //State has to be changed
         if(hash_value === "#Subjects") {
-          this.setState({current_tab: 0,event_id:""});
+          this.setState({
+              current_tab: 0,
+              eventEntity: ""
+          });
         }
         else if (hash_value === "#Events" && this.state.current_tab === 2) {
           // The condition 'this.state.current_tab==2' is to avoid
@@ -234,8 +256,8 @@ var NavController = React.createClass({
         if(this.state.subject_id !== "") {
             selected_subject_id = "Subject ID: " + this.state.subject_id;
         }
-        if(this.state.event_id !== "") {
-            selected_event_id = "Event: " + this.state.event_id.unique_event_name;
+        if(this.state.eventEntity !== "") {
+            selected_event_id = "Event: " + this.state.eventEntity.unique_event_name;
         }
 
         for(var i = 0; i < tabs.length; i++) {
@@ -259,8 +281,8 @@ var NavController = React.createClass({
 
         if(current_tab === 0) {
             window.location.hash = 'Subjects';
-            //By Passing the Subject selected function to the SubjectsList component
-            //We are allowing the SubjectsList component to execute it when 
+            // By passing the "subjectSelected" function to the SubjectsList component
+            // we are allowing the SubjectsList component to execute it when
             // it is time to change the visible tab
             visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
@@ -272,7 +294,12 @@ var NavController = React.createClass({
             window.location.hash = 'Files';
             $("#upload-files").show();
             $("#files-list").empty();
-            visible_tab = <FilesUpload showFiles = {this.showFiles}/>;
+
+            // pass data to Resumable object so we can map files to the subject
+            visible_tab = <FilesUpload showFiles = {this.showFiles}
+                subject_id = {this.state.subject_id}
+                eventEntity = {this.state.eventEntity}
+            />;
         }
 
         return (
