@@ -208,7 +208,7 @@ var AdminUsersRow = React.createClass({
                     </button>
             }
 
-            display =   <tr>
+            return (<tr>
                             <td>{ row_num }</td>
                             <td>{record.id}</td>
                             <td>{record.email}</td>
@@ -219,11 +219,7 @@ var AdminUsersRow = React.createClass({
                             <td>{emailButton}</td>
                             <td>{expireButton}</td>
                             <td>{deactivateButton}</td>
-                        </tr>;
-            return(
-                <div>
-                {display}
-                </div>
+                        </tr>
             );
     }
 });
@@ -366,7 +362,7 @@ var AddNewUserForm = React.createClass({
 
         for (var i = 0; i < collection.length; i++) {
             if (collection.item(i).selected) {
-                roles[i] = collection.item(i).value;
+                roles.push(collection.item(i).value);
             }
         }
         console.log("roles: " + roles);
@@ -427,7 +423,7 @@ var AddNewUserForm = React.createClass({
                     'access_expires_at': record.access_expires_at,
                     'email_confirmed_at': record.email_confirmed_at,
                     'is_active'     : record.is_active,
-                    'roles'         : record.rolName
+                    'roles'         : record.roles
                 };
                 _this.props.addNewUser(data);
             }
@@ -494,7 +490,8 @@ var AddNewUserForm = React.createClass({
               <select ref="user_roles" className="form-control" id="id-user-roles" multiple={true}>
                   <option value="admin">Admin</option>
                   <option value="technician">Technician</option>
-                  <option value="researcher">Researcher</option>
+                  <option value="researcher_one">Researcher 1</option>
+                  <option value="researcher_two">Researcher 2</option>
                 </select>
             </div>
         </div>
