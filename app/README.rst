@@ -30,7 +30,7 @@ There are three great tools for python development:
 
     brew install mysql
     mysql --version
-    (mysql  Ver 14.14 Distrib 5.6.23, for osx10.9 (x86_64) using  EditLine wrapper)
+    (mysql  Ver 14.14 Distrib 5.6.24, for osx10.9 (x86_64) using  EditLine wrapper)
 
     sudo pip install virtualenv
     sudo pip install virtualenvwrapper
@@ -44,7 +44,23 @@ There are three great tools for python development:
     workon redi-dropper-client
     cd ~/git/redi-dropper-client/app
     fab install_requirements
-    fab reset_db
+    fab init_db
+
+    # create/update important configuration params
+    cp redidropper/startup/application.cfg.example ~/redidropper_application.cfg
+
+    # run the application
+    REDIDROPPER_CONFIG=~/redidropper_application.cfg python run.py
+
+    # to avoid typing the REDIDROPPER_CONFIG=... you can create a permanent
+    # environment entry in your ~/.bashrc
+    echo 'REDIDROPPER_CONFIG=~/redidropper_application.cfg' >> ~/.bashrc && . ~/.bashrc
+    # ... and then you can simply run
+    ./run.sh
+        or
+    python run.py
+
+
 
 Files & Folders
 ---------------
