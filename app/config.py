@@ -8,6 +8,7 @@ Goal: Implement the default-config and test-config clases
 """
 
 import os
+from datetime import timedelta
 import logging
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -24,6 +25,10 @@ class DefaultConfig(object):
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request
     SESSION_COOKIE_SECURE = True
+
+    # https://www.owasp.org/index.php/Session_Management_Cheat_Sheet
+    # flask.pocoo.org/docs/0.10/api/#flask.Flask.permanent_session_lifetime
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
 
     DEBUG = False
     TESTING = False

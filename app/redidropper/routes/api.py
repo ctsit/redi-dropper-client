@@ -7,7 +7,7 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-import math
+# import math
 from datetime import datetime
 from flask import request
 from flask import send_file
@@ -45,8 +45,6 @@ def api_list_subject_events():
 
     if 'POST' == request.method:
         subject_id = get_safe_int(request.form.get('subject_id'))
-        # = get_safe_int(request.form.get(''))
-        # = get_safe_int(request.args.get(''))
     else:
         subject_id = get_safe_int(request.args.get('subject_id'))
 
@@ -104,6 +102,7 @@ def api_list_subject_event_files():
 
 
 @app.route('/api/find_subject', methods=['POST', 'GET'])
+@login_required
 def find_subject():
     """
     :rtype: Response
@@ -133,6 +132,7 @@ def find_subject():
 
 
 @app.route('/api/list_events', methods=['POST', 'GET'])
+@login_required
 def list_events():
     """
     :rtype: Response
@@ -237,7 +237,6 @@ def api_list_users():
         per_page = get_safe_int(request.args.get('per_page'))
         page_num = get_safe_int(request.args.get('page_num'))
 
-    # users = UserEntity.query.all()
     # users = UserEntity.query.filter(UserEntity.id >= 14).all()
     pagination = UserEntity.query.order_by(
         db.desc(UserEntity.id)).paginate(page_num, per_page, False)
@@ -374,10 +373,11 @@ def api_send_verification_email():
                               .format(exc, details)})
 
 
-@app.route('/api/verify_email', methods=['POST', 'GET'])
+@app.route('/api/verify_email', methods=['POST'])
 def api_verify_email():
     """
     @TODO: add column for verification hash
+    @TODO: add counter/log to track failed attempts
 
     :rtype: Response
     :return the success or failed in json format
@@ -415,9 +415,9 @@ def api_expire_account():
     return jsonify_success({"message": "User access was expired."})
 
 
-@app.route('/api/extend_expiration_date', methods=['POST'])
+@app.route('/api/extend_account', methods=['POST'])
 @perm_admin.require()
-def api_extend_expiration_date():
+def api_extend_account():
     """
     Change the `User.usrAccessExpiresAt` to today's date + 180 days
 

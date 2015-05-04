@@ -91,12 +91,12 @@ var AdminUsersRow = React.createClass({
         });
     },
 
-    extendExpirationDate:function(){
+    extendExpirationDate: function() {
         var record = this.state.record;
         var _this = this;
         var data = {
             "user_id": record.id};
-        var request = Utils.api_post_json("/api/extend_expiration_date", data);
+        var request = Utils.api_post_json("/api/extend_account", data);
 
         request.success( function(json) {
             if(json.status === "success") {

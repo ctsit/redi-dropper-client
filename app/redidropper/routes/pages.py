@@ -37,6 +37,8 @@ login_manager = LoginManager(app)
 
 # Possible options: strong, basic, None
 login_manager.session_protection = "strong"
+login_manager.login_message = ""
+login_manager.login_message_category = "info"
 
 
 @login_manager.user_loader
@@ -50,6 +52,17 @@ def unauthorized():
     """ Returns a message for the unauthorized users """
     # return redirect('/')
     return 'Please <a href="{}">login</a> first.'.format(url_for('index'))
+
+
+@app.errorhandler(403)
+def page_not_found(e):
+    """
+    Redirect to login page if probing a protected resources before login
+    """
+    show_permission_error = True
+    if show_permission_error:
+        # session['redirected_from'] = request.url
+        return redirect(url_for('index') + "?next={}".format(request.url))
 
 
 class LoginForm(Form):
@@ -98,6 +111,8 @@ def index():
 
             app.logger.info('Log login event for: {}'.format(user))
             next_page = get_role_landing_page()
+            # utils.flash_info("next page: ".format(request.args.get('next')))
+            # return redirect(request.args.get('next') or next_page)
             return redirect(next_page)
         else:
             app.logger.info('Incorrect pass')
@@ -105,6 +120,8 @@ def index():
 
     if current_user.is_authenticated():
         next_page = get_role_landing_page()
+        # utils.flash_info("next page: ".format(request.args.get('next')))
+        # return redirect(request.args.get('next') or next_page)
         return redirect(next_page)
 
     return render_template('index.html', form=form)
