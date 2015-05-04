@@ -28,6 +28,10 @@ There are three great tools for python development:
 
 .. raw:: bash
 
+    brew install mysql
+    mysql --version
+    (mysql  Ver 14.14 Distrib 5.6.23, for osx10.9 (x86_64) using  EditLine wrapper)
+
     sudo pip install virtualenv
     sudo pip install virtualenvwrapper
     sudo pip install fabric
@@ -40,7 +44,7 @@ There are three great tools for python development:
     workon redi-dropper-client
     cd ~/git/redi-dropper-client/app
     fab install_requirements
-
+    fab reset_db
 
 Files & Folders
 ---------------
