@@ -4,14 +4,17 @@ USE RediDropper;
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
 SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
+
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
-    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW()),
-    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0, NULL),
-    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1, NULL),
-    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1, NULL),
-    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1, NULL),
-    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1, NULL)
+    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW());
+INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive)
+VALUES
+    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0),
+    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1),
+    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1),
+    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1),
+    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1)
 ;
 
 
@@ -175,11 +178,11 @@ VALUES
 ;
 
 
-INSERT INTO Log (logtID, logIP, webID, logDateTime)
-      SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'account_created'
-UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'login'
-UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'logout'
-UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'login_error'
-UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'file_uploaded'
-UNION SELECT logtID, '1.2.3.4', 1, NOW() FROM LogType WHERE logtType = 'file_downloaded'
+INSERT INTO Log (logtID, logIP, webID, logDateTime, logDetails)
+      SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
+UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
+UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
+UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'
+UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_uploaded'
+UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_downloaded'
 ;
