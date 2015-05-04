@@ -1,7 +1,7 @@
 """
 ORM for RediDropper.SubjectFile table
 """
-
+import os
 from redidropper.main import db
 from redidropper.utils import dump_datetime
 from redidropper.database.crud_mixin import CRUDMixin
@@ -30,12 +30,39 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     event = db.relationship('EventEntity', uselist=False, lazy='joined')
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
+    @classmethod
+    def create_folder(self, prefix):
+        """
+        Create folder prefix/subject_id if it does not exist
+        """
+        directory = os.path.join(prefix, self.subject_id)
+        print "dir: " + directory
+
+        if not os.path.exists(directory):
+            try:
+                os.makedirs(directory)
+
+                return directory
+            except Exception as exc:
+                print "Failed due: {}".format(exc)
+
     def get_full_path(self, prefix):
         """
         Build the full path using the database info and the prefix
         @TODO: implement the naming convention
+
+        20120101_0123_SiteIDA_SubjectIDB_Sequence123_xyz.jpg
         """
-        return os.path.join(prefix, self.file_name)
+        subject_dir = SubjectFileEntity.create_folder(prefix)
+        assert subject_dir is not None
+
+        when_date = '20150101'
+        when_time = '0102'
+        sequence = '1'
+        file_convention = "{}_{}_site_{}_{}_{}".format(
+            when_date, when_time, self.subject_id, sequence, self.file_name)
+
+        return os.path.join(subject_dir, file_convention)
 
     def __repr__(self):
         return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id})>" \
