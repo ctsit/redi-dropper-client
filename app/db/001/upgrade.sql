@@ -8,6 +8,7 @@ ON
     RediDropper.*
 TO
     'redidropper'@'localhost';
+
 FLUSH PRIVILEGES;
 
 

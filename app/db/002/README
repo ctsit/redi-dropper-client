@@ -1,23 +1,6 @@
 This schema change adds tables for user management.
 
 show tables from RediDropper;
-+-----------------------+
-| Tables_in_redidropper |
-+-----------------------+
-| Event                 |
-| EventType             |
-| Role                  |
-| Subject               |
-| SubjectFile           |
-| User                  |
-| UserAgent             |
-| UserRole              |
-| Version               |
-| WebSession            |
-| subject_file_view     |
-| user_role_view        |
-+-----------------------+
-12 rows in set (0.00 sec)
 
 -- View available roles
 SELECT * FROM Role;
@@ -55,43 +38,9 @@ desc Subject;
 
 -- what files have been uploaded
 desc SubjectFile;
-+----------------+----------------------+------+-----+---------+----------------+
-| Field          | Type                 | Null | Key | Default | Extra          |
-+----------------+----------------------+------+-----+---------+----------------+
-| sfID           | int(10) unsigned     | NO   | PRI | NULL    | auto_increment |
-| sbjID          | int(10) unsigned     | NO   | MUL | NULL    |                |
-| sfEventNumber  | smallint(5) unsigned | NO   |     | NULL    |                |
-| sfFileName     | varchar(255)         | NO   | MUL | NULL    |                |
-| sfFileCheckSum | varchar(32)          | NO   |     | NULL    |                |
-| sfUploadDate   | date                 | NO   | MUL | NULL    |                |
-| usrID          | int(10) unsigned     | NO   | MUL | NULL    |                |
-+----------------+----------------------+------+-----+---------+----------------+
-
 
 
 select * from Subject natural join SubjectFile where sbjRedcapID = '001';
-+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
-| sbjID | sbjRedcapID | sbjAddedAt          | sfID | sfEventNumber | sfFileName | sfFileCheckSum                   | sfUploadDate | usrID |
-+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
-|     1 | 001         | 2015-04-20 12:34:16 |    1 |             1 | file.png   | 0cc175b9c0f1b6a831c399e269772661 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    2 |             1 | file2.png  | 92eb5ffee6ae2fec3ad71c777531578f | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    3 |             1 | file3.png  | 4a8a08f09d37b73795649038408b5f33 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    4 |             2 | file4.png  | 8277e0910d750195b448797616e091ad | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    5 |             2 | file5.png  | e1671797c52e15f763380b45e841ec32 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    6 |             2 | file6.png  | 8fa14cdd754f91cc6554c9e71929cce7 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    7 |             3 | file7.png  | b2f5ff47436671b6e533d8dc3614845d | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    8 |             3 | file8.png  | 2510c39011c5be704182423e3a695e91 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |    9 |             4 | file9.png  | 865c0c0b4ab0e063e5caa3387c1a8741 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   10 |             5 | fileA.png  | 363b122c528f54df4a0446b6bab05515 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   11 |             6 | fileB.png  | 8ce4b16b22b58894aa86c421e8759df3 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   12 |             7 | fileC.png  | 2db95e8e1a9267b7a1188556b2013b33 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   13 |             7 | fileD.png  | 6f8f57715090da2632453988d9a1501b | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   14 |             8 | fileE.png  | 7b8b965ad4bca0e41ab51de7b31363a1 | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   15 |             8 | fileF.png  | d95679752134a2d9eb61dbd7b91c4bcc | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   16 |             9 | fileG.png  | 83878c91171338902e0fe0fb97a8c47a | 2015-04-20   |     1 |
-|     1 | 001         | 2015-04-20 12:34:16 |   17 |             9 | fileH.png  | 7694f4a66316e53c8cdd9d9954bd611d | 2015-04-20   |     1 |
-+-------+-------------+---------------------+------+---------------+------------+----------------------------------+--------------+-------+
-17 rows in set (0.00 sec)
 
 
 -- browser data
@@ -135,22 +84,10 @@ select * from WebSession;
 2 rows in set (0.00 sec)
 
 
--- what events to log
-desc EventType;
-+-----------------+------------------+------+-----+---------+----------------+
-| Field           | Type             | Null | Key | Default | Extra          |
-+-----------------+------------------+------+-----+---------+----------------+
-| evttID          | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
-| evttType        | varchar(255)     | NO   | UNI | NULL    |                |
-| evttDescription | text             | NO   |     | NULL    |                |
-+-----------------+------------------+------+-----+---------+----------------+
-3 rows in set (0.01 sec)
-
-
--- examples of events
-select * from EventType;
+-- examples of log events
+select * from LogType;
 +--------+-----------------+-----------------+
-| evttID | evttType        | evttDescription |
+| logtID | logtType        | logtDescription |
 +--------+-----------------+-----------------+
 |      1 | account_created |                 |
 |      2 | login           |                 |
@@ -162,31 +99,15 @@ select * from EventType;
 6 rows in set (0.00 sec)
 
 
--- Store important events
-desc Event;
-+-------------+------------------+------+-----+---------------------+----------------+
-| Field       | Type             | Null | Key | Default             | Extra          |
-+-------------+------------------+------+-----+---------------------+----------------+
-| evtID       | int(10) unsigned | NO   | PRI | NULL                | auto_increment |
-| evttID      | int(10) unsigned | NO   | MUL | NULL                |                |
-| evtIP       | varchar(15)      | NO   | MUL |                     |                |
-| webID       | int(10) unsigned | NO   | MUL | NULL                |                |
-| evtDateTime | datetime         | NO   | MUL | 0000-00-00 00:00:00 |                |
-| evtDetails  | text             | NO   |     | NULL                |                |
-+-------------+------------------+------+-----+---------------------+----------------+
-6 rows in set (0.00 sec)
-
-
-select * from Event;
+select * from Log;
 +-------+--------+---------+-------+---------------------+------------+
-| evtID | evttID | evtIP   | webID | evtDateTime         | evtDetails |
+| logID | logtID | logIP   | webID | logDateTime         | logDetails |
 +-------+--------+---------+-------+---------------------+------------+
-|     1 |      1 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     2 |      2 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     3 |      3 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     4 |      4 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     5 |      5 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
-|     6 |      6 | 1.2.3.4 |     1 | 2015-04-20 12:34:16 |            |
+|     1 |      1 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     2 |      2 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     3 |      3 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     4 |      4 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     5 |      5 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
+|     6 |      6 | 1.2.3.4 |     1 | 2015-04-27 17:47:59 |            |
 +-------+--------+---------+-------+---------------------+------------+
 6 rows in set (0.00 sec)
-

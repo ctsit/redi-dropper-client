@@ -29,22 +29,16 @@ from flask_principal import \
 from redidropper.main import app
 from redidropper import utils
 from redidropper.models.user_entity import UserEntity
-
+from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN, \
+    ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
 
 # set the login manager for the app
 login_manager = LoginManager(app)
 
-# class AnonymousUser(AnonymousUserMixin):
-#   """ fix AttributeError: 'AnonymousUserMixin' object has no attribute 'id'"""
-#
-#     def __init__(self):
-#         """ ha """
-#         self.id = None
-#         self.roles = ()
-# login_manager.anonymous_user = AnonymousUser
-
 # Possible options: strong, basic, None
 login_manager.session_protection = "strong"
+login_manager.login_message = ""
+login_manager.login_message_category = "info"
 
 
 @login_manager.user_loader
@@ -58,6 +52,17 @@ def unauthorized():
     """ Returns a message for the unauthorized users """
     # return redirect('/')
     return 'Please <a href="{}">login</a> first.'.format(url_for('index'))
+
+
+@app.errorhandler(403)
+def page_not_found(e):
+    """
+    Redirect to login page if probing a protected resources before login
+    """
+    show_permission_error = True
+    if show_permission_error:
+        # session['redirected_from'] = request.url
+        return redirect(url_for('index') + "?next={}".format(request.url))
 
 
 class LoginForm(Form):
@@ -84,7 +89,7 @@ def index():
         app.logger.debug("{} password: {}".format(email, password))
 
         app.logger.debug("Checking email: {}".format(email))
-        user = UserEntity.query.filter_by(email=email).one()
+        user = UserEntity.query.filter_by(email=email).first()
 
         if user:
             app.logger.debug("Found user object: {}".format(user))
@@ -105,15 +110,43 @@ def index():
                                   identity=Identity(user.get_id()))
 
             app.logger.info('Log login event for: {}'.format(user))
-            return redirect(request.args.get('next') or url_for('technician'))
+            next_page = get_role_landing_page()
+            # utils.flash_info("next page: ".format(request.args.get('next')))
+            # return redirect(request.args.get('next') or next_page)
+            return redirect(next_page)
         else:
             app.logger.info('Incorrect pass')
             utils.flash_error("Incorrect password.")
 
     if current_user.is_authenticated():
-        return redirect(request.args.get('next') or url_for('technician'))
+        next_page = get_role_landing_page()
+        # utils.flash_info("next page: ".format(request.args.get('next')))
+        # return redirect(request.args.get('next') or next_page)
+        return redirect(next_page)
 
     return render_template('index.html', form=form)
+
+
+def get_role_landing_page():
+    """
+    Get the landing page for a user with specific role
+    :return None if the
+    """
+    if not hasattr(current_user, 'roles'):
+        return None
+
+    roles = current_user.get_roles()
+
+    if ROLE_ADMIN in roles:
+        role_landing_page = url_for('admin')
+    elif ROLE_TECHNICIAN in roles:
+        role_landing_page = url_for('start_upload')
+    elif ROLE_RESEARCHER_ONE in roles:
+        role_landing_page = url_for('researcher_one')
+    elif ROLE_RESEARCHER_TWO in roles:
+        role_landing_page = url_for('researcher_two')
+
+    return request.args.get('next') or role_landing_page
 
 
 @identity_loaded.connect_via(app)
@@ -166,7 +199,7 @@ def load_user_from_request(req):
         m = hashlib.md5()
         m.update(api_key)
         app.logger.debug("trying api_key: {}".format(m.digest()))
-        user = UserEntity.query.filter_by(api_key=api_key).one()
+        user = UserEntity.query.filter_by(api_key=api_key).first()
         return user
 
     # finally, return None if neither of the api_keys is valid

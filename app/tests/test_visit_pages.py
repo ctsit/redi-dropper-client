@@ -19,13 +19,13 @@ from redidropper.models.role_entity import RoleEntity
 
 protected_pages = [
     '/admin',
-    '/technician',
+    '/dashboard',
     '/researcher_one',
     '/researcher_two',
     '/start_upload',
     '/download_file',
     '/logs',
-    'static',]
+    ]
 
 
 class TestVisitPages(BaseTestCaseWithData):

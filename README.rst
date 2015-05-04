@@ -24,3 +24,12 @@ RediDropper
 
 Introduction
 ============
+
+This application can be used for uploading files to the server and allow/block
+access to the uploaded files based on the user roles.
+
+
+License
+============
+
+BSD 3-Clause License

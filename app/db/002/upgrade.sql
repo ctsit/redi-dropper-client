@@ -2,7 +2,7 @@
 USE RediDropper;
 
 INSERT INTO Version (verID, verInfo)
-    VALUES('002', 'Create tables: User, Role, UserRole, Subject, SubjectFile, UserAgent, WebSession, EventType, Event')
+    VALUES('002', 'Create tables: User, Role, UserRole, Subject, SubjectFile, UserAgent, WebSession, LogType, Log, Event')
 ;
 
 
@@ -86,20 +86,33 @@ CREATE TABLE Subject (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
+CREATE TABLE Event (
+    evtID integer unsigned NOT NULL AUTO_INCREMENT,
+    evtRedcapArm varchar(255) NOT NULL,
+    evtRedcapEvent varchar(255) NOT NULL,
+    evtAddedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+ PRIMARY KEY (evtID),
+ UNIQUE KEY (evtRedcapArm, evtRedcapEvent),
+ KEY (evtRedcapEvent),
+ KEY (evtAddedAt)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+;
 
 CREATE TABLE SubjectFile (
     sfID int(10) unsigned NOT NULL AUTO_INCREMENT,
     sbjID int(10) unsigned NOT NULL,
-    sfEventNumber smallint unsigned NOT NULL,
+    evtID integer unsigned NOT NULL,
     sfFileName varchar(255) NOT NULL,
     sfFileCheckSum varchar(32) NOT NULL,
-    sfUploadDate date NOT NULL,
+    sfFileSize varchar(255) NOT NULL,
+    sfUploadedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     usrID integer unsigned NOT NULL,
  PRIMARY KEY(sfID),
- UNIQUE KEY (sbjID, sfEventNumber, sfFileName),
+ UNIQUE KEY (sbjID, evtID, sfFileName),
  KEY (sfFileName),
- KEY (sfUploadDate),
+ KEY (sfUploadedAt),
  KEY (usrID),
+ CONSTRAINT `fk_SubjectFile_evtID` FOREIGN KEY (evtID) REFERENCES Event (evtID),
  CONSTRAINT `fk_SubjectFile_sbjID` FOREIGN KEY (sbjID) REFERENCES Subject (sbjID),
  CONSTRAINT `fk_SubjectFile_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
@@ -111,14 +124,15 @@ CREATE
     VIEW `subject_file_view`
 AS
 SELECT
-    sbjID, sbjRedcapID, sfEventNumber, COUNT(sfFileName) AS totalEventFiles
+    sbjID, sbjRedcapID, evtID, evtRedcapArm, evtRedcapEvent, COUNT(sfFileName) AS totalEventFiles
 FROM
     Subject
     JOIN SubjectFile USING (sbjID)
+    JOIN Event USING (evtID)
 GROUP BY
-    sbjRedcapID, sfEventNumber
+    sbjRedcapID, evtID
 ORDER BY
-    sbjRedcapID
+    sbjRedcapID, evtRedcapArm, evtRedcapEvent
 ;
 
 
@@ -154,28 +168,28 @@ CREATE TABLE WebSession (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
-CREATE TABLE EventType (
-    evttID integer unsigned NOT NULL AUTO_INCREMENT,
-    evttType varchar(255) NOT NULL,
-    evttDescription text NOT NULL,
- PRIMARY KEY (evttID),
- UNIQUE KEY (evttType)
+CREATE TABLE LogType (
+    logtID integer unsigned NOT NULL AUTO_INCREMENT,
+    logtType varchar(255) NOT NULL,
+    logtDescription text NOT NULL,
+ PRIMARY KEY (logtID),
+ UNIQUE KEY (logtType)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
-CREATE TABLE Event (
-    evtID integer unsigned NOT NULL AUTO_INCREMENT,
-    evttID integer unsigned NOT NULL,
-    evtIP varchar(15) NOT NULL DEFAULT '',
+CREATE TABLE Log (
+    logID integer unsigned NOT NULL AUTO_INCREMENT,
+    logtID integer unsigned NOT NULL,
+    logIP varchar(15) NOT NULL DEFAULT '',
     webID integer unsigned NOT NULL,
-    evtDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    evtDetails text NOT NULL,
- PRIMARY KEY (evtID),
- KEY (evttID),
- KEY (evtIP),
+    logDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    logDetails text NOT NULL,
+ PRIMARY KEY (logID),
+ KEY (logtID),
+ KEY (logIP),
  KEY (webID),
- KEY (evtDateTime),
- CONSTRAINT `fk_Event_evttID` FOREIGN KEY (evttID) REFERENCES EventType (evttID),
+ KEY (logDateTime),
+ CONSTRAINT `fk_Log_logtID` FOREIGN KEY (logtID) REFERENCES LogType (logtID),
  CONSTRAINT `fk_Event_webID` FOREIGN KEY (webID) REFERENCES WebSession (webID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;

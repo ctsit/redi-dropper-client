@@ -45,6 +45,7 @@ script:
 
 # __5a after_success
 after_success:
+    - coveralls --output=coverage.json
     - coveralls -v
 
 # __5b

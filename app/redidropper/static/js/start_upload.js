@@ -1,88 +1,95 @@
-// @TODO: document
+// Goal: Implement the simple navigation between tabs
 //
-var EventFilesList = React.createClass({
-  getInitialState: function() {
-    return {list_of_files:[]};
+//  Subject > Events > Files
+//
+// Components used:
+//
+//      __1 SubjectsList
+//      __2 EventsList
+//      __3 FilesUpload
+//      __4 NavController
+
+// var Utils, React, $;
+
+// ============ __1 SubjectsList
+var SubjectsList = React.createClass({
+    getInitialState: function() {
+        return {
+            list_of_subjects: []
+        };
+    },
+
+    componentWillMount: function() {
+        // this.updateSubjectsList('');
+    },
+
+    updateSubjectsList: function(subject_name) {
+        var _this = this;
+        var url = "/api/find_subject";
+        var request = Utils.api_post_json(url, {name: subject_name});
+        request.success( function(json) {
+            _this.setState({
+                list_of_subjects: json.data.subjects
+            });
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+    },
+
+  subjectChanged: function() {
+    var subject_name = this.refs.subject_name.getDOMNode().value.trim();
+    if (subject_name.length > 0) {
+        this.updateSubjectsList(subject_name);
+    }
   },
-  componentWillMount: function() {
+
+  render: function() {
+    var rows = [];
     var _this = this;
 
-    // @TODO: send subject and event
-    var request = Utils.api_request("/api/list_of_files/1", "GET", {}, "json", true);
-    request.success( function(json) {
-       _this.setState({list_of_files: json.list_of_files});
+    this.state.list_of_subjects.map(function(record, i) {
+        // Wire the click on the button to the parent
+        // function subjectSelected() with the parameter record
+        // which allows the parent component to access record data
+        var selectSubject = _this.props.subjectSelected.bind(null, record);
+        rows.push(
+            <tr>
+                <td>
+                    <button className="btn btn-lg2 btn-primary btn-block"
+                        onClick={selectSubject}>
+                        {record}
+                        </button>
+                </td>
+              </tr>
+        );
     });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
+
     return (
+    <div>
+
+    <div className="form-group">
+        <input className="form-control"
+                ref="subject_name"
+                onChange={this.subjectChanged}
+                placeholder="Please type a Subject ID"
+                type="text" />
+    </div>
     <div className="table-responsive" >
-        <table id="technician-table" className="table table-striped">
+        <table id="subject-table" className="table table-striped table-curved">
             <thead>
-                <tr>
-                    <th># </th>
-                    <th>File Name</th>
-                    <th>File Size </th>
-                    <th> MD5Sum</th>
-                    <th> Date Uploaded </th>
-                    <th> Uploader </th>
-                    <th></th>
-                </tr>
             </thead>
-            <tbody id="technician-table-body">
-                {this.state.list_of_files.map(function(record, i) {
-                    var add_url="/download_file/" + record.id;
-                    return <tr>
-                                <td>{i+1}</td>
-                                <td>{record.file_name}</td>
-                                <td>{record.file_size}</td>
-                                <td> sum </td>
-                                <td> 2015-01-01 </td>
-                                <td> Technician 1</td>
-                                <td><a href={add_url} className="btn btn-primary btn">Download File</a></td>
-                            </tr>
-                })}
+            <tbody id="subject-table-body">
+               {rows}
             </tbody>
         </table>
     </div>
-    );
-  }
-});
-
-var FilesUpload = React.createClass({
-  getInitialState: function() {
-    return {show_button: false}
-  },
-  componentWillMount: function() {
-    var _this=this;
-    var r = Utils.get_resumable_instance();
-    r.on('complete', function() {
-       _this.setState({show_button: true});
-    });
-    r.on('uploadStart', function() {
-      if (_this.state.show_button) {
-        _this.setState({show_button: false});
-      }
-    });
-  },
-  render: function() {
-    var button;
-    if(this.state.show_button) {
-      button = <button className="btn btn-default"
-                       onClick={this.props.showFiles}>
-                       Show Files
-                </button>;
-    }
-    return (
-    <div className="table-responsive" >
-      {button}
     </div>
     );
   }
 });
 
+// ============ __2  EventsList
 var EventsList = React.createClass({
   getInitialState: function() {
     return {list_of_events: []};
@@ -90,10 +97,12 @@ var EventsList = React.createClass({
   componentWillMount: function() {
     var _this = this;
     var url = "/api/list_events";
-    var request = Utils.api_post_json(url, {subject_id: 'a'});
+    var request = Utils.api_post_json(url, {});
 
     request.success( function(json) {
-       _this.setState({list_of_events:json.data});
+       _this.setState({
+           list_of_events: json.data.events
+       });
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
@@ -102,30 +111,28 @@ var EventsList = React.createClass({
   render: function() {
     var rows = [];
     var _this = this;
-    {
-        this.state.list_of_events.map(function(record, i) {
+    this.state.list_of_events.map(function(record, i) {
         var callback = _this.props.eventSelected.bind(null, record);
+        var event_name = record.unique_event_name;
+
         rows.push(
             <tr>
-                <td>{i+1}</td>
                 <td>
-                    <button className="btn btn-info btn-lg"
+                    <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={callback}>
-                        {record}
-                        <span className="glyphicon glyphicon-step-forward"></span>
+                        {event_name}
                     </button>
                 </td>
             </tr>
         );
-    })}
+    });
+
     return (
     <div>
-    <div className="table-responsive" >
-        <table id="event-table" className="table table-striped">
+    <div className="table-responsive">
+        <table id="event-table" className="table table-striped table-curved">
             <thead>
                 <tr>
-                    <th># </th>
-                    <th>Event</th>
                 </tr>
             </thead>
             <tbody id="subject-table-body">
@@ -138,127 +145,127 @@ var EventsList = React.createClass({
   }
 });
 
-var SubjectsList = React.createClass({
-  getInitialState: function() {
-    return {list_of_subjects:[]};
-  },
-  componentWillMount: function() {
-    this.updateSubjectsList('');
-  },
-  updateSubjectsList: function(subject_name) {
-    var _this=this;
-    var url= "/api/find_subject";
-    var request = Utils.api_post_json(url,{name:subject_name});
+// ============ __3 FilesUpload
+var FilesUpload = React.createClass({
+    // Note: This component has access to the
+    //      subject_id
+    //      eventEntity
+    // values shared by the NavController component
 
-    request.success( function(json) {
-       _this.setState({list_of_subjects:json.data});
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  subjectChanged: function() {
-    var subject_name = this.refs.subject_name.getDOMNode().value.trim();
-    this.updateSubjectsList(subject_name);
-    if (subject_name.length > 2) { }
-  },
-  render: function() {
-    var rows = [];
-    var _this = this;
-    {
-        this.state.list_of_subjects.map(function(record, i) {
-        var callback=_this.props.subjectSelected.bind(null, record);
-        rows.push(
-            <tr>
-                <td>{i+1}</td>
-                <td> yes </td>
-                <td>
-                    <button className="btn btn-info btn-lg"
-                        onClick={callback}>
-                        {record}
-                        <span className="glyphicon glyphicon-step-forward"></span>
-                        </button>
-                </td>
-              </tr>
-        );
-    })}
+    getInitialState: function() {
+        return {};
+    },
+    componentWillMount: function() {
+        var self = this;
+        var resumable = Utils.get_resumable_instance();
+        resumable.setExtraData({
+            'subject_id': self.props.subject_id,
+            'event_id': self.props.eventEntity.id
+        });
 
-    return (
-    <div>
-    <div className="form-group">
-        <input className="form-control"
-                ref="subject_name"
-                onChange={this.subjectChanged}
-                placeholder="Please Enter a Subject ID to search"
-                type="text" />
-    </div>
-    <div className="table-responsive" >
-        <table id="subject-table" className="table table-striped">
-            <thead>
-                <tr>
-                    <th> # </th>
-                    <th> Active </th>
-                    <th> REDCap Subject ID</th>
-                </tr>
-            </thead>
-            <tbody id="subject-table-body">
-               {rows}
-            </tbody>
-        </table>
-    </div>
-    </div>
-    );
-  }
+        resumable.on('complete', function() {
+            console.log("Uploaded byte count: " + resumable.getSize());
+            $("#upload-complete-button").show();
+        });
+
+        resumable.on('uploadStart', function() {
+            $("#upload-complete-button").hide();
+        });
+    },
+    render: function() {
+        return (
+                <div className="table-responsive" >
+                </div>
+               );
+    }
 });
 
-var Display = React.createClass({
+
+// ============ __4 NavController
+var NavController = React.createClass({
     getInitialState: function() {
+        //Add Listner for the url change
+        window.onhashchange = this.urlChanged;
+
         var tabs = [
             "Subjects",
             "Events",
-            "Files",
-                "Event Folder"
+            "Files"
         ];
         return {
             current_tab: 0,
             tabs: tabs,
             subject_id: "",
-            event_id: ""
+            eventEntity: ""
         };
     },
     changeTab: function(i) {
-        this.setState({current_tab:i})
+        this.setState({
+          current_tab: i
+        });
+
+        if (i === 0) {
+          this.setState({
+            eventEntity: ""
+          });
+        }
     },
     subjectSelected: function(subject_id) {
-        this.setState({current_tab: 1, subject_id: subject_id})
+        this.setState({
+            current_tab: 1,
+            subject_id: subject_id
+        });
     },
-    eventSelected: function(event_id) {
-        this.setState({current_tab: 2, event_id: event_id})
+    eventSelected: function(eventEntity) {
+        this.setState({
+            current_tab: 2,
+            eventEntity: eventEntity
+        });
     },
     showFiles: function() {
-        this.setState({current_tab: 3})
+        this.setState({current_tab: 3});
+    },
+    urlChanged: function () {
+      var hash_value = location.hash;
+      var current_tab = this.state.current_tab;
+
+      //check whether the current state is not equal to hash value
+      if("#" + this.state.tabs[current_tab] !== hash_value) {
+        //State has to be changed
+        if(hash_value === "#Subjects") {
+          this.setState({
+              current_tab: 0,
+              eventEntity: ""
+          });
+        }
+        else if (hash_value === "#Events" && this.state.current_tab === 2) {
+          // The condition 'this.state.current_tab==2' is to avoid
+          // state changes for forward button click from subjects tab
+          this.setState({current_tab: 1});
+        }
+      }
     },
     render: function() {
-        var display ;
-        var subject_id;
-        var event_id
-            var breadcrumbs = [];
+        var visible_tab;
+        var selected_subject_id;
+        var selected_event_id;
+        var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subject_id != "") {
-            subject_id = <h3>Subject Id : {this.state.subject_id}</h3>;
+        if(this.state.subject_id !== "") {
+            selected_subject_id = "Subject ID: " + this.state.subject_id;
         }
-        if(this.state.event_id != "") {
-            event_id = <h3>Event Id : {this.state.event_id}</h3>;
+        if(this.state.eventEntity !== "") {
+            selected_event_id = "Event: " + this.state.eventEntity.unique_event_name;
         }
 
-        for(var i = 0 ;i < tabs.length; i++) {
+        for(var i = 0; i < tabs.length; i++) {
             var tab_class;
-            if(current_tab == i) {
+            if(current_tab === i) {
                 breadcrumbs.push(<li><a>{tabs[i]}</a></li>);
             }
-            else if(current_tab>i) {
+            else if(current_tab > i) {
                 breadcrumbs.push(
                         <li className="prev-page" onClick={this.changeTab.bind(null, i)}>
                         <a>{tabs[i]}</a>
@@ -270,36 +277,58 @@ var Display = React.createClass({
         }
 
         $("#upload-files").hide();
-        if(current_tab == 0) {
-            display = <SubjectsList subjectSelected = {this.subjectSelected}/>;
+        $("#upload-complete-button").hide();
+
+        if(current_tab === 0) {
+            window.location.hash = 'Subjects';
+            // By passing the "subjectSelected" function to the SubjectsList component
+            // we are allowing the SubjectsList component to execute it when
+            // it is time to change the visible tab
+            visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
         }
-        else if(current_tab == 1) {
-            display = <EventsList eventSelected = {this.eventSelected}/>;
+        else if(current_tab === 1) {
+            window.location.hash = 'Events';
+            visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
-        else if(current_tab == 2) {
+        else if(current_tab === 2) {
+            window.location.hash = 'Files';
             $("#upload-files").show();
-            display = <FilesUpload showFiles = {this.showFiles}/>;
-        }
-        else if(current_tab == 3) {
-            display = <EventFilesList />;
+            $("#files-list").empty();
+
+            // pass data to Resumable object so we can map files to the subject
+            visible_tab = <FilesUpload showFiles = {this.showFiles}
+                subject_id = {this.state.subject_id}
+                eventEntity = {this.state.eventEntity}
+            />;
         }
 
         return (
             <div>
-                <div id="crumbs">
-                    <ul>
-                        {breadcrumbs}
-                    </ul>
+                <div className="panel-heading">
+                    <div id="crumbs">
+                        <ul>
+                            {breadcrumbs}
+                        </ul>
+                    </div>
                 </div>
-
-                <br/>
-                <br/>
-                {subject_id}
-                {event_id}
-                {display}
+                <div className="row">
+                <div className="col-md-offset-4 col-md-4 col-xs-12">
+                <table id="technician-table" className="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{selected_subject_id}</th>
+                        <th>{selected_event_id}</th>
+                     </tr>
+                </thead>
+                </table>
+                </div>
+                </div>
+                <div className="panel-body">
+                    {visible_tab}
+                </div>
             </div>
         );
     }
 });
 
-React.render(<Display/>, document.getElementById("start-upload"));
+React.render(<NavController/>, document.getElementById("start-upload"));

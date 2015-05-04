@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <h1>List of API Functions</h1>
+
+<ol class="text-left">
+    <li> <a href="https://localhost:5000/api/list_subject_events?subject_id=1">                 /api/list_subject_events?subject_id=1 </a> </li>
+    <li> <a href="https://localhost:5000/api/list_subject_event_files?subject_id=1&event_id=1"> /api/list_subject_event_files?subject_id=1&event_id=1 </a> </li>
+    <li> <a href="https://localhost:5000/api/find_subject?name=001">                            /api/find_subject?name=01 </a> </li>
+    <li> <a href="https://localhost:5000/api/list_events">                                      /api/list_events </a> </li>
+    <li> <a href="https://localhost:5000/api/upload">                                           /api/upload </a> </li>
+    <li> <a href="https://localhost:5000/api/download_file?file_id=1">                          /api/download_file?file_id=1 </a> </li>
+    <li> <a href="https://localhost:5000/api/save_user">                                        /api/save_user </a> </li>
+    <li> <a href="https://localhost:5000/api/list_users">                                       /api/list_users </a> </li>
+    <li> <a href="https://localhost:5000/api/list_logs?per_page=5&page_num=1">                  /api/list_logs?per_page=5&page_num=1</a> </li>
+    <li> <a href="https://localhost:5000/api/list_redcap_subjects">                             /api/list_redcap_subjects </a> </li>
+    <li> <a href="https://localhost:5000/api/list_local_subjects">                              /list_local_subjects </a> </li>
+
+    <!-- ADMIN -->
+    <li> <a href="https://localhost:5000/api/activate_account">                                 /api/activate_account </a> </li>
+    <li> <a href="https://localhost:5000/api/deactivate_account">                               /api/deactivate_account </a> </li>
+    <li> <a href="https://localhost:5000/api/send_verification_email">                          /api/send_verification_email </a> </li>
+    <li> <a href="https://localhost:5000/api/verify_email">                                     /api/verify_email</a> </li>
+    <li> <a href="https://localhost:5000/api/expire_account">                                   /api/expire_account  </a> </li>
+    <li> <a href="https://localhost:5000/api/extand/account">                                   /api/extend_account</a> </li>
+
+    <li> <a href="https://localhost:5000">                          </a> </li>
+
+</ol>
+
+
+{% endblock %}

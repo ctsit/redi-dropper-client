@@ -10,7 +10,7 @@ Goal: Store helper functions not tied to a specific module
 import os
 from datetime import datetime, timedelta
 import json
-from flask import flash, request
+from flask import flash, request, jsonify
 from hashlib import sha512, sha256
 import hmac
 import base64
@@ -122,7 +122,7 @@ def get_safe_int(unsafe, default=1, min_allowed=1, max_allowed=None):
     """ Helper method for reading the user input
 
     :param unsafe: the user input to be interpreted as in
-    :param default: the default to use if there was a problem converting the int
+    :param default: the default to use if there is a problem converting the int
     :param min_allowed: the minimum value to use
     :param max_allowed: the maximum value to use (ignores None value)
     """
@@ -165,7 +165,7 @@ def pack(data):
     Create a string represenation of data
     :param data -- dictionary
     """
-    return json.dumps(data)
+    return json.dumps(data, sort_keys=True, indent=2)
 
 
 def pack_error(msg):
@@ -173,14 +173,14 @@ def pack_error(msg):
     return pack({'status': 'error', 'message': msg})
 
 
-def pack_info(msg):
-    """ Format an info message to be json-friendly """
-    return pack({'status': 'info', 'message': msg})
+def jsonify_error(data):
+    """ Format an error message to be json-friendly """
+    return jsonify({'status': 'error', 'data': data})
 
 
-def pack_success_result(data):
+def jsonify_success(data):
     """ Format a success message to be json-friendly """
-    return pack({'status': 'success', 'data': data})
+    return jsonify({'status': 'success', 'data': data})
 
 
 def get_db_friendly_date_time():

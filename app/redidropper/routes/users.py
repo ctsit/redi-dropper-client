@@ -9,15 +9,13 @@ Goal: Define the routes for the users
 
 # from flask import request
 from flask import render_template
-from flask import send_file
 
-from flask_login import login_required, current_user
+from flask_login import current_user
 from flask_principal import Principal, Permission, RoleNeed
 
 from redidropper.models.role_entity import \
     ROLE_ADMIN, ROLE_TECHNICIAN, ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
 from redidropper.main import app
-from redidropper.routes.managers import file_manager
 
 # @TODO: read https://pythonhosted.org/Flask-Security/api.html
 # from flask_security import roles_accepted
@@ -53,57 +51,77 @@ def logs():
     return render_template('logs.html', user_links=get_user_links())
 
 
+def get_highest_role():
+    """ If a user has more than one role pick the `highest` role
+
+    :rtype string
+    :return the role name for the current_user or None
+    """
+
+    try:
+        roles = current_user.get_roles()
+    except Exception as exc:
+        app.logger.debug("get_highest_role() problem: {}".format(exc))
+        return None
+
+    if ROLE_ADMIN in roles:
+        return ROLE_ADMIN
+    if ROLE_TECHNICIAN in roles:
+        return ROLE_TECHNICIAN
+    if ROLE_RESEARCHER_ONE in roles:
+        return ROLE_RESEARCHER_ONE
+    if ROLE_RESEARCHER_TWO in roles:
+        return ROLE_RESEARCHER_TWO
+    return None
+
+
 def get_user_links():
-    current_role = 'admin'
-    all_pages = [
-        # ('index', 'Home'),
-        ('admin', 'Admin'),
-        ('logs', 'Logs'),
-        ('technician', 'Technician'),
-        ('researcher_one', 'Researcher 1'),
-        ('researcher_two', 'Researcher 2'),
-        ('start_upload', 'Start Upload'),
-        ('logout', 'Logout'),
-    ]
-
+    """
+    :rtype list
+    :return the navigation menu options depending on the role or None if
+        the current_user doe not have a role
+    """
     pages = {
-        'admin': all_pages,
-        'technician': all_pages,
+        'admin': ('admin', 'Manage Users'),
+        'logs': ('logs', 'View Logs'),
+        'dashboard': ('dashboard', 'Dashboard'),
+        'res_one': ('researcher_one', 'Researcher 1'),
+        'res_two': ('researcher_two', 'Researcher 2'),
+        'start_upload': ('start_upload', 'Start Upload'),
+        'logout': ('logout', 'Logout'),
     }
-    return pages[current_role]
+    role = get_highest_role()
+    if role is None:
+        return []
+
+    print "highest role: {}".format(role)
+
+    if ROLE_ADMIN == role:
+        links = [pages['admin'], pages['start_upload'], pages['dashboard'],
+                 pages['logs']]
+    elif ROLE_TECHNICIAN == role:
+        links = [pages['start_upload'], pages['dashboard']]
+    elif ROLE_RESEARCHER_ONE == role:
+        links = [pages['res_one']]
+    elif ROLE_RESEARCHER_TWO == role:
+        links = [pages['res_two']]
+
+    links.append(pages['logout'])
+    return links
 
 
-@app.route('/technician')
+@app.route('/dashboard')
 @perm_admin_or_technician.require()
-def technician():
+def dashboard():
     """ Render the technician's home page """
-    # return render_template('users/technician.html', current_user=current_user,
-    return render_template('users/technician.html', user_links=get_user_links())
-
-
-@app.route('/start_upload')
-@perm_admin_or_technician.require()
-def start_upload():
-    """ Render the Start Upload page """
-    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
-    return render_template('users/start_upload.html',
-                           user_links=get_user_links())
-
-
-# @app.route('/subject')
-# @app.route('/subject/<subject_id>')
-# @login_required
-# def list_subject_files(subject_id=None):
-#     """ Render the subject files page """
-#     return render_template('users/project_subject_files.html',
-#                            subject_id=subject_id)
+    return render_template('dashboard.html', user_links=get_user_links())
 
 
 @app.route('/researcher_one')
 @perm_researcher_one.require()
 def researcher_one():
     """ Render the researcher's home page """
-    return render_template('users/researcher_one.html',
+    return render_template('researcher_one.html',
                            user_links=get_user_links())
 
 
@@ -111,22 +129,22 @@ def researcher_one():
 @perm_researcher_two.require()
 def researcher_two():
     """ Render the researcher's home page """
-    return render_template('users/researcher_two.html',
+    return render_template('researcher_two.html',
                            user_links=get_user_links())
 
 
-# @app.route('/users/manage_event')
-# @app.route('/users/manage_event/<event_id>')
-# @login_required
-# def manage_event(event_id=None):
-#     """ Render the upload screen """
-#     return render_template('users/manage_event.html', event_id=event_id)
+@app.route('/start_upload')
+@perm_admin_or_technician.require()
+def start_upload():
+    """ Render the Start Upload page """
+    # @roles_accepted(ROLE_ADMIN, ROLE_TECHNICIAN)
+    return render_template('start_upload.html',
+                           user_links=get_user_links())
 
 
-@app.route("/download_file")
-@app.route("/download_file/<file_id>")
-@login_required
-def download_file(file_id):
-    """ Download a file using the database id """
-    file_path = file_manager.get_file_path_from_id(file_id)
-    return send_file(file_path, as_attachment=True)
+@app.route('/api')
+@app.route('/api/')
+def api():
+    """ Display the list of valid paths under /api/ """
+    # @TODO: protect with @perm_admin.require() when unit tests are fixed
+    return render_template('api.html', user_links=get_user_links())

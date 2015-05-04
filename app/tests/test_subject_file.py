@@ -6,12 +6,10 @@ Authors:
 
 """
 
-import hashlib
-from sqlalchemy.orm.exc import NoResultFound
 from .base_test import BaseTestCase
-from redidropper.main import db
 from redidropper import utils
 
+from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
@@ -30,10 +28,14 @@ class TestSubjectFile(BaseTestCase):
             redcap_id="001",
             added_at=added_date,
             last_checked_at=added_date,
-            was_deleted=0)
+            was_deleted=False)
 
         self.assertEquals(1, subject.id)
         self.assertEquals("001", subject.redcap_id)
+        self.assertIsNotNone(subject.added_at)
+        self.assertIsNotNone(subject.last_checked_at)
+        self.assertFalse(subject.was_deleted)
+        self.assertEqual(subject.added_at, subject.last_checked_at)
 
         subjects = SubjectEntity.query.all()
         self.assertEquals(1, len(subjects))
@@ -42,7 +44,10 @@ class TestSubjectFile(BaseTestCase):
         subject = SubjectEntity.update(subject, redcap_id="002")
         self.assertEquals("002", subject.redcap_id)
 
-        fdata = {'name': 'a.png', 'size': '1MB', }
+        evt = EventEntity.create(redcap_arm='Arm 1', redcap_event='Event 1',
+                                 added_at=added_date)
+
+        fdata = {'name': 'a.png', 'size': '1MB', 'event': evt.id}
         user = UserEntity.create(email="admin@example.com",
                                  first="",
                                  last="",
@@ -53,9 +58,10 @@ class TestSubjectFile(BaseTestCase):
 
         subject_file = SubjectFileEntity.create(
             subject_id=subject.id,
-            event_number=1,
+            event_id=fdata['event'],
             file_name=fdata['name'],
             file_check_sum=utils.compute_text_md5(fdata['name']),
+            file_size=fdata['size'],
             uploaded_at=added_date,
             user_id=user.get_id())
         self.assertIsNotNone(subject_file.id)
@@ -64,7 +70,7 @@ class TestSubjectFile(BaseTestCase):
         self.assertEqual(1, actual_count)
 
         actual_count = SubjectFileEntity.query.filter_by(
-            event_number=1).count()
+            event_id=1).count()
         self.assertEqual(1, actual_count)
 
         sfile = SubjectFileEntity.query.first()

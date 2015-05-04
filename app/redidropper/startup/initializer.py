@@ -70,7 +70,7 @@ def do_init(app, db, extra_settings={}):
     from redidropper.routes import api
 
     if not app.testing:
-        # When runing tests there is no need to for the debugtoolbar
+        # When runing tests there is no need for the debugtoolbar
         DebugToolbarExtension(app)
     return app
 

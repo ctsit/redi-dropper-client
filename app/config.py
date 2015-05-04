@@ -8,6 +8,7 @@ Goal: Implement the default-config and test-config clases
 """
 
 import os
+from datetime import timedelta
 import logging
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -25,16 +26,37 @@ class DefaultConfig(object):
     # unencrypted HTTP request
     SESSION_COOKIE_SECURE = True
 
+    # https://www.owasp.org/index.php/Session_Management_Cheat_Sheet
+    # flask.pocoo.org/docs/0.10/api/#flask.Flask.permanent_session_lifetime
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
+
     DEBUG = False
     TESTING = False
+    DEBUG_TB_ENABLED = False
 
     # Set to True in order to view every redirect in the debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
+    # email config
+    MAIL_SENDER_SUPPORT = os.getenv(
+        'REDIDROPPER_MAIL_SENDER_SUPPORT',
+        'admin@dropper.ctsi.ufl.edu')
+    MAIL_SERVER = os.getenv(
+        'REDIDROPPER_MAIL_SERVER',
+        'smtp.gmail.com')
+    MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 465)
+    # MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 587)
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = os.environ.get('REDIDROPPER_MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('REDIDROPPER_MAIL_PASSWORD')
+
+    print MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
+    # Database configuration is stored outside version control
+    # in the `application.cfg` file
     DB_HOST = ''
     DB_NAME = ''
 
-    ADMINS = frozenset(['admin@example.com'])
     SECRET_KEY = os.getenv('SECRET_KEY', 'insecure_key')
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
@@ -59,7 +81,8 @@ class DefaultConfig(object):
 class DebugConfig(DefaultConfig):
 
     """ Extra flag for debugging """
-    DEBUG = True
+    DEBUG_TB_ENABLED = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class TestConfig(DefaultConfig):

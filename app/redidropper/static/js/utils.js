@@ -46,7 +46,7 @@ var Utils = (function() {
             return api_request_private(url, reqType, data, dataType, doCache);
         },
         get_resumable_instance: function() {
-            if (! resumable_instance) {
+            if (!resumable_instance) {
                 create_resumable_instance();
             }
             return resumable_instance;
@@ -55,7 +55,46 @@ var Utils = (function() {
             return validate_email_private(email);
         },
         print_r: function(o) {
-            return JSON.stringify(o, null, '\t').replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;');
+            // return JSON.stringify(o, null, '\t').replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;');
+            return JSON.stringify(o, null, '\t');
+        },
+
+        getAllQueryVarsFromUrl: function(url) {
+            var query = url.split('?');
+            var allvars = {};
+            query = query[1];
+
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; ++i) {
+                var pair = vars[i].split("=");
+                allvars[pair[0]] = pair[1];
+            }
+            return allvars;
+        },
+
+        getQueryVar: function(varName) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; ++i) {
+                var pair = vars[i].split("=");
+                if (pair[0] == varName) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            return (false);
+        },
+        getQueryVarFromUrl: function(url, varName) {
+            var query = url.split('?');
+            query = query[1];
+
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; ++i) {
+                var pair = vars[i].split("=");
+                if (pair[0] == varName) {
+                    return pair[1];
+                }
+            }
+            return (false);
         }
-    };
+   };
 })();

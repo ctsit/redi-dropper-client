@@ -9,13 +9,11 @@ Goal: Implement code specific to file handling on server side
 @TODO: read
     https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
     https://pypi.python.org/pypi/bleach
-    bcrypt http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
 """
 #
 
 import os
-import math
-import logging
+# import math
 
 from flask import request
 from werkzeug import secure_filename
@@ -28,9 +26,14 @@ logger = app.logger
 
 
 class FileChunk(object):
+
     """ Properties storage for a file chunk """
 
     def __init__(self):
+        """
+        Copy the request data about the file chunk into an object we can
+        pass around functions that need the data
+        """
         # @TODO: !!! add size checks for user input
         self.number = int(request.form['resumableChunkNumber'])
         self.size = int(request.form['resumableChunkSize'])
@@ -38,17 +41,16 @@ class FileChunk(object):
         self.uniqueid = request.form['resumableIdentifier']
         self.file_name = secure_filename(request.form['resumableFilename'])
         self.afile = request.files['file']
-        self.total_parts = int(max(math.floor(self.total_size/self.size), 1))
+        # self.total_parts = int(max(math.floor(self.total_size /self.size),1))
+        self.total_parts = int(request.form['resumableTotalChunks'])
+        self.subject_id = int(request.form['subject_id'])
+        self.event_id = int(request.form['event_id'])
 
     def __repr__(self):
         """ Implement an unambiguous representation """
-        return "FileChunk <{} out of {} for file: {} ({} out of {} bytes)>" \
-            .format(self.number,
-                    self.total_parts,
-                    self.file_name,
-                    self.size,
-                    self.total_size)
-
+        return "FileChunk <{0.number} out of {0.total_parts} for file:" \
+               "{0.file_name} ({0.size} out of {0.total_size} bytes)>" \
+               .format(self)
 
 
 def get_chunk_path(file_name, chunk_number):
@@ -68,8 +70,8 @@ def get_file_path_from_id(file_id):
     @TODO: implement
     """
     files = {
-            1: "example_1.tgz",
-            2: "example_2.tgz"
+        '1': "example_1.tgz",
+        '2': "example_2.tgz"
     }
     file_path = get_file_path(files[file_id])
     return file_path
@@ -78,14 +80,14 @@ def get_file_path_from_id(file_id):
 def save_uploaded_file():
     """ Receives files on the server side """
     fchunk = FileChunk()
-    logger.info("Uploading {}".format(fchunk)) 
+    logger.info("Uploading {}".format(fchunk))
 
     file_name = fchunk.file_name
 
     if not utils.allowed_file(file_name):
-        err = utils.pack_error("Invalid file type: {}." \
-                "Allowed extensions: {}" \
-                .format(file_name, utils.ALLOWED_EXTENSIONS))
+        err = utils.pack_error("Invalid file type: {}."
+                               "Allowed extensions: {}"
+                               .format(file_name, utils.ALLOWED_EXTENSIONS))
         logger.error(err)
         return err
 
@@ -101,18 +103,18 @@ def save_uploaded_file():
         fchunk.afile.save(chunk_path)
     except:
         logger.error("Problem saving: {}".format(fchunk))
-        return utils.pack_error("Unable to save file chunk: {}" \
-                .format(fchunk.number))
+        return utils.pack_error("Unable to save file chunk: {}"
+                                .format(fchunk.number))
 
     # When all chunks are recived we merge them
     if all_chunks_received(fchunk):
         merge_files(fchunk)
         verify_file_integrity(fchunk)
         delete_temp_files(fchunk)
-        return utils.pack_info('File {} uploaded successfully.' \
-                .format(file_name))
+        return utils.jsonify_success('File {} uploaded successfully.'
+                                     .format(file_name))
     else:
-        return utils.pack_info('Request completed successfully.')
+        return utils.jsonify_success('Request completed successfully.')
 
 
 def all_chunks_received(fchunk):
@@ -125,8 +127,8 @@ def all_chunks_received(fchunk):
 
         if os.path.isfile(chunk_path):
             if i == fchunk.total_parts:
-                logger.debug("Verified all {} chunks received for {}." \
-                        .format(fchunk.total_parts, file_name))
+                logger.debug("Verified all {} chunks received for {}."
+                             .format(fchunk.total_parts, file_name))
                 done = True
         else:
             break
@@ -144,8 +146,8 @@ def verify_file_integrity(fchunk):
 def delete_temp_files(fchunk):
     """ Delete file chunks after all received and merged """
     file_name = fchunk.file_name
-    logger.debug("Removing {} file chunks for: {}" \
-            .format(fchunk.total_parts, file_name))
+    logger.debug("Removing {} file chunks for: {}"
+                 .format(fchunk.total_parts, file_name))
 
     for i in range(1, fchunk.total_parts + 1):
         chunk_path = get_chunk_path(file_name, i)
@@ -156,8 +158,8 @@ def merge_files(fchunk):
     """ Reconstruct the original file from chunks """
     file_name = fchunk.file_name
     file_path = get_file_path(file_name)
-    logger.debug("Saving file: {} consisting of {} chunks." \
-            .format(file_name, fchunk.total_parts))
+    logger.debug("Saving file: {} consisting of {} chunks."
+                 .format(file_name, fchunk.total_parts))
 
     f = open(file_path, "w")
 

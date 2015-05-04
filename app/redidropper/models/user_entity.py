@@ -2,6 +2,7 @@
 ORM for User table
 """
 
+from datetime import datetime
 from flask_login import UserMixin
 
 # flask_security expands the flask_login UserMixin class with:
@@ -34,8 +35,8 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     email_confirmed_at = db.Column("usrEmailConfirmedAt", db.DateTime(),
                                    nullable=False,
                                    server_default='0000-00-00 00:00:00')
-    is_active = db.Column("usrIsActive", db.Boolean(), nullable=False,
-                          server_default='1')
+    active = db.Column("usrIsActive", db.Boolean(), nullable=False,
+                       server_default='1')
 
     access_expires_at = db.Column("usrAccessExpiresAt", db.DateTime(),
                                   nullable=False,
@@ -63,7 +64,11 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
 
     def is_active(self):
         """ An user can be blocked by setting a flag in the database """
-        return self.is_active
+        return self.active
+
+    def is_expired(self):
+        """ An user can be blocked by setting expiration date to yesterday"""
+        return self.access_expires_at < datetime.today()
 
     def is_anonymous(self):
         """ Flag instances of valid users """
@@ -80,6 +85,10 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         """ The id encrypted in the session """
         return unicode(self.id)
 
+    def get_roles(self):
+        """ Return text representation of user roles """
+        return [role.name for role in self.roles]
+
     """
     @property
     def to_visible(self):
@@ -90,13 +99,23 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         return dict([(key, val) for key, val in self.__dict__.items()
                     if key in UserEntity.visible_props])
     """
-    """
-    def __init__(self, **kwargs):
-        super(UserEntity, self).__init__(**kwargs)
-    """
+
+    def get_name(self):
+        """
+        :rtype string
+        :return concat(first, ' ', last)
+        """
+        return "{} {}".format(self.first, self.last)
+
+    def get_email_verification_token(self):
+        """
+        :rtype string
+        :return the email verification token stored in the database
+        """
+        return "token"
 
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """Return object data for jsonification"""
 
         return {
             'id': self.id,
@@ -105,12 +124,13 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
             'first': self.first,
             'last': self.last,
             'minitial': self.minitial,
-            'is_active': True,
+            'is_active': True if self.active else False,
+            'is_expired': True if self.is_expired() else False,
             'added_at': dump_datetime(self.added_at),
             'email_confirmed_at': dump_datetime(self.email_confirmed_at),
-            'access_expires_at:': dump_datetime(self.access_expires_at),
+            'access_expires_at': dump_datetime(self.access_expires_at),
         }
 
     def __repr__(self):
-        return "<UserEntity (usrID: {}, usrEmail: {})>" \
-            .format(self.id, self.email)
+        return "<UserEntity (usrID: {0.id}, usrEmail: {0.email}, " \
+               "usrIsActive: {0.active})>".format(self)

@@ -7,11 +7,12 @@ Goal: Implement the application entry point
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-from redidropper.main import app, db
+from redidropper.main import app, db, mail
 from redidropper.startup import initializer
 
 # Configures routes, models
 app = initializer.do_init(app, db)
+mail.init_app(app)
 
 ssl_public_key_file = 'server.crt'
 ssl_private_key_file = 'server.key'
@@ -24,6 +25,8 @@ def get_ssl_context(app):
     """
     import os.path
     import ssl
+
+    ssl_context = None
 
     if app.debug:
         if os.path.isfile(ssl_public_key_file) and \
