@@ -29,6 +29,10 @@ def install_requirements():
 
 
 @task
+def resetdb():
+    reset_db()
+
+@task
 def reset_db():
     """
     Drop all tables, Create empty tables, and populate tables
@@ -39,9 +43,11 @@ def reset_db():
     """
     if not confirm("Do you want to drop all tables and start from scratch?"):
         abort("Aborting at user request.")
-    #local('PYTHONPATH=. python db.py')
-    local('sudo mysql < db/001/downgrade.sql && sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql')
+    # local('PYTHONPATH=. python db.py')
+    local('sudo mysql < db/001/downgrade.sql')
+    local('sudo mysql < db/001/upgrade.sql')
+    local('sudo mysql < db/002/downgrade.sql')
+    local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
 
 @task
