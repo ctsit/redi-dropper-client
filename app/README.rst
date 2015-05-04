@@ -60,7 +60,8 @@ There are three great tools for python development:
         or
     python run.py
 
-
+    Finally you can opn your browser at https://localhost:5000/ and login as 
+    admin@example.com with any password
 
 Files & Folders
 ---------------
