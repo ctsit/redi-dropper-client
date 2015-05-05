@@ -189,10 +189,11 @@ def merge_files(fchunk):
     :rtype boolean
     :return true if the file was reconstructed from the chunks
     """
+    success = False
     subject_file = save_file_metadata(fchunk)
     # file_path = get_file_path(file_name)
     prefix = app.config['REDIDROPPER_SAVED_DIR']
-    print "pefix: {}".format(prefix)
+    app.logger.debug("Saving files using prefix folder: {}".format(prefix))
     file_path = subject_file.get_full_path(prefix)
 
     file_name = fchunk.file_name

@@ -74,9 +74,9 @@ class DefaultConfig(object):
     REDIDROPPER_TEMP_DIR = os.getenv('REDIDROPPER_TEMP_DIR',
                                      os.path.expanduser('~/.redidropper/temp'))
 
-    REDIDROPPER_SAVED_DIR = os.getenv('REDIDROPPER_SAVED_DIR',
-                                    os.path.expanduser('~/.redidropper/saved'))
-    print "REDIDROPPER_SAVED_DIR: " + REDIDROPPER_SAVED_DIR
+    REDIDROPPER_SAVED_DIR = os.getenv(
+        'REDIDROPPER_SAVED_DIR',
+        os.path.expanduser('~/.redidropper/saved'))
 
 
 class DebugConfig(DefaultConfig):

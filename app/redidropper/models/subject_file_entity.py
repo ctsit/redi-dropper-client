@@ -30,21 +30,34 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     event = db.relationship('EventEntity', uselist=False, lazy='joined')
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
-    @classmethod
-    def create_folder(self, prefix):
+    def create_folder(self, directory):
         """
-        Create folder prefix/subject_id if it does not exist
+        Create folder if it does not exist
         """
-        directory = os.path.join(prefix, self.subject_id)
-        print "dir: " + directory
+        success = True
 
         if not os.path.exists(directory):
             try:
                 os.makedirs(directory)
-
-                return directory
             except Exception as exc:
                 print "Failed due: {}".format(exc)
+                success = False
+        return success
+
+    @classmethod
+    def get_convention_file_name(cls, date_and_time, subject_id, file_name):
+        """
+        Concatenate the pieces to obtain a nice file name
+        """
+        date_part = date_and_time.strftime("%Y%m%d")
+        time_part = date_and_time.strftime("%H%M")
+
+        file_convention = "{}_{}_site_subject_{}_{}".format(
+            date_part,
+            time_part,
+            subject_id,
+            file_name)
+        return file_convention
 
     def get_full_path(self, prefix):
         """
@@ -53,20 +66,22 @@ class SubjectFileEntity(db.Model, CRUDMixin):
 
         20120101_0123_SiteIDA_SubjectIDB_Sequence123_xyz.jpg
         """
-        subject_dir = SubjectFileEntity.create_folder(prefix)
-        assert subject_dir is not None
+        subject_dir = os.path.join(
+            prefix, "subject_{}".format(self.subject.redcap_id))
+        success = self.create_folder(subject_dir)
+        assert success
 
-        when_date = '20150101'
-        when_time = '0102'
-        sequence = '1'
-        file_convention = "{}_{}_site_{}_{}_{}".format(
-            when_date, when_time, self.subject_id, sequence, self.file_name)
-
-        return os.path.join(subject_dir, file_convention)
+        file_convention = SubjectFileEntity.get_convention_file_name(
+            self.uploaded_at,
+            self.subject.redcap_id,
+            self.file_name)
+        full_path = os.path.join(subject_dir, file_convention)
+        # print("using full_path: {}".format(full_path))
+        return full_path
 
     def __repr__(self):
-        return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id})>" \
-            "usrID: {0.user_id}".format(self)
+        return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id}, " \
+            "usrID: {0.user_id}, sfFileName: {0.file_name}>)".format(self)
 
     def serialize(self):
         """Return object data for jsonification """
