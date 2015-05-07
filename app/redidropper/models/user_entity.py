@@ -31,7 +31,6 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     added_at = db.Column("usrAddedAt", db.DateTime(), nullable=False,
                          server_default='0000-00-00 00:00:00')
     modified_at = db.Column("usrModifiedAt", db.TIMESTAMP(), nullable=False)
-    # server_default='CURRENT_TIMESTAMP')
     email_confirmed_at = db.Column("usrEmailConfirmedAt", db.DateTime(),
                                    nullable=False,
                                    server_default='0000-00-00 00:00:00')
@@ -105,7 +104,9 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         :rtype string
         :return concat(first, ' ', last)
         """
-        return "{} {}".format(self.first, self.last)
+        return "{} {}".format(
+            self.first.encode('utf-8'),
+            self.last.encode('utf-8'))
 
     def get_email_verification_token(self):
         """
