@@ -18,44 +18,31 @@ var SubjectsRow = React.createClass({
         };
     },
     componentWillReceiveProps: function(nextProps) {
-        this.setState(
-                {
-                    row_data: nextProps.row_data,
-                    max_events: nextProps.max_events
-                });
+        this.setState({
+            row_data: nextProps.row_data,
+            max_events: nextProps.max_events
+        });
     },
+    /*
     showAlert: function() {
         $("#event-alert").show();
         setTimeout(function () {
             $("#event-alert").hide();
         }, 1500);
     },
+    */
     render: function() {
         var column_count = this.state.max_events;
         var table_columns = [];
         var row_data = this.state.row_data;
         var events_count = 0;
         var i;
+
         /*
-        var events_count = row_data.events.length;
-
-
-        for(i = 0; i < events_count; i++) {
-            var view_files_url = "/" + row_data.events[i].event_id;
-            if (row_data.events[i].event_files !== 0) {
-                table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
-            }
-            else {
-                table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
-            }
-        }
-        var new_event = "/start_upload/" + row_data.id;
-        table_columns.push(<td><a href={new_event}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
-        */
-
         for (i = events_count + 2; i <= column_count; i++) {
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
+        */
 
         var selectSubject = this.props.subjectSelected.bind(null, row_data);
         return (
@@ -63,7 +50,7 @@ var SubjectsRow = React.createClass({
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={selectSubject}>
-                        Select subject: {row_data.id}
+                        Select subject: {row_data.redcap_id}
                     </button>
                 </td>
                 {table_columns}
@@ -194,7 +181,8 @@ var EventsTable = React.createClass({
             rows.push(
             <tr>
                 <td> {i+1} </td>
-                <td> {record.unique_event_name} </td>
+                <td> {record.redcap_arm} </td>
+                <td> {record.redcap_event} </td>
                 <td>
                     <button
                         className="btn btn-primary btn-block"
@@ -214,6 +202,10 @@ var EventsTable = React.createClass({
                 <table id="event-table" className="table table-striped table-curved">
                     <thead>
                         <tr>
+                            <th> # </th>
+                            <th> REDCap Arm </th>
+                            <th> REDCap Event </th>
+                            <th> File Count</th>
                         </tr>
                     </thead>
                     <tbody id="subject-table-body">
@@ -239,7 +231,6 @@ var FilesList = React.createClass({
             subject_id: this.props.subject_id.id,
             event_id: this.props.event_id.id
         };
-        console.log(request_data);
 
         var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
 
@@ -439,7 +430,7 @@ var Dashboard = React.createClass({
             selected_subject_id = "Subject ID: " + this.state.subject_id.id;
         }
         if(this.state.event_id !== "") {
-            selected_event_id = "Event ID: " + this.state.event_id.unique_event_name;
+            selected_event_id = "Event ID: " + this.state.event_id.redcap_event;
         }
 
         for(var i = 0; i < tabs.length; i++) {

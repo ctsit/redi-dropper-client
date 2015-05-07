@@ -55,11 +55,12 @@ var SubjectsList = React.createClass({
         var selectSubject = _this.props.subjectSelected.bind(null, record);
         rows.push(
             <tr>
+                <td> {i+1} </td>
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={selectSubject}>
-                        {record}
-                        </button>
+                        Select subject: {record}
+                    </button>
                 </td>
               </tr>
         );
@@ -67,23 +68,26 @@ var SubjectsList = React.createClass({
 
     return (
     <div>
-
-    <div className="form-group">
-        <input className="form-control"
-                ref="subject_name"
-                onChange={this.subjectChanged}
-                placeholder="Please type a Subject ID"
-                type="text" />
-    </div>
-    <div className="table-responsive" >
-        <table id="subject-table" className="table table-striped table-curved">
-            <thead>
-            </thead>
-            <tbody id="subject-table-body">
-               {rows}
-            </tbody>
-        </table>
-    </div>
+        <div className="form-group">
+            <input className="form-control"
+                    ref="subject_name"
+                    onChange={this.subjectChanged}
+                    placeholder="REDCap Subject ID"
+                    type="text" />
+        </div>
+        <div className="table-responsive">
+            <table id="subject-table" className="table table-striped table-curved">
+                <thead>
+                    <tr>
+                        <th> # </th>
+                        <th> Search Results </th>
+                    </tr>
+                </thead>
+                <tbody id="subject-table-body">
+                   {rows}
+                </tbody>
+            </table>
+        </div>
     </div>
     );
   }
@@ -103,6 +107,7 @@ var EventsList = React.createClass({
        _this.setState({
            list_of_events: json.data.events
        });
+       $(".sortable").tablesorter();
     });
     request.fail(function (jqXHR, textStatus, error) {
         console.log('Failed: ' + textStatus + error);
@@ -113,14 +118,15 @@ var EventsList = React.createClass({
     var _this = this;
     this.state.list_of_events.map(function(record, i) {
         var callback = _this.props.eventSelected.bind(null, record);
-        var event_name = record.unique_event_name;
 
         rows.push(
             <tr>
+                <td> {i+1} </td>
+                <td> {record.redcap_arm} </td>
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={callback}>
-                        {event_name}
+                        {record.redcap_event}
                     </button>
                 </td>
             </tr>
@@ -130,9 +136,12 @@ var EventsList = React.createClass({
     return (
     <div>
     <div className="table-responsive">
-        <table id="event-table" className="table table-striped table-curved">
+        <table id="event-table" className="table table-striped table-curved sortable tablesorter">
             <thead>
                 <tr>
+                    <th> # </th>
+                    <th> REDCap Event Arm </th>
+                    <th> REDCap Event Name </th>
                 </tr>
             </thead>
             <tbody id="subject-table-body">
@@ -257,7 +266,7 @@ var NavController = React.createClass({
             selected_subject_id = "Subject ID: " + this.state.subject_id;
         }
         if(this.state.eventEntity !== "") {
-            selected_event_id = "Event: " + this.state.eventEntity.unique_event_name;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
         }
 
         for(var i = 0; i < tabs.length; i++) {
