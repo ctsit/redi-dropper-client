@@ -62,7 +62,7 @@ class DefaultConfig(object):
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
     MAX_CONTENT_LENGTH = os.getenv(
-        'REDI_DROPPER_MAX_CONTENT_LENGTH',
+        'REDIDROPPER_MAX_CONTENT_LENGTH',
         DEFAULT_MAX_CONTENT_LENGTH)
 
     # THREADS_PER_PAGE = 8
@@ -71,11 +71,12 @@ class DefaultConfig(object):
 
     # http://effbot.org/librarybook/os-path.htm
     # @TODO: add code to check for valid paths
-    INCOMING_TEMP_DIR = os.getenv('REDI_DROPPER_INCOMING_TEMP_DIR',
-                                  os.path.expanduser('~/.redidropper/temp'))
+    REDIDROPPER_TEMP_DIR = os.getenv('REDIDROPPER_TEMP_DIR',
+                                     os.path.expanduser('~/.redidropper/temp'))
 
-    INCOMING_SAVED_DIR = os.getenv('REDI_DROPPER_NCOMING_SAVED_DIR',
-                                   os.path.expanduser('~/.redidropper/saved'))
+    REDIDROPPER_SAVED_DIR = os.getenv(
+        'REDIDROPPER_SAVED_DIR',
+        os.path.expanduser('~/.redidropper/saved'))
 
 
 class DebugConfig(DefaultConfig):

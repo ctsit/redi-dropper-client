@@ -10,17 +10,18 @@ Goal: Implement code specific to file handling on server side
     https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
     https://pypi.python.org/pypi/bleach
 """
-#
 
 import os
 # import math
+from datetime import datetime
 
 from flask import request
+from flask_login import current_user
 from werkzeug import secure_filename
 
 from redidropper import utils
 from redidropper.main import app
-
+from redidropper.models.subject_file_entity import SubjectFileEntity
 
 logger = app.logger
 
@@ -28,12 +29,13 @@ logger = app.logger
 class FileChunk(object):
 
     """ Properties storage for a file chunk """
-
-    def __init__(self):
+    @classmethod
+    def init_from_request(cls):
         """
         Copy the request data about the file chunk into an object we can
         pass around functions that need the data
         """
+        self = FileChunk()
         # @TODO: !!! add size checks for user input
         self.number = int(request.form['resumableChunkNumber'])
         self.size = int(request.form['resumableChunkSize'])
@@ -45,6 +47,7 @@ class FileChunk(object):
         self.total_parts = int(request.form['resumableTotalChunks'])
         self.subject_id = int(request.form['subject_id'])
         self.event_id = int(request.form['event_id'])
+        return self
 
     def __repr__(self):
         """ Implement an unambiguous representation """
@@ -53,15 +56,34 @@ class FileChunk(object):
                .format(self)
 
 
+def save_file_metadata(fchunk):
+    """
+    Insert a row in SubjectFile table to preserve file details
+    """
+    # uploader = SubjectEntity.get_by_id(current_user.id)
+    added_date = datetime.today()
+
+    subject_file = SubjectFileEntity.create(
+        subject_id=fchunk.subject_id,
+        event_id=fchunk.event_id,
+        file_name=fchunk.file_name,
+        file_check_sum='pending',
+        file_size=fchunk.total_size,
+        uploaded_at=added_date,
+        user_id=current_user.id)
+    print subject_file
+    return subject_file
+
+
 def get_chunk_path(file_name, chunk_number):
     """ Helper for building path to temp dir """
     name = "{}.part{}".format(file_name, chunk_number)
-    return os.path.join(app.config['INCOMING_TEMP_DIR'], name)
+    return os.path.join(app.config['REDIDROPPER_TEMP_DIR'], name)
 
 
 def get_file_path(file_name):
     """ Helper for building path to saved files dir """
-    return os.path.join(app.config['INCOMING_SAVED_DIR'], file_name)
+    return os.path.join(app.config['REDIDROPPER_SAVED_DIR'], file_name)
 
 
 def get_file_path_from_id(file_id):
@@ -79,7 +101,7 @@ def get_file_path_from_id(file_id):
 
 def save_uploaded_file():
     """ Receives files on the server side """
-    fchunk = FileChunk()
+    fchunk = FileChunk.init_from_request()
     logger.info("Uploading {}".format(fchunk))
 
     file_name = fchunk.file_name
@@ -107,14 +129,21 @@ def save_uploaded_file():
                                 .format(fchunk.number))
 
     # When all chunks are recived we merge them
-    if all_chunks_received(fchunk):
-        merge_files(fchunk)
-        verify_file_integrity(fchunk)
-        delete_temp_files(fchunk)
-        return utils.jsonify_success('File {} uploaded successfully.'
-                                     .format(file_name))
-    else:
+    if not all_chunks_received(fchunk):
         return utils.jsonify_success('Request completed successfully.')
+
+    # When all chunks are received we merge them
+    merge_completed = merge_files(fchunk)
+    if merge_completed:
+        delete_temp_files(fchunk)
+        hash_matches = verify_file_integrity(fchunk)
+        if hash_matches:
+            return utils.jsonify_success('File {} uploaded successfully.'
+                                         .format(file_name))
+        else:
+            app.logger.error("md5 sum does not match for: {}".format(fchunk))
+            return utils.jsonify_error('Checksum mismatch for file: {}'
+                                       .format(file_name))
 
 
 def all_chunks_received(fchunk):
@@ -137,10 +166,10 @@ def all_chunks_received(fchunk):
 
 def verify_file_integrity(fchunk):
     """
-    @TODO: implemenet
+    @TODO: implement
     """
     logger.debug("Verify md5sum...{}".format(fchunk))
-    pass
+    return True
 
 
 def delete_temp_files(fchunk):
@@ -155,15 +184,32 @@ def delete_temp_files(fchunk):
 
 
 def merge_files(fchunk):
-    """ Reconstruct the original file from chunks """
+    """ Reconstruct the original file from chunks
+
+    :rtype boolean
+    :return true if the file was reconstructed from the chunks
+    """
+    success = False
+    subject_file = save_file_metadata(fchunk)
+    # file_path = get_file_path(file_name)
+    prefix = app.config['REDIDROPPER_SAVED_DIR']
+    app.logger.debug("Saving files using prefix folder: {}".format(prefix))
+    file_path = subject_file.get_full_path(prefix)
+
     file_name = fchunk.file_name
-    file_path = get_file_path(file_name)
     logger.debug("Saving file: {} consisting of {} chunks."
                  .format(file_name, fchunk.total_parts))
 
-    f = open(file_path, "w")
+    try:
+        f = open(file_path, "w")
 
-    for i in range(1, fchunk.total_parts + 1):
-        chunk_path = get_chunk_path(file_name, i)
-        tempfile = open(chunk_path, "r")
-        f.write(tempfile.read())
+        for i in range(1, fchunk.total_parts + 1):
+            chunk_path = get_chunk_path(file_name, i)
+            tempfile = open(chunk_path, "r")
+            f.write(tempfile.read())
+
+        success = True
+    except Exception as exc:
+        logger.error("There was an issue in merge_files(): {}".format(exc))
+
+    return success

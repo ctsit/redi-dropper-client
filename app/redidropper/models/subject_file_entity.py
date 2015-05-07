@@ -1,7 +1,7 @@
 """
 ORM for RediDropper.SubjectFile table
 """
-
+import os
 from redidropper.main import db
 from redidropper.utils import dump_datetime
 from redidropper.database.crud_mixin import CRUDMixin
@@ -30,16 +30,58 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     event = db.relationship('EventEntity', uselist=False, lazy='joined')
     user = db.relationship('UserEntity', uselist=False, lazy='joined')
 
+    def create_folder(self, directory):
+        """
+        Create folder if it does not exist
+        """
+        success = True
+
+        if not os.path.exists(directory):
+            try:
+                os.makedirs(directory)
+            except Exception as exc:
+                print "Failed due: {}".format(exc)
+                success = False
+        return success
+
+    @classmethod
+    def get_convention_file_name(cls, date_and_time, subject_id, file_name):
+        """
+        Concatenate the pieces to obtain a nice file name
+        """
+        date_part = date_and_time.strftime("%Y%m%d")
+        time_part = date_and_time.strftime("%H%M")
+
+        file_convention = "{}_{}_site_subject_{}_{}".format(
+            date_part,
+            time_part,
+            subject_id,
+            file_name)
+        return file_convention
+
     def get_full_path(self, prefix):
         """
         Build the full path using the database info and the prefix
         @TODO: implement the naming convention
+
+        20120101_0123_SiteIDA_SubjectIDB_Sequence123_xyz.jpg
         """
-        return os.path.join(prefix, self.file_name)
+        subject_dir = os.path.join(
+            prefix, "subject_{}".format(self.subject.redcap_id))
+        success = self.create_folder(subject_dir)
+        assert success
+
+        file_convention = SubjectFileEntity.get_convention_file_name(
+            self.uploaded_at,
+            self.subject.redcap_id,
+            self.file_name)
+        full_path = os.path.join(subject_dir, file_convention)
+        # print("using full_path: {}".format(full_path))
+        return full_path
 
     def __repr__(self):
-        return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id})>" \
-            "usrID: {0.user_id}".format(self)
+        return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id}, " \
+            "usrID: {0.user_id}, sfFileName: {0.file_name}>)".format(self)
 
     def serialize(self):
         """Return object data for jsonification """

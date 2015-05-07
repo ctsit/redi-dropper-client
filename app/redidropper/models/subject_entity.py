@@ -40,6 +40,7 @@ class SubjectEntity(db.Model, CRUDMixin):
 
         return {
             'id': self.id,
+            'redcap_id': self.redcap_id,
             'events': [],
             # 'events': [{'event_id': '1', 'event_files': '1'}],
             # 'files': [f.name for f in self.files],
