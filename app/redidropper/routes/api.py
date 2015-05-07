@@ -69,6 +69,7 @@ WHERE
 GROUP BY
     evtID
     """
+    # print subject_id, query
     result = db.session.execute(query, {'subject_id': subject_id})
     Event = namedtuple('Event', result.keys())
     events = [Event(*r) for r in result.fetchall()]
@@ -161,13 +162,13 @@ def download_file():
     """ Download a file using the database id """
 
     if 'POST' == request.method:
-        file_id = request.form['file_id']
+        file_id = get_safe_int(request.form['file_id'])
     else:
-        file_id = request.args.get('file_id')
+        file_id = get_safe_int(request.args.get('file_id'))
 
-    # 1 ==> example_1.tgz
-    file_path = file_manager.get_file_path_from_id(file_id)
-    print "serving file: " + file_path
+    subject_file = SubjectFileEntity.get_by_id(file_id)
+    file_path = subject_file.get_full_path(app.config['REDIDROPPER_SAVED_DIR'])
+    # log_manager.log_file_download(subject_file)
     return send_file(file_path, as_attachment=True)
 
 

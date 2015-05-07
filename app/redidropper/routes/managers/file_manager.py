@@ -12,7 +12,6 @@ Goal: Implement code specific to file handling on server side
 """
 
 import os
-# import math
 from datetime import datetime
 
 from flask import request
@@ -43,7 +42,6 @@ class FileChunk(object):
         self.uniqueid = request.form['resumableIdentifier']
         self.file_name = secure_filename(request.form['resumableFilename'])
         self.afile = request.files['file']
-        # self.total_parts = int(max(math.floor(self.total_size /self.size),1))
         self.total_parts = int(request.form['resumableTotalChunks'])
         self.subject_id = int(request.form['subject_id'])
         self.event_id = int(request.form['event_id'])
@@ -58,7 +56,9 @@ class FileChunk(object):
 
 def save_file_metadata(fchunk):
     """
-    Insert a row in SubjectFile table to preserve file details
+    Insert a row in SubjectFile table to preserve file details.
+
+    Called from api.py#api_upload() -> #save_uploaded_file() -> #merge_files()
     """
     # uploader = SubjectEntity.get_by_id(current_user.id)
     added_date = datetime.today()
@@ -71,7 +71,7 @@ def save_file_metadata(fchunk):
         file_size=fchunk.total_size,
         uploaded_at=added_date,
         user_id=current_user.id)
-    print subject_file
+    logger.debug("Saved metadata to the db: ".format(subject_file))
     return subject_file
 
 
@@ -81,29 +81,10 @@ def get_chunk_path(file_name, chunk_number):
     return os.path.join(app.config['REDIDROPPER_TEMP_DIR'], name)
 
 
-def get_file_path(file_name):
-    """ Helper for building path to saved files dir """
-    return os.path.join(app.config['REDIDROPPER_SAVED_DIR'], file_name)
-
-
-def get_file_path_from_id(file_id):
-    """" Get file path from the database for the specified file id
-
-    @TODO: implement
-    """
-    files = {
-        '1': "example_1.tgz",
-        '2': "example_2.tgz"
-    }
-    file_path = get_file_path(files[file_id])
-    return file_path
-
-
 def save_uploaded_file():
     """ Receives files on the server side """
     fchunk = FileChunk.init_from_request()
-    logger.info("Uploading {}".format(fchunk))
-
+    logger.info("User uploaded chunk: {}".format(fchunk))
     file_name = fchunk.file_name
 
     if not utils.allowed_file(file_name):
@@ -141,9 +122,12 @@ def save_uploaded_file():
             return utils.jsonify_success('File {} uploaded successfully.'
                                          .format(file_name))
         else:
-            app.logger.error("md5 sum does not match for: {}".format(fchunk))
+            logger.error("md5 sum does not match for: {}".format(fchunk))
             return utils.jsonify_error('Checksum mismatch for file: {}'
                                        .format(file_name))
+    else:
+        return utils.jsonify_error('Unable to merge chunks for file: {}'
+                                   .format(file_name))
 
 
 def all_chunks_received(fchunk):
@@ -191,14 +175,12 @@ def merge_files(fchunk):
     """
     success = False
     subject_file = save_file_metadata(fchunk)
-    # file_path = get_file_path(file_name)
     prefix = app.config['REDIDROPPER_SAVED_DIR']
-    app.logger.debug("Saving files using prefix folder: {}".format(prefix))
     file_path = subject_file.get_full_path(prefix)
-
     file_name = fchunk.file_name
-    logger.debug("Saving file: {} consisting of {} chunks."
-                 .format(file_name, fchunk.total_parts))
+    logger.debug("Saving file: {} consisting of {} chunks"
+                 " in the destination folder: {}."
+                 .format(file_name, fchunk.total_parts, prefix))
 
     try:
         f = open(file_path, "w")
@@ -209,6 +191,7 @@ def merge_files(fchunk):
             f.write(tempfile.read())
 
         success = True
+        # log_manager.log_file_upload(subject_file)
     except Exception as exc:
         logger.error("There was an issue in merge_files(): {}".format(exc))
 
