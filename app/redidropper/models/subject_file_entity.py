@@ -2,10 +2,11 @@
 ORM for RediDropper.SubjectFile table
 """
 import os
-from redidropper.main import db
+from redidropper.main import app, db
 from redidropper.utils import dump_datetime
 from redidropper.database.crud_mixin import CRUDMixin
 
+logger = app.logger
 
 class SubjectFileEntity(db.Model, CRUDMixin):
 
@@ -47,7 +48,16 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     @classmethod
     def get_convention_file_name(cls, date_and_time, subject_id, file_name):
         """
-        Concatenate the pieces to obtain a nice file name
+        Concatenate the pieces to obtain a fiendly file name.
+
+        @TODO: check if we need to need the "site ID" and
+            how to obtain it.
+
+        Original convention:
+            20120101_0123_SiteID_A_SubjectID_B_Sequence123_xyz.jpg
+
+        Actual implementation (does not keep track of sequences):
+            20120101_0123_site_subject_B_xyz.jpg
         """
         date_part = date_and_time.strftime("%Y%m%d")
         time_part = date_and_time.strftime("%H%M")
@@ -76,7 +86,6 @@ class SubjectFileEntity(db.Model, CRUDMixin):
             self.subject.redcap_id,
             self.file_name)
         full_path = os.path.join(subject_dir, file_convention)
-        # print("using full_path: {}".format(full_path))
         return full_path
 
     def __repr__(self):

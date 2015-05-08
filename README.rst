@@ -15,11 +15,11 @@ RediDropper
     :alt: Build status
 
 .. image:: https://coveralls.io/repos/ctsit/redi-dropper-client/badge.svg?branch=master
-    :target: https://coveralls.io/r/ctsit/redi-dropper-client
+    :target: https://coveralls.io/r/ctsit/redi-dropper-client?branch=master
     :alt: Coverage status
 
 .. image:: https://coveralls.io/repos/ctsit/redi-dropper-client/badge.svg?branch=develop
-    :target: https://coveralls.io/r/ctsit/redi-dropper-client
+    :target: https://coveralls.io/r/ctsit/redi-dropper-client?branch=develop
     :alt: Coverage status
 
 Introduction

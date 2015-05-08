@@ -151,15 +151,19 @@ var EventsTable = React.createClass({
     },
 
     componentDidMount: function() {
-        $('[data-toggle="tooltip"]').tooltip()
+        // $('[data-toggle="tooltip"]').tooltip()
     },
-
+    componentWillReceiveProps: function(nextProps) {
+        // console.log("componentWillReceiveProps: " + nextProps);
+    },
     componentWillMount: function() {
         var _this = this;
         var url = "/api/list_subject_events";
-        var request_data = {subject_id: this.props.subject_id};
-        var request = Utils.api_post_json(url, request_data);
+        var request_data = {
+            subject_id: this.props.subjectEntity.id
+        };
 
+        var request = Utils.api_post_json(url, request_data);
         request.success( function(json) {
             _this.setState({
                 list_of_events: json.data.subject_events
@@ -221,15 +225,15 @@ var EventsTable = React.createClass({
 var FilesList = React.createClass({
     getInitialState: function() {
         return {
-            list_of_files :[]
+            list_of_files: []
         };
     },
 
     componentWillMount: function() {
         var _this = this;
         var request_data = {
-            subject_id: this.props.subject_id.id,
-            event_id: this.props.event_id.id
+            subject_id: this.props.subjectEntity.id,
+            event_id: this.props.eventEntity.id
         };
 
         var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
@@ -370,8 +374,8 @@ var Dashboard = React.createClass({
         return {
             current_tab: 0,
             tabs: tabs,
-            subject_id: "",
-            event_id: ""
+            subjectEntity: "",
+            eventEntity: ""
         };
     },
     changeTab: function(i) {
@@ -379,16 +383,16 @@ var Dashboard = React.createClass({
             current_tab: i
         });
     },
-    subjectSelected: function(subject_id) {
+    subjectSelected: function(subjectEntity) {
         this.setState({
             current_tab: 1,
-            subject_id: subject_id
+            subjectEntity: subjectEntity
         });
     },
-    eventSelected: function(event_id) {
+    eventSelected: function(eventEntity) {
         this.setState({
             current_tab: 2,
-            event_id: event_id
+            eventEntity: eventEntity
         });
     },
     showFiles: function() {
@@ -408,7 +412,7 @@ var Dashboard = React.createClass({
         if(hash_value === "#Subjects") {
           this.setState({
               current_tab: 0,
-              event_id: ""
+              eventEntity: ""
           });
         }
         else if (hash_value === "#Events" && this.state.current_tab === 2) {
@@ -426,11 +430,11 @@ var Dashboard = React.createClass({
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subject_id !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subject_id.id;
+        if(this.state.subjectEntity !== "") {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
         }
-        if(this.state.event_id !== "") {
-            selected_event_id = "Event ID: " + this.state.event_id.redcap_event;
+        if(this.state.eventEntity !== "") {
+            selected_event_id = "Event ID: " + this.state.eventEntity.redcap_event;
         }
 
         for(var i = 0; i < tabs.length; i++) {
@@ -458,11 +462,11 @@ var Dashboard = React.createClass({
         }
         else if (current_tab === 1) {
             window.location.hash = 'Events';
-            visible_tab = <EventsTable subject_id = {this.state.subject_id} eventSelected = {this.eventSelected}/>;
+            visible_tab = <EventsTable subjectEntity = {this.state.subjectEntity} eventSelected = {this.eventSelected}/>;
         }
         else if (current_tab === 2) {
             window.location.hash = 'Files';
-            visible_tab = <FilesList subject_id = {this.state.subject_id} event_id = {this.state.event_id}/>;
+            visible_tab = <FilesList subjectEntity = {this.state.subjectEntity} eventEntity = {this.state.eventEntity}/>;
         }
 
         return (
