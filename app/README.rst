@@ -54,11 +54,13 @@ There are three great tools for python development:
 
     # to avoid typing the REDIDROPPER_CONFIG=... you can create a permanent
     # environment entry in your ~/.bashrc
-    echo 'REDIDROPPER_CONFIG=~/redidropper_application.cfg' >> ~/.bashrc && . ~/.bashrc
+    echo 'export REDIDROPPER_CONFIG=~/redidropper_application.cfg' >> ~/.bashrc && . ~/.bashrc
     # ... and then you can simply run
     ./run.sh
         or
     python run.py
+	or
+    fab run
 
     Finally you can opn your browser at https://localhost:5000/ and login as 
     admin@example.com with any password
