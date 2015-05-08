@@ -52,6 +52,7 @@ def app():
 
         # use the in-memory database
         SQLALCHEMY_DATABASE_URI='sqlite:///:memory:',
+        # SQLALCHEMY_DATABASE_URI='sqlite:///db.test',
 
         # Disable CSRF form validation
         WTF_CSRF_ENABLED=False,

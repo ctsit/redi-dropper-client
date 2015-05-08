@@ -56,24 +56,6 @@ VALUES
 INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
         SELECT 'Arm 1', 'Event 01', NOW()
 UNION   SELECT 'Arm 1', 'Event 02', NOW()
-UNION   SELECT 'Arm 1', 'Event 03', NOW()
-UNION   SELECT 'Arm 1', 'Event 04', NOW()
-UNION   SELECT 'Arm 1', 'Event 05', NOW()
-UNION   SELECT 'Arm 1', 'Event 06', NOW()
-UNION   SELECT 'Arm 1', 'Event 07', NOW()
-UNION   SELECT 'Arm 1', 'Event 08', NOW()
-UNION   SELECT 'Arm 1', 'Event 09', NOW()
-UNION   SELECT 'Arm 1', 'Event 10', NOW()
-UNION   SELECT 'Arm 1', 'Event 11', NOW()
-UNION   SELECT 'Arm 1', 'Event 12', NOW()
-UNION   SELECT 'Arm 1', 'Event 13', NOW()
-UNION   SELECT 'Arm 1', 'Event 14', NOW()
-UNION   SELECT 'Arm 1', 'Event 15', NOW()
-UNION   SELECT 'Arm 1', 'Event 16', NOW()
-UNION   SELECT 'Arm 1', 'Event 17', NOW()
-UNION   SELECT 'Arm 1', 'Event 18', NOW()
-UNION   SELECT 'Arm 1', 'Event 19', NOW()
-UNION   SELECT 'Arm 1', 'Event 20', NOW()
 ;
 
 
@@ -107,11 +89,11 @@ VALUES
 ;
 
 
-INSERT INTO Log (logtID, logIP, webID, logDateTime, logDetails)
-      SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
-UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
-UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
-UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'
-UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_uploaded'
-UNION SELECT logtID, '1.2.3.4', 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_downloaded'
+INSERT INTO Log (logtID, webID, logDateTime, logDetails)
+      SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
+UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
+UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
+UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'
+UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_uploaded'
+UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_downloaded'
 ;

@@ -8,9 +8,9 @@ from redidropper.database.crud_mixin import CRUDMixin
 
 logger = app.logger
 
-class SubjectFileEntity(db.Model, CRUDMixin):
 
-    """ Stores the file metadata """
+class SubjectFileEntity(db.Model, CRUDMixin):
+    """ Stores the uploaded file metadata """
     __tablename__ = 'SubjectFile'
 
     id = db.Column("sfID", db.Integer, primary_key=True)
@@ -21,7 +21,7 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     file_name = db.Column("sfFileName", db.String(255), nullable=False)
     file_check_sum = db.Column("sfFileCheckSum", db.String(32), nullable=False)
     file_size = db.Column("sfFileSize", db.String(255), nullable=False)
-    uploaded_at = db.Column("sfUploadedAt", db.DateTime(), nullable=False,
+    uploaded_at = db.Column("sfUploadedAt", db.DateTime, nullable=False,
                             server_default='0000-00-00 00:00:00')
     user_id = db.Column("usrID", db.Integer, db.ForeignKey('User.usrID'),
                         nullable=False)
@@ -89,6 +89,7 @@ class SubjectFileEntity(db.Model, CRUDMixin):
         return full_path
 
     def __repr__(self):
+        """ Return a friendly object representation """
         return "<SubjectFileEntity (sfID: {0.id}, sbjID: {0.subject_id}, " \
             "usrID: {0.user_id}, sfFileName: {0.file_name}>)".format(self)
 
