@@ -37,6 +37,7 @@ class EventEntity(db.Model, CRUDMixin):
             'id': self.id,
             'redcap_arm': self.redcap_arm,
             'redcap_event': self.redcap_event,
+            'day_offset': self.day_offset,
             'unique_event_name': self.get_unique_event_name(),
             'added_at': dump_datetime(self.added_at),
         }

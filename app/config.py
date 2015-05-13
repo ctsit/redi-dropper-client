@@ -19,6 +19,11 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
+    # REDCap project configs
+    REDCAP_API_URL = ''
+    REDCAP_API_TOKEN = ''
+    REDCAP_DEMOGRAPHICS_FIELDS = ''
+
     # @see http://flask.pocoo.org/docs/0.10/config/
     SERVER_NAME = 'localhost:5000'
 
@@ -46,7 +51,7 @@ class DefaultConfig(object):
         'smtp.gmail.com')
     MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 465)
     # MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 587)
-    MAIL_USE_TLS = False
+    MAIL_USE_TLS = True
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get('REDIDROPPER_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('REDIDROPPER_MAIL_PASSWORD')

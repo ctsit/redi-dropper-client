@@ -8,12 +8,17 @@ Goal: Store helper functions not tied to a specific module
 """
 
 import os
-from datetime import datetime, timedelta
+import ast
 import json
+from datetime import datetime, timedelta
+from itsdangerous import URLSafeTimedSerializer
 from flask import flash, request, jsonify
 from hashlib import sha512, sha256
 import hmac
 import base64
+from subprocess import Popen
+from subprocess import PIPE
+
 
 # @TODO: move to the configs
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff',
@@ -217,3 +222,64 @@ def compute_text_md5(text):
     m = hashlib.md5()
     m.update(text)
     return m.hexdigest()
+
+
+def get_email_token(email, salt, secret):
+    """
+    Generate a timestamped token from the specified email
+    """
+    ts = URLSafeTimedSerializer(secret)
+    token = ts.dumps(email, salt=salt)
+    return token
+
+
+def get_email_from_token(token, salt, secret, max_age=86400):
+    """
+    Read an email from a timestamped token.
+    Raises an exception if the token is more than 24 hours old or invalid
+    """
+    ts = URLSafeTimedSerializer(secret)
+    email = ts.loads(token, salt=salt, max_age=max_age)
+    return email
+
+
+def redcap_api_call(url, token, content, fields):
+    """
+    @TODO: doku
+    """
+    assert content in ['event', 'record']
+
+    # @TODO: specify events -- an array of unique event names that you wish
+    # to pull records for - only for longitudinal projects
+    # ' -d events="event_1_arm_1"' \
+    cmd = 'curl -s -X POST {} ' \
+        ' -d token={} ' \
+        ' -d format=json ' \
+        ' -d content={} ' \
+        ' -d fields="{}"' \
+        ' -d returnFormat=json ' \
+        ' | python -m json.tool ' \
+        .format(url, token, content, fields)
+
+    proc = Popen(cmd, shell=True, stdout=PIPE)
+    (out, err) = proc.communicate()
+    data = ast.literal_eval(out)
+    return data
+
+
+def retrieve_redcap_subjects(url, token, fields):
+    """
+    @TODO: doku
+    """
+    data = redcap_api_call(url, token, content='record', fields=fields)
+    # print("subjects: {}".format(data))
+    return data
+
+
+def retrieve_redcap_events(url, token):
+    """
+    @TODO: doku
+    """
+    data = redcap_api_call(url, token, content='event', fields={})
+    # print("events: {}".format(data))
+    return data

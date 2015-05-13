@@ -2,10 +2,11 @@
 <p> Hello {{ user.get_name() }}, </p>
 
 <p>
-Please click on the link below to verify your email for accessing the
-RediDropper application:
+Please click on the provided link to verify your email for accessing the
+RediDropper application.
 
-<a href="{{ url_for('api_verify_email', tok=user.get_email_verification_token(), _external=True) }}">verify email</a>
+<br />
+<a href="{{ url_for('api_verify_email', tok=token, _external=True) }}">VERIFY EMAIL</a>
 </p>
 
 <p>Regards, </p>
