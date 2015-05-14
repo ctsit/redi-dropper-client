@@ -35,7 +35,7 @@ def do_init(app, db, extra_settings={}):
     print get_config_summary(app)
 
     # Override with values stored in `REDIDROPPER_CONFIG` file
-    #   cp startup/application.cfg.example startup/application.cfg
+    #   cp startup/application.cfg.example ~/.redidropper/application.cfg
     #   export REDIDROPPER_CONFIG=
     #        ~/git/redi-dropper-client/app/redidropper/startup/application.cfg
     if REDIDROPPER_CONFIG in os.environ:
@@ -51,10 +51,15 @@ def do_init(app, db, extra_settings={}):
                              .format(app_config))
             sys.exit()
     else:
-        app.logger.error("The `REDIROPPER_CONFIG` environment "
-                         "variable is not set.")
-        app.logger.info("Please create a config file and set the "
-                        "environment variable appropriately.")
+        app.logger.error("""
+        The `REDIROPPER_CONFIG` environment variable is not set.
+        Please create a config file with appropriate values and set the
+        `REDIROPPER_CONFIG` environment variable:
+
+            $ mkdir ~/.redidropper
+            $ cp startup/application.cfg.example ~/.redidropper/application.cfg
+            $ export REDIDROPPER_CONFIG=~/.redidropper/application.cfg
+        """)
         sys.exit()
 
     if len(extra_settings):

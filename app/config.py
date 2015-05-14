@@ -24,8 +24,13 @@ class DefaultConfig(object):
     REDCAP_API_TOKEN = ''
     REDCAP_DEMOGRAPHICS_FIELDS = ''
 
+    # SSL Certificate config
+    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper-self-signed.key'
+    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper-self-signed.crt'
+
     # @see http://flask.pocoo.org/docs/0.10/config/
-    SERVER_NAME = 'localhost:5000'
+    SERVER_NAME = '0.0.0.0:5000'
+
 
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request

@@ -8,6 +8,12 @@ REDCAP_API_TOKEN = 'change_me_32_chars'
 REDCAP_DEMOGRAPHICS_FIELDS = 'subject_id,subject_first,subject_last'
 
 
+# SSL Certificate config
+SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.key'
+SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
+
+
+# @see http://flask.pocoo.org/docs/0.10/config/
 SERVER_NAME = 'localhost:5000'
 
 DEBUG = True
