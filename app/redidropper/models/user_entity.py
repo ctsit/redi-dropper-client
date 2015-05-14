@@ -12,7 +12,7 @@ from redidropper.main import db
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.models.role_entity import RoleEntity
 from redidropper.models.user_role_entity import UserRoleEntity
-from redidropper.utils import dump_datetime
+from redidropper.utils import dump_datetime, get_email_token
 
 
 class UserEntity(db.Model, UserMixin, CRUDMixin):
@@ -108,12 +108,12 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
             self.first.encode('utf-8'),
             self.last.encode('utf-8'))
 
-    def get_email_verification_token(self):
+    def get_email_verification_token(self, salt, secret):
         """
         :rtype string
         :return the email verification token stored in the database
         """
-        return "token"
+        return get_email_token(self.email, salt, secret)
 
     def serialize(self):
         """Return object data for jsonification"""
