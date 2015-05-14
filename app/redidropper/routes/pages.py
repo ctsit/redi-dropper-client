@@ -79,7 +79,14 @@ class LoginForm(Form):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    """ Render the home page """
+    """ Render the login page"""
+
+    if app.config['LOGIN_USING_SHIB_AUTH']:
+        return render_login_shib()
+    return render_login_local()
+
+
+def render_login_local():
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -125,6 +132,13 @@ def index():
         return redirect(next_page)
 
     return render_template('index.html', form=form)
+
+
+def render_login_shib():
+    """
+
+    """
+    return render_template('login_shib.html', form=request.form)
 
 
 def get_role_landing_page():
@@ -208,7 +222,12 @@ def load_user_from_request(req):
 
 @app.route('/logout')
 def logout():
-    """ Destroy the user session and redirect to the home page """
+    """ Destroy the user session and redirect to the home page
+
+    Shib:
+        https://shib.ncsu.edu/docs/logout.html
+        https://wiki.shibboleth.net/confluence/display/CONCEPT/SLOIssues
+    """
     logout_user()
 
     # Remove session keys set by Flask-Principal
