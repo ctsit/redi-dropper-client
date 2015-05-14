@@ -123,6 +123,7 @@ var EventsList = React.createClass({
             <tr>
                 <td> {i+1} </td>
                 <td> {record.redcap_arm} </td>
+                <td> {record.day_offset} </td>
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={callback}>
@@ -141,6 +142,7 @@ var EventsList = React.createClass({
                 <tr>
                     <th> # </th>
                     <th> REDCap Event Arm </th>
+                    <th> Day Offset </th>
                     <th> REDCap Event Name </th>
                 </tr>
             </thead>

@@ -168,6 +168,7 @@ var EventsTable = React.createClass({
             _this.setState({
                 list_of_events: json.data.subject_events
             });
+            $(".sortable").tablesorter();
         });
         request.fail(function (jqXHR, textStatus, error) {
             console.log('Failed: ' + textStatus + error);
@@ -186,6 +187,7 @@ var EventsTable = React.createClass({
             <tr>
                 <td> {i+1} </td>
                 <td> {record.redcap_arm} </td>
+                <td> {record.day_offset} </td>
                 <td> {record.redcap_event} </td>
                 <td>
                     <button
@@ -203,13 +205,14 @@ var EventsTable = React.createClass({
         return (
         <div>
             <div className="table-responsive">
-                <table id="event-table" className="table table-striped table-curved">
+                <table id="event-table" className="table table-striped table-curved sortable tablesorter">
                     <thead>
                         <tr>
                             <th> # </th>
                             <th> REDCap Arm </th>
+                            <th> Day Offset </th>
                             <th> REDCap Event </th>
-                            <th> File Count</th>
+                            <th> File Count </th>
                         </tr>
                     </thead>
                     <tbody id="subject-table-body">

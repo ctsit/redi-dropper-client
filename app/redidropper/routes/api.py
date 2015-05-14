@@ -55,6 +55,7 @@ SELECT
             ' ',
             '_')
     ) AS unique_event_name
+    , evtDayOffset AS day_offset
     , COUNT(sfID) AS total_files
     , GROUP_CONCAT( CONCAT(sfFileName, ':', sfFileSize)) AS file_names
 FROM
