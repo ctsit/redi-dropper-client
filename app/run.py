@@ -37,13 +37,13 @@ def get_ssl_context(app):
                     .format(ssl_public_key_file))
         except Exception as exc:
             app.logger.error("Problem loading SSL certificate: {}".format(exc))
-            if app.debug:
-                try:
-                    import OpenSSL
-                    # if the pyOpenSSL is installed use the adhoc ssl context
-                    ssl_context = 'adhoc'
-                except:
-                    pass
+    elif app.debug:
+        try:
+	    import OpenSSL
+	    # if the pyOpenSSL is installed use the adhoc ssl context
+	    ssl_context = 'adhoc'
+	except:
+	    pass
 
     return ssl_context
 
