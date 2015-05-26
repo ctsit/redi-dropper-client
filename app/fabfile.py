@@ -29,6 +29,22 @@ def install_requirements():
 
 
 @task
+def initdb():
+    init_db()
+
+@task
+def init_db():
+    """
+
+    """
+    if not confirm("Do you want to create the RediDropper database tables?"):
+        abort("Aborting at user request.")
+    local('sudo mysql < db/001/upgrade.sql')
+    local('sudo mysql < db/002/upgrade.sql')
+    local('sudo mysql < db/002/data.sql')
+
+
+@task
 def resetdb():
     reset_db()
 

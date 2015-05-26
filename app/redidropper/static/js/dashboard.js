@@ -18,44 +18,31 @@ var SubjectsRow = React.createClass({
         };
     },
     componentWillReceiveProps: function(nextProps) {
-        this.setState(
-                {
-                    row_data: nextProps.row_data,
-                    max_events: nextProps.max_events
-                });
+        this.setState({
+            row_data: nextProps.row_data,
+            max_events: nextProps.max_events
+        });
     },
+    /*
     showAlert: function() {
         $("#event-alert").show();
         setTimeout(function () {
             $("#event-alert").hide();
         }, 1500);
     },
+    */
     render: function() {
         var column_count = this.state.max_events;
         var table_columns = [];
         var row_data = this.state.row_data;
         var events_count = 0;
         var i;
+
         /*
-        var events_count = row_data.events.length;
-
-
-        for(i = 0; i < events_count; i++) {
-            var view_files_url = "/" + row_data.events[i].event_id;
-            if (row_data.events[i].event_files !== 0) {
-                table_columns.push(<td><a href={view_files_url}>{row_data.events[i].event_files}</a></td>);
-            }
-            else {
-                table_columns.push(<td><a href={view_files_url}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
-            }
-        }
-        var new_event = "/start_upload/" + row_data.id;
-        table_columns.push(<td><a href={new_event}><i className="fa fa-lg fa-plus-circle"></i></a></td>);
-        */
-
         for (i = events_count + 2; i <= column_count; i++) {
             table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
         }
+        */
 
         var selectSubject = this.props.subjectSelected.bind(null, row_data);
         return (
@@ -63,7 +50,7 @@ var SubjectsRow = React.createClass({
                 <td>
                     <button className="btn btn-lg2 btn-primary btn-block"
                         onClick={selectSubject}>
-                        Select subject: {row_data.id}
+                        Select subject: {row_data.redcap_id}
                     </button>
                 </td>
                 {table_columns}
@@ -164,19 +151,24 @@ var EventsTable = React.createClass({
     },
 
     componentDidMount: function() {
-        $('[data-toggle="tooltip"]').tooltip()
+        // $('[data-toggle="tooltip"]').tooltip()
     },
-
+    componentWillReceiveProps: function(nextProps) {
+        // console.log("componentWillReceiveProps: " + nextProps);
+    },
     componentWillMount: function() {
         var _this = this;
         var url = "/api/list_subject_events";
-        var request_data = {subject_id: this.props.subject_id};
-        var request = Utils.api_post_json(url, request_data);
+        var request_data = {
+            subject_id: this.props.subjectEntity.id
+        };
 
+        var request = Utils.api_post_json(url, request_data);
         request.success( function(json) {
             _this.setState({
                 list_of_events: json.data.subject_events
             });
+            $(".sortable").tablesorter();
         });
         request.fail(function (jqXHR, textStatus, error) {
             console.log('Failed: ' + textStatus + error);
@@ -194,7 +186,9 @@ var EventsTable = React.createClass({
             rows.push(
             <tr>
                 <td> {i+1} </td>
-                <td> {record.unique_event_name} </td>
+                <td> {record.redcap_arm} </td>
+                <td> {record.day_offset} </td>
+                <td> {record.redcap_event} </td>
                 <td>
                     <button
                         className="btn btn-primary btn-block"
@@ -211,9 +205,14 @@ var EventsTable = React.createClass({
         return (
         <div>
             <div className="table-responsive">
-                <table id="event-table" className="table table-striped table-curved">
+                <table id="event-table" className="table table-striped table-curved sortable tablesorter">
                     <thead>
                         <tr>
+                            <th> # </th>
+                            <th> REDCap Arm </th>
+                            <th> Day Offset </th>
+                            <th> REDCap Event </th>
+                            <th> File Count </th>
                         </tr>
                     </thead>
                     <tbody id="subject-table-body">
@@ -229,17 +228,16 @@ var EventsTable = React.createClass({
 var FilesList = React.createClass({
     getInitialState: function() {
         return {
-            list_of_files :[]
+            list_of_files: []
         };
     },
 
     componentWillMount: function() {
         var _this = this;
         var request_data = {
-            subject_id: this.props.subject_id.id,
-            event_id: this.props.event_id.id
+            subject_id: this.props.subjectEntity.id,
+            event_id: this.props.eventEntity.id
         };
-        console.log(request_data);
 
         var request = Utils.api_post_json("/api/list_subject_event_files", request_data);
 
@@ -379,8 +377,8 @@ var Dashboard = React.createClass({
         return {
             current_tab: 0,
             tabs: tabs,
-            subject_id: "",
-            event_id: ""
+            subjectEntity: "",
+            eventEntity: ""
         };
     },
     changeTab: function(i) {
@@ -388,16 +386,16 @@ var Dashboard = React.createClass({
             current_tab: i
         });
     },
-    subjectSelected: function(subject_id) {
+    subjectSelected: function(subjectEntity) {
         this.setState({
             current_tab: 1,
-            subject_id: subject_id
+            subjectEntity: subjectEntity
         });
     },
-    eventSelected: function(event_id) {
+    eventSelected: function(eventEntity) {
         this.setState({
             current_tab: 2,
-            event_id: event_id
+            eventEntity: eventEntity
         });
     },
     showFiles: function() {
@@ -417,7 +415,7 @@ var Dashboard = React.createClass({
         if(hash_value === "#Subjects") {
           this.setState({
               current_tab: 0,
-              event_id: ""
+              eventEntity: ""
           });
         }
         else if (hash_value === "#Events" && this.state.current_tab === 2) {
@@ -435,11 +433,11 @@ var Dashboard = React.createClass({
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subject_id !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subject_id.id;
+        if(this.state.subjectEntity !== "") {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
         }
-        if(this.state.event_id !== "") {
-            selected_event_id = "Event ID: " + this.state.event_id.unique_event_name;
+        if(this.state.eventEntity !== "") {
+            selected_event_id = "Event ID: " + this.state.eventEntity.redcap_event;
         }
 
         for(var i = 0; i < tabs.length; i++) {
@@ -467,11 +465,11 @@ var Dashboard = React.createClass({
         }
         else if (current_tab === 1) {
             window.location.hash = 'Events';
-            visible_tab = <EventsTable subject_id = {this.state.subject_id} eventSelected = {this.eventSelected}/>;
+            visible_tab = <EventsTable subjectEntity = {this.state.subjectEntity} eventSelected = {this.eventSelected}/>;
         }
         else if (current_tab === 2) {
             window.location.hash = 'Files';
-            visible_tab = <FilesList subject_id = {this.state.subject_id} event_id = {this.state.event_id}/>;
+            visible_tab = <FilesList subjectEntity = {this.state.subjectEntity} eventEntity = {this.state.eventEntity}/>;
         }
 
         return (

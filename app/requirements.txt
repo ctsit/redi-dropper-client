@@ -13,6 +13,7 @@ Flask-Security==1.7.4
 Flask-SQLAlchemy==2.0
 Flask-WTF==0.10.2
 MySQL-python==1.2.5
+pyOpenSSL==0.15.1
 WTForms==2.0.2
 
 # == Shibboleth http://flask-sso.readthedocs.org/en/latest/#a-minimal-example

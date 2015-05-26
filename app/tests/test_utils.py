@@ -5,6 +5,8 @@ Goal: test functions in utils.py
 import os
 # from werkzeug.datastructures import Headers
 from redidropper import utils
+import time
+from .base_test import BaseTestCase
 
 
 def test_create_salt(app):
@@ -106,3 +108,27 @@ def test_allowed_file():
 def test_pack():
     assert '{"message":"msg","status":"error"}' == utils.pack_error("msg") \
         .replace(' ', '').replace('\n', '')
+
+
+def test_compute_text_md5():
+    """ verify md5 generator """
+    text = 'text'
+    assert '1cb251ec0d568de6a929b520c4aed8d1' == utils.compute_text_md5(text)
+
+
+class UtilsTests(BaseTestCase):
+
+    def test_get_email_token(self):
+        email = 'a@a.com'
+        salt = 'salt'
+        secret = 'secret'
+        token = utils.get_email_token(email, salt, secret)
+        assert 'ImFAYS5jb20i' == token[0:12]
+        decoded = utils.get_email_from_token(token, salt, secret)
+        assert email == decoded
+        time.sleep(2)
+
+        with self.assertRaises(Exception) as context:
+            decoded = utils.get_email_from_token(token, salt,
+                                                 secret, max_age=1)
+        self.assertTrue('Signature age 2 > 1 seconds' in context.exception)

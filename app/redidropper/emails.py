@@ -37,13 +37,17 @@ def send_verification_email(user):
     """
     subject = "RediDropper Email Verification"
     sender = app.config['MAIL_SENDER_SUPPORT']
+    secret = app.config['SECRET_KEY']
+    token = user.get_email_verification_token(secret, secret)
     recipient = user.email
     text_body = render_template(
         "verification_email.txt",
         sender=sender,
-        user=user)
+        user=user,
+        token=token)
     html_body = render_template(
         "verification_email.html",
         sender=sender,
-        user=user)
+        user=user,
+        token=token)
     send_email(subject, sender, [recipient], text_body, html_body)

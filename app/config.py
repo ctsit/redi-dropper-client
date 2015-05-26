@@ -19,8 +19,18 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
+    # REDCap project configs
+    REDCAP_API_URL = ''
+    REDCAP_API_TOKEN = ''
+    REDCAP_DEMOGRAPHICS_FIELDS = ''
+
+    # SSL Certificate config
+    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper-self-signed.key'
+    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper-self-signed.crt'
+
     # @see http://flask.pocoo.org/docs/0.10/config/
-    SERVER_NAME = 'localhost:5000'
+    SERVER_NAME = '0.0.0.0:5000'
+
 
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request
@@ -46,7 +56,7 @@ class DefaultConfig(object):
         'smtp.gmail.com')
     MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 465)
     # MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 587)
-    MAIL_USE_TLS = False
+    MAIL_USE_TLS = True
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get('REDIDROPPER_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('REDIDROPPER_MAIL_PASSWORD')
@@ -62,7 +72,7 @@ class DefaultConfig(object):
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
     MAX_CONTENT_LENGTH = os.getenv(
-        'REDI_DROPPER_MAX_CONTENT_LENGTH',
+        'REDIDROPPER_MAX_CONTENT_LENGTH',
         DEFAULT_MAX_CONTENT_LENGTH)
 
     # THREADS_PER_PAGE = 8
@@ -71,11 +81,12 @@ class DefaultConfig(object):
 
     # http://effbot.org/librarybook/os-path.htm
     # @TODO: add code to check for valid paths
-    INCOMING_TEMP_DIR = os.getenv('REDI_DROPPER_INCOMING_TEMP_DIR',
-                                  os.path.expanduser('~/.redidropper/temp'))
+    REDIDROPPER_TEMP_DIR = os.getenv('REDIDROPPER_TEMP_DIR',
+                                     os.path.expanduser('~/.redidropper/temp'))
 
-    INCOMING_SAVED_DIR = os.getenv('REDI_DROPPER_NCOMING_SAVED_DIR',
-                                   os.path.expanduser('~/.redidropper/saved'))
+    REDIDROPPER_SAVED_DIR = os.getenv(
+        'REDIDROPPER_SAVED_DIR',
+        os.path.expanduser('~/.redidropper/saved'))
 
 
 class DebugConfig(DefaultConfig):

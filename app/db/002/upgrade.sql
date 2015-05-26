@@ -90,6 +90,7 @@ CREATE TABLE Event (
     evtID integer unsigned NOT NULL AUTO_INCREMENT,
     evtRedcapArm varchar(255) NOT NULL,
     evtRedcapEvent varchar(255) NOT NULL,
+    evtDayOffset float NOT NULL DEFAULT '0',
     evtAddedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
  PRIMARY KEY (evtID),
  UNIQUE KEY (evtRedcapArm, evtRedcapEvent),
@@ -108,7 +109,9 @@ CREATE TABLE SubjectFile (
     sfUploadedAt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     usrID integer unsigned NOT NULL,
  PRIMARY KEY(sfID),
- UNIQUE KEY (sbjID, evtID, sfFileName),
+ KEY (sbjID),
+ KEY (evtID),
+ KEY (sfFileName),
  KEY (sfFileName),
  KEY (sfUploadedAt),
  KEY (usrID),
@@ -180,17 +183,15 @@ CREATE TABLE LogType (
 CREATE TABLE Log (
     logID integer unsigned NOT NULL AUTO_INCREMENT,
     logtID integer unsigned NOT NULL,
-    logIP varchar(15) NOT NULL DEFAULT '',
     webID integer unsigned NOT NULL,
     logDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     logDetails text NOT NULL,
  PRIMARY KEY (logID),
  KEY (logtID),
- KEY (logIP),
  KEY (webID),
  KEY (logDateTime),
  CONSTRAINT `fk_Log_logtID` FOREIGN KEY (logtID) REFERENCES LogType (logtID),
- CONSTRAINT `fk_Event_webID` FOREIGN KEY (webID) REFERENCES WebSession (webID)
+ CONSTRAINT `fk_Log_webID` FOREIGN KEY (webID) REFERENCES WebSession (webID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
