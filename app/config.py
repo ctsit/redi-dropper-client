@@ -19,6 +19,9 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
+    # Use local or shib sso auth
+    LOGIN_USING_SHIB_AUTH = False
+
     # REDCap project configs
     REDCAP_API_URL = ''
     REDCAP_API_TOKEN = ''
