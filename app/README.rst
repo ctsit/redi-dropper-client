@@ -47,14 +47,14 @@ There are three great tools for python development:
     fab init_db
 
     # create/update important configuration params
-    cp redidropper/startup/application.cfg.example ~/redidropper_application.cfg
+    cp redidropper/application.conf.sample ~/redidropper_application.conf
 
     # run the application
-    REDIDROPPER_CONFIG=~/redidropper_application.cfg python run.py
+    REDIDROPPER_CONFIG=~/redidropper_application.conf python run.py
 
     # to avoid typing the REDIDROPPER_CONFIG=... you can create a permanent
     # environment entry in your ~/.bashrc
-    echo 'export REDIDROPPER_CONFIG=~/redidropper_application.cfg' >> ~/.bashrc && . ~/.bashrc
+    echo 'export REDIDROPPER_CONFIG=~/redidropper_application.conf' >> ~/.bashrc && . ~/.bashrc
     # ... and then you can simply run
     ./run.sh
         or
