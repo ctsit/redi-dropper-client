@@ -19,6 +19,8 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
+    REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
+
     # REDCap project configs
     REDCAP_API_URL = ''
     REDCAP_API_TOKEN = ''
