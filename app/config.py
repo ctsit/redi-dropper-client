@@ -19,8 +19,8 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
-    # /srv/apps/dropper-alz/app/deploy/application.conf
-    REDIDROPPER_CONFIG = 'app/deploy/application.conf'
+    # REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
+    REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
 
     # Use local or shib sso auth
     LOGIN_USING_SHIB_AUTH = False
@@ -105,6 +105,7 @@ class DebugConfig(DefaultConfig):
 class TestConfig(DefaultConfig):
 
     """ Configuration for running tests """
+    REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
     TESTING = True
     CSRF_ENABLED = False
 
