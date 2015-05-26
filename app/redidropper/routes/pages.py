@@ -127,6 +127,15 @@ def index():
     return render_template('index.html', form=form)
 
 
+@app.route('/loginExternalAuthReturn/', methods=['POST', 'GET'])
+def shib_return():
+    """ Helper for reading the Shibboleth headers """
+    # import pprint; pprint.pprint(request.headers)
+    interesting_fields = ['Mail', 'Eppn', 'Glid']
+    data = [i for i in request.headers if i[0] in interesting_fields]
+    return utils.jsonify_success({'headers': data})
+
+
 def get_role_landing_page():
     """
     Get the landing page for a user with specific role
