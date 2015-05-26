@@ -2,6 +2,10 @@
 Goal: Override configs for developers
 """
 
+# Use local or shib sso auth
+LOGIN_USING_SHIB_AUTH = True
+
+
 # REDCap project configs
 REDCAP_API_URL = 'https://example.com/redcap/api/'
 REDCAP_API_TOKEN = 'change_me_32_chars'
@@ -14,7 +18,7 @@ SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
 
 # @see http://flask.pocoo.org/docs/0.10/config/
-SERVER_NAME = 'localhost:5000'
+SERVER_NAME = '0.0.0.0:5000'
 
 DEBUG = True
 

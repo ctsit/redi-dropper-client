@@ -19,6 +19,12 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
+    # REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
+    REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
+
+    # Use local or shib sso auth
+    LOGIN_USING_SHIB_AUTH = False
+
     # REDCap project configs
     REDCAP_API_URL = ''
     REDCAP_API_TOKEN = ''
@@ -99,6 +105,7 @@ class DebugConfig(DefaultConfig):
 class TestConfig(DefaultConfig):
 
     """ Configuration for running tests """
+    REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
     TESTING = True
     CSRF_ENABLED = False
 
