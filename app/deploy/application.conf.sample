@@ -2,9 +2,6 @@
 Goal: Override configs for developers
 """
 
-
-REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
-
 # Use local or shib sso auth
 LOGIN_USING_SHIB_AUTH = True
 
