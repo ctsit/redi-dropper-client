@@ -44,7 +44,7 @@ before_script:
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
     - mkdir ~/.redidropper
     # put config file in the place expected by config.py
-    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample ${REDIDROPPER_CONFIG}
+    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample ~/.redidropper/application.conf
 
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
