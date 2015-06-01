@@ -25,7 +25,8 @@ branches:
 
 # __1 Use this to prepare the system to install prerequisites or dependencies
 before_install:
-    sudo apt-get install -y python-setuptools python-dev
+    - echo "Running on ${TRAVIS_OS_NAME}: ${TRAVIS_BUILD_DIR}"
+    - sudo apt-get install -y python-setuptools python-dev
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
@@ -42,10 +43,9 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
-    - echo ${TRAVIS_OS_NAME}
     - mkdir ~/.redidropper
     # put config file in the place expected by config.py
-    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample $REDIDROPPER_CONFIG
+    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample ${REDIDROPPER_CONFIG}
 
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
