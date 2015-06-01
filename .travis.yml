@@ -1,9 +1,16 @@
-# From http://docs.travis-ci.com/user/build-configuration/
+# @see
+#   http://docs.travis-ci.com/user/build-configuration/
+#   http://docs.travis-ci.com/user/ci-environment/
+#
+# To skip some tests:
+#   @unittest.skip("Unconditional skipping")
+#   @unittest.skipIf(os.getenv('CONTINUOUS_INTEGRATION', '') > '', reason='Travis VM')
+
+env: REDIDROPPER_CONFIG=~/.redidropper/application.conf
 
 notifications:
   email:
     - indera@gmail.com
-
 
 
 language: python
@@ -34,9 +41,11 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
+    - echo "$TRAVIS_OS_NAME - TRAVIS_BUILD_DIR: $TRAVIS_BUILD_DIR"
     - mkdir ~/.redidropper
-    - cp app/deploy/application.conf.sample ~/.redidropper/application.conf
-    - export REDIDROPPER_CONFIG=~/.redidropper/application.conf
+    # put config file in the place expected by config.py
+    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample $REDIDROPPER_CONFIG
+
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:

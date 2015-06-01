@@ -19,8 +19,10 @@ class DefaultConfig(object):
 
     """ Default configuration data """
 
-    # REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
-    REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
+    if os.getenv('CONTINUOUS_INTEGRATION', '') > '':
+        REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
+    else:
+        REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
 
     # Use local or shib sso auth
     LOGIN_USING_SHIB_AUTH = False
