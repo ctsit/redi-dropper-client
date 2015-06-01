@@ -25,7 +25,7 @@ branches:
 
 # __1 Use this to prepare the system to install prerequisites or dependencies
 before_install:
-    - echo "Running on ${TRAVIS_OS_NAME}: ${TRAVIS_BUILD_DIR}"
+    - echo Running on ${TRAVIS_OS_NAME}: ${TRAVIS_BUILD_DIR}
     - sudo apt-get install -y python-setuptools python-dev
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
