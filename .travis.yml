@@ -6,7 +6,8 @@
 #   @unittest.skip("Unconditional skipping")
 #   @unittest.skipIf(os.getenv('CONTINUOUS_INTEGRATION', '') > '', reason='Travis VM')
 
-env: REDIDROPPER_CONFIG=~/.redidropper/application.conf
+env:
+    - REDIDROPPER_CONFIG=~/.redidropper/application.conf
 
 notifications:
   email:
@@ -41,7 +42,7 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
-    - echo "$TRAVIS_OS_NAME - TRAVIS_BUILD_DIR: $TRAVIS_BUILD_DIR"
+    - echo "%TRAVIS_OS_NAME% - TRAVIS_BUILD_DIR: %TRAVIS_BUILD_DIR%"
     - mkdir ~/.redidropper
     # put config file in the place expected by config.py
     - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample $REDIDROPPER_CONFIG
