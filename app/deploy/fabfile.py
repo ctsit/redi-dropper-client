@@ -12,7 +12,7 @@ Fabric deployment file.
 import imp
 import sys
 from os.path import isfile, isdir, join
-from pprint import pprint
+#from pprint import pprint
 
 from fabric.api import cd, env
 from fabric.context_managers import hide, prefix, settings
@@ -27,6 +27,7 @@ from fabric.utils import abort
 # =========================================================================
 
 def load_environ(target, new_settings={}):
+    """ Helper for loading an 'environ/fabric.py' file"""
     # pprint(sys.path)
     fab_conf_file = join(target, 'fabric.py')
     if not isfile(fab_conf_file):

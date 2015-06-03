@@ -7,14 +7,11 @@ Goal: Implement the application entry point
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
-import os.path
-import ssl
-
-from redidropper.main import app, db, mail
+from redidropper.main import app, mail
 from redidropper.startup import initializer
 
 # Configures routes, models
-app = initializer.do_init(app, db)
+app = initializer.do_init(app)
 mail.init_app(app)
 
 

@@ -6,8 +6,8 @@
 #   @unittest.skip("Unconditional skipping")
 #   @unittest.skipIf(os.getenv('CONTINUOUS_INTEGRATION', '') > '', reason='Travis VM')
 
-env:
-    - REDIDROPPER_CONFIG=~/.redidropper/application.conf
+# The redidropper/startup/initializer.py does not need the env variable anymore
+#env: REDIDROPPER_CONFIG=~/build/ctsit/redi-dropper-client/app/deploy/application.conf
 
 notifications:
   email:
@@ -42,9 +42,8 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
-    - mkdir ~/.redidropper
     # put config file in the place expected by config.py
-    - cp ~/build/ctsit/redi-dropper-client/app/deploy/application.conf.sample ~/.redidropper/application.conf
+    - cp ~/build/ctsit/redi-dropper-client/app/deploy/sample.settings.conf ~/build/ctsit/redi-dropper-client/app/deploy/settings.conf
 
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
