@@ -12,18 +12,19 @@ from datetime import timedelta
 import logging
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
-LOG_LEVEL = logging.DEBUG
 
 
 class DefaultConfig(object):
 
     """ Default configuration data """
+    LOG_LEVEL = logging.DEBUG
+    # CONFIDENTIAL_SETTINGS_FILE = '/srv/apps/dropper-alz/app/deploy/settings.conf'
 
-    # REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
-    REDIDROPPER_CONFIG = '/srv/apps/dropper-alz/app/deploy/application.conf'
+    # same folder as the config.py
+    CONFIDENTIAL_SETTINGS_FILE = os.path.abspath('deploy/settings.conf')
 
     # Use local or shib sso auth
-    LOGIN_USING_SHIB_AUTH = False
+    LOGIN_USING_SHIB_AUTH = True
 
     # REDCap project configs
     REDCAP_API_URL = ''
@@ -31,12 +32,13 @@ class DefaultConfig(object):
     REDCAP_DEMOGRAPHICS_FIELDS = ''
 
     # SSL Certificate config
-    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper-self-signed.key'
-    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper-self-signed.crt'
+    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.key'
+    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
-    SERVER_NAME = '0.0.0.0:5000'
-
+    # (!) Try changing this value to the real server name
+    # if you keep getting back "GET / HTTP/1.1" 404 -
+    SERVER_NAME = 'localhost:5000'
 
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request
@@ -73,7 +75,10 @@ class DefaultConfig(object):
     DB_HOST = ''
     DB_NAME = ''
 
-    SECRET_KEY = os.getenv('SECRET_KEY', 'insecure_key')
+    from base64 import b64encode
+    from os import urandom
+    random_key = b64encode(urandom(50))
+    SECRET_KEY = os.getenv('SECRET_KEY', random_key)
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
@@ -85,19 +90,19 @@ class DefaultConfig(object):
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = ""
 
-    # http://effbot.org/librarybook/os-path.htm
-    # @TODO: add code to check for valid paths
-    REDIDROPPER_TEMP_DIR = os.getenv('REDIDROPPER_TEMP_DIR',
-                                     os.path.expanduser('~/.redidropper/temp'))
+    # override as needed in CONFIDENTIAL_SETTINGS_FILE
+    # os.path.expanduser('~/.redidropper/temp'))
+    REDIDROPPER_UPLOAD_TEMP_DIR = os.getenv('REDIDROPPER_UPLOAD_TEMP_DIR',
+                                            os.path.abspath('upload/temp'))
 
-    REDIDROPPER_SAVED_DIR = os.getenv(
-        'REDIDROPPER_SAVED_DIR',
-        os.path.expanduser('~/.redidropper/saved'))
+    REDIDROPPER_UPLOAD_SAVED_DIR = os.getenv('REDIDROPPER_UPLOAD_SAVED_DIR',
+                                             os.path.abspath('upload//saved'))
 
 
 class DebugConfig(DefaultConfig):
 
     """ Extra flag for debugging """
+    DEBUG = True
     DEBUG_TB_ENABLED = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
@@ -105,16 +110,10 @@ class DebugConfig(DefaultConfig):
 class TestConfig(DefaultConfig):
 
     """ Configuration for running tests """
-    REDIDROPPER_CONFIG = '~/.redidropper/application.conf'
     TESTING = True
     CSRF_ENABLED = False
 
-    DATABASE = 'tests.db'
-    DATABASE_PATH = os.path.join(_basedir, DATABASE)
-
-    run_fast = True
-    if run_fast:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    else:
-        # If we want to inspect the results we can use a file instead of memory
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_PATH
+    if os.getenv('CONTINUOUS_INTEGRATION', '') > '':
+        # resolve a path when runing with TravisCI
+        CONFIDENTIAL_SETTINGS_FILE = \
+            '~/build/ctsit/redi-dropper-client/app/deploy/settings.conf'
