@@ -47,6 +47,7 @@ class BaseTestCaseWithData(BaseTestCase):
                                  minitial="M",
                                  added_at=added_date,
                                  modified_at=added_date,
+                                 email_confirmed_at=added_date,
                                  access_expires_at=access_end_date)
 
         # == Create roles

@@ -22,7 +22,8 @@ SQLAlchemy gives you access to the following things:
 """
 
 from flask_testing import TestCase
-from redidropper.main import app, db
+from redidropper.main import app, db, mail
+from redidropper.startup import initializer
 
 
 class BaseTestCase(TestCase):
@@ -31,7 +32,8 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         """ override the default config with the test config """
-        app.config.from_object('config.TestConfig')
+        initializer.do_init(app, is_mode_testing=True)
+        mail.init_app(app)
         return app
 
     def setUp(self):
