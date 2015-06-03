@@ -7,11 +7,11 @@ RediDropper
     :alt: PyPI version
 
 .. image:: https://travis-ci.org/ctsit/redi-dropper-client.svg?branch=master
-    :target: https://travis-ci.org/ctsit/redi-dropper-client
+    :target: https://travis-ci.org/ctsit/redi-dropper-client?branch=master
     :alt: Build status
 
 .. image:: https://travis-ci.org/ctsit/redi-dropper-client.svg?branch=develop
-    :target: https://travis-ci.org/ctsit/redi-dropper-client
+    :target: https://travis-ci.org/ctsit/redi-dropper-client?branch=develop
     :alt: Build status
 
 .. image:: https://coveralls.io/repos/ctsit/redi-dropper-client/badge.svg?branch=master

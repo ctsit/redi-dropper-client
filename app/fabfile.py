@@ -133,5 +133,5 @@ def clean():
     """
     Remove generated files
     """
-    local('rm -rf cover/ htmlcov/ .coverage coverage.xml nosetests.xml')
+    local('rm -rf cover/ htmlcov/ .coverage coverage.xml nosetests.xml .ropeproject')
     local('find . -type f -name "*.pyc" -print | xargs rm -f')
