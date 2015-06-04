@@ -17,8 +17,7 @@ from flask_login import login_required
 from redidropper.main import app, db
 from redidropper import emails
 from redidropper import utils
-from redidropper.routes.managers import file_manager, subject_manager, \
-    log_manager
+from redidropper.routes.managers import file_manager, log_manager
 
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
@@ -49,15 +48,9 @@ SELECT
     evtID AS id
     , evtRedcapArm AS redcap_arm
     , evtRedcapEvent AS redcap_event
-    , LOWER(
-        REPLACE(
-            CONCAT(evtRedcapEvent, '_', evtRedcapArm),
-            ' ',
-            '_')
-    ) AS unique_event_name
     , evtDayOffset AS day_offset
     , COUNT(sfID) AS total_files
-    , GROUP_CONCAT( CONCAT(sfFileName, ':', sfFileSize)) AS file_names
+    , GROUP_CONCAT(sfFileName) AS file_names
 FROM
      Event
     JOIN SubjectFile USING(evtID)
@@ -153,7 +146,7 @@ def api_upload():
     return make_response(file_manager.save_uploaded_file(), 200)
 
 
-@app.route("/api/download_file", methods=['POST', 'GET'])
+@app.route("/api/download_file", methods=['POST'])
 @login_required
 def download_file():
     """ Download a file using the database id """
@@ -164,7 +157,8 @@ def download_file():
         file_id = utils.get_safe_int(request.args.get('file_id'))
 
     subject_file = SubjectFileEntity.get_by_id(file_id)
-    file_path = subject_file.get_full_path(app.config['REDIDROPPER_SAVED_DIR'])
+    file_path = subject_file.get_full_path(
+        app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
     # log_manager.log_file_download(subject_file)
     return send_file(file_path, as_attachment=True)
 
@@ -274,17 +268,17 @@ def api_list_logs():
         dict(list_of_events=logs, total_pages=total_pages))
 
 
-@app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
-@login_required
-def api_list_redcap_subjects():
-    """
-    @TODO: remove me
-    :rtype: Response
-    :return the list of subjects in json format
-    """
-    subjects = subject_manager.get_fresh_list_of_subjects()
-    subjects_list = [x.to_visible() for x in subjects]
-    return utils.jsonify_success({'subjects_list': subjects_list})
+# @app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
+# @login_required
+# def api_list_redcap_subjects():
+#     """
+#     @TODO: remove me
+#     :rtype: Response
+#     :return the list of subjects in json format
+#     """
+#     subjects = subject_manager.get_fresh_list_of_subjects()
+#     subjects_list = [x.to_visible() for x in subjects]
+#     return utils.jsonify_success({'subjects_list': subjects_list})
 
 
 @app.route('/api/list_local_subjects', methods=['GET', 'POST'])

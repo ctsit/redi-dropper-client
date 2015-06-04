@@ -8,14 +8,9 @@ Authors:
 
 from __future__ import print_function
 
-from datetime import datetime
 from flask import url_for
 from .base_test_with_data import BaseTestCaseWithData
 from redidropper.main import app
-from redidropper import utils
-from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN
-from redidropper.models.user_entity import UserEntity
-from redidropper.models.role_entity import RoleEntity
 
 protected_pages = [
     '/admin',

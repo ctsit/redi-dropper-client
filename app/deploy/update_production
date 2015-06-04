@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Exit cleanly on Ctrl-C
+trap 'exit 1' INT
+
+#REPO_DIR=$HOME/redi-dropper-client/
+REPO_DIR=/srv/apps/dropper-alz/
+
+#REMOTE_DIRECTORY='/srv/apps/droper-staging/'
+#SRC_DIR='/srv/apps/droper-staging/src/'
+
+eval export HOME=~$(id -un)
+REMOTE=asura@stage.dropper.ctsi.ufl.edu
+
+function log() {
+    echo -n "LOG:"
+    echo $*
+}
+
+# Update local Git repository and re-exec this script if updated
+SUM=$(md5sum $0)
+
+#if (cd $REPO_DIR && git pull && git checkout develop); then
+#    if [ "$SUM" != "$(md5sum $0)" ]; then
+#        echo "Re-executing updated $0 script"
+#        exec $0 "$@"
+#    fi
+#fi
+
+# cd $REPO_DIR/app
+
+# Activate virtualenv to get Fabric module
+source $REPO_DIR/app/venv/bin/activate
+
+# Set up PYTHONPATH for fabfile.py
+export PYTHONPATH=$REPO_DIR:$PYTHONPATH
+
+# CWD where the fabfile.py is located
+cd $REPO_DIR/app/deploy
+
+log "Disabling site temporarily"
+fab production disable_site
+
+log "Pulling from git & Installing dependencies"
+#fab production update_code:HEAD
+
+fab production bootstrap('develop')

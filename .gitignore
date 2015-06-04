@@ -1,4 +1,8 @@
-application.cfg
+/app/deploy/*/fabric.py
+/app/deploy/settings.conf
+/app/upload/saved/*/
+/app/upload/temp/*/
+
 vagrant/.vagrant
 *.pyc
 *.pyo

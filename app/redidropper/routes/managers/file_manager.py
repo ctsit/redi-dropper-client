@@ -78,7 +78,7 @@ def save_file_metadata(fchunk):
 def get_chunk_path(file_name, chunk_number):
     """ Helper for building path to temp dir """
     name = "{}.part{}".format(file_name, chunk_number)
-    return os.path.join(app.config['REDIDROPPER_TEMP_DIR'], name)
+    return os.path.join(app.config['REDIDROPPER_UPLOAD_TEMP_DIR'], name)
 
 
 def save_uploaded_file():
@@ -175,7 +175,7 @@ def merge_files(fchunk):
     """
     success = False
     subject_file = save_file_metadata(fchunk)
-    prefix = app.config['REDIDROPPER_SAVED_DIR']
+    prefix = app.config['REDIDROPPER_UPLOAD_SAVED_DIR']
     file_path = subject_file.get_full_path(prefix)
     file_name = fchunk.file_name
     logger.debug("Saving file: {} consisting of {} chunks"
