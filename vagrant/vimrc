@@ -23,7 +23,6 @@ set softtabstop=4 " makes the spaces feel like real tabs; one backspace goes bac
 set backspace=indent,eol,start
 retab
 
-
 set nowrapscan
 set ignorecase " Ignore case in search
 set smartcase " Consider case only when typing Uppercase
@@ -34,13 +33,20 @@ set showmode " display mode INSERT/REPLACE/...
 set scrolloff=3 " do not let the curser get too close to the edge
 set laststatus=2 " laststatus: show status line? Yes, always!
 
-map! <F1> <ESC> " F1 != Help; remove acces to help :)
-map <F1> <ESC>
-" switch lines
+map <F1> <ESC>:NERDTreeToggle <CR>
+map <F2> <c-w>wl
+map <F3> <Esc>:echo expand('%:p')<Return>
+autocmd filetype python nnoremap <F3> :w <bar> exec '!pylint ' .shellescape('%')<CR>
+autocmd filetype php nnoremap <F4> :w <bar> exec '!php '.shellescape('%')<CR>
+autocmd filetype python nnoremap <F3> :w <bar> exec '!pylint '.shellescape('%')<CR>
+autocmd filetype python nnoremap <F4> :w <bar> exec '!python '.shellescape('%')<CR>
 map <F5> ddkkp<CR>
 map <F6> :set number! <CR>
+map <F7> :TlistToggle <CR>
+"map <F9> :let &background = ( &background == "dark"? "light" : "dark" ) <CR>
+map <F9> :set paste <CR>
 
-nnoremap 2 <c-w>wl
+
 
 " restore position
 function! ResCur()
