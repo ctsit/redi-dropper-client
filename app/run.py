@@ -18,4 +18,6 @@ mail.init_app(app)
 if __name__ == "__main__":
     """ Entry point for command line execution """
     ssl_context = initializer.get_ssl_context(app)
+    server_name = app.config['SERVER_NAME']
+    print("SERVER_NAME: {} curl -skL https://{}/api".format(server_name, server_name))
     app.run(ssl_context=ssl_context)
