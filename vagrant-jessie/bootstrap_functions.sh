@@ -5,12 +5,14 @@ function install_apache_for_python() {
     apt-get update
     apt-get install -y \
         mysql-client \
+        libmysqlclient-dev \
         mysql-server \
         apache2 \
         libapache2-mod-wsgi \
         libapache2-mod-uwsgi \
         python-dev \
         python-setuptools \
+        python-mysqldb \
         python-pip
 
     # Setting up a virtual environment will keep the application and its dependencies isolated from the main system.
@@ -54,12 +56,10 @@ function install_utils() {
       locate
 }
 
-
-function install_demo_app() {
+function install_demo_app_old() {
     echo "Running install_demo_app()"
 
     pushd /var/www/app
-
     virtualenv venv
     source venv/bin/activate
     pip install fabric
@@ -69,7 +69,23 @@ function install_demo_app() {
     python hello.py &
     sleep 2
     curl -s http://localhost:5000
-
     echo "Done."
+    popd
+}
+
+function install_demo_app() {
+    echo "Running install_demo_app()"
+
+    pushd /var/www/app
+    virtualenv venv
+    source venv/bin/activate
+    pip install fabric
+    fab install_requirements
+
+    # Run the demo app
+    python run.py &
+    sleep 2
+    curl -skL https://localhost:5000/api
+    echo "ssh vagrant@192.168.50.100  or open https://localhost:5002 "
     popd
 }

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. /var/www/app/venv/bin/activate
+python /var/www/app/run.py
