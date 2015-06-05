@@ -1,33 +1,60 @@
 #!/bin/bash
 
+function configure_base() {
+   # Use local time so we don't have to do math when looking thru logs
+   echo "US/Eastern" > /etc/timezone
+   dpkg-reconfigure tzdata
+
+   # Update packages
+   apt-get update -y
+   apt-get upgrade -y
+}
+
 function install_apache_for_python() {
    # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
-	apt-get update
-	apt-get install -y \
-		apache2 \
-      libapache2-mod-wsgi \
-      python-dev \
-      python-setuptools \
-      python-pip
+   apt-get install -y \
+      apache2 libapache2-mod-wsgi \
+      python-dev python-pip \
+      mysql-server libmysqlclient-dev \
+      libffi-dev \
+      libsqlite3-dev
 
    # Setting up a virtual environment will keep the application and its dependencies isolated from the main system.
    # Changes to it will not affect the cloud server's system configurations.
    pip install virtualenv
-
-	service apache2 restart
 }
 
-function install_nodejs() {
-   # https://www.digitalocean.com/community/tutorials/how-to-install-express-a-node-js-framework-and-set-up-socket-io-on-a-vps
+function install_dropper() {
+   pushd /var/www/app
 
-   curl -sL https://deb.nodesource.com/setup | bash -
-   apt-get install -y nodejs
+      sed -i'.bak' 's#/srv/apps/dropper-alz#/var/www#' ./deploy/dropper.wsgi
 
-   # To compile and install native addons from npm you may also need to install build tools:
-   apt-get install -y build-essential
+      virtualenv venv
+      source venv/bin/activate
+         pip install fabric
+         fab install_requirements
+         #fab init_db
+         mysql < db/001/upgrade.sql
+         mysql < db/002/upgrade.sql
+         mysql < db/002/data.sql
+      deactivate
 
-   npm install npm -g
-   npm install -g express
+      # Copy most of the sample settings, but change the DB user and password
+      cat ./deploy/sample.settings.conf | grep -v DB_USER | grep -v DB_PASS \
+         > ./deploy/settings.conf
+      echo "DB_USER = 'root'" >> ./deploy/settings.conf
+      echo "DB_PASS = ''" >> ./deploy/settings.conf
+
+      service apache2 stop
+      a2dissite 000-default
+      ln -s /vagrant/apache.conf /etc/apache2/sites-available/dropper.conf
+      ln -s /vagrant/apache-ssl.conf /etc/apache2/sites-available/dropper-ssl.conf
+      ln -s /vagrant/apache.conf /etc/apache2/sites-enabled/dropper.conf
+      ln -s /vagrant/apache-ssl.conf /etc/apache2/sites-enabled/dropper-ssl.conf
+      a2enmod ssl
+      service apache2 start
+
+   popd
 }
 
 function install_utils() {
@@ -45,20 +72,3 @@ function install_utils() {
       tree
 }
 
-
-function install_demos() {
-   # Edit /etc/apache2/sites-available/FlaskApp.conf
-
-   pushd /var/www/app
-
-   virtualenv venv
-   source venv/bin/activate
-   pip install Flask
-   pip install flask-debugtoolbar
-   # Successfully installed Flask-0.10.1 Jinja2-2.7.3 Werkzeug-0.10.1 itsdangerous-0.24 markupsafe-0.23
-
-   # Run the demo app
-   python redidropper/__init__.py &
-   curl -s http://127.0.0.1:5000/ | grep 'Hello World'
-   popd
-}
