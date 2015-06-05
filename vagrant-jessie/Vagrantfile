@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # config.vm.box = "puphpet/debian75-x64"
+  config.vm.box = "debian-jessie"
+  config.vm.hostname = "redi-dropper-client"
+  config.vm.synced_folder "../app", "/var/www/app"
+  config.vm.network "forwarded_port", guest: 80, host: 8088
+  config.vm.network :forwarded_port, guest: 443, host: 7088
+
+  config.vm.provision "shell" do |s|
+    s.path = "bootstrap.sh"
+  end
+end
