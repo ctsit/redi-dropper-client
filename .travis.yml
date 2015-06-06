@@ -42,8 +42,9 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
+    - echo -e ${TRAVIS_BUILD_DIR}
     # put config file in the place expected by config.py
-    - cp app/deploy/sample.settings.conf app/deploy/settings.conf
+    - cp ${TRAVIS_BUILD_DIR}/app/deploy/sample.settings.conf ${TRAVIS_BUILD_DIR}/app/deploy/settings.conf
 
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
