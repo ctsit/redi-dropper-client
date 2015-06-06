@@ -94,4 +94,4 @@ class BaseTestCaseWithData(BaseTestCase):
                 file_size=fdata['size'],
                 uploaded_at=added_date,
                 user_id=user.id)
-            app.logger.debug("Init test case with: {}".format(subject_file))
+            # app.logger.debug("Init test case with: {}".format(subject_file))

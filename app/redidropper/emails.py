@@ -25,7 +25,6 @@ def send_email(subject, sender, recipients, text_body, html_body):
     try:
         mail.send(msg)
     except Exception as exc:
-        print mail.__repr__
         app.logger.debug("Error sending email [{}] to [{}] due: {}"
                          .format(subject, recipients, exc))
         raise
