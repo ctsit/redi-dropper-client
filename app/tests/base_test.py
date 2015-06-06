@@ -23,7 +23,7 @@ SQLAlchemy gives you access to the following things:
 
 from flask_testing import TestCase
 from redidropper.main import app, db, mail
-from redidropper.startup import initializer
+from redidropper import initializer
 
 
 class BaseTestCase(TestCase):

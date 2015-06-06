@@ -8,7 +8,7 @@ Goal: Implement the application entry point
 """
 
 from redidropper.main import app, mail
-from redidropper.startup import initializer
+from redidropper import initializer
 
 # Configures routes, models
 app = initializer.do_init(app)

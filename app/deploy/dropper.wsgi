@@ -28,7 +28,7 @@ print("Adding application path: {}".format(app_home))
 sys.path.insert(0, app_home)
 
 from redidropper.main import app as application, mail
-from redidropper.startup import initializer
+from redidropper import initializer
 
 # Configures routes, models
 application = initializer.do_init(application)

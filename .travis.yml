@@ -43,7 +43,7 @@ before_script:
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
     # put config file in the place expected by config.py
-    - cp ~/build/ctsit/redi-dropper-client/app/deploy/sample.settings.conf ~/build/ctsit/redi-dropper-client/app/deploy/settings.conf
+    - cp app/deploy/sample.settings.conf app/deploy/settings.conf
 
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
