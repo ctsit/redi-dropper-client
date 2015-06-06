@@ -23,7 +23,7 @@ class TestEvent(BaseTestCaseWithData):
         self.assertEquals("Arm 1", evt.redcap_arm)
         self.assertEquals("Event 1", evt.redcap_event)
         self.assertEquals(1, evt.day_offset)
-        print EventEntity.query.all()
+        # print(EventEntity.query.all())
 
         with self.assertRaises(MultipleResultsFound):
             evt2 = EventEntity.query.filter_by(redcap_arm='Arm 1').one()

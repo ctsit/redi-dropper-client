@@ -61,7 +61,7 @@ def get_highest_role():
     try:
         roles = current_user.get_roles()
     except Exception as exc:
-        app.logger.debug("get_highest_role() problem: {}".format(exc))
+        # app.logger.debug("get_highest_role() problem: {}".format(exc))
         return None
 
     if ROLE_ADMIN in roles:

@@ -13,7 +13,7 @@ class LogTests(BaseTestCase):
     def test_log_creation(self):
         log_type = LogTypeEntity.create(type='login', description='')
         self.assertEquals(1, log_type.id)
-        print log_type
+        # print(log_type)
 
         web_session = WebSessionEntity.create()
         self.assertEquals(1, web_session.id)
@@ -25,4 +25,4 @@ class LogTests(BaseTestCase):
 
         self.assertEquals(1, log.id)
         self.assertEquals("login", log.log_type.type)
-        print log
+        # print(log)
