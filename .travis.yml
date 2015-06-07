@@ -45,7 +45,7 @@ before_script:
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
     - pushd app
-    - echo "TRAVIS_BUILD_DIR: " $TRAVIS_BUILD_DIR
+    - echo "TRAVIS_BUILD_DIR: $TRAVIS_BUILD_DIR"
     - ls -al deploy/
     # put config file in the place expected by config.py
     - cp deploy/sample.settings.conf deploy/settings.conf
