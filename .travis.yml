@@ -31,7 +31,6 @@ before_install:
 install:
     - pwd
     - pip install fabric coveralls
-    - ls -al
     - pushd app
     - fab install_requirements
     - popd
@@ -42,14 +41,14 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
-    - echo -e ${TRAVIS_BUILD_DIR}
-    # put config file in the place expected by config.py
-    - cp ${TRAVIS_BUILD_DIR}/app/deploy/sample.settings.conf ${TRAVIS_BUILD_DIR}/app/deploy/settings.conf
-
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
     - pushd app
+    - echo $TRAVIS_BUILD_DIR
+    - ls -al deploy/
+    # put config file in the place expected by config.py
+    - cp deploy/sample.settings.conf deploy/settings.conf
     - fab test_cov
     - popd
 
