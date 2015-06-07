@@ -114,6 +114,5 @@ class TestConfig(DefaultConfig):
     CSRF_ENABLED = False
 
     if os.getenv('CONTINUOUS_INTEGRATION', '') > '':
-        # resolve a path when runing with TravisCI
-        CONFIDENTIAL_SETTINGS_FILE = \
-            '~/build/ctsit/redi-dropper-client/app/deploy/settings.conf'
+        print("CONTINUOUS_INTEGRATION: {}"
+              .format(os.getenv('TRAVIS_BUILD_DIR')))
