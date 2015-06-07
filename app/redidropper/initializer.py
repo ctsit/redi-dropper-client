@@ -23,8 +23,13 @@ def _load_confidential_settings(app):
         app.logger.error(err)
         sys.exit(err)
 
-    confidential_file = os.path.expanduser(
-        app.config['CONFIDENTIAL_SETTINGS_FILE'])
+    confidential_file = app.config['CONFIDENTIAL_SETTINGS_FILE']
+
+    if not os.path.isabs(confidential_file):
+        err = "The CONFIDENTIAL_SETTINGS_FILE should be specified" \
+            "using an absolute path"
+        app.logger.error(err)
+        sys.exit(err)
 
     if os.access(confidential_file, os.R_OK):
         app.config.from_pyfile(confidential_file)
@@ -34,6 +39,7 @@ def _load_confidential_settings(app):
             .format(confidential_file)
         app.logger.error(err)
         sys.exit(err)
+
 
 def _check_config(app):
     upload_dirs = [
@@ -45,6 +51,7 @@ def _check_config(app):
             sys.exit(
                 "Please check if '{}' dir exists and it is accessible"
                 .format(directory))
+
 
 def do_init(app, is_mode_testing=False, extra_settings={}):
     """
