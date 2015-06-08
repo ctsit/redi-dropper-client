@@ -34,11 +34,6 @@ class DefaultConfig(object):
     SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.key'
     SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
-    # @see http://flask.pocoo.org/docs/0.10/config/
-    # (!) Try changing this value to the real server name
-    # if you keep getting back "GET / HTTP/1.1" 404 -
-    SERVER_NAME = 'localhost:5000'
-
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request
     SESSION_COOKIE_SECURE = True
