@@ -4,6 +4,10 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+unless Vagrant.has_plugin?("vagrant-triggers")
+  raise 'vagrant-triggers plugin is not installed! Run the command "vagrant plugin install vagrant-triggers"'
+end
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # https://atlas.hashicorp.com/debian/boxes/jessie64
   config.vm.box = "debian/jessie64"
@@ -40,6 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+
   config.trigger.after [:halt, :destroy] do
     if Vagrant::Util::Platform.darwin?
       puts "Please enter your admin password to change packet filter rules"
@@ -48,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # install all software (apache, mysqld, python...)
-  config.vm.provision "shell" do |s|
+  config.vm.provision "shell", run: "always" do |s|
     s.path = "bootstrap.sh"
   end
 

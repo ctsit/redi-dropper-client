@@ -89,7 +89,8 @@ function install_dropper() {
 
     # Start the app manually
     python run.py --port 443 &
-    # sleep 2 && curl -skL https://localhost/api
+    sleep 2
+    # curl -skL https://localhost/api
     echo "ssh vagrant@192.168.50.100 or open https://localhost "
     popd
 }

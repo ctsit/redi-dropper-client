@@ -42,7 +42,7 @@ class DefaultConfig(object):
     #   by default enables URL generation without a request context but with an
     #   application context.`
     #
-    # (!) Try changing this value to the real server name
+    # (!) Try changing or *removing* this value
     # if you keep getting back "GET / HTTP/1.1" 404 -
     # SERVER_NAME = 'debian-jessie:443'
 
