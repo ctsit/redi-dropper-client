@@ -35,9 +35,16 @@ class DefaultConfig(object):
     SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
+    # @see # http://librelist.com/browser/flask/2011/3/14/problem-with-apache-proxy-and-canonical-urls/
+    #   `The name and port number of the server. Required for subdomain support
+    #   (e.g.: 'myapp.dev:5000') Note that localhost does not support subdomains
+    #   so setting this to `localhost` does not help. Setting a SERVER_NAME also
+    #   by default enables URL generation without a request context but with an
+    #   application context.`
+    #
     # (!) Try changing this value to the real server name
     # if you keep getting back "GET / HTTP/1.1" 404 -
-    SERVER_NAME = 'localhost:5000'
+    # SERVER_NAME = 'debian-jessie:443'
 
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request

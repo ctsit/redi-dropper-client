@@ -3,6 +3,7 @@ alias hist='history | less'
 alias refresh='. ~/.bash_aliases'
 alias ali='vim ~/.bash_aliases'
 alias ma='vim Makefile'
+alias va='vim Vagrantfile'
 alias re='vim README.md'
 alias fa='vim fabric.py'
 alias steps='vim steps'
@@ -13,8 +14,8 @@ alias db_root='mysql mysql --prompt="(\u@\h) [\d]> " --pager="less -niSFX" -u ro
 
 alias port_5000='sudo netstat -tulpn | grep :5000'
 
-alias check_5000='      echo "curl -s  http://127.0.0.1:5000"  && curl -s  http://127.0.0.1:5000 && echo '
-alias check_5000_ssl='  echo "curl -ks https://127.0.0.1:5000" && curl -ks https://127.0.0.1:5000 && echo '
+alias check_app_5000='      echo "curl -s  http://localhost:5000"  && curl -s  http://localhost:5000 && echo '
+alias check_app_5000_ssl='  echo "curl -ks https://localhost:5000" && curl -ks https://localhost:5000 && echo '
 
 alias check_app='       echo "curl -s  http://localhost/"  && curl -s  http://localhost/ '
 alias check_app_ssl='   echo "curl -ks https://localhost/" && curl -ks https://localhost/ '
@@ -32,7 +33,8 @@ alias view_apache_ver='     sudo apachectl -V'
 alias restart_mysql='       sudo service mysql restart'
 alias restart_shibd='       sudo /etc/init.d/shibd restart'
 
-alias tail_apache='sudo tail -f /var/log/apache2/error.log'
+alias tail_apache_err='sudo tail -f /var/log/apache2/error.log'
+alias tail_apache_access='sudo tail -f /var/log/apache2/access.log'
 alias tail_shibd='sudo tail -f /var/log/shibboleth/shibd.log'
 
 alias ssl_enable='      sudo apachectl configtest && sudo a2enmod ssl && sudo a2enmod wsgi '

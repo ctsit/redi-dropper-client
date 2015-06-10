@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Goal: Implement the application entry point
 
@@ -7,6 +8,7 @@ Goal: Implement the application entry point
   Sanath Pasumarthy       <sanath@ufl.edu>
 """
 
+import argparse
 from redidropper.main import app, mail
 from redidropper import initializer
 
@@ -17,7 +19,13 @@ mail.init_app(app)
 
 if __name__ == "__main__":
     """ Entry point for command line execution """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port',
+                        dest='port',
+                        type=int,
+                        default=5000,
+                        help="Application port number")
+    args = parser.parse_args()
     ssl_context = initializer.get_ssl_context(app)
-    server_name = app.config['SERVER_NAME']
-    print("SERVER_NAME: {} curl -skL https://{}/api".format(server_name, server_name))
-    app.run(ssl_context=ssl_context)
+    print("curl -skL https://localhost:{}".format(args.port))
+    app.run(host='0.0.0.0', port=args.port, ssl_context=ssl_context)
