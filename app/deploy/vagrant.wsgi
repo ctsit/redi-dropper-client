@@ -15,8 +15,8 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 
 # @TODO: Read from the environment
-app_home = '/srv/apps/dropper-alz/app/'
-venv_home = '/srv/apps/dropper-alz/app/venv'
+app_home = '/var/www/app'
+venv_home = '/var/www/app/venv'
 
 print("Using interpreter: {}".format(sys.version))
 
