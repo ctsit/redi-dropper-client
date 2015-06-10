@@ -23,8 +23,13 @@ def _load_confidential_settings(app):
         app.logger.error(err)
         sys.exit(err)
 
-    confidential_file = os.path.expanduser(
-        app.config['CONFIDENTIAL_SETTINGS_FILE'])
+    confidential_file = app.config['CONFIDENTIAL_SETTINGS_FILE']
+
+    if not os.path.isabs(confidential_file):
+        err = "The CONFIDENTIAL_SETTINGS_FILE should be specified" \
+            "using an absolute path"
+        app.logger.error(err)
+        sys.exit(err)
 
     if os.access(confidential_file, os.R_OK):
         app.config.from_pyfile(confidential_file)
@@ -34,6 +39,7 @@ def _load_confidential_settings(app):
             .format(confidential_file)
         app.logger.error(err)
         sys.exit(err)
+
 
 def _check_config(app):
     upload_dirs = [
@@ -45,6 +51,7 @@ def _check_config(app):
             sys.exit(
                 "Please check if '{}' dir exists and it is accessible"
                 .format(directory))
+
 
 def do_init(app, is_mode_testing=False, extra_settings={}):
     """
@@ -59,7 +66,7 @@ def do_init(app, is_mode_testing=False, extra_settings={}):
 
     if is_mode_testing:
         app.config.from_object(config.TestConfig)
-        print("Loaded test config")
+        # print("Loaded test config")
     else:
         app.config.from_object(config.DefaultConfig)
         print("Loaded default config")
@@ -86,7 +93,7 @@ def do_init(app, is_mode_testing=False, extra_settings={}):
 
     # After we read the confidential settings we can build the database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-    print("get_config_summary: {}". format(get_config_summary(app)))
+    app.logger.debug("get_config_summary: {}". format(get_config_summary(app)))
 
     if len(extra_settings):
         # Override with special settings (example: tests/conftest.py)
@@ -116,7 +123,7 @@ def _configure_logging(app):
                     '%(message)s [%(filename)s +%(lineno)d]')
     handler.setFormatter(fmt)
     handler.setLevel(debug_level)
-    print("configure_logging() set debug level to: {}".format(debug_level))
+    # print("_configure_logging() set debug level to: {}".format(debug_level))
     app.logger.addHandler(handler)
 
 

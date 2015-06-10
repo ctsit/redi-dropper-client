@@ -11,17 +11,16 @@ import os
 from datetime import timedelta
 import logging
 
-_basedir = os.path.abspath(os.path.dirname(__file__))
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class DefaultConfig(object):
 
     """ Default configuration data """
     LOG_LEVEL = logging.DEBUG
-    # CONFIDENTIAL_SETTINGS_FILE = '/srv/apps/dropper-alz/app/deploy/settings.conf'
 
     # same folder as the config.py
-    CONFIDENTIAL_SETTINGS_FILE = os.path.abspath('deploy/settings.conf')
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
 
     # Use local or shib sso auth
     LOGIN_USING_SHIB_AUTH = True
@@ -36,9 +35,16 @@ class DefaultConfig(object):
     SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
-    # (!) Try changing this value to the real server name
+    # @see # http://librelist.com/browser/flask/2011/3/14/problem-with-apache-proxy-and-canonical-urls/
+    #   `The name and port number of the server. Required for subdomain support
+    #   (e.g.: 'myapp.dev:5000') Note that localhost does not support subdomains
+    #   so setting this to `localhost` does not help. Setting a SERVER_NAME also
+    #   by default enables URL generation without a request context but with an
+    #   application context.`
+    #
+    # (!) Try changing or *removing* this value
     # if you keep getting back "GET / HTTP/1.1" 404 -
-    SERVER_NAME = 'localhost:5000'
+    # SERVER_NAME = 'debian-jessie:443'
 
     # the browser will not send a cookie with the secure flag set over an
     # unencrypted HTTP request
@@ -50,20 +56,18 @@ class DefaultConfig(object):
 
     DEBUG = False
     TESTING = False
+
     DEBUG_TB_ENABLED = False
 
     # Set to True in order to view every redirect in the debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     # email config
-    MAIL_SENDER_SUPPORT = os.getenv(
-        'REDIDROPPER_MAIL_SENDER_SUPPORT',
-        'admin@dropper.ctsi.ufl.edu')
-    MAIL_SERVER = os.getenv(
-        'REDIDROPPER_MAIL_SERVER',
-        'smtp.gmail.com')
+    MAIL_SENDER_SUPPORT = os.getenv('REDIDROPPER_MAIL_SENDER_SUPPORT',
+                                    'admin@example.com')
+    MAIL_SERVER = os.getenv('REDIDROPPER_MAIL_SERVER',
+                            'smtp.gmail.com')
     MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 465)
-    # MAIL_PORT = os.getenv('REDIDROPPER_MAIL_PORT', 587)
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get('REDIDROPPER_MAIL_USERNAME')
@@ -75,10 +79,12 @@ class DefaultConfig(object):
     DB_HOST = ''
     DB_NAME = ''
 
+    # Generate a new key every time we start the app
     from base64 import b64encode
     from os import urandom
     random_key = b64encode(urandom(50))
     SECRET_KEY = os.getenv('SECRET_KEY', random_key)
+
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
@@ -91,12 +97,13 @@ class DefaultConfig(object):
     CSRF_SESSION_KEY = ""
 
     # override as needed in CONFIDENTIAL_SETTINGS_FILE
-    # os.path.expanduser('~/.redidropper/temp'))
     REDIDROPPER_UPLOAD_TEMP_DIR = os.getenv('REDIDROPPER_UPLOAD_TEMP_DIR',
-                                            os.path.abspath('upload/temp'))
+                                            os.path.join(BASEDIR,
+                                                         'upload/temp'))
 
     REDIDROPPER_UPLOAD_SAVED_DIR = os.getenv('REDIDROPPER_UPLOAD_SAVED_DIR',
-                                             os.path.abspath('upload//saved'))
+                                             os.path.join(BASEDIR,
+                                                          'upload/saved'))
 
 
 class DebugConfig(DefaultConfig):
@@ -114,6 +121,5 @@ class TestConfig(DefaultConfig):
     CSRF_ENABLED = False
 
     if os.getenv('CONTINUOUS_INTEGRATION', '') > '':
-        # resolve a path when runing with TravisCI
-        CONFIDENTIAL_SETTINGS_FILE = \
-            '~/build/ctsit/redi-dropper-client/app/deploy/settings.conf'
+        print("CONTINUOUS_INTEGRATION: {}"
+              .format(os.getenv('TRAVIS_BUILD_DIR')))

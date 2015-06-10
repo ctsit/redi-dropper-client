@@ -1,6 +1,9 @@
 
 alias hist='history | less'
+alias refresh='. ~/.bash_aliases'
+alias ali='vim ~/.bash_aliases'
 alias ma='vim Makefile'
+alias va='vim Vagrantfile'
 alias re='vim README.md'
 alias fa='vim fabric.py'
 alias steps='vim steps'
@@ -10,10 +13,16 @@ alias db='mysql --prompt="(\u@\h) [\d]> " --pager="less -niSFX" -u redidropper -
 alias db_root='mysql mysql --prompt="(\u@\h) [\d]> " --pager="less -niSFX" -u root -pinsecurepassword RediDropper -h localhost'
 
 alias port_5000='sudo netstat -tulpn | grep :5000'
-alias check_5000='curl -k https://localhost:5000 && echo'
-alias check_app='curl -k https://dropper.ctsi.ufl.edu/ && echo'
 
-alias check_apache='curl -k https://localhost && echo'
+alias check_app_5000='      echo "curl -s  http://localhost:5000"  && curl -s  http://localhost:5000 && echo '
+alias check_app_5000_ssl='  echo "curl -ks https://localhost:5000" && curl -ks https://localhost:5000 && echo '
+
+alias check_app='       echo "curl -s  http://localhost/"  && curl -s  http://localhost/ '
+alias check_app_ssl='   echo "curl -ks https://localhost/" && curl -ks https://localhost/ '
+
+alias check_127='        curl -s  http://127.0.0.1 && echo Done '
+alias check_127_ssl='    curl -ks https://127.0.0.1 && echo Done'
+
 alias conf_apache='     sudo vim /etc/apache2/sites-available/default'
 alias conf_apache_ssl=' sudo vim /etc/apache2/sites-available/default-ssl'
 
@@ -24,16 +33,17 @@ alias view_apache_ver='     sudo apachectl -V'
 alias restart_mysql='       sudo service mysql restart'
 alias restart_shibd='       sudo /etc/init.d/shibd restart'
 
-alias tail_apache='sudo tail -f /var/log/apache2/error.log'
+alias tail_apache_err='sudo tail -f /var/log/apache2/error.log'
+alias tail_apache_access='sudo tail -f /var/log/apache2/access.log'
 alias tail_shibd='sudo tail -f /var/log/shibboleth/shibd.log'
 
-alias ssl_enable='      sudo apachectl configtest && a2enmod ssl'
+alias ssl_enable='      sudo apachectl configtest && sudo a2enmod ssl && sudo a2enmod wsgi '
 alias ssl_check='       openssl s_client -connect localhost:443  | grep subject'
 alias ssl_view_cert='   openssl x509 -in /etc/apache2/ssl/some.crt  -noout -text'
 
-alias cd_app='cd /srv/apps/dropper-alz/ && lsa'
+alias cd_alz='cd /srv/apps/dropper-alz/ && lsa'
 alias cd_cln='cd ~/git/redi-dropper-client/app && lsa'
-alias cd_www='cd /var/www/ && pwd && ls -al'
+alias cd_app='cd /var/www/app && ls -al'
 
 alias ls='ls --color=auto'
 alias lsa='ls -al'

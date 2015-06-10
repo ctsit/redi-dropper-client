@@ -1,0 +1,71 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # https://atlas.hashicorp.com/debian/boxes/jessie64
+  config.vm.box = "debian/jessie64"
+
+  # use a box created manually
+  # config.vm.box = "debian-jessie"
+  config.vm.hostname = "debian-jessie"
+  config.vm.synced_folder "../app", "/var/www/app"
+
+  # http://docs.vagrantup.com/v2/networking/private_network.html
+  config.vm.network "private_network", ip: "192.168.50.100"
+
+  config.vm.network "forwarded_port", guest: 80, host: 8088
+  config.vm.network "forwarded_port", guest: 443, host: 4443
+  config.vm.network "forwarded_port", guest: 5000, host: 5555
+
+  # Update packages
+  # config.vm.provision :shell, :inline => "apt-get update -y", run: "once"
+  # apt-get upgrade -y
+
+  # Set time zone
+  config.vm.provision "shell", run: "once",
+    inline: "echo \"America/New_York\" | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata"
+
+  config.trigger.after [:provision, :up, :reload] do
+    if Vagrant::Util::Platform.darwin?
+      puts "Please enter your admin password to change packet filter rules"
+      # https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/pf.conf.5.html
+      system('echo "
+        rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 80 -> 127.0.0.1 port 8088
+        rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 127.0.0.1 port 4443
+        " | sudo pfctl -ef - > /dev/null 2>&1; echo "==> Fowarding Ports: 80 -> 8088, 443 -> 4443 & Enabling pf"')
+      system("open -a 'Google Chrome.app' https://localhost")
+    end
+  end
+
+  config.trigger.after [:halt, :destroy] do
+    if Vagrant::Util::Platform.darwin?
+      puts "Please enter your admin password to change packet filter rules"
+      system("sudo pfctl -df /etc/pf.conf > /dev/null 2>&1; echo '==> Removing Port Forwarding & Disabling pf'")
+    end
+  end
+
+  # install all software (apache, mysqld, python...)
+  config.vm.provision "shell" do |s|
+    s.path = "bootstrap.sh"
+  end
+
+  # create mysql tables
+  config.vm.provision "initdb", type: "shell", run: "once",
+    inline: "
+        mysql < /var/www/app/db/001/upgrade.sql
+        mysql < /var/www/app/db/002/upgrade.sql
+        mysql < /var/www/app/db/002/data.sql "
+
+  config.vm.provision "resetdb", type: "shell", run: "once",
+    inline: "
+        mysql < /var/www/app/db/001/downgrade.sql
+        mysql < /var/www/app/db/001/upgrade.sql
+        mysql < /var/www/app/db/002/upgrade.sql
+        mysql < /var/www/app/db/002/data.sql "
+
+  # Restart apache when all done (if using apache)
+  config.vm.provision "shell", run: "always", inline: "service apache2 restart"
+end

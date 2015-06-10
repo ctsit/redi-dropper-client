@@ -9,7 +9,8 @@ SHARED_FOLDER=/vagrant
 # Exit on first error
 set -e
 
-configure_base
 install_utils
 install_apache_for_python
+#install_nodejs
+#install_hello_world
 install_dropper

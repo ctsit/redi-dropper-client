@@ -5,7 +5,8 @@
 
 
 [run]
-omit = redidropper/config/local_settings.py
+# omit = app/deploy/*/fabric.py
+omit = app/deploy/
 
 [report]
 show_missing = True

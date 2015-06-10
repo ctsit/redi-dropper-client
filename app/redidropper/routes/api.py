@@ -99,11 +99,10 @@ def find_subject():
     :rtype: Response
     :return the list of subjects in json format
     """
-
     if 'POST' == request.method:
-        search_id = request.form['name']
+        search_id = utils.get_safe_int(request.form['name'])
     else:
-        search_id = request.args.get('name')
+        search_id = utils.get_safe_int(request.args.get('name'))
 
     matching = []
 
@@ -352,8 +351,9 @@ def api_send_verification_email():
     """
     user_id = utils.get_safe_int(request.form.get('user_id'))
     user = UserEntity.get_by_id(user_id)
-    user = UserEntity.get_by_id(1)
-    user.email = app.config['MAIL_SENDER_SUPPORT']
+
+    # For debugging
+    # user = UserEntity.get_by_id(1)
 
     try:
         emails.send_verification_email(user)
@@ -372,7 +372,6 @@ def api_send_verification_email():
 @app.route('/api/verify_email', methods=['GET'])
 def api_verify_email():
     """
-    @TODO: add column for verification hash
     @TODO: add counter/log to track failed attempts
 
     :rtype: Response
@@ -386,6 +385,8 @@ def api_verify_email():
         token,
         app.config["SECRET_KEY"],
         app.config["SECRET_KEY"])
+
+    app.logger.debug("Decoded email from token: {}".format(email))
     user = UserEntity.query.filter_by(email=email).first()
 
     if user is None:
