@@ -44,6 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+
   config.trigger.after [:halt, :destroy] do
     if Vagrant::Util::Platform.darwin?
       puts "Please enter your admin password to change packet filter rules"
@@ -52,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # install all software (apache, mysqld, python...)
-  config.vm.provision "shell" do |s|
+  config.vm.provision "shell", run: "always" do |s|
     s.path = "bootstrap.sh"
   end
 
