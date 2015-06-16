@@ -20,7 +20,9 @@ class DefaultConfig(object):
     LOG_LEVEL = logging.DEBUG
 
     # same folder as the config.py
-    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
+    # CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
+    # When we dploy we use /srv/apps/dropper/ folder
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, '/srv/apps/dropper/settings.conf')
 
     # Use local or shib sso auth
     LOGIN_USING_SHIB_AUTH = True
