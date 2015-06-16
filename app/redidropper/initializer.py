@@ -105,7 +105,7 @@ def do_init(app, is_mode_testing=False, extra_settings={}):
     from redidropper.routes import users
     from redidropper.routes import api
 
-    if not app.testing:
+    if app.config['DEBUG_TB_ENABLED'] and not app.testing:
         # When runing tests there is no need for the debugtoolbar
         from flask_debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app)
