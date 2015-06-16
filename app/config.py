@@ -13,16 +13,19 @@ import logging
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
+MODE_TEST = 'mode_test'     # for unit tests
+MODE_PROD = 'mode_prod'     # for production
+MODE_DEBUG = 'mode_debug'   # for developer mode
+
 
 class DefaultConfig(object):
 
     """ Default configuration data """
     LOG_LEVEL = logging.DEBUG
 
-    # same folder as the config.py
-    # CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
-    # When we dploy we use /srv/apps/dropper/ folder
-    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, '/srv/apps/dropper/settings.conf')
+    # When we deploy we use /srv/apps/dropper/ folder
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR,
+                                              '/srv/apps/dropper/settings.conf')
 
     # Use local or shib sso auth
     LOGIN_USING_SHIB_AUTH = True
@@ -37,7 +40,6 @@ class DefaultConfig(object):
     SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
-    # @see # http://librelist.com/browser/flask/2011/3/14/problem-with-apache-proxy-and-canonical-urls/
     #   `The name and port number of the server. Required for subdomain support
     #   (e.g.: 'myapp.dev:5000') Note that localhost does not support subdomains
     #   so setting this to `localhost` does not help. Setting a SERVER_NAME also
@@ -98,7 +100,7 @@ class DefaultConfig(object):
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = ""
 
-    # override as needed in CONFIDENTIAL_SETTINGS_FILE
+    # override as needed in the settings file
     REDIDROPPER_UPLOAD_TEMP_DIR = os.getenv('REDIDROPPER_UPLOAD_TEMP_DIR',
                                             os.path.join(BASEDIR,
                                                          'upload/temp'))
@@ -114,6 +116,9 @@ class DebugConfig(DefaultConfig):
     DEBUG = True
     DEBUG_TB_ENABLED = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+    # same folder as config.py
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR,
+                                              'deploy/settings.conf')
 
 
 class TestConfig(DefaultConfig):
@@ -121,6 +126,8 @@ class TestConfig(DefaultConfig):
     """ Configuration for running tests """
     TESTING = True
     CSRF_ENABLED = False
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR,
+                                              'deploy/settings.conf')
 
     if os.getenv('CONTINUOUS_INTEGRATION', '') > '':
         print("CONTINUOUS_INTEGRATION: {}"
