@@ -25,4 +25,4 @@ from config import MODE_PROD
 
 # Configures routes, models
 application = initializer.do_init(application)
-mail.init_app(application, mode=MODE_PROD)
+mail.init_app(application)
