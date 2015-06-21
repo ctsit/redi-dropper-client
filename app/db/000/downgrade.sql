@@ -1,5 +1,5 @@
 
-DROP DATABASE IF EXISTS RediDropper;
-REVOKE ALL PRIVILEGES ON RediDropper.* FROM 'redidropper'@'localhost';
-DROP USER 'redidropper'@'localhost';
+DROP DATABASE IF EXISTS ctsi_dropper_s;
+REVOKE ALL PRIVILEGES ON ctsi_dropper_s.* FROM 'ctsi_dropper_s'@'localhost';
+DROP USER 'ctsi_dropper_s'@'localhost';
 FLUSH PRIVILEGES;

@@ -1,16 +1,15 @@
 
 -- Create the user and grant privileges
-CREATE USER 'redidropper'@'localhost' IDENTIFIED BY 'insecurepassword';
+CREATE USER 'ctsi_dropper_s'@'localhost' IDENTIFIED BY 'insecurepassword';
 GRANT
     INSERT, SELECT, UPDATE, DELETE
     , SHOW VIEW
 ON
-    RediDropper.*
+    ctsi_dropper_s.*
 TO
-    'redidropper'@'localhost';
+    'ctsi_dropper_s'@'localhost';
 
 FLUSH PRIVILEGES;
 
 
-CREATE DATABASE RediDropper;
-
+CREATE DATABASE ctsi_dropper_s;

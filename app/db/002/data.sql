@@ -1,5 +1,5 @@
 
-USE RediDropper;
+USE ctsi_dropper_s;
 
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
 SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
@@ -7,14 +7,11 @@ SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
-    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW());
-INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive)
-VALUES
-    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0),
-    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1),
-    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1),
-    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1),
-    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1)
+    ('asura@ufl.edu',           'Andrei',       'Sura',                     NOW(), @end, 1, NOW()),
+    ('kshanson@ufl.edu',        'Kevin',        'Hanson',                   NOW(), @end, 1, NOW()),
+    ('technician@ufl.edu',      'Technician',   'Țărnă',                    NOW(), @end2, 1, NOW()),
+    ('researcher_one@ufl.edu',  'Researcher 1', 'de Méziriac',              NOW(), @end2, 1, NOW()),
+    ('researcher_two@ufl.edu',  'Researcher 2', 'Bauchspeicheldrüsenkrebs', NOW(), @end2, 1, NOW())
 ;
 
 
@@ -30,15 +27,11 @@ VALUES
 
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
-      SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_blocked@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_expired@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_one'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_two'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'technician@example.com' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_one@example.com' AND rolName = 'researcher_one'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_two@example.com' AND rolName = 'researcher_two'
+      SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'asura@ufl.edu' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'researcher_one'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'researcher_two'
 ;
 
 -- Subjects

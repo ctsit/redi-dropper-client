@@ -1,4 +1,5 @@
-USE RediDropper;
+
+USE ctsi_dropper_s;
 
 -- Store database modification log
 CREATE TABLE Version (

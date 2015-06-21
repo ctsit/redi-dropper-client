@@ -36,8 +36,10 @@ class DefaultConfig(object):
     REDCAP_DEMOGRAPHICS_FIELDS = ''
 
     # SSL Certificate config
-    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.key'
-    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
+    # Note: the paths to the certificate do *not matter* when the app is
+    # served by Apache since Apache has its own configuration for that
+    SERVER_SSL_KEY_FILE = 'ssl/server.key'
+    SERVER_SSL_CRT_FILE = 'ssl/server.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
     #   `The name and port number of the server. Required for subdomain support
