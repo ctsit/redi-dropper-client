@@ -15,7 +15,9 @@ import os
 from datetime import datetime
 
 from flask import request
+from flask import session
 from flask_login import current_user
+from redidropper.models.log_entity import LogEntity
 from werkzeug import secure_filename
 
 from redidropper import utils
@@ -119,13 +121,22 @@ def save_uploaded_file():
         delete_temp_files(fchunk)
         hash_matches = verify_file_integrity(fchunk)
         if hash_matches:
+            LogEntity.file_uploaded(session['uuid'],
+                                    'File {} uploaded successfully.'
+                                    .format(file_name))
             return utils.jsonify_success('File {} uploaded successfully.'
                                          .format(file_name))
         else:
             logger.error("md5 sum does not match for: {}".format(fchunk))
+            LogEntity.file_uploaded(session['uuid'],
+                                    'Checksum mismatch for file: {}'
+                                    .format(file_name))
             return utils.jsonify_error('Checksum mismatch for file: {}'
                                        .format(file_name))
     else:
+        LogEntity.file_uploaded(session['uuid'],
+                                'Unable to merge chunks for file: {}'
+                                .format(file_name))
         return utils.jsonify_error('Unable to merge chunks for file: {}'
                                    .format(file_name))
 
