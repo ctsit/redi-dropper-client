@@ -1,5 +1,5 @@
 
-USE RediDropper;
+USE ctsi_dropper_s;
 
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
 SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
@@ -7,14 +7,14 @@ SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
-    ('admin@example.com', 'Admin', 'Adminsky', NOW(), @end, 1, NOW());
-INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive)
-VALUES
-    ('admin_blocked@example.com', 'Admin', 'Adminsky', NOW(), @end, 0),
-    ('admin_expired@example.com', 'Admin', 'Adminsky', NOW(), @end2, 1),
-    ('technician@example.com', 'Technician', 'Țărnă', NOW(), @end, 1),
-    ('researcher_one@example.com', 'Researcher 1', 'de Méziriac', NOW(), @end, 1),
-    ('researcher_two@example.com', 'Researcher 2', 'Bauchspeicheldrüsenkrebs',NOW(), @end, 1)
+    ('asura@ufl.edu',           'Andrei',       'Şérenfaü',                     NOW(), @end, 1, NOW()),
+    ('kshanson@ufl.edu',        'Kevin',        'Hanson',                       NOW(), @end, 1, NOW()),
+    ('cpb@ufl.edu',             'Christopher',  'Barnes',                       NOW(), @end2, 1, NOW()),
+    ('pbc@ufl.edu',             'Philip',       'Chase',                        NOW(), @end, 0, NOW()),
+    ('keyes@ufl.edu',           'Roy',          'Keyes',                        NOW(), @end, 0, NOW()),
+    ('taeber@ufl.edu',          'Taeber',       'Rapczak',                      NOW(), @end, 0, NOW()),
+    ('atloiaco@ufl.edu',        'Alex',         'Loiacono',                     NOW(), @end, 0, NOW()),
+    ('cavedivr@ufl.edu',        'Erik',         'Schmidt',                      NOW(), @end, 0, NOW())
 ;
 
 
@@ -30,33 +30,35 @@ VALUES
 
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
-      SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_blocked@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin_expired@example.com' AND rolName = 'admin'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_one'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'admin@example.com' AND rolName = 'researcher_two'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'technician@example.com' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_one@example.com' AND rolName = 'researcher_one'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'researcher_two@example.com' AND rolName = 'researcher_two'
+      SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'asura@ufl.edu' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'admin'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'researcher_one'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'kshanson@ufl.edu' AND rolName = 'researcher_two'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'cpb@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'pbc@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'keyes@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'taeber@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'atloiaco@ufl.edu' AND rolName = 'technician'
+UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'cavedivr@ufl.edu' AND rolName = 'technician'
 ;
 
--- Subjects
-INSERT INTO Subject (sbjRedcapID, sbjAddedAt)
-VALUES
-    ('001', NOW()),
-    ('002', NOW()),
-    ('003', NOW()),
-    ('004', NOW()),
-    ('005', NOW())
-;
+-- REDCap Subjects (retrieve from server)
+-- INSERT INTO Subject (sbjRedcapID, sbjAddedAt)
+-- VALUES
+--     ('001', NOW()),
+--     ('002', NOW()),
+--     ('003', NOW()),
+--     ('004', NOW()),
+--     ('005', NOW())
+-- ;
 
 
--- REDCap event
-INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
-        SELECT 'Arm 1', 'Event 01', NOW()
-UNION   SELECT 'Arm 1', 'Event 02', NOW()
-;
+-- REDCap event (retrieve from server)
+-- INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
+--         SELECT 'Arm 1', 'Event 01', NOW()
+-- UNION   SELECT 'Arm 1', 'Event 02', NOW()
+-- ;
 
 
 -- Subject Files

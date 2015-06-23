@@ -1,19 +1,5 @@
 
--- Create the user and grant privileges
-CREATE USER 'redidropper'@'localhost' IDENTIFIED BY 'insecurepassword';
-GRANT
-    INSERT, SELECT, UPDATE, DELETE
-    , SHOW VIEW
-ON
-    RediDropper.*
-TO
-    'redidropper'@'localhost';
-
-FLUSH PRIVILEGES;
-
-
-CREATE DATABASE RediDropper;
-USE RediDropper;
+USE ctsi_dropper_s;
 
 -- Store database modification log
 CREATE TABLE Version (
@@ -24,7 +10,7 @@ CREATE TABLE Version (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO Version (verID, verInfo)
-   VALUES('001', 'Create initial database with versioning table')
+   VALUES('001', 'New table: Version')
 ;
 
 

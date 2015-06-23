@@ -36,8 +36,10 @@ class DefaultConfig(object):
     REDCAP_DEMOGRAPHICS_FIELDS = ''
 
     # SSL Certificate config
-    SERVER_SSL_KEY_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.key'
-    SERVER_SSL_CRT_FILE = '/etc/apache2/ssl/dropper.ctsi.ufl.edu.crt'
+    # Note: the paths to the certificate do *not matter* when the app is
+    # served by Apache since Apache has its own configuration for that
+    SERVER_SSL_KEY_FILE = 'ssl/server.key'
+    SERVER_SSL_CRT_FILE = 'ssl/server.crt'
 
     # @see http://flask.pocoo.org/docs/0.10/config/
     #   `The name and port number of the server. Required for subdomain support
@@ -82,12 +84,6 @@ class DefaultConfig(object):
     # in the `application.cfg` file
     DB_HOST = ''
     DB_NAME = ''
-
-    # Generate a new key every time we start the app
-    from base64 import b64encode
-    from os import urandom
-    random_key = b64encode(urandom(50))
-    SECRET_KEY = os.getenv('SECRET_KEY', random_key)
 
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
