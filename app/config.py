@@ -85,12 +85,6 @@ class DefaultConfig(object):
     DB_HOST = ''
     DB_NAME = ''
 
-    # Generate a new key every time we start the app
-    from base64 import b64encode
-    from os import urandom
-    random_key = b64encode(urandom(50))
-    SECRET_KEY = os.getenv('SECRET_KEY', random_key)
-
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
