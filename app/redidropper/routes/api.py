@@ -11,12 +11,14 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
 from datetime import datetime
 from flask import request
 from flask import send_file
+from flask import session
 from flask import make_response
 from flask_login import login_required
 
 from redidropper.main import app, db
 from redidropper import emails
 from redidropper import utils
+from redidropper.models.log_entity import LogEntity
 from redidropper.routes.managers import file_manager, log_manager
 
 from redidropper.models.subject_entity import SubjectEntity
@@ -159,6 +161,8 @@ def download_file():
     file_path = subject_file.get_full_path(
         app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
     # log_manager.log_file_download(subject_file)
+    LogEntity.file_downloaded(session['uuid'],
+                              "File download: {}".format(file_path))
     return send_file(file_path, as_attachment=True)
 
 
@@ -211,6 +215,7 @@ def api_save_user():
     [user.roles.append(rol) for rol in user_roles]
     user = UserEntity.save(user)
     app.logger.debug("saved user: {}".format(user))
+    LogEntity.account_created(session['uuid'], "saved user: {}".format(user))
     return utils.jsonify_success({'user': user.serialize()})
 
 
@@ -267,19 +272,6 @@ def api_list_logs():
         dict(list_of_events=logs, total_pages=total_pages))
 
 
-# @app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
-# @login_required
-# def api_list_redcap_subjects():
-#     """
-#     @TODO: remove me
-#     :rtype: Response
-#     :return the list of subjects in json format
-#     """
-#     subjects = subject_manager.get_fresh_list_of_subjects()
-#     subjects_list = [x.to_visible() for x in subjects]
-#     return utils.jsonify_success({'subjects_list': subjects_list})
-
-
 @app.route('/api/list_local_subjects', methods=['GET', 'POST'])
 @login_required
 def api_list_local_subjects():
@@ -320,6 +312,8 @@ def api_activate_account():
     user_id = utils.get_safe_int(request.form.get('user_id'))
     user = UserEntity.get_by_id(user_id)
     user = UserEntity.update(user, active=True)
+    LogEntity.account_modified(session['uuid'],
+                               "User activated: {}".format(user))
     return utils.jsonify_success({"message": "User activated."})
 
 
@@ -336,6 +330,8 @@ def api_deactivate_account():
     user_id = utils.get_safe_int(request.form.get('user_id'))
     user = UserEntity.get_by_id(user_id)
     user = UserEntity.update(user, active=False)
+    LogEntity.account_modified(session['uuid'],
+                               "User deactivated: {}".format(user))
     return utils.jsonify_success({"message": "User deactivated."})
 
 
@@ -396,6 +392,9 @@ def api_verify_email():
 
     user = UserEntity.update(user, email_confirmed_at=datetime.today())
     app.logger.debug("Verified token {} for user {}".format(token, user.email))
+    LogEntity.account_modified(session['uuid'],
+                               "Verified token {} for user {}".format(
+                                   token, user.email))
     return utils.jsonify_success(
         {"message": "Email was verified for {}.".format(email)})
 
@@ -415,6 +414,8 @@ def api_expire_account():
     today = datetime.today()
     today_start = datetime(today.year, today.month, today.day)
     user = UserEntity.update(user, access_expires_at=today_start)
+    LogEntity.account_modified(session['uuid'],
+                               "User access was expired. {}".format(user.email))
     return utils.jsonify_success({"message": "User access was expired."})
 
 
@@ -431,6 +432,9 @@ def api_extend_account():
     today_plus_180 = utils.get_expiration_date(180)
     user = UserEntity.get_by_id(user_id)
     user = UserEntity.update(user, access_expires_at=today_plus_180)
+    LogEntity.account_modified(session['uuid'],
+                               "Updated expiration date to {}. {}".format(
+                                   today_plus_180, user.email))
     return utils.jsonify_success(
         {"message": "Updated expiration date to {}".format(today_plus_180)})
 
@@ -442,11 +446,13 @@ def api_import_redcap_subjects():
     Refresh the list of subjects
     """
     local_subjects = SubjectEntity.query.all()
+    # app.logger.debug("local_subjects: \n{}".format(local_subjects))
+
     url = app.config['REDCAP_API_URL']
     redcap_subjects = utils.retrieve_redcap_subjects(
         url,
         app.config['REDCAP_API_TOKEN'],
-        app.config['REDCAP_DEMOGRAPHICS_FIELDS'])
+        app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID'])
     new_subjects = find_new_subjects(local_subjects, redcap_subjects)
 
     added_date = datetime.today()
@@ -485,11 +491,13 @@ def find_new_subjects(local_subjects, redcap_subjects):
         # populate the lookup table for faster comparison
         local_lut[subj.redcap_id] = subj
 
+    subject_id_field = app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID']
     new_subjects = {}
 
     for subj in redcap_subjects:
-        id = subj['z1_0e_subject_id']
+        id = str(subj[subject_id_field])
         if id not in local_lut:
+            # app.logger.debug("id {} not in local list of ids".format(id))
             new_subjects[id] = subj
 
     return new_subjects

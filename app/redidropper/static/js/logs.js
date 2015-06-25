@@ -22,7 +22,7 @@ var AdminEventsTable = React.createClass({
                 <tr>
                     <th> # </th>
                     <th> Event Name</th>
-                    <th> Username</th>
+                    <th> Session ID </th>
                     <th> Timestamp</th>
                 </tr>
             </thead>
