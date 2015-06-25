@@ -77,8 +77,6 @@ def get_settings(overrides={}):
     SETTINGS['project_repo_path'] = '%(project_path)s/src' % SETTINGS
     SETTINGS['project_repo'] = overrides.get('project_repo',
         'git://github.com/ctsit/redi-dropper-client.git')
-    SETTINGS['project_settings_path'] = ('%(project_repo_path)s/app/'
-                                         'settings' % SETTINGS)
 
     # =========================================================================
     # Secret key

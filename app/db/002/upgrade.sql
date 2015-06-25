@@ -1,5 +1,5 @@
 
-USE RediDropper;
+USE ctsi_dropper_s;
 
 INSERT INTO Version (verID, verInfo)
     VALUES('002', 'Create tables: User, Role, UserRole, Subject, SubjectFile, UserAgent, WebSession, LogType, Log, Event')

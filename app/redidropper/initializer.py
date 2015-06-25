@@ -53,7 +53,7 @@ def _check_config(app):
                 .format(directory))
 
 
-def do_init(app, is_mode_testing=False, extra_settings={}):
+def do_init(app, mode=config.MODE_PROD, extra_settings={}):
     """
     Initialize the app.
 
@@ -64,18 +64,22 @@ def do_init(app, is_mode_testing=False, extra_settings={}):
     :return the initialized application object
     """
 
-    if is_mode_testing:
-        app.config.from_object(config.TestConfig)
-        # print("Loaded test config")
-    else:
+    if mode == config.MODE_PROD:
         app.config.from_object(config.DefaultConfig)
         print("Loaded default config")
+    elif mode == config.MODE_TEST:
+        app.config.from_object(config.TestConfig)
+        # print("Loaded test config")
+    elif mode == config.MODE_DEBUG:
+        app.config.from_object(config.DebugConfig)
+        # print("Loaded debug config")
 
     _configure_logging(app)
     _load_confidential_settings(app)
     _check_config(app)
 
-    if is_mode_testing:
+    # When running unit tests we use in-memory sqlite
+    if mode == config.MODE_TEST:
         DATABASE_PATH = os.path.abspath('tests.db')
 
         # If we want to inspect the results we can use a file instead of memory
@@ -105,7 +109,7 @@ def do_init(app, is_mode_testing=False, extra_settings={}):
     from redidropper.routes import users
     from redidropper.routes import api
 
-    if not app.testing:
+    if app.config['DEBUG_TB_ENABLED'] and not app.testing:
         # When runing tests there is no need for the debugtoolbar
         from flask_debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app)

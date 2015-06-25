@@ -88,17 +88,6 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         """ Return text representation of user roles """
         return [role.name for role in self.roles]
 
-    """
-    @property
-    def to_visible(self):
-    visible_props = ['id', 'email', 'first', 'last', 'minitial',
-                     'added_at', 'modified_at', 'email_confirmed_at',
-                     'is_active', 'access_expires_at']
-
-        return dict([(key, val) for key, val in self.__dict__.items()
-                    if key in UserEntity.visible_props])
-    """
-
     def get_name(self):
         """
         :rtype string

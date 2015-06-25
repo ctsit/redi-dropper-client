@@ -37,10 +37,13 @@ install:
 
 # __3 Use this to prepare your build for testing
 before_script:
-    - echo "Creating the database and tables..."
+    - echo "Creating the database..."
+    - mysql -uroot < app/db/000/upgrade.sql
+    - echo "Creating the tables..."
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
-    - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
+    - echo "Adding data..."
+    - mysql -uctsi_dropper_s -pinsecurepassword < app/db/002/data.sql
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:

@@ -68,7 +68,7 @@ function install_hello_world() {
     pip install Flask
 
     # Run the demo app
-    python hello.py &
+    python /home/vagrant/hello.py &
     sleep 2
     curl -s http://localhost:5000
     echo "Done."

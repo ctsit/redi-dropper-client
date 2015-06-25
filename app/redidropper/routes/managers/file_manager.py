@@ -106,8 +106,8 @@ def save_uploaded_file():
     try:
         # For every request recived we store the chunk to a temp folder
         fchunk.afile.save(chunk_path)
-    except:
-        logger.error("Problem saving: {}".format(fchunk))
+    except Exception as exc:
+        logger.error("Problem saving: {} due: {}".format(fchunk, exc))
         return utils.pack_error("Unable to save file chunk: {}"
                                 .format(fchunk.number))
 

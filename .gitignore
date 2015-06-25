@@ -1,5 +1,11 @@
+
+# Server specific files
 /app/deploy/*/fabric.py
+/app/deploy/*/settings.conf
+/app/deploy/*/virtualhost.conf
+
 /app/deploy/settings.conf
+
 /app/upload/saved/*/
 /app/upload/temp/*/
 
@@ -24,5 +30,5 @@ nosexcover-*
 .coveralls.yml
 pylint.out
 
-server.crt
-server.key
+app/ssl/server.crt
+app/ssl/server.key

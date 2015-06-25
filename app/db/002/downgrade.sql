@@ -1,5 +1,5 @@
 
-USE RediDropper;
+USE ctsi_dropper_s;
 
 DELETE FROM Version where verID = '002';
 
