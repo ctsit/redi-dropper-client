@@ -75,7 +75,8 @@ VALUES
     ('logout', ''),
     ('login_error', ''),
     ('file_uploaded', ''),
-    ('file_downloaded', '')
+    ('file_downloaded', ''),
+    ('account_modified', '')
 ;
 
 INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaLanguage)

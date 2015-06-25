@@ -2,9 +2,11 @@
 ORM for RediDropper.Log table
 """
 # import datetime
+import datetime
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.main import db
-# from redidropper.models.log_type_entity import LogTypeEntity
+from redidropper.models.log_type_entity import LogTypeEntity
+from redidropper.models.web_session_entity import WebSessionEntity
 
 
 class LogEntity(db.Model, CRUDMixin):
@@ -25,13 +27,44 @@ class LogEntity(db.Model, CRUDMixin):
     details = db.Column('logDetails', db.Text, nullable=False)
 
     # @OneToOne
-    log_type = db.relationship(
-        'LogTypeEntity',
-        uselist=False,
-        lazy='joined')
-    web_session = db.relationship('WebSessionEntity',
-                                  uselist=False,
+    log_type = db.relationship(LogTypeEntity, uselist=False, lazy='joined')
+    web_session = db.relationship(WebSessionEntity, uselist=False,
                                   lazy='joined')
+
+    @staticmethod
+    def _log(log_type, session_id, details=''):
+        lt = LogTypeEntity.query.filter_by(type=log_type).one()
+        LogEntity.create(log_type=lt,
+                         date_time=datetime.datetime.now(),
+                         details=details,
+                         web_session=WebSessionEntity.get(session_id))
+
+    @staticmethod
+    def file_downloaded(session_id, details=''):
+        LogEntity._log('file_downloaded', session_id, details)
+
+    @staticmethod
+    def file_uploaded(session_id, details=''):
+        LogEntity._log('file_uploaded', session_id, details)
+
+    @staticmethod
+    def logout(session_id, details=''):
+        LogEntity._log('logout', session_id, details)
+
+    @staticmethod
+    def login(session_id, details='', successful=True):
+        if successful:
+            LogEntity._log('login', session_id, details)
+        else:
+            LogEntity._log('login_error', session_id, details)
+
+    @staticmethod
+    def account_created(session_id, details=''):
+        LogEntity._log('account_created', session_id, details)
+
+    @staticmethod
+    def account_modified(session_id, details=''):
+        LogEntity._log('account_modified', session_id, details)
 
     def __repr__(self):
         """ Return a friendly object representation """

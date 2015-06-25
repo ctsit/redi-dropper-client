@@ -38,6 +38,10 @@ class WebSessionEntity(db.Model, CRUDMixin):
     #                          nullable=False, default=0)
     user_agent_id = db.Column('uaID', db.Integer, nullable=False, default=0)
 
+    @staticmethod
+    def get(session_id):
+        return WebSessionEntity.query.filter_by(session_id=session_id).one()
+
     def __repr__(self):
         """ Return a friendly object representation """
         return "<WebSessionEntity (webID: '{0.id}', webSessID: {0.session_id},"\

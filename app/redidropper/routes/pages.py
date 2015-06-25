@@ -13,12 +13,17 @@ Goal: Define the routes for general pages
 
 import hashlib
 import base64
+import datetime
+import uuid
 from flask import current_app
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
+from redidropper.models.log_entity import LogEntity
+from redidropper.models.log_type_entity import LogTypeEntity
+from redidropper.models.web_session_entity import WebSessionEntity
 from wtforms import Form, TextField, PasswordField, validators
 
 from flask_login import LoginManager
@@ -77,6 +82,18 @@ class LoginForm(Form):
                 min=6, max=25)])
 
 
+@app.before_request
+def check_session_id():
+    if 'uuid' not in session:
+        session['uuid'] = uuid.uuid4()
+        WebSessionEntity.create(session_id=session['uuid'],
+                                user_id=0,
+                                ip=request.remote_addr,
+                                date_time=datetime.datetime.now(),
+                                 # TODO: Create UserAgentEntity and populate
+                                user_agent_id=1)
+
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
     """ Render the login page"""
@@ -102,6 +119,8 @@ def render_login_local():
             app.logger.debug("Found user object: {}".format(user))
         else:
             utils.flash_error("No such email: {}".format(email))
+            LogEntity.login(session['uuid'], "No such email: {}".format(email),
+                            successful=False)
             return redirect(request.args.get('next') or url_for('index'))
 
         # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt,
@@ -117,12 +136,17 @@ def render_login_local():
                                   identity=Identity(user.get_id()))
 
             app.logger.info('Log login event for: {}'.format(user))
+            LogEntity.login(session['uuid'],
+                            'Log login event for: {}'.format(user))
             next_page = get_role_landing_page()
             # utils.flash_info("next page: ".format(request.args.get('next')))
             # return redirect(request.args.get('next') or next_page)
             return redirect(next_page)
         else:
             app.logger.info('Incorrect pass')
+            LogEntity.login(session['uuid'],
+                            'Incorrect pass for: {}'.format(user),
+                            successful=False)
             utils.flash_error("Incorrect password.")
 
     if current_user.is_authenticated():
@@ -140,6 +164,8 @@ def shib_return():
     # import pprint; pprint.pprint(request.headers)
     interesting_fields = ['Mail', 'Eppn', 'Glid']
     data = [i for i in request.headers if i[0] in interesting_fields]
+    LogEntity.login(session['uuid'], 'Successful login via Shibboleth: {}',
+                    utils.jsonify_success(data))
     return utils.jsonify_success({'headers': data})
 
 
@@ -246,6 +272,10 @@ def logout():
     # Tell Flask-Principal the user is anonymous
     identity_changed.send(current_app._get_current_object(),
                           identity=AnonymousIdentity())
+
+    # Log the logout
+    LogEntity.logout(session['uuid'], 'User logged out.')
+
     return redirect(request.args.get('next') or '/')
 
 
