@@ -43,7 +43,7 @@ before_script:
     - mysql -uroot < app/db/001/upgrade.sql
     - mysql -uroot < app/db/002/upgrade.sql
     - echo "Adding data..."
-    - mysql -uredidropper -pinsecurepassword < app/db/002/data.sql
+    - mysql -uctsi_dropper_s -pinsecurepassword < app/db/002/data.sql
 
 # __4 All commands must exit with code 0 on success. Anything else is considered failure.
 script:
