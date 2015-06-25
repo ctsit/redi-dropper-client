@@ -22,7 +22,6 @@ from flask import request
 from flask import session
 from flask import url_for
 from redidropper.models.log_entity import LogEntity
-from redidropper.models.log_type_entity import LogTypeEntity
 from redidropper.models.web_session_entity import WebSessionEntity
 from wtforms import Form, TextField, PasswordField, validators
 
@@ -71,11 +70,9 @@ def page_not_found(e):
 
 
 class LoginForm(Form):
-
     """ Declare the validation rules for the login form """
     # email = TextField('Email', [validators.Length(min=4, max=25)])
     email = TextField('Email')
-    # username = TextField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField(
         'Password', [
             validators.Required(), validators.Length(
@@ -84,14 +81,23 @@ class LoginForm(Form):
 
 @app.before_request
 def check_session_id():
+    """
+    Generate a UUID and store it in the session
+    as well as in the WebSession table.
+    """
+    # TODO: Create UserAgentEntity and populate
+    user_agent_id = 1
+
     if 'uuid' not in session:
-        session['uuid'] = uuid.uuid4()
+        session['uuid'] = str(uuid.uuid4())
         WebSessionEntity.create(session_id=session['uuid'],
-                                user_id=0,
+                                user_id=current_user.get_id(),
                                 ip=request.remote_addr,
                                 date_time=datetime.datetime.now(),
-                                 # TODO: Create UserAgentEntity and populate
-                                user_agent_id=1)
+                                user_agent_id=user_agent_id)
+    else:
+        # TODO: update the user_id on the first request after login is completed
+        pass
 
 
 @app.route('/', methods=['POST', 'GET'])

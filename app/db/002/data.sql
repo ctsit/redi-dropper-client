@@ -85,16 +85,16 @@ INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaL
 
 INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime, uaID)
 VALUES
-    (md5('ha'), 1, '192.168.1.1', NOW(), 1),
-    (md5('ha2'), 1, '172.27.1.100', NOW(), 1)
+    (uuid(), 1, '192.168.1.1', NOW(), 1),
+    (uuid(), 1, '172.27.1.100', NOW(), 1)
 ;
 
 
-INSERT INTO Log (logtID, webID, logDateTime, logDetails)
-      SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
-UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
-UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
-UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'
-UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_uploaded'
-UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_downloaded'
-;
+-- INSERT INTO Log (logtID, webID, logDateTime, logDetails)
+--       SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_uploaded'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'file_downloaded'
+-- ;
