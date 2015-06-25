@@ -33,7 +33,7 @@ class DefaultConfig(object):
     # REDCap project configs
     REDCAP_API_URL = ''
     REDCAP_API_TOKEN = ''
-    REDCAP_DEMOGRAPHICS_FIELDS = ''
+    REDCAP_DEMOGRAPHICS_SUBJECT_ID = ''
 
     # SSL Certificate config
     # Note: the paths to the certificate do *not matter* when the app is

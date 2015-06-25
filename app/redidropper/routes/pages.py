@@ -235,7 +235,7 @@ def on_identity_loaded(sender, identity):
     @TODO: add unit tests
         http://stackoverflow.com/questions/16712321/unit-testing-a-flask-principal-application
     """
-    app.logger.debug("identity_loaded signal sender: {}".format(sender))
+    # app.logger.debug("identity_loaded signal sender: {}".format(sender))
 
     if type(current_user) == 'AnonymousUserMixin':
         return
