@@ -267,19 +267,6 @@ def api_list_logs():
         dict(list_of_events=logs, total_pages=total_pages))
 
 
-# @app.route('/api/list_redcap_subjects', methods=['POST', 'GET'])
-# @login_required
-# def api_list_redcap_subjects():
-#     """
-#     @TODO: remove me
-#     :rtype: Response
-#     :return the list of subjects in json format
-#     """
-#     subjects = subject_manager.get_fresh_list_of_subjects()
-#     subjects_list = [x.to_visible() for x in subjects]
-#     return utils.jsonify_success({'subjects_list': subjects_list})
-
-
 @app.route('/api/list_local_subjects', methods=['GET', 'POST'])
 @login_required
 def api_list_local_subjects():
@@ -442,11 +429,13 @@ def api_import_redcap_subjects():
     Refresh the list of subjects
     """
     local_subjects = SubjectEntity.query.all()
+    # app.logger.debug("local_subjects: \n{}".format(local_subjects))
+
     url = app.config['REDCAP_API_URL']
     redcap_subjects = utils.retrieve_redcap_subjects(
         url,
         app.config['REDCAP_API_TOKEN'],
-        app.config['REDCAP_DEMOGRAPHICS_FIELDS'])
+        app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID'])
     new_subjects = find_new_subjects(local_subjects, redcap_subjects)
 
     added_date = datetime.today()
@@ -485,11 +474,13 @@ def find_new_subjects(local_subjects, redcap_subjects):
         # populate the lookup table for faster comparison
         local_lut[subj.redcap_id] = subj
 
+    subject_id_field = app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID']
     new_subjects = {}
 
     for subj in redcap_subjects:
-        id = subj['z1_0e_subject_id']
+        id = str(subj[subject_id_field])
         if id not in local_lut:
+            # app.logger.debug("id {} not in local list of ids".format(id))
             new_subjects[id] = subj
 
     return new_subjects

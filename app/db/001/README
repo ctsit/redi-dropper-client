@@ -1,13 +1,5 @@
 
--- Added the `RediDropper.Version` table
-show tables from RediDropper;
-+-----------------------+
-| Tables_in_redidropper |
-+-----------------------+
-| Version               |
-+-----------------------+
-1 row in set (0.00 sec)
-
+-- Added the `Version` table
 
 desc Version;
 +----------+--------------+------+-----+-------------------+-----------------------------+

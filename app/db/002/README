@@ -1,6 +1,6 @@
 This schema change adds tables for user management.
 
-show tables from RediDropper;
+show tables from ctsi_dropper_s;
 
 -- View available roles
 SELECT * FROM Role;

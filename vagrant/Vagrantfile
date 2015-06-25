@@ -15,4 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell" do |s|
     s.path = "bootstrap.sh"
   end
+
+  config.trigger.after [:up] do
+    if Vagrant::Util::Platform.darwin?
+      system("open -a 'Google Chrome.app' https://localhost:7088")
+    end
+  end
 end

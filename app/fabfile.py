@@ -13,6 +13,7 @@ from fabric.api import local, task, prefix, abort
 from fabric.contrib.console import confirm
 from contextlib import contextmanager
 
+
 @task
 def tasks():
     """
@@ -20,17 +21,20 @@ def tasks():
     """
     local("fab --list")
 
+
 @task
 def install_requirements():
     """
     Install required Python packages using: pip install -r requirements.txt
     """
-    local('pip install -r requirements.txt')
+    local('pip install -r requirements/dev.txt')
+    local('pip install -r requirements/tests.txt')
 
 
 @task
 def initdb():
     init_db()
+
 
 @task
 def init_db():
@@ -47,6 +51,7 @@ def init_db():
 @task
 def resetdb():
     reset_db()
+
 
 @task
 def reset_db():
@@ -66,6 +71,7 @@ def reset_db():
     local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
 
+
 @task
 def test():
     """
@@ -73,15 +79,18 @@ def test():
     """
     local('py.test --tb=short -s tests/')
 
+
 @task
 def test_cov():
     """ Alias for coverage"""
     coverage()
 
+
 @task
 def cov():
     """ Alias for coverage"""
     coverage()
+
 
 @task
 def coverage():
@@ -100,10 +109,12 @@ def coverage():
         --cov-report html \
         tests/""")
 
+
 @task
 def lint():
     local("which pylint || sudo easy_install pylint")
     local("pylint -f parseable redidropper | tee pylint.out")
+
 
 @task
 def run():
@@ -125,13 +136,21 @@ def deploy():
 @contextmanager
 def virtualenv(venv_name):
     """ Activate a context """
+    """Usage example:
+    def deploy():
+        with virtualenv('ha'):
+            run("pip freeze > requirements.txt")
+    """
+    # @see so/questions/1180411/activate-a-virtualenv-via-fabric-as-deploy-user
     with prefix('source ~/.virtualenvs/'+venv_name+'/bin/activate'):
         yield
+
 
 @task
 def clean():
     """
     Remove generated files
     """
-    local('rm -rf cover/ htmlcov/ .coverage coverage.xml nosetests.xml .ropeproject')
+    local('rm -rf cover/ htmlcov/ .coverage coverage.xml nosetests.xml')
+    local('rm -rf .ropeproject')
     local('find . -type f -name "*.pyc" -print | xargs rm -f')

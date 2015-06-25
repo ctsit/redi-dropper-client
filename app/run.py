@@ -11,9 +11,10 @@ Goal: Implement the application entry point
 import argparse
 from redidropper.main import app, mail
 from redidropper import initializer
+from config import MODE_DEBUG
 
 # Configures routes, models
-app = initializer.do_init(app)
+app = initializer.do_init(app, mode=MODE_DEBUG)
 mail.init_app(app)
 
 

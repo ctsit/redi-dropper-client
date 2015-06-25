@@ -252,7 +252,7 @@ def redcap_api_call(url, token, content, fields):
     # @TODO: specify events -- an array of unique event names that you wish
     # to pull records for - only for longitudinal projects
     # ' -d events="event_1_arm_1"' \
-    cmd = 'curl -s -X POST {} ' \
+    cmd = 'curl -skX POST {} ' \
         ' -d token={} ' \
         ' -d format=json ' \
         ' -d content={} ' \
@@ -263,7 +263,16 @@ def redcap_api_call(url, token, content, fields):
 
     proc = Popen(cmd, shell=True, stdout=PIPE)
     (out, err) = proc.communicate()
-    data = ast.literal_eval(out)
+    # print("redcap_api_call: {}\n{}".format(cmd, out))
+    if err:
+        print("redcap_api_call error: \n{}".format(err))
+
+    # data = ast.literal_eval(out)
+    data = []
+    try:
+        data = ast.literal_eval(out)
+    except Exception as exc:
+        print("redcap_api_call error parsing curl response:\n{}".format(exc))
     return data
 
 
