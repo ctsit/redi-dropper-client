@@ -13,6 +13,7 @@ from .base_test_with_data import BaseTestCaseWithData
 from redidropper.main import app
 
 protected_pages = [
+    '/loginExternalAuthReturn',
     '/admin',
     '/dashboard',
     '/researcher_one',
