@@ -10,64 +10,71 @@ http://flask.pocoo.org/docs/0.10/patterns/fabric/#fabric-deployment
 
 from __future__ import with_statement
 from fabric.api import local, task, prefix, abort
+from fabric import colors
+from fabric.context_managers import settings
 from fabric.contrib.console import confirm
 from contextlib import contextmanager
 
 
 @task
-def tasks():
-    """
-    List available tasks
-    """
-    local("fab --list")
+def prep_deploy():
+    """ Install required Python packages """
+    local('pip install -r requirements/deploy.txt')
 
 
 @task
-def install_requirements():
-    """
-    Install required Python packages using: pip install -r requirements.txt
-    """
+def prep_develop():
+    """ Install required Python packages for developers """
     local('pip install -r requirements/dev.txt')
     local('pip install -r requirements/tests.txt')
 
 
-@task
-def initdb():
-    init_db()
+def get_db_name():
+    with settings(warn_only=True):
+        cmd = "grep -i 'create database' db/000/upgrade.sql | cut -d ' ' -f3 " \
+            "| tr -d  ';'"
+        db_name = local(cmd, capture=True)
+    return db_name
+
+
+def check_db_exists(db_name):
+    cmd = "echo 'select count(*) from information_schema.SCHEMATA " \
+          "WHERE SCHEMA_NAME = \"{}\"' | mysql -uroot " \
+          "| sort | head -1".format(db_name)
+    result = local(cmd, capture=True)
+    return result
 
 
 @task
 def init_db():
-    """
+    """ Create the database """
+    db_name = get_db_name()
+    exists = check_db_exists(db_name)
 
-    """
-    if not confirm("Do you want to create the RediDropper database tables?"):
-        abort("Aborting at user request.")
+    if exists:
+        abort(colors.red("The database '{}' already exists".format(db_name)))
+
+    if not confirm("Do you want to create the database '{}'?".format(db_name)):
+        abort(colors.yellow("Aborting at user request."))
+
+    local('sudo mysql < db/000/upgrade.sql')
     local('sudo mysql < db/001/upgrade.sql')
     local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
 
 
 @task
-def resetdb():
-    reset_db()
-
-
-@task
 def reset_db():
-    """
-    Drop all tables, Create empty tables, and populate tables
+    """ Drop all tables, Create empty tables, and add data. """
+    db_name = get_db_name()
 
-    sudo mysql < db/001/downgrade.sql && sudo mysql < db/001/upgrade.sql
-    sudo mysql < db/002/downgrade.sql && sudo mysql < db/002/upgrade.sql \
-            && sudo mysql < db/002/data.sql
-    """
-    if not confirm("Do you want to drop all tables and start from scratch?"):
-        abort("Aborting at user request.")
-    # local('PYTHONPATH=. python db.py')
-    local('sudo mysql < db/001/downgrade.sql')
+    if not confirm("Do you want to erase the '{}' database"
+                   "and start from scratch?".format(db_name)):
+        abort(colors.yellow("Aborting at user request."))
+
+    local('sudo mysql < db/000/downgrade.sql')
+    local('sudo mysql < db/000/upgrade.sql')
     local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/downgrade.sql')
     local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
 
