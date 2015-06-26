@@ -4,6 +4,14 @@ ORM for RediDropper.LogType table
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.main import db
 
+LOG_TYPE_ACCOUNT_CREATED = 'account_created'
+LOG_TYPE_LOGIN = 'login'
+LOG_TYPE_LOGOUT = 'logout'
+LOG_TYPE_LOGIN_ERROR = 'login_error'
+LOG_TYPE_FILE_UPLOADED = 'file_uploaded'
+LOG_TYPE_FILE_DOWNLOADED = 'file_downloaded'
+LOG_TYPE_ACCOUNT_MODIFIED = 'account_modified'
+
 
 class LogTypeEntity(db.Model, CRUDMixin):
 

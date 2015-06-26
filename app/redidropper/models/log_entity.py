@@ -4,17 +4,17 @@ ORM for RediDropper.Log table
 # import datetime
 import datetime
 from redidropper.database.crud_mixin import CRUDMixin
-from redidropper.main import db
+from redidropper.main import app, db
 from redidropper.models.log_type_entity import LogTypeEntity
 from redidropper.models.web_session_entity import WebSessionEntity
-
-LOG_TYPE_ACCOUNT_CREATED = 'account_created'
-LOG_TYPE_LOGIN = 'login'
-LOG_TYPE_LOGOUT = 'logout'
-LOG_TYPE_LOGIN_ERROR = 'login_error'
-LOG_TYPE_FILE_UPLOADED = 'file_uploaded'
-LOG_TYPE_FILE_DOWNLOADED = 'file_downloaded'
-LOG_TYPE_ACCOUNT_MODIFIED = 'account_modified'
+from redidropper.models.log_type_entity import \
+    LOG_TYPE_ACCOUNT_CREATED, \
+    LOG_TYPE_LOGIN, \
+    LOG_TYPE_LOGOUT, \
+    LOG_TYPE_LOGIN_ERROR, \
+    LOG_TYPE_FILE_UPLOADED, \
+    LOG_TYPE_FILE_DOWNLOADED, \
+    LOG_TYPE_ACCOUNT_MODIFIED
 
 
 class LogEntity(db.Model, CRUDMixin):
@@ -42,54 +42,50 @@ class LogEntity(db.Model, CRUDMixin):
     @staticmethod
     def _log(log_type, session_id, details=''):
         """ Helper for logging """
-        log_type = LogTypeEntity.query.filter_by(type=log_type).one()
-        LogEntity.create(log_type=log_type,
-                         date_time=datetime.datetime.now(),
-                         details=details,
-                         web_session=WebSessionEntity.get(session_id))
-
+        logt = LogTypeEntity.query.filter_by(type=log_type).first()
+        if logt is None:
+            app.logger.error("Developer error. Invalid log type: {}"
+                             .format(log_type))
+        else:
+            LogEntity.create(log_type=logt,
+                            date_time=datetime.datetime.now(),
+                            details=details,
+                            web_session=WebSessionEntity.get(session_id))
 
     @staticmethod
     def account_created(session_id, details=''):
         """ Log account creation """
         LogEntity._log(LOG_TYPE_ACCOUNT_CREATED, session_id, details)
 
-
     @staticmethod
     def login(session_id, details=''):
         """ Log successful login """
         LogEntity._log(LOG_TYPE_LOGIN, session_id, details)
-
 
     @staticmethod
     def logout(session_id, details=''):
         """ Log logout click """
         LogEntity._log(LOG_TYPE_LOGOUT, session_id, details)
 
-
     @staticmethod
     def login_error(session_id, details=''):
         """ Log failed login """
         LogEntity._log(LOG_TYPE_LOGIN_ERROR, session_id, details)
-
 
     @staticmethod
     def file_uploaded(session_id, details=''):
         """ Log file upload """
         LogEntity._log(LOG_TYPE_FILE_UPLOADED, session_id, details)
 
-
     @staticmethod
     def file_downloaded(session_id, details=''):
         """ Log file download """
         LogEntity._log(LOG_TYPE_FILE_DOWNLOADED, session_id, details)
 
-
     @staticmethod
     def account_modified(session_id, details=''):
         """ Log account changes """
         LogEntity._log(LOG_TYPE_ACCOUNT_MODIFIED, session_id, details)
-
 
     def __repr__(self):
         """ Return a friendly object representation """
