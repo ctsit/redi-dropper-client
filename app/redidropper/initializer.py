@@ -109,7 +109,7 @@ def do_init(app, mode=config.MODE_PROD, extra_settings={}):
     from redidropper.routes import users
     from redidropper.routes import api
 
-    if app.config['DEBUG_TB_ENABLED'] and not app.testing:
+    if app.debug and app.config['DEBUG_TB_ENABLED'] and not app.testing:
         # When runing tests there is no need for the debugtoolbar
         from flask_debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app)
@@ -171,9 +171,15 @@ def get_ssl_context(app):
               .format(ssl_public_key_file, ssl_private_key_file))
 
         if app.debug:
-            # if the pyOpenSSL is installed use the adhoc ssl context
-            ssl_context = 'adhoc'
-            print("Attempting to use the adhoc ssl_context")
+            try:
+                # if the pyOpenSSL is installed use the adhoc ssl context
+                import OpenSSL
+                ssl_context = 'adhoc'
+                print("Using the adhoc ssl_context from OpenSSL {}"
+                      .format(OpenSSL.__version__))
+            except Exception as exc:
+                print("Please execute 'pip install pyOpenSSL'"
+                      "to test and adhoc ssl context. {}".format(exc))
         else:
             sys.exit('Please run in debug mode if you want to test an adhoc'
                      ' certificate.')

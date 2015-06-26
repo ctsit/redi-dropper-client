@@ -15,42 +15,26 @@ from contextlib import contextmanager
 
 
 @task
-def tasks():
-    """
-    List available tasks
-    """
-    local("fab --list")
+def prep_deploy():
+    """ Install required Python packages """
+    local('pip install -r requirements/deploy.txt')
 
 
 @task
-def install_requirements():
-    """
-    Install required Python packages using: pip install -r requirements.txt
-    """
+def prep_develop():
+    """ Install required Python packages for developers """
     local('pip install -r requirements/dev.txt')
     local('pip install -r requirements/tests.txt')
 
 
 @task
-def initdb():
-    init_db()
-
-
-@task
 def init_db():
-    """
-
-    """
     if not confirm("Do you want to create the RediDropper database tables?"):
         abort("Aborting at user request.")
+    local('sudo mysql < db/000/upgrade.sql')
     local('sudo mysql < db/001/upgrade.sql')
     local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
-
-
-@task
-def resetdb():
-    reset_db()
 
 
 @task
@@ -65,9 +49,9 @@ def reset_db():
     if not confirm("Do you want to drop all tables and start from scratch?"):
         abort("Aborting at user request.")
     # local('PYTHONPATH=. python db.py')
-    local('sudo mysql < db/001/downgrade.sql')
+    local('sudo mysql < db/000/downgrade.sql')
+    local('sudo mysql < db/000/upgrade.sql')
     local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/downgrade.sql')
     local('sudo mysql < db/002/upgrade.sql')
     local('sudo mysql < db/002/data.sql')
 
