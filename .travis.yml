@@ -32,7 +32,7 @@ install:
     - pwd
     - pip install fabric coveralls
     - pushd app
-    - fab install_requirements
+    - fab prep_develop
     - popd
 
 # __3 Use this to prepare your build for testing
