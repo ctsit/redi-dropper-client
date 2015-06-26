@@ -9,7 +9,7 @@ Authors:
 from datetime import datetime
 from .base_test import BaseTestCase
 from redidropper import utils
-from redidropper.main import app, db
+from redidropper.main import db
 
 from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN, \
     ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
@@ -19,6 +19,7 @@ from redidropper.models.role_entity import RoleEntity
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
 from redidropper.models.log_type_entity import LogTypeEntity
+from redidropper.models.log_type_entity import LOG_TYPE_LOGIN, LOG_TYPE_LOGOUT
 
 
 class BaseTestCaseWithData(BaseTestCase):
@@ -30,14 +31,15 @@ class BaseTestCaseWithData(BaseTestCase):
         self.create_sample_data()
 
     def create_log_types(self):
-        log_login = LogTypeEntity.create(type='login', description='')
-        log_logout = LogTypeEntity.create(type='logout', description='')
+        log_login = LogTypeEntity.create(type=LOG_TYPE_LOGIN, description='')
+        log_logout = LogTypeEntity.create(type=LOG_TYPE_LOGOUT, description='')
         self.assertEquals(1, log_login.id)
         self.assertEquals(2, log_logout.id)
 
     def create_sample_data(self):
         """ Add some data """
 
+        self.create_log_types()
         # == Create users
         added_date = datetime.today()
         access_end_date = utils.get_expiration_date(180)
@@ -75,6 +77,7 @@ class BaseTestCaseWithData(BaseTestCase):
                                   added_at=added_date)
 
         self.assertIsNotNone(evt.id)
+        self.assertIsNotNone(evt2.id)
 
         files = [
             {'name': 'a.png', 'size': '1MB', 'event': evt.id},
@@ -94,4 +97,5 @@ class BaseTestCaseWithData(BaseTestCase):
                 file_size=fdata['size'],
                 uploaded_at=added_date,
                 user_id=user.id)
+            self.assertIsNotNone(subject_file.id)
             # app.logger.debug("Init test case with: {}".format(subject_file))
