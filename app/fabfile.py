@@ -58,9 +58,9 @@ def init_db():
         abort(colors.yellow("Aborting at user request."))
 
     local('sudo mysql < db/000/upgrade.sql')
-    local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/upgrade.sql')
-    local('sudo mysql < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/data.sql')
 
 
 @task
@@ -74,9 +74,9 @@ def reset_db():
 
     local('sudo mysql < db/000/downgrade.sql')
     local('sudo mysql < db/000/upgrade.sql')
-    local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/upgrade.sql')
-    local('sudo mysql < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/data.sql')
 
 
 @task
