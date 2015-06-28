@@ -52,7 +52,7 @@ script:
     - ls -al deploy/
     # put config file in the place expected by config.py
     - cp deploy/sample.settings.conf deploy/settings.conf
-    - fab test_cov
+    - fab coverage
     - popd
 
 # __5a after_success

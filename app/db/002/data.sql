@@ -77,9 +77,9 @@ VALUES
     ('account_modified', '')
 ;
 
--- INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaLanguage)
---     VALUES ('Firefox 123', md5('Firefox 123'), 'OS X', 'Firefox', '123', 'EN')
--- ;
+INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaLanguage)
+    VALUES ('Firefox 123', md5('Firefox 123'), 'OS X', 'Firefox', '123', 'EN')
+;
 
 -- INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime, uaID)
 -- VALUES

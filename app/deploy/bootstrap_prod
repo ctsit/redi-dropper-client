@@ -6,7 +6,7 @@ trap 'exit 1' INT
 eval export HOME=~$(id -un)
 REPO_DIR=$HOME/git/indera-dropper
 VENV_DIR=$HOME/venv
-REMOTE=asura@dropper1.ctsi.ufl.edu
+REMOTE=asura@dropper.ctsi.ufl.edu
 
 echo "Using REPO_DIR: $REPO_DIR"
 echo "Using VENV_DIR: $VENV_DIR"
@@ -32,6 +32,7 @@ type fab >/dev/null 2>&1 || {
     pip install fabric
 }
 
+
 # Set up PYTHONPATH for fabfile.py
 export PYTHONPATH=$REPO_DIR:$PYTHONPATH
 
@@ -49,11 +50,11 @@ SUM=$(md5sum $0)
 cd $REPO_DIR/app/deploy
 
 # create folders, install venv, clone repo from the given branch
-fab staging bootstrap:develop
+fab production bootstrap:develop
 
 # re-check code an requirements (assumes that bootstrap was performed)
-fab staging deploy:develop
+fab production deploy:develop
 
 # show error log from the remote server
-fab staging show_config_apache
-fab staging show_errors_apache
+fab production show_config_apache
+fab production show_errors_apache
