@@ -1,4 +1,4 @@
 
-USE ctsi_dropper_s;
+-- USE ctsi_dropper_s;
 
 DROP TABLE Version;

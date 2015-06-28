@@ -1,10 +1,7 @@
 
-USE ctsi_dropper_s;
+-- USE ctsi_dropper_s;
 
 DELETE FROM Version where verID = '002';
-
-DROP VIEW  IF EXISTS subject_file_view;
-DROP VIEW  IF EXISTS user_role_view;
 
 DROP TABLE IF EXISTS Log;
 DROP TABLE IF EXISTS LogType;

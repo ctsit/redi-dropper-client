@@ -1,5 +1,5 @@
 
-USE ctsi_dropper_s;
+-- USE ctsi_dropper_s;
 
 -- Store database modification log
 CREATE TABLE Version (
