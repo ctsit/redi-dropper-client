@@ -8,11 +8,11 @@
 
     <title>REDIDropper</title>
 
-    <!-- Bootstrap core CSS
+    <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Custom styles for this template
+    <link href="{{ url_for('static', filename='css/bootstrap_flatly.min.css') }}" rel="stylesheet">
     -->
-    <!-- Custom styles for this template -->
-     <link href="{{ url_for('static', filename='css/bootstrap_flatly.min.css') }}" rel="stylesheet">
    
     <link href="{{ url_for('static', filename='css/fileupload.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
@@ -44,9 +44,14 @@
   </head>
 
 <body>
+{% if current_user.is_authenticated() %}
+    <div id="wrapper">
+{%else%}
     <div id="wrapper" class="toggled">
+{%endif%}
+
         <!-- Sidebar -->
-        <div id="sidebar-wrapper">
+        <div id="sidebar-wrapper" class="bg-primary">
             <ul class="sidebar-nav">
                 {% for link in user_links %}
                     {{ render_nav_link(link[0], link[1]) }}
@@ -55,8 +60,8 @@
         </div>
 
         <div id="page-content-wrapper">
-            <nav class="navbar navbar-black">
-                <div class="container-fluid">
+            <nav class="navbar">
+                <div class="container-fluid bg-primary">
                     <div class="navbar-header">
                         <div class="navbar-brand" href="/">
                             {% if current_user.is_authenticated() %}

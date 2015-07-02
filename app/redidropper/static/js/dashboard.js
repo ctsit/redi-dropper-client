@@ -48,7 +48,7 @@ var SubjectsRow = React.createClass({
         return (
             <tr>
                 <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
+                    <button className="btn btn-lg2 btn-primary"
                         onClick={selectSubject}>
                         Select subject: {row_data.redcap_id}
                     </button>
@@ -126,7 +126,7 @@ var SubjectsTable = React.createClass({
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
-        <table id="technician-table" className="table table-curved">
+        <table id="technician-table" className="table borderless">
             <thead>
                 <tr>
                     {table_columns}
@@ -185,7 +185,6 @@ var EventsTable = React.createClass({
 
             rows.push(
             <tr>
-                <td> {i+1} </td>
                 <td> {record.redcap_arm} </td>
                 <td> {record.day_offset} </td>
                 <td> {record.redcap_event} </td>
@@ -205,10 +204,9 @@ var EventsTable = React.createClass({
         return (
         <div>
             <div className="table-responsive">
-                <table id="event-table" className="table table-striped table-curved sortable tablesorter">
+                <table id="event-table" className="table borderless sortable tablesorter">
                     <thead>
                         <tr>
-                            <th> # </th>
                             <th> REDCap Arm </th>
                             <th> Day Offset </th>
                             <th> REDCap Event </th>
@@ -253,10 +251,9 @@ var FilesList = React.createClass({
     render: function() {
         return (
         <div className="table-responsive" >
-            <table id="technician-table" className="table table-striped">
+            <table id="technician-table" className="table borderless">
                 <thead>
                     <tr>
-                        <th className="text-center"> # </th>
                         <th className="text-center"> File Name </th>
                         <th className="text-center"> File Size </th>
                         <th className="text-center"> Uploaded </th>
@@ -268,10 +265,8 @@ var FilesList = React.createClass({
                 {
                 this.state.list_of_files.map(function(record, i) {
                     var uploaded_at = record.uploaded_at[0] + " " + record.uploaded_at[1];
-                    // var download_url = "/api/download_file?file_id=" + record.id;
 
-                    return <tr>
-                        <td> {i+1} </td>
+                    return (<tr>
                         <td>{record.file_name}</td>
                         <td>{record.file_size}</td>
                         <td>{uploaded_at}</td>
@@ -282,7 +277,7 @@ var FilesList = React.createClass({
                                 <button className="btn btn-primary">Download File</button>
                             </form>
                         </td>
-                    </tr>
+                    </tr>)
                 })}
                 </tbody>
             </table>
@@ -488,7 +483,7 @@ var Dashboard = React.createClass({
                 </div>
                 <div className="row">
                 <div className="col-md-offset-4 col-md-4 col-xs-12">
-                <table id="technician-table" className="table table-striped">
+                <table id="technician-table" className="table borderless">
                     <thead>
                     <tr>
                         <th>{selected_subject_id}</th>

@@ -8,7 +8,8 @@
 
 .logo-name{
     font-size:20px;
-    color: #9d9d9d;
+    /*color: #9d9d9d;*/
+    color: #fff;
     margin-left: 20px;
 }
 
@@ -29,11 +30,6 @@
     padding-left: 250px;
 }
 
-.navbar-black {
-  background-color: #000;
-  border-color: #000;
-}
-
 .icon-white{
     color: #fff;
 }
@@ -50,7 +46,6 @@
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #000;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -91,12 +86,12 @@
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999999;
+    color: #fff;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #fff;
+    color: #2A6496;
     background: rgba(255,255,255,0.2);
 }
 
