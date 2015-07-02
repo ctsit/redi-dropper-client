@@ -48,7 +48,7 @@ var SubjectsRow = React.createClass({
         return (
             <tr>
                 <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
+                    <button className="btn btn-lg2 btn-primary"
                         onClick={selectSubject}>
                         Select subject: {row_data.redcap_id}
                     </button>
@@ -126,7 +126,7 @@ var SubjectsTable = React.createClass({
     return (
     <div className="table-responsive">
         <div>{this.props.selected_project}</div>
-        <table id="technician-table" className="table table-curved">
+        <table id="technician-table" className="table borderless">
             <thead>
                 <tr>
                     {table_columns}
@@ -185,7 +185,6 @@ var EventsTable = React.createClass({
 
             rows.push(
             <tr>
-                <td> {i+1} </td>
                 <td> {record.redcap_arm} </td>
                 <td> {record.day_offset} </td>
                 <td> {record.redcap_event} </td>
@@ -195,7 +194,7 @@ var EventsTable = React.createClass({
                         data-toggle="tooltip"
                         title={title}
                         onClick={eventSelected}>
-                        {record.total_files}
+                        View {record.total_files} file(s)
                     </button>
                 </td>
             </tr>
@@ -205,10 +204,9 @@ var EventsTable = React.createClass({
         return (
         <div>
             <div className="table-responsive">
-                <table id="event-table" className="table table-striped table-curved sortable tablesorter">
+                <table id="event-table" className="table borderless sortable tablesorter">
                     <thead>
                         <tr>
-                            <th> # </th>
                             <th> REDCap Arm </th>
                             <th> Day Offset </th>
                             <th> REDCap Event </th>
@@ -253,12 +251,11 @@ var FilesList = React.createClass({
     render: function() {
         return (
         <div className="table-responsive" >
-            <table id="technician-table" className="table table-striped">
+            <table id="technician-table" className="table borderless">
                 <thead>
                     <tr>
-                        <th className="text-center"> # </th>
                         <th className="text-center"> File Name </th>
-                        <th className="text-center"> File Size </th>
+                        <th className="text-center"> File Size (MB)</th>
                         <th className="text-center"> Uploaded </th>
                         <th className="text-center"> Uploaded By </th>
                         <th className="text-center"></th>
@@ -268,12 +265,10 @@ var FilesList = React.createClass({
                 {
                 this.state.list_of_files.map(function(record, i) {
                     var uploaded_at = record.uploaded_at[0] + " " + record.uploaded_at[1];
-                    // var download_url = "/api/download_file?file_id=" + record.id;
 
-                    return <tr>
-                        <td> {i+1} </td>
+                    return (<tr>
                         <td>{record.file_name}</td>
-                        <td>{record.file_size}</td>
+                        <td>{(record.file_size / (1024 * 1024)).toFixed(2)}</td>
                         <td>{uploaded_at}</td>
                         <td>{record.user_name}</td>
                         <td>
@@ -282,7 +277,7 @@ var FilesList = React.createClass({
                                 <button className="btn btn-primary">Download File</button>
                             </form>
                         </td>
-                    </tr>
+                    </tr>);
                 })}
                 </tbody>
             </table>
@@ -438,13 +433,6 @@ var Dashboard = React.createClass({
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subjectEntity !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
-        }
-        if(this.state.eventEntity !== "") {
-            selected_event_id = "Event ID: " + this.state.eventEntity.redcap_event;
-        }
-
         for(var i = 0; i < tabs.length; i++) {
             var tab_class;
             if(current_tab === i) {
@@ -469,10 +457,14 @@ var Dashboard = React.createClass({
             visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected} />;
         }
         else if (current_tab === 1) {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
+            selected_event_id = "";
             window.location.hash = 'Events';
             visible_tab = <EventsTable subjectEntity = {this.state.subjectEntity} eventSelected = {this.eventSelected}/>;
         }
         else if (current_tab === 2) {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
             window.location.hash = 'Files';
             visible_tab = <FilesList subjectEntity = {this.state.subjectEntity} eventEntity = {this.state.eventEntity}/>;
         }
@@ -488,7 +480,7 @@ var Dashboard = React.createClass({
                 </div>
                 <div className="row">
                 <div className="col-md-offset-4 col-md-4 col-xs-12">
-                <table id="technician-table" className="table table-striped">
+                <table id="technician-table" className="table borderless">
                     <thead>
                     <tr>
                         <th>{selected_subject_id}</th>

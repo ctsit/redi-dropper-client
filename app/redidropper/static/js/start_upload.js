@@ -55,9 +55,8 @@ var SubjectsList = React.createClass({
         var selectSubject = _this.props.subjectSelected.bind(null, record);
         rows.push(
             <tr>
-                <td> {i+1} </td>
                 <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
+                    <button className="btn btn-lg2 btn-primary"
                         onClick={selectSubject}>
                         Select subject: {record}
                     </button>
@@ -76,10 +75,9 @@ var SubjectsList = React.createClass({
                     type="text" />
         </div>
         <div className="table-responsive">
-            <table id="subject-table" className="table table-striped table-curved">
+            <table id="subject-table" className="table borderless">
                 <thead>
                     <tr>
-                        <th> # </th>
                         <th> Search Results </th>
                     </tr>
                 </thead>
@@ -121,11 +119,10 @@ var EventsList = React.createClass({
 
         rows.push(
             <tr>
-                <td> {i+1} </td>
                 <td> {record.redcap_arm} </td>
                 <td> {record.day_offset} </td>
                 <td>
-                    <button className="btn btn-lg2 btn-primary btn-block"
+                    <button className="btn btn-lg2 btn-primary"
                         onClick={callback}>
                         {record.redcap_event}
                     </button>
@@ -137,10 +134,9 @@ var EventsList = React.createClass({
     return (
     <div>
     <div className="table-responsive">
-        <table id="event-table" className="table table-striped table-curved sortable tablesorter">
+        <table id="event-table" className="table borderless sortable tablesorter">
             <thead>
                 <tr>
-                    <th> # </th>
                     <th> REDCap Event Arm </th>
                     <th> Day Offset </th>
                     <th> REDCap Event Name </th>
@@ -246,6 +242,7 @@ var NavController = React.createClass({
         if(hash_value === "#Subjects") {
           this.setState({
               current_tab: 0,
+              subject_id: 0,
               eventEntity: ""
           });
         }
@@ -258,18 +255,11 @@ var NavController = React.createClass({
     },
     render: function() {
         var visible_tab;
-        var selected_subject_id;
-        var selected_event_id;
+        var selected_subject_id = "";
+        var selected_event_id = "";
         var breadcrumbs = [];
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
-
-        if(this.state.subject_id !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subject_id;
-        }
-        if(this.state.eventEntity !== "") {
-            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
-        }
 
         for(var i = 0; i < tabs.length; i++) {
             var tab_class;
@@ -295,13 +285,17 @@ var NavController = React.createClass({
             // By passing the "subjectSelected" function to the SubjectsList component
             // we are allowing the SubjectsList component to execute it when
             // it is time to change the visible tab
-            visible_tab = <SubjectsList subjectSelected = {this.subjectSelected}/>;
+            visible_tab = <SubjectsList subjectSelected = {this.subjectSelected} />;
         }
         else if(current_tab === 1) {
+            selected_subject_id = "Subject ID: " + this.state.subject_id;
+            selected_event_id = "";
             window.location.hash = 'Events';
             visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
         }
         else if(current_tab === 2) {
+            selected_subject_id = "Subject ID: " + this.state.subject_id;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
             window.location.hash = 'Files';
             $("#upload-files").show();
             $("#files-list").empty();
@@ -324,7 +318,7 @@ var NavController = React.createClass({
                 </div>
                 <div className="row">
                 <div className="col-md-offset-4 col-md-4 col-xs-12">
-                <table id="technician-table" className="table table-striped">
+                <table id="technician-table" className="table borderless">
                     <thead>
                     <tr>
                         <th>{selected_subject_id}</th>

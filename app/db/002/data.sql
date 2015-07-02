@@ -1,5 +1,5 @@
 
-USE ctsi_dropper_s;
+-- USE ctsi_dropper_s;
 
 SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
 SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
@@ -17,8 +17,6 @@ VALUES
     ('cavedivr@ufl.edu',        'Erik',         'Schmidt',                      NOW(), @end, 0, NOW())
 ;
 
-
-
 INSERT INTO Role (rolName, rolDescription)
 VALUES
     ('admin', 'Can add/edit users, roles, log events; upload/delete images'),
@@ -26,8 +24,6 @@ VALUES
     ('researcher_one', 'Can upload/download images'),
     ('researcher_two', 'Can upload/download images')
 ;
-
-
 
 INSERT INTO UserRole (usrID, rolID, urAddedAt)
       SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'asura@ufl.edu' AND rolName = 'admin'
@@ -85,11 +81,11 @@ INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaL
     VALUES ('Firefox 123', md5('Firefox 123'), 'OS X', 'Firefox', '123', 'EN')
 ;
 
-INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime, uaID)
-VALUES
-    (uuid(), 1, '192.168.1.1', NOW(), 1),
-    (uuid(), 1, '172.27.1.100', NOW(), 1)
-;
+-- INSERT INTO WebSession (webSessID, usrID, webIP, webDateTime, uaID)
+-- VALUES
+--     (uuid(), 1, '192.168.1.1', NOW(), 1),
+--     (uuid(), 1, '172.27.1.100', NOW(), 1)
+-- ;
 
 
 -- INSERT INTO Log (logtID, webID, logDateTime, logDetails)

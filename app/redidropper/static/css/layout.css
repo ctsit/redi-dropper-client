@@ -39,3 +39,7 @@ th.header.headerSortUp {
 th.header.headerSortDown {
     background-image: url(/static/img/small_desc.gif);
 }
+
+table.borderless td, table.borderless th {
+    border: none !important;
+}
