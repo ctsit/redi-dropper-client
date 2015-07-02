@@ -28,7 +28,7 @@ var AdminEventsTable = React.createClass({
             </thead>
             <tbody>
                 {
-                    this.state.list_of_events.map(function(record,i) {
+                    this.state.list_of_events.map(function(record, i) {
                     return  <tr>
                                 <td>{ i+1 }</td>
                                 <td>{record.event_id}</td>
@@ -44,7 +44,7 @@ var AdminEventsTable = React.createClass({
   }
 });
 
-var AdminEventsPagination =React.createClass({
+var AdminEventsPagination = React.createClass({
   getInitialState: function() {
     return {
         total_pages: this.props.total_pages,
@@ -54,35 +54,50 @@ var AdminEventsPagination =React.createClass({
   componentWillReceiveProps: function(nextProps) {
 
   },
+
   activateOnClick: function(i) {
-    this.setState({total_pages:this.state.total_pages,current_page:i});
+    this.setState({
+        total_pages: this.state.total_pages,
+        current_page: i
+    });
     this.props.changePage(i);
   },
+
   nextPage: function() {
-    var current_page=this.state.current_page;
-    if(current_page==this.state.total_pages) {
+    var current_page = this.state.current_page;
+    if(current_page === this.state.total_pages) {
         return;
-    }else{
-        this.setState({total_pages:this.state.total_pages,current_page:current_page+1});
-        this.props.changePage(current_page+1);
     }
+
+    this.setState({
+        total_pages: this.state.total_pages,
+        current_page: current_page + 1
+    });
+    this.props.changePage(current_page+1);
   },
+
   prevPage: function() {
-    var current_page=this.state.current_page;
-    if(current_page==1) {
+    var current_page = this.state.current_page;
+
+    if(current_page === 1) {
         return;
-    }else{
-        this.setState({total_pages:this.state.total_pages,current_page:current_page-1});
-        this.props.changePage(current_page-1);
     }
+    this.setState({
+        total_pages: this.state.total_pages,
+        current_page: current_page-1
+    });
+    this.props.changePage(current_page-1);
   },
+
   render: function() {
-    var pages=[];
-    for(var i=1;i<=this.state.total_pages;i++) {
-        if(i==this.state.current_page) {
+    var pages = [];
+
+    for(var i = 1; i <= this.state.total_pages; ++i) {
+        if (i === this.state.current_page) {
             pages.push(<li className="active"><a>{i}</a></li>);
-        }else{
-            pages.push(<li><a onClick={this.activateOnClick.bind(null,i)}>{i}</a></li>);
+        }
+        else {
+            pages.push(<li><a onClick={this.activateOnClick.bind(null, i)}>{i}</a></li>);
         }
     }
     return (
@@ -152,14 +167,15 @@ var AdminEventsList = React.createClass({
         pagination = <AdminEventsPagination total_pages={total_pages} changePage={this.changePage}/>;
     }
     var events_table;
-    if(list_of_events == undefined) {
-        //so some loading screen
+    if(list_of_events === undefined) {
+        //@TODO: show a "loading" animation
     }
-    else if(list_of_events.length == 0) {
-        events_table = <div>No data to display</div>;
+    // else if(this.state.error !== "") { }
+    else if(list_of_events.length === 0) {
+       events_table = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
     }
     else {
-        events_table = <AdminEventsTable list_of_events = {this.state.list_of_events}/>
+        events_table = <AdminEventsTable list_of_events = {this.state.list_of_events}/>;
     }
     return (
     <div>

@@ -74,7 +74,7 @@ var SubjectsTable = React.createClass({
     },
     changeData: function(page_num, max_events) {
         // if needed we will allow the user to select how many rows to display per page
-        var per_page = 4;
+        var per_page = 25;
         var request_data = {'per_page': per_page, 'page_num': page_num};
         var _this = this;
         var request = Utils.api_post_json("/api/list_local_subjects", request_data);
@@ -111,11 +111,10 @@ var SubjectsTable = React.createClass({
         }
 
         var table_columns = [];
-        // table_columns.push(<th>Subject ID</th>);
-
         for (i = 1; i <= column_count; i++) {
             table_columns.push(<th> Event {i}</th>);
         }
+
         var pagination;
         var no_of_pages = this.state.no_of_pages;
 
@@ -123,21 +122,33 @@ var SubjectsTable = React.createClass({
             pagination = <SubjectsPagination no_of_pages={no_of_pages} changePage={this.changePage}/>;
         }
 
+        var subjects_table;
+        if (subjects_data === undefined) {
+            //@TODO: show a "loading" animation
+        }
+        else if (row_count === 0) {
+            subjects_table = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
+        }
+        else {
+            subjects_table = (
+                <div className="table-responsive">
+                    <table id="technician-table" className="table borderless">
+                    <thead>
+                        <tr> {table_columns} </tr>
+                    </thead>
+                    <tbody id="technician-table-body">
+                        {table_rows}
+                    </tbody>
+                    </table>
+                </div>
+            );
+        }
+
     return (
-    <div className="table-responsive">
-        <div>{this.props.selected_project}</div>
-        <table id="technician-table" className="table borderless">
-            <thead>
-                <tr>
-                    {table_columns}
-                </tr>
-            </thead>
-            <tbody id="technician-table-body">
-                {table_rows}
-            </tbody>
-        </table>
-        {pagination}
-    </div>
+        <div className="row">
+            {subjects_table}
+            {pagination}
+        </div>
     );
   }
 });

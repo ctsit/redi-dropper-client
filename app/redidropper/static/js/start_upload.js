@@ -15,7 +15,7 @@
 var SubjectsList = React.createClass({
     getInitialState: function() {
         return {
-            list_of_subjects: []
+            list_of_subjects: null
         };
     },
 
@@ -42,38 +42,45 @@ var SubjectsList = React.createClass({
     if (subject_name.length > 0) {
         this.updateSubjectsList(subject_name);
     }
+    else {
+        this.setState(this.getInitialState());
+    }
   },
 
   render: function() {
     var rows = [];
     var _this = this;
 
-    this.state.list_of_subjects.map(function(record, i) {
-        // Wire the click on the button to the parent
-        // function subjectSelected() with the parameter record
-        // which allows the parent component to access record data
-        var selectSubject = _this.props.subjectSelected.bind(null, record);
-        rows.push(
-            <tr>
-                <td>
-                    <button className="btn btn-lg2 btn-primary"
-                        onClick={selectSubject}>
-                        Select subject: {record}
-                    </button>
-                </td>
-              </tr>
-        );
-    });
+    var search_results_table;
 
-    return (
-    <div>
-        <div className="form-group">
-            <input className="form-control"
-                    ref="subject_name"
-                    onChange={this.subjectChanged}
-                    placeholder="REDCap Subject ID"
-                    type="text" />
-        </div>
+    if (this.state.list_of_subjects === undefined) {
+        //@TODO: show a "loading" animation
+    }
+    else if (this.state.list_of_subjects === null) {
+        search_results_table = <div></div>
+    }
+    else if (this.state.list_of_subjects.length === 0) {
+        search_results_table = <div>No subjects found.</div>;
+    }
+    else {
+        this.state.list_of_subjects.map(function(record, i) {
+            // Wire the click on the button to the parent
+            // function subjectSelected() with the parameter record
+            // which allows the parent component to access record data
+            var selectSubject = _this.props.subjectSelected.bind(null, record);
+            rows.push(
+                <tr>
+                    <td>
+                        <button className="btn btn-lg2 btn-primary"
+                            onClick={selectSubject}>
+                            Select subject: {record}
+                        </button>
+                    </td>
+                  </tr>
+            );
+        });
+
+        search_results_table = (
         <div className="table-responsive">
             <table id="subject-table" className="table borderless">
                 <thead>
@@ -86,6 +93,19 @@ var SubjectsList = React.createClass({
                 </tbody>
             </table>
         </div>
+        );
+    }
+
+    return (
+    <div>
+        <div className="form-group">
+            <input className="form-control"
+                    ref="subject_name"
+                    onChange={this.subjectChanged}
+                    placeholder="Please enter the REDCap Subject ID to search"
+                    type="text" />
+        </div>
+        {search_results_table}
     </div>
     );
   }
