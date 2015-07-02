@@ -14,7 +14,9 @@ from redidropper.models.log_type_entity import \
     LOG_TYPE_LOGIN_ERROR, \
     LOG_TYPE_FILE_UPLOADED, \
     LOG_TYPE_FILE_DOWNLOADED, \
-    LOG_TYPE_ACCOUNT_MODIFIED
+    LOG_TYPE_ACCOUNT_MODIFIED, \
+    LOG_TYPE_REDCAP_SUBJECTS_IMPORTED, \
+    LOG_TYPE_REDCAP_EVENTS_IMPORTED
 
 
 class LogEntity(db.Model, CRUDMixin):
@@ -46,11 +48,18 @@ class LogEntity(db.Model, CRUDMixin):
         if logt is None:
             app.logger.error("Developer error. Invalid log type: {}"
                              .format(log_type))
-        else:
-            LogEntity.create(log_type=logt,
-                            date_time=datetime.datetime.now(),
-                            details=details,
-                            web_session=WebSessionEntity.get(session_id))
+            return
+
+        web_session = WebSessionEntity.get_by_session_id(session_id)
+        if web_session is None:
+            app.logger.error("Developer error. Invalid session id: {}"
+                             .format(session_id))
+            return
+
+        LogEntity.create(log_type=logt,
+                         date_time=datetime.datetime.now(),
+                         details=details,
+                         web_session=web_session)
 
     @staticmethod
     def account_created(session_id, details=''):
@@ -86,6 +95,17 @@ class LogEntity(db.Model, CRUDMixin):
     def account_modified(session_id, details=''):
         """ Log account changes """
         LogEntity._log(LOG_TYPE_ACCOUNT_MODIFIED, session_id, details)
+
+    @staticmethod
+    def redcap_subjects_imported(session_id, details=''):
+        """ Log it """
+        LogEntity._log(LOG_TYPE_REDCAP_SUBJECTS_IMPORTED, session_id, details)
+
+    @staticmethod
+    def redcap_events_imported(session_id, details=''):
+        """ Log it """
+        LogEntity._log(LOG_TYPE_REDCAP_EVENTS_IMPORTED, session_id, details)
+
 
     def __repr__(self):
         """ Return a friendly object representation """
