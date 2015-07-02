@@ -5,10 +5,13 @@ Goal: Delegate requests to the `/api` path to the appropriate controller
   Andrei Sura             <sura.andrei@gmail.com>
   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
   Sanath Pasumarthy       <sanath@ufl.edu>
+  Taeber Rapczak          <taeber@ufl.edu>
 """
 
 # import math
 from datetime import datetime
+import collections
+
 from flask import request
 from flask import send_file
 from flask import session
@@ -80,13 +83,10 @@ def api_list_subject_event_files():
     if 'POST' == request.method:
         subject_id = utils.get_safe_int(request.form.get('subject_id'))
         event_id = utils.get_safe_int(request.form.get('event_id'))
-        # = get_safe_int(request.form.get(''))
-        # = get_safe_int(request.args.get(''))
     else:
         subject_id = utils.get_safe_int(request.args.get('subject_id'))
         event_id = utils.get_safe_int(request.args.get('event_id'))
 
-    # files = SubjectFileEntity.query.filter_by(s.redcap_id=redcap_id).all()
     files = SubjectFileEntity \
         .query.filter_by(subject_id=subject_id,
                          event_id=event_id).all()
@@ -98,24 +98,36 @@ def api_list_subject_event_files():
 @login_required
 def find_subject():
     """
+    Side effect: This function will synchronize the list of subjects in the
+    local database with REDCap by sending a REDCap API call
+    if the local database contains no entries.
+
     :rtype: Response
     :return the list of subjects in json format
     """
+    invalid_id = -1
+
     if 'POST' == request.method:
-        search_id = utils.get_safe_int(request.form['name'])
+        search_id = utils.get_safe_int(request.form['name'],
+                                       invalid_id, invalid_id)
     else:
-        search_id = utils.get_safe_int(request.args.get('name'))
+        search_id = utils.get_safe_int(request.args.get('name'),
+                                       invalid_id,
+                                       invalid_id)
 
     matching = []
 
-    if search_id is not None:
+    if search_id != invalid_id:
         # @TODO: optimize to return one column by default
         # http://stackoverflow.com/questions/7533146/how-do-i-select-additional-manual-values-along-with-an-sqlalchemy-query
         subject_list = SubjectEntity.query.filter(
             SubjectEntity.redcap_id.like("%{}%".format(search_id))
         ).all()
         matching = [subject.redcap_id for subject in subject_list]
-        # matching = [found for found in matching if search_id in found]
+
+        if len(matching) == 0:
+            api_import_redcap_subjects()
+
     else:
         app.logger.debug("Invalid API call: "
                          "no value provided for redcap_subject_id.")
@@ -127,13 +139,19 @@ def find_subject():
 @login_required
 def list_events():
     """
+    Side effect: This function will synchronize the list of events in the
+    local database with REDCap by sending a REDCap API call
+    if the local database contains no entries.
+
     :rtype: Response
     :return the list of subjects in json format
     """
-    # redcap_subject_id = request.form['subject_id']
-    # if redcap_subject_id is not None:
     events = EventEntity.query.all()
     events_ser = [i.serialize() for i in events]
+
+    if len(events) == 0:
+        api_import_redcap_events()
+
     return utils.jsonify_success({'events': events_ser})
 
 
@@ -143,6 +161,8 @@ def api_upload():
     """ Receives files on the server side
     :rtype: Response
     :return the status of the upload action in json format
+
+    @TODO: respond with an error if upload failed
     """
     return make_response(file_manager.save_uploaded_file(), 200)
 
@@ -160,23 +180,19 @@ def download_file():
     subject_file = SubjectFileEntity.get_by_id(file_id)
     file_path = subject_file.get_full_path(
         app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
-    # log_manager.log_file_download(subject_file)
-    LogEntity.file_downloaded(session['uuid'],
-                              "File download: {}".format(file_path))
+    LogEntity.file_downloaded(session['uuid'], file_path)
     return send_file(file_path, as_attachment=True)
 
 
 @app.route('/api/save_user', methods=['POST'])
 @login_required
 def api_save_user():
-    """ Add New User to the database """
+    """ Save a new user to the database """
     email = request.form['email']
     first = request.form['first']
     last = request.form['last']
     minitial = request.form['minitial']
     roles = request.form.getlist('roles[]')
-
-    app.logger.debug("roles: {}".format(roles))
 
     email_exists = False
     try:
@@ -190,7 +206,6 @@ def api_save_user():
             {'message': 'Sorry. This email is already taken.'})
 
     # @TODO: fix hardcoded values
-    # password = 'password'
     # salt, hashed_pass = generate_auth(app.config['SECRET_KEY'], password)
     added_date = datetime.today()
     access_end_date = utils.get_expiration_date(180)
@@ -203,7 +218,7 @@ def api_save_user():
                              modified_at=added_date,
                              access_expires_at=access_end_date,
                              password_hash="")
-    # roles=user_roles)
+
     user_roles = []
     try:
         for role_name in roles:
@@ -215,7 +230,7 @@ def api_save_user():
     [user.roles.append(rol) for rol in user_roles]
     user = UserEntity.save(user)
     app.logger.debug("saved user: {}".format(user))
-    LogEntity.account_created(session['uuid'], "saved user: {}".format(user))
+    LogEntity.account_created(session['uuid'], user)
     return utils.jsonify_success({'user': user.serialize()})
 
 
@@ -223,7 +238,7 @@ def api_save_user():
 @login_required
 def api_list_users():
     """
-    @TODo: use the page_num in the query
+    Retrieve the users cached in the local database
     :rtype: Response
     :return
     """
@@ -234,7 +249,6 @@ def api_list_users():
         per_page = utils.get_safe_int(request.args.get('per_page'))
         page_num = utils.get_safe_int(request.args.get('page_num'))
 
-    # users = UserEntity.query.filter(UserEntity.id >= 14).all()
     pagination = UserEntity.query.order_by(
         db.desc(UserEntity.id)).paginate(page_num, per_page, False)
     items = [i.serialize() for i in pagination.items]
@@ -267,7 +281,7 @@ def api_list_logs():
                                 list_of_events=items))
     """
     logs, total_pages = log_manager.get_logs(per_page, page_num)
-    # logs_list = [x.to_visible() for x in logs]
+
     return utils.jsonify_success(
         dict(list_of_events=logs, total_pages=total_pages))
 
@@ -294,7 +308,6 @@ def api_list_local_subjects():
 
     pagination = SubjectEntity.query.paginate(page_num, per_page, False)
     items = [i.serialize() for i in pagination.items]
-    # app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
     return utils.jsonify_success(
         dict(total_pages=pagination.pages, list_of_subjects=items))
 
@@ -339,7 +352,6 @@ def api_deactivate_account():
 @perm_admin.require()
 def api_send_verification_email():
     """
-    @TODO: allow POST only
     @TODO: Send Verification Email to user_id
 
     :rtype: Response
@@ -347,9 +359,6 @@ def api_send_verification_email():
     """
     user_id = utils.get_safe_int(request.form.get('user_id'))
     user = UserEntity.get_by_id(user_id)
-
-    # For debugging
-    # user = UserEntity.get_by_id(1)
 
     try:
         emails.send_verification_email(user)
@@ -392,6 +401,8 @@ def api_verify_email():
 
     user = UserEntity.update(user, email_confirmed_at=datetime.today())
     app.logger.debug("Verified token {} for user {}".format(token, user.email))
+
+    # @TODO: add dedicated log type
     LogEntity.account_modified(session['uuid'],
                                "Verified token {} for user {}".format(
                                    token, user.email))
@@ -414,6 +425,7 @@ def api_expire_account():
     today = datetime.today()
     today_start = datetime(today.year, today.month, today.day)
     user = UserEntity.update(user, access_expires_at=today_start)
+    # @TODO: add dedicated log type
     LogEntity.account_modified(session['uuid'],
                                "User access was expired. {}".format(user.email))
     return utils.jsonify_success({"message": "User access was expired."})
@@ -432,6 +444,7 @@ def api_extend_account():
     today_plus_180 = utils.get_expiration_date(180)
     user = UserEntity.get_by_id(user_id)
     user = UserEntity.update(user, access_expires_at=today_plus_180)
+    # @TODO: add dedicated log type
     LogEntity.account_modified(session['uuid'],
                                "Updated expiration date to {}. {}".format(
                                    today_plus_180, user.email))
@@ -446,8 +459,6 @@ def api_import_redcap_subjects():
     Refresh the list of subjects
     """
     local_subjects = SubjectEntity.query.all()
-    # app.logger.debug("local_subjects: \n{}".format(local_subjects))
-
     url = app.config['REDCAP_API_URL']
     redcap_subjects = utils.retrieve_redcap_subjects(
         url,
@@ -459,15 +470,17 @@ def api_import_redcap_subjects():
     inserted_subjects = []
 
     for id, redcap_subject in new_subjects.iteritems():
-        # TODO: we might need to use
-        # redcap_subject['redcap_event_name'] like 'event_1_arm_1'
-        # to show only subjects relevant to a specific "Arm"
         subject = SubjectEntity.create(
             redcap_id=id,
             added_at=added_date,
             last_checked_at=added_date,
             was_deleted=False)
         inserted_subjects.append(subject)
+
+    details = [i for i in new_subjects]
+    LogEntity.redcap_subjects_imported(session['uuid'],
+                                       "Total: {} \n {}"
+                                       .format(len(details), details))
 
     return utils.jsonify_success({
         'local_subjects': [i.redcap_id for i in local_subjects],
@@ -484,8 +497,7 @@ def find_new_subjects(local_subjects, redcap_subjects):
     :rtype {}
     :return the dictionary of subjects that do not exist in the local database
     """
-
-    local_lut = {}
+    local_lut = collections.OrderedDict()
 
     for subj in local_subjects:
         # populate the lookup table for faster comparison
@@ -503,6 +515,30 @@ def find_new_subjects(local_subjects, redcap_subjects):
     return new_subjects
 
 
+def find_new_events(local_events, redcap_events):
+    """
+    :param local_events: the EventEntity objects in the local database
+    :param redcap_subjects: the events in the remote database
+    :rtype {}
+    :return the dictionary of events  that do not exist in the local database
+    """
+
+    local_lut = collections.OrderedDict()
+
+    for evt in local_events:
+        # local_lut.append(evt.get_unique_event_name())
+        local_lut[evt.get_unique_event_name()] = evt
+
+    new_events = collections.OrderedDict()
+
+    for evt in redcap_events:
+        id = evt['unique_event_name']
+        if id not in local_lut:
+            new_events[id] = evt
+
+    return new_events
+
+
 @app.route('/api/import_redcap_events', methods=['POST'])
 @perm_admin_or_technician.require()
 def api_import_redcap_events():
@@ -510,8 +546,31 @@ def api_import_redcap_events():
     Refresh the list of events
     """
     url = app.config['REDCAP_API_URL']
-    events = utils.retrieve_redcap_events(
+    local_events = EventEntity.query.all()
+    redcap_events = utils.retrieve_redcap_events(
         url,
         app.config['REDCAP_API_TOKEN'])
+    new_events = find_new_events(local_events, redcap_events)
 
-    return utils.jsonify_success({'events': events, 'api_url': url})
+    added_date = datetime.today()
+    inserted_events = []
+
+    for id, redcap_event in new_events.iteritems():
+        evt = EventEntity.create(
+            redcap_arm='arm_{}'.format(redcap_event['arm_num']),
+            redcap_event=redcap_event['event_name'],
+            day_offset=redcap_event['day_offset'],
+            added_at=added_date
+        )
+        inserted_events.append(evt)
+
+    details = [i for i in new_events]
+    LogEntity.redcap_events_imported(session['uuid'],
+                                     "Total: {} \n {}"
+                                     .format(len(details), details))
+
+    return utils.jsonify_success({
+        'local_events': [i.get_unique_event_name() for i in local_events],
+        'redcap_events': redcap_events,
+        'inserted_events': [i.get_unique_event_name() for i in inserted_events],
+        'api_url': url})

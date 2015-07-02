@@ -74,7 +74,9 @@ VALUES
     ('login_error', ''),
     ('file_uploaded', ''),
     ('file_downloaded', ''),
-    ('account_modified', '')
+    ('account_modified', ''),
+    ('redcap_subjects_impported', ''),
+    ('redcap_events_imported', '')
 ;
 
 INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaLanguage)

@@ -59,8 +59,9 @@ class FileChunk(object):
 def save_file_metadata(fchunk):
     """
     Insert a row in SubjectFile table to preserve file details.
-
     Called from api.py#api_upload() -> #save_uploaded_file() -> #merge_files()
+
+    @return SubjectFileEntity
     """
     # uploader = SubjectEntity.get_by_id(current_user.id)
     added_date = datetime.today()
@@ -116,27 +117,30 @@ def save_uploaded_file():
         return utils.jsonify_success('Request completed successfully.')
 
     # When all chunks are received we merge them
-    merge_completed = merge_files(fchunk)
-    if merge_completed:
+    subject_file = merge_files(fchunk)
+
+    if subject_file is not None:
+        prefix = app.config['REDIDROPPER_UPLOAD_SAVED_DIR']
+        file_path = subject_file.get_full_path(prefix)
         delete_temp_files(fchunk)
         hash_matches = verify_file_integrity(fchunk)
+
         if hash_matches:
             LogEntity.file_uploaded(session['uuid'],
-                                    'File {} uploaded successfully.'
-                                    .format(file_name))
+                                    file_path)
             return utils.jsonify_success('File {} uploaded successfully.'
                                          .format(file_name))
         else:
             logger.error("md5 sum does not match for: {}".format(fchunk))
             LogEntity.file_uploaded(session['uuid'],
                                     'Checksum mismatch for file: {}'
-                                    .format(file_name))
+                                    .format(file_path))
             return utils.jsonify_error('Checksum mismatch for file: {}'
                                        .format(file_name))
     else:
         LogEntity.file_uploaded(session['uuid'],
                                 'Unable to merge chunks for file: {}'
-                                .format(file_name))
+                                .format(file_path))
         return utils.jsonify_error('Unable to merge chunks for file: {}'
                                    .format(file_name))
 
@@ -181,10 +185,9 @@ def delete_temp_files(fchunk):
 def merge_files(fchunk):
     """ Reconstruct the original file from chunks
 
-    :rtype boolean
-    :return true if the file was reconstructed from the chunks
+    :rtype SubjectFileEntity or None if merging fails
+    :return the object representing the file metadata
     """
-    success = False
     subject_file = save_file_metadata(fchunk)
     prefix = app.config['REDIDROPPER_UPLOAD_SAVED_DIR']
     file_path = subject_file.get_full_path(prefix)
@@ -200,10 +203,9 @@ def merge_files(fchunk):
             chunk_path = get_chunk_path(file_name, i)
             tempfile = open(chunk_path, "r")
             f.write(tempfile.read())
-
-        success = True
         # log_manager.log_file_upload(subject_file)
     except Exception as exc:
+        subject_file = None
         logger.error("There was an issue in merge_files(): {}".format(exc))
 
-    return success
+    return subject_file
