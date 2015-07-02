@@ -194,7 +194,7 @@ var EventsTable = React.createClass({
                         data-toggle="tooltip"
                         title={title}
                         onClick={eventSelected}>
-                        {record.total_files}
+                        View {record.total_files} file(s)
                     </button>
                 </td>
             </tr>
@@ -255,7 +255,7 @@ var FilesList = React.createClass({
                 <thead>
                     <tr>
                         <th className="text-center"> File Name </th>
-                        <th className="text-center"> File Size </th>
+                        <th className="text-center"> File Size (MB)</th>
                         <th className="text-center"> Uploaded </th>
                         <th className="text-center"> Uploaded By </th>
                         <th className="text-center"></th>
@@ -268,7 +268,7 @@ var FilesList = React.createClass({
 
                     return (<tr>
                         <td>{record.file_name}</td>
-                        <td>{record.file_size}</td>
+                        <td>{(record.file_size / (1024 * 1024)).toFixed(2)}</td>
                         <td>{uploaded_at}</td>
                         <td>{record.user_name}</td>
                         <td>
@@ -277,7 +277,7 @@ var FilesList = React.createClass({
                                 <button className="btn btn-primary">Download File</button>
                             </form>
                         </td>
-                    </tr>)
+                    </tr>);
                 })}
                 </tbody>
             </table>
@@ -433,13 +433,6 @@ var Dashboard = React.createClass({
         var current_tab = this.state.current_tab;
         var tabs = this.state.tabs;
 
-        if(this.state.subjectEntity !== "") {
-            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
-        }
-        if(this.state.eventEntity !== "") {
-            selected_event_id = "Event ID: " + this.state.eventEntity.redcap_event;
-        }
-
         for(var i = 0; i < tabs.length; i++) {
             var tab_class;
             if(current_tab === i) {
@@ -464,10 +457,14 @@ var Dashboard = React.createClass({
             visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected} />;
         }
         else if (current_tab === 1) {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
+            selected_event_id = "";
             window.location.hash = 'Events';
             visible_tab = <EventsTable subjectEntity = {this.state.subjectEntity} eventSelected = {this.eventSelected}/>;
         }
         else if (current_tab === 2) {
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
             window.location.hash = 'Files';
             visible_tab = <FilesList subjectEntity = {this.state.subjectEntity} eventEntity = {this.state.eventEntity}/>;
         }

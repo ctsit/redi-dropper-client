@@ -209,16 +209,15 @@ var AdminUsersRow = React.createClass({
             }
 
             return (<tr>
-                            <td>{ row_num }</td>
-                            <td>{record.id}</td>
-                            <td>{record.email}</td>
-                            <td>{record.first}</td>
-                            <td>{record.last}</td>
-                            <td>{roles}</td>
-                            <td>{record.added_at}</td>
-                            <td>{emailButton}</td>
-                            <td>{expireButton}</td>
-                            <td>{deactivateButton}</td>
+                            <td className="text-right">{record.id}</td>
+                            <td className="text-left">{record.email}</td>
+                            <td className="text-left">{record.first}</td>
+                            <td className="text-left">{record.last}</td>
+                            <td className="text-left">{roles}</td>
+                            <td className="text-left">{record.added_at}</td>
+                            <td className="text-left">{emailButton}</td>
+                            <td className="text-center">{expireButton}</td>
+                            <td className="text-center">{deactivateButton}</td>
                         </tr>
             );
     }
@@ -246,19 +245,18 @@ var AdminUsersTable = React.createClass({
 
         return (
     <div className="table-responsive">
-        <table className="table table-striped table-curved">
+        <table className="table borderless sortable">
             <thead>
                 <tr>
-                    <th className="text-center"> # </th>
-                    <th className="text-center">User ID</th>
+                    <th className="text-right">User ID</th>
                     <th className="text-center">User Email</th>
-                    <th className="text-center">First <br /> Name</th>
-                    <th className="text-center">Last <br /> Name</th>
+                    <th className="text-center">First </th>
+                    <th className="text-center">Last </th>
                     <th className="text-center">Role</th>
-                    <th className="text-center">Date <br />Added</th>
-                    <th className="text-center">Email <br /> Verified</th>
-                    <th className="text-center">Account <br /> Expiration</th>
-                    <th className="text-center">Account <br /> Status</th>
+                    <th className="text-center">Date Added</th>
+                    <th className="text-center">Email Verified</th>
+                    <th className="text-center">Account Expiration</th>
+                    <th className="text-center">Account Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -560,6 +558,7 @@ var AdminUserManagement = React.createClass({
                     total_pages: json.data.total_pages
                 }
                 _this.setState(state);
+                $(".sortable").tablesorter();
             }
             else {
                 _this.setState({
