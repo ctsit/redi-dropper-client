@@ -58,9 +58,9 @@ def init_db():
         abort(colors.yellow("Aborting at user request."))
 
     local('sudo mysql < db/000/upgrade.sql')
-    local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/upgrade.sql')
-    local('sudo mysql < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/data.sql')
 
 
 @task
@@ -69,14 +69,14 @@ def reset_db():
     db_name = get_db_name()
 
     if not confirm("Do you want to erase the '{}' database"
-                   "and start from scratch?".format(db_name)):
+                   " and re-create it?".format(db_name)):
         abort(colors.yellow("Aborting at user request."))
 
     local('sudo mysql < db/000/downgrade.sql')
     local('sudo mysql < db/000/upgrade.sql')
-    local('sudo mysql < db/001/upgrade.sql')
-    local('sudo mysql < db/002/upgrade.sql')
-    local('sudo mysql < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/002/data.sql')
 
 
 @task
@@ -85,18 +85,6 @@ def test():
     Run the automated test suite using py.test
     """
     local('py.test --tb=short -s tests/')
-
-
-@task
-def test_cov():
-    """ Alias for coverage"""
-    coverage()
-
-
-@task
-def cov():
-    """ Alias for coverage"""
-    coverage()
 
 
 @task
@@ -129,15 +117,6 @@ def run():
     Start the web application using the WSGI webserver provided by Flask
     """
     local('python run.py')
-
-
-@task
-def deploy():
-    """
-    Deploy web application to Heroku.
-    Requires: heroku git:remote -a PROJECTNAME
-    """
-    local('git push heroku master')
 
 
 @contextmanager

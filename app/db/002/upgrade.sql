@@ -1,5 +1,5 @@
 
-USE ctsi_dropper_s;
+-- USE ctsi_dropper_s;
 
 INSERT INTO Version (verID, verInfo)
     VALUES('002', 'Create tables: User, Role, UserRole, Subject, SubjectFile, UserAgent, WebSession, LogType, Log, Event')
@@ -56,22 +56,6 @@ CREATE TABLE UserRole (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ;
 
--- show active users but does not filter out the ones with usrAccessExpiresAt < NOW()
-CREATE
-    ALGORITHM=UNDEFINED
-    DEFINER=`redidropper`@`localhost`
-    VIEW `user_role_view`
-AS
-SELECT
-    usrID, usrEmail, rolID, rolName, urAddedAt, usrAccessExpiresAt
-FROM
-    User
-    JOIN UserRole USING (usrID)
-    JOIN Role USING (rolID)
-WHERE
-    usrIsActive
-;
-
 
 CREATE TABLE Subject (
     sbjID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -119,23 +103,6 @@ CREATE TABLE SubjectFile (
  CONSTRAINT `fk_SubjectFile_sbjID` FOREIGN KEY (sbjID) REFERENCES Subject (sbjID),
  CONSTRAINT `fk_SubjectFile_usrID` FOREIGN KEY (usrID) REFERENCES User (usrID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
-;
-
-CREATE
-    ALGORITHM=UNDEFINED
-    DEFINER=`redidropper`@`localhost`
-    VIEW `subject_file_view`
-AS
-SELECT
-    sbjID, sbjRedcapID, evtID, evtRedcapArm, evtRedcapEvent, COUNT(sfFileName) AS totalEventFiles
-FROM
-    Subject
-    JOIN SubjectFile USING (sbjID)
-    JOIN Event USING (evtID)
-GROUP BY
-    sbjRedcapID, evtID
-ORDER BY
-    sbjRedcapID, evtRedcapArm, evtRedcapEvent
 ;
 
 
