@@ -144,7 +144,7 @@ var EventsList = React.createClass({
                 <td>
                     <button className="btn btn-lg2 btn-primary"
                         onClick={callback}>
-                        {record.redcap_event}
+                        Select {record.redcap_event}
                     </button>
                 </td>
             </tr>
