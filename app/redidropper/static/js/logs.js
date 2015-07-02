@@ -170,10 +170,10 @@ var AdminEventsList = React.createClass({
         }
         var events_table;
         if(list_of_events === undefined) {
-            //so some loading screen
+            //@TODO: show a "loading" animation
         }
         else if(list_of_events.length === 0) {
-            events_table = <div>No data to display</div>;
+             events_table = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
         }
         else {
             events_table = <AdminEventsTable list_of_events = {this.state.list_of_events}/>;

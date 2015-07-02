@@ -614,14 +614,13 @@ var AdminUserManagement = React.createClass({
         var users_table;
 
         if(list_of_users === undefined) {
-            //show some loading screen
+            //@TODO: show a "loading" animation
         }
         else if(this.state.error !== "") {
-            users_table = <div className="alert alert-danger">Error : {this.state.error} .
-                Refresh the page</div>
+            users_table = <div className="alert alert-danger">There was an error loading the information: {this.state.error}. Please contact your support personnel.</div>
         }
         else if (list_of_users.length === 0) {
-            users_table = <div>No data to display</div>;
+            users_table = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
         }
         else {
             users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/>

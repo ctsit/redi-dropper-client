@@ -88,11 +88,12 @@ def check_session_id():
 
     if 'uuid' not in session:
         session['uuid'] = str(uuid.uuid4())
-        WebSessionEntity.create(session_id=session['uuid'],
-                                user_id=current_user.get_id(),
-                                ip=request.remote_addr,
-                                date_time=datetime.datetime.now(),
-                                user_agent_id=user_agent_id)
+        web_sess = WebSessionEntity.create(session_id=session['uuid'],
+                                           user_id=current_user.get_id(),
+                                           ip=request.remote_addr,
+                                           date_time=datetime.datetime.now(),
+                                           user_agent_id=user_agent_id)
+        app.logger.debug("Init websession: {}".format(web_sess))
     else:
         # TODO: update the user_id on the first request after login is completed
         pass
@@ -128,7 +129,7 @@ def render_login_local():
             app.logger.debug("Found user object: {}".format(user))
         else:
             utils.flash_error("No such email: {}".format(email))
-            LogEntity.login(str(session['uuid']),
+            LogEntity.login(session['uuid'],
                             "No such email: {}".format(email))
             return redirect(url_for('index'))
 
@@ -136,7 +137,7 @@ def render_login_local():
         # password, auth.uathPassword):
         if '' == user.password_hash:
             app.logger.info('Log login event for: {}'.format(user))
-            LogEntity.login(str(session['uuid']),
+            LogEntity.login(session['uuid'],
                             'Successful login via email/password')
             # Pass force=True to ignore is_active=false
             login_user(user, remember=False, force=False)
@@ -148,7 +149,7 @@ def render_login_local():
             return redirect(next_page)
         else:
             app.logger.info('Incorrect pass for: {}'.format(user))
-            LogEntity.login_error(str(session['uuid']),
+            LogEntity.login_error(session['uuid'],
                                   'Incorrect pass for: {}'.format(user))
 
     return render_template('index.html', form=form)
@@ -211,7 +212,7 @@ def shibb_return():
 
     # Log it
     app.logger.info('Successful login via Shibboleth for: {}'.format(user))
-    LogEntity.login(str(session['uuid']), 'Successful login via Shibboleth')
+    LogEntity.login(session['uuid'], 'Successful login via Shibboleth')
 
     login_user(user, remember=False, force=False)
 
@@ -326,6 +327,6 @@ def logout():
                           identity=AnonymousIdentity())
 
     # Log the logout
-    LogEntity.logout(str(session['uuid']))
+    LogEntity.logout(session['uuid'])
 
     return redirect(request.args.get('next') or '/')
