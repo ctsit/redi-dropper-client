@@ -23,7 +23,7 @@ from flask import session
 from flask import url_for
 from redidropper.models.log_entity import LogEntity
 from redidropper.models.web_session_entity import WebSessionEntity
-from wtforms import Form, TextField, PasswordField, validators
+from wtforms import Form, TextField, PasswordField, HiddenField, validators
 
 from flask_login import LoginManager
 from flask_login import login_user, logout_user, current_user
@@ -56,19 +56,19 @@ def unauthorized():
     return 'Please <a href="{}">login</a> first.'.format(url_for('index'))
 
 
-# @app.errorhandler(403)
-# def page_not_found(e):
-#     """
-#     Redirect to login page if probing a protected resources before login
-#     """
-#     show_permission_error = True
-#     if show_permission_error:
-#         # session['redirected_from'] = request.url
-#         return redirect(url_for('index') + "?next={}".format(request.url))
+@app.errorhandler(403)
+def page_not_found(e):
+    """
+    Redirect to login page if probing a protected resources before login
+    """
+    # session['redirected_from'] = request.url
+    return redirect(url_for('index') + "?next={}".format(request.url))
 
 
 class LoginForm(Form):
     """ Declare the validation rules for the login form """
+    next = HiddenField(default='')
+
     # email = TextField('Email', [validators.Length(min=4, max=25)])
     email = TextField('Email')
     password = PasswordField(
@@ -102,18 +102,21 @@ def check_session_id():
 @app.route('/', methods=['POST', 'GET'])
 def index():
     """ Render the login page"""
-
     if app.config['LOGIN_USING_SHIB_AUTH']:
         return render_login_shib()
     return render_login_local()
 
 
 def render_login_local():
-    """ Render the login page with username/pass"""
-    if current_user.is_authenticated():
-        next_page = get_role_landing_page()
-        return redirect(next_page)
+    """ Render the login page with username/pass
 
+    @see #index()
+    @see #render_login_shib()
+    """
+    if current_user.is_authenticated():
+        return redirect(get_role_landing_page())
+
+    uuid = session['uuid']
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -129,30 +132,27 @@ def render_login_local():
             app.logger.debug("Found user object: {}".format(user))
         else:
             utils.flash_error("No such email: {}".format(email))
-            LogEntity.login(session['uuid'],
-                            "No such email: {}".format(email))
+            LogEntity.login(uuid, "No such email: {}".format(email))
             return redirect(url_for('index'))
 
         # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt,
         # password, auth.uathPassword):
         if '' == user.password_hash:
             app.logger.info('Log login event for: {}'.format(user))
-            LogEntity.login(session['uuid'],
-                            'Successful login via email/password')
-            # Pass force=True to ignore is_active=false
+            LogEntity.login(uuid, 'Successful login via email/password')
             login_user(user, remember=False, force=False)
 
             # Tell Flask-Principal that the identity has changed
             identity_changed.send(current_app._get_current_object(),
                                   identity=Identity(user.get_id()))
-            next_page = get_role_landing_page()
-            return redirect(next_page)
+            return redirect(get_role_landing_page())
         else:
             app.logger.info('Incorrect pass for: {}'.format(user))
-            LogEntity.login_error(session['uuid'],
-                                  'Incorrect pass for: {}'.format(user))
+            LogEntity.login_error(uuid, 'Incorrect pass for: {}'.format(user))
 
-    return render_template('index.html', form=form)
+    # When sending a GET request render the login form
+    return render_template('index.html', form=form,
+                           next_page=request.args.get('next'))
 
 
 @app.route('/loginExternalAuth', methods=['POST', 'GET'])
@@ -164,6 +164,7 @@ def shibb_redirect():
     Note: This is equivalent to Apache's syntax:
         Redirect seeother /loginExternalAuth /Shibboleth.sso/Login?target=...
 
+    @see #index()
     @see #shibb_return()
     """
     next_page = "/Shibboleth.sso/Login?target={}"\
@@ -175,7 +176,7 @@ def shibb_redirect():
 def shibb_return():
     """
     Read the Shibboleth headers returned by the IdP after
-    the user entered the usrname/password.
+    the user entered the username/password.
     If the `eduPersonPrincipalName` (aka Eppn) for the user matches the
     usrEmail of an active user then let the user in,
     otherwise let them see the login page.
@@ -183,11 +184,11 @@ def shibb_return():
     @see #shibb_redirect()
     """
     if current_user.is_authenticated():
-        # already logged in...
-        next_page = get_role_landing_page()
-        return redirect(next_page)
+        # next_page = request.args.get('next') or get_role_landing_page()
+        return redirect(get_role_landing_page())
 
-    # fresh login
+    # fresh login...
+    uuid = session['uuid']
     email = request.headers['Mail']
     glid = request.headers['Glid']  # Gatorlink ID
     app.logger.debug("Checking if email: {} is registered for glid: {}"
@@ -196,23 +197,25 @@ def shibb_return():
 
     if not user:
         utils.flash_error("No such user: {}".format(email))
-        # log_event("Shibboleth user not allowed for this resource")
+        LogEntity.login_error(uuid,
+                              "Shibboleth user is not registered for this app")
+
         return redirect(url_for('index'))
 
     if not user.is_active():
         utils.flash_error("Inactive user: {}".format(email))
-        # log_event("Inactive user tries to login")
+        LogEntity.login_error(uuid, 'Inactive user tried to login')
         return redirect(url_for('index'))
 
     if user.is_expired():
         utils.flash_error("User account for {} expired on {}"
                           .format(email, user.access_expires_at))
-        # log_event("Expired user tries to login")
+        LogEntity.login_error(uuid, 'Expired user tried to login')
         return redirect(url_for('index'))
 
     # Log it
     app.logger.info('Successful login via Shibboleth for: {}'.format(user))
-    LogEntity.login(session['uuid'], 'Successful login via Shibboleth')
+    LogEntity.login(uuid, 'Successful login via Shibboleth')
 
     login_user(user, remember=False, force=False)
 
@@ -243,7 +246,7 @@ def get_role_landing_page():
     # if ROLE_ADMIN in roles:
     #     role_landing_page = url_for('admin')
     # elif ROLE_TECHNICIAN in roles:
-    #     role_landing_page = url_for('start_upload')
+    #     role_landing_page = url_for('upload_files')
     # elif ROLE_RESEARCHER_ONE in roles:
     #     role_landing_page = url_for('researcher_one')
     # elif ROLE_RESEARCHER_TWO in roles:
@@ -253,7 +256,8 @@ def get_role_landing_page():
     # return request.args.get('next') or role_landing_page
 
     # Per Chris's request all users land on the same page
-    return url_for('start_upload')
+    next_page = request.form.get('next')
+    return next_page if next_page != 'None' else url_for('upload_files')
 
 
 @identity_loaded.connect_via(app)
@@ -262,8 +266,6 @@ def on_identity_loaded(sender, identity):
     @TODO: add unit tests
         http://stackoverflow.com/questions/16712321/unit-testing-a-flask-principal-application
     """
-    # app.logger.debug("identity_loaded signal sender: {}".format(sender))
-
     if type(current_user) == 'AnonymousUserMixin':
         return
 
