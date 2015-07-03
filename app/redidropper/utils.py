@@ -104,10 +104,16 @@ def is_valid_auth(pepper, salt, candidate_password, correct_hash):
     return correct_hash == candidate_hash
 
 
+def clean_str(dangerous):
+    """ Return the trimmed string """
+    if dangerous is None:
+        return None
+    return str(dangerous).strip()
+
+
 def clean_int(dangerous):
     """
     Return None for non-integer input
-    Warning: do not use the
     """
     if dangerous is None:
         return None

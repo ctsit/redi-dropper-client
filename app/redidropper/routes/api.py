@@ -155,7 +155,7 @@ def list_events():
     return utils.jsonify_success({'events': events_ser})
 
 
-@app.route('/api/upload', methods=['POST', 'GET'])
+@app.route('/api/upload', methods=['POST'])
 @login_required
 def api_upload():
     """ Receives files on the server side
@@ -313,6 +313,7 @@ def api_list_local_subjects():
 
 
 @app.route('/api/activate_account', methods=['POST'])
+@login_required
 @perm_admin.require()
 def api_activate_account():
     """
@@ -331,6 +332,7 @@ def api_activate_account():
 
 
 @app.route('/api/deactivate_account', methods=['POST'])
+@login_required
 @perm_admin.require()
 def api_deactivate_account():
     """
@@ -349,6 +351,7 @@ def api_deactivate_account():
 
 
 @app.route('/api/send_verification_email', methods=['POST'])
+@login_required
 @perm_admin.require()
 def api_send_verification_email():
     """
@@ -374,7 +377,7 @@ def api_send_verification_email():
             {"message": "Unable to send email due: {} {}".format(exc, details)})
 
 
-@app.route('/api/verify_email', methods=['GET'])
+@app.route('/api/verify_email', methods=['GET', 'POST'])
 def api_verify_email():
     """
     @TODO: add counter/log to track failed attempts
@@ -382,14 +385,22 @@ def api_verify_email():
     :rtype: Response
     :return the success or failed in json format
     """
-    token = request.args.get('tok')
+    if 'POST' == request.method:
+        token = utils.clean_str(request.form.get('tok'))
+    else:
+        token = utils.clean_str(request.args.get('tok'))
+
     if not token:
         return utils.jsonify_error({'message': 'No token specified.'})
 
-    email = utils.get_email_from_token(
-        token,
-        app.config["SECRET_KEY"],
-        app.config["SECRET_KEY"])
+    try:
+        email = utils.get_email_from_token(token,
+                                           app.config["SECRET_KEY"],
+                                           app.config["SECRET_KEY"])
+    except Exception as exc:
+        # @TODO: add dedicated log type
+        app.logger.error("api_verify_email: {}".format(exc.message))
+        return utils.jsonify_error({'message': exc.message})
 
     app.logger.debug("Decoded email from token: {}".format(email))
     user = UserEntity.query.filter_by(email=email).first()
@@ -411,6 +422,7 @@ def api_verify_email():
 
 
 @app.route('/api/expire_account', methods=['POST'])
+@login_required
 @perm_admin.require()
 def api_expire_account():
     """
@@ -432,6 +444,7 @@ def api_expire_account():
 
 
 @app.route('/api/extend_account', methods=['POST'])
+@login_required
 @perm_admin.require()
 def api_extend_account():
     """
@@ -453,6 +466,7 @@ def api_extend_account():
 
 
 @app.route('/api/import_redcap_subjects', methods=['POST'])
+@login_required
 @perm_admin_or_technician.require()
 def api_import_redcap_subjects():
     """
@@ -540,6 +554,7 @@ def find_new_events(local_events, redcap_events):
 
 
 @app.route('/api/import_redcap_events', methods=['POST'])
+@login_required
 @perm_admin_or_technician.require()
 def api_import_redcap_events():
     """

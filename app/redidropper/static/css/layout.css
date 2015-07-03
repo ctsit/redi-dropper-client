@@ -43,3 +43,7 @@ th.header.headerSortDown {
 table.borderless td, table.borderless th {
     border: none !important;
 }
+
+.bordered {
+    border: solid 1px black;
+}
