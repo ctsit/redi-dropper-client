@@ -10,10 +10,6 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <!-- Custom styles for this template
-    <link href="{{ url_for('static', filename='css/bootstrap_flatly.min.css') }}" rel="stylesheet">
-    -->
-   
     <link href="{{ url_for('static', filename='css/fileupload.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
@@ -33,14 +29,11 @@
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js"></script>
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"> </script>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    {% block scripts %}
+        <!-- allow to insert page specific js -->
+    {% endblock %}
   </head>
 
 <body>
