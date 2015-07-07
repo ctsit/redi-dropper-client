@@ -22,7 +22,7 @@ from redidropper.main import app, db
 from redidropper import emails
 from redidropper import utils
 from redidropper.models.log_entity import LogEntity
-from redidropper.routes.managers import file_manager, log_manager
+from redidropper.routes import file_manager
 
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
