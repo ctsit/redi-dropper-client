@@ -18,11 +18,10 @@ protected_pages = [
     '/dashboard',
     '/researcher_one',
     '/researcher_two',
-    '/start_upload',
+    '/upload_files',
     '/download_file',
     '/logs',
     ]
-
 
 class TestVisitPages(BaseTestCaseWithData):
 

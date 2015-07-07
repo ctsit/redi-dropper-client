@@ -26,6 +26,9 @@
                                 label_visible=false,
                                 placeholder='Password',
                                 type='password') }}
+        {{ macros.render_field(form.next,
+                                value=next_page,
+                                type='hidden') }}
         {% endcall %}
     </div>
 </div>
