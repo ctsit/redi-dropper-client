@@ -3,26 +3,13 @@ ORM for RediDropper.WebSession table
 """
 import datetime
 from redidropper.database.crud_mixin import CRUDMixin
+from redidropper.models.user_agent_entity import UserAgentEntity
 from redidropper.main import db
 
 
 class WebSessionEntity(db.Model, CRUDMixin):
-    """
-CREATE TABLE WebSession (
-    webID integer unsigned NOT NULL AUTO_INCREMENT,
-    webSessID varchar(255) NOT NULL DEFAULT '',
-    usrID integer unsigned NOT NULL DEFAULT '0',
-    webIP varchar(15) NOT NULL DEFAULT '',
-    webDateTime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    uaID integer unsigned NOT NULL DEFAULT '0',
- PRIMARY KEY (webID),
- KEY (usrID),
- KEY (webDateTime),
- KEY (uaID),
- CONSTRAINT `fk_WebSession_uaID` FOREIGN KEY (uaID) REFERENCES UserAgent (uaID)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
-;
-    """
+
+    """Store web session details"""
     __tablename__ = 'WebSession'
 
     id = db.Column('webID', db.Integer, primary_key=True)
@@ -32,11 +19,12 @@ CREATE TABLE WebSession (
     ip = db.Column('webIP', db.String(15), nullable=False, default='')
     date_time = db.Column('webDateTime', db.DateTime, nullable=False,
                           default=datetime.datetime(datetime.MINYEAR, 1, 1))
-    # TODO: use FK for uaID
-    # user_agent_id = db.Column('uaID', db.Integer,
-    #                          db.ForeignKey('UserAgent.uaID'),
-    #                          nullable=False, default=0)
-    user_agent_id = db.Column('uaID', db.Integer, nullable=False, default=0)
+    user_agent_id = db.Column('uaID', db.Integer,
+                              db.ForeignKey('UserAgent.uaID'),
+                              nullable=False)
+    # @OneToMany
+    user_agent = db.relationship(UserAgentEntity,
+                                 lazy='joined')
 
     @staticmethod
     def get_by_session_id(session_id):

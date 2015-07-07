@@ -128,10 +128,6 @@ def find_subject():
         if len(matching) == 0:
             api_import_redcap_subjects()
 
-    else:
-        app.logger.debug("Invalid API call: "
-                         "no value provided for redcap_subject_id.")
-
     return utils.jsonify_success({'subjects': matching})
 
 

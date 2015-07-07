@@ -3,9 +3,6 @@ The 'fabfile.py' is used by Fabric and must reside in the
 application root directory.
 
 @see http://docs.fabfile.org/en/latest/tutorial.html
-
-@TODO add deploy task
-http://flask.pocoo.org/docs/0.10/patterns/fabric/#fabric-deployment
 """
 
 from __future__ import with_statement

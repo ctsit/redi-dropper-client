@@ -23,6 +23,7 @@ from flask import session
 from flask import url_for
 from redidropper.models.log_entity import LogEntity
 from redidropper.models.web_session_entity import WebSessionEntity
+from redidropper.models.user_agent_entity import UserAgentEntity
 from wtforms import Form, TextField, PasswordField, HiddenField, validators
 
 from flask_login import LoginManager
@@ -61,7 +62,6 @@ def page_not_found(e):
     """
     Redirect to login page if probing a protected resources before login
     """
-    # session['redirected_from'] = request.url
     return redirect(url_for('index') + "?next={}".format(request.url))
 
 
@@ -77,6 +77,31 @@ class LoginForm(Form):
                 min=6, max=25)])
 
 
+def get_user_agent():
+    """Find an existing user agent or insert a new one"""
+    # The raw user agent string received from the browser
+    uag = request.user_agent
+    hash = utils.compute_text_md5(uag.string)
+
+    # The entity representing the user agent
+    user_agent = UserAgentEntity.get_by_hash(hash)
+
+    if user_agent is None:
+        platform = uag.platform if uag.platform is not None else ''
+        browser = uag.browser if uag.browser is not None else ''
+        version = uag.version if uag.version is not None else ''
+        language = uag.language if uag.language is not None else ''
+        user_agent = UserAgentEntity.create(user_agent=uag.string,
+                                            hash=hash,
+                                            platform=platform,
+                                            browser=browser,
+                                            version=version,
+                                            language=language)
+
+    # app.logger.debug(user_agent)
+    return user_agent
+
+
 @app.before_request
 def check_session_id():
     """
@@ -84,19 +109,26 @@ def check_session_id():
     as well as in the WebSession table.
     """
     # TODO: Create UserAgentEntity and populate
-    user_agent_id = 1
+    user_agent = get_user_agent()
 
     if 'uuid' not in session:
         session['uuid'] = str(uuid.uuid4())
-        web_sess = WebSessionEntity.create(session_id=session['uuid'],
-                                           user_id=current_user.get_id(),
-                                           ip=request.remote_addr,
-                                           date_time=datetime.datetime.now(),
-                                           user_agent_id=user_agent_id)
-        app.logger.debug("Init websession: {}".format(web_sess))
-    else:
-        # TODO: update the user_id on the first request after login is completed
-        pass
+        WebSessionEntity.create(session_id=session['uuid'],
+                                user_id=current_user.get_id(),
+                                ip=request.remote_addr,
+                                date_time=datetime.datetime.now(),
+                                user_agent=user_agent)
+        return
+    if current_user.is_authenticated():
+        # update the user_id on the first request after login is completed
+        session_id = session['uuid']
+        web_session = WebSessionEntity.get_by_session_id(session_id)
+        if web_session is not None:
+            web_session = WebSessionEntity.update(
+                web_session,
+                user_id=current_user.get_id())
+        else:
+            app.logger.error("No row found for sess_id: {}".format(session_id))
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -330,5 +362,6 @@ def logout():
 
     # Log the logout
     LogEntity.logout(session['uuid'])
-
+    # Also pop the session id
+    session.pop('uuid')
     return redirect(request.args.get('next') or '/')
