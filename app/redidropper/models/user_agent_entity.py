@@ -6,6 +6,8 @@ from redidropper.main import db
 
 
 class UserAgentEntity(db.Model, CRUDMixin):
+
+    """ Store types of browsers """
     __tablename__ = 'UserAgent'
 
     id = db.Column('uaID', db.Integer, primary_key=True)

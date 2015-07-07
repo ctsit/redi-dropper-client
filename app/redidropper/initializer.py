@@ -33,7 +33,7 @@ def _load_confidential_settings(app):
 
     if os.access(confidential_file, os.R_OK):
         app.config.from_pyfile(confidential_file)
-        app.logger.info("Loaded config from: {}" .format(confidential_file))
+        # app.logger.debug("Loaded config from: {}" .format(confidential_file))
     else:
         err = "The confidential_file: [{}] is not readable. "\
             .format(confidential_file)
@@ -97,7 +97,7 @@ def do_init(app, mode=config.MODE_PROD, extra_settings={}):
 
     # After we read the confidential settings we can build the database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-    app.logger.debug("get_config_summary: {}". format(get_config_summary(app)))
+    # app.logger.debug("get_config_summary: {}".format(get_config_summary(app)))
 
     if len(extra_settings):
         # Override with special settings (example: tests/conftest.py)
