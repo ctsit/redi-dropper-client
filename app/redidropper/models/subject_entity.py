@@ -3,7 +3,7 @@ ORM for RediDropper.Subject table
 """
 
 from redidropper.main import db
-from redidropper.utils import dump_datetime
+from redidropper import utils
 from redidropper.database.crud_mixin import CRUDMixin
 
 
@@ -24,9 +24,6 @@ class SubjectEntity(db.Model, CRUDMixin):
     was_deleted = db.Column("sbjWasDeleted", db.Boolean(), nullable=False,
                             server_default='0')
 
-    # @OneToOne
-    # user = db.relationship('UserEntity', uselist=False, lazy='joined')
-
     def __repr__(self):
         return """<SubjectEntity (sbjID: {0.id},
         sbjRedcapID: {0.redcap_id}, sbjAddedAt: {0.added_at})>""".format(self)
@@ -37,14 +34,12 @@ class SubjectEntity(db.Model, CRUDMixin):
         Note: There is some `residual jsx code` that expects the
             `events` array to be sent
         """
-
         return {
             'id': self.id,
             'redcap_id': self.redcap_id,
             'events': [],
-            # 'events': [{'event_id': '1', 'event_files': '1'}],
-            # 'files': [f.name for f in self.files],
-            'added_at': dump_datetime(self.added_at),
-            'last_checked_at': dump_datetime(self.last_checked_at),
+            'added_at': utils.localize_est_datetime(self.added_at),
+            'last_checked_at': utils.localize_est_datetime(
+                self.last_checked_at),
             'was_deleted': self.was_deleted
         }

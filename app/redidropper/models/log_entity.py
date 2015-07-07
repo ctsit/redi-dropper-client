@@ -9,6 +9,7 @@ ORM for RediDropper.Log table
 """
 
 import datetime
+from redidropper import utils
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.main import app, db
 from redidropper.models.log_type_entity import LogTypeEntity
@@ -39,14 +40,12 @@ class LogEntity(db.Model, CRUDMixin):
                                nullable=False)
     date_time = db.Column('logDateTime', db.DateTime, nullable=False,
                           server_default='0000-00-00 00:00:00')
-    # datetime.datetime(datetime.MINYEAR, 1, 1))
     details = db.Column('logDetails', db.Text, nullable=False)
 
     # @OneToOne
     log_type = db.relationship(LogTypeEntity, uselist=False, lazy='joined')
     web_session = db.relationship(WebSessionEntity, uselist=False,
                                   lazy='joined')
-
 
     @staticmethod
     def get_logs(per_page=25, page_num=1):
@@ -56,11 +55,12 @@ class LogEntity(db.Model, CRUDMixin):
         def item_from_entity(entity):
             return {
                 'id': entity.id,
+                'user_id': entity.web_session.user_id,
                 'type': entity.log_type.type,
                 'details': entity.details,
                 'web_session_id': entity.web_session.session_id,
                 'web_session_ip': entity.web_session.ip,
-                'date_time': entity.date_time,
+                'date_time': utils.localize_est_datetime(entity.date_time),
             }
 
         pagination = LogEntity.query.paginate(page_num, per_page, False)
@@ -131,7 +131,6 @@ class LogEntity(db.Model, CRUDMixin):
     def redcap_events_imported(session_id, details=''):
         """ Log it """
         LogEntity._log(LOG_TYPE_REDCAP_EVENTS_IMPORTED, session_id, details)
-
 
     def __repr__(self):
         """ Return a friendly object representation """

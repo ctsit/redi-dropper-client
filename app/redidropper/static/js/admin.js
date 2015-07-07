@@ -147,10 +147,10 @@ var AdminUsersRow = React.createClass({
                 deactivateButton,
                 title = "",
                 display = "",
-                expirationDate = record.access_expires_at[0];
+                expirationDate = record.access_expires_at;
 
             if (record.roles) {
-                roles = record.roles.join(", ");
+                roles = record.roles.join("<br>");
             }
             if (record.email_confirmed_at) {
                 emailButton = <div> {record.email_confirmed_at} </div>;
@@ -168,7 +168,7 @@ var AdminUsersRow = React.createClass({
             }
 
             if (record.is_expired) {
-                title = "Extend access by 180 days (expired on " + expirationDate + ")";
+                title = "Extend access by 180 days (expired " + expirationDate + ")";
                 expireButton = <div>
                     <button
                         className="btn btn-primary"
@@ -213,7 +213,7 @@ var AdminUsersRow = React.createClass({
                             <td className="text-left">{record.email}</td>
                             <td className="text-left">{record.first}</td>
                             <td className="text-left">{record.last}</td>
-                            <td className="text-left">{roles}</td>
+                            <td className="text-left" dangerouslySetInnerHTML={{__html:roles}}></td>
                             <td className="text-left">{record.added_at}</td>
                             <td className="text-left">{emailButton}</td>
                             <td className="text-center">{expireButton}</td>
@@ -456,8 +456,7 @@ var AddNewUserForm = React.createClass({
     {error}
 
     <div className="form-horizontal">
-
-        <h3> Add New User </h3>
+        <h4> Please enter user details </h4>
         <div className="form-group">
             <label for="id-user-email" className="col-sm-4 control-label">Email</label>
             <div className="col-sm-8">
@@ -495,7 +494,7 @@ var AddNewUserForm = React.createClass({
         </div>
         <div className="form-group">
             <div className="col-sm-offset-2 col-sm-10">
-                <button onClick={this.addUser} className="btn btn-primary btn">Add User to Project</button>
+                <button onClick={this.addUser} className="btn btn-danger">Save User</button>
             </div>
         </div>
     </div>
@@ -547,7 +546,7 @@ var AdminUserManagement = React.createClass({
         this.changeData(pageNum);
     },
     changeData: function(pageNum) {
-        var request_data = {'per_page': 10, 'page_num': pageNum};
+        var request_data = {'per_page': 25, 'page_num': pageNum};
         var _this = this;
         var request = Utils.api_post_json("/api/list_users", request_data);
 
@@ -600,14 +599,14 @@ var AdminUserManagement = React.createClass({
         var list_of_users = this.state.list_of_users;
         var pagination;
         var show_user_form;
-        var button_text = "Add User";
+        var button_text = "Open 'Add User' Form";
 
         if(total_pages > 1) {
             pagination = <AdminUsersPagination total_pages={total_pages} changePage={this.changePage}/>;
         }
 
         if(this.state.show_user_form) {
-            button_text = "Close Add User Form";
+            button_text = "Close 'Add User' Form";
             show_user_form = <AddNewUserForm addNewUser = {this.addNewUser}/>
         }
 
@@ -627,7 +626,7 @@ var AdminUserManagement = React.createClass({
         }
         return (
                 <div>
-        <button onClick={this.toggleAddUserForm} className="btn btn-primary">{button_text}</button>
+        <button onClick={this.toggleAddUserForm} className="btn btn-danger">{button_text}</button>
         <br/>
         <div className="row">
           {show_user_form}

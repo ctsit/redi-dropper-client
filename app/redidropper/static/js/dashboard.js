@@ -189,6 +189,8 @@ var EventsTable = React.createClass({
     render: function() {
         var rows = [];
         var _this = this;
+        var rowCount = this.state.list_of_events.length,
+            eventsData = this.state.list_of_events;
 
         this.state.list_of_events.map(function(record, i) {
             var eventSelected = _this.props.eventSelected.bind(null, record);
@@ -212,8 +214,15 @@ var EventsTable = React.createClass({
             );
         });
 
-        return (
-        <div>
+        var eventsTable;
+        if (eventsData === undefined) {
+            //@TODO: show a "loading" animation
+        }
+        else if (rowCount === 0) {
+            eventsTable = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
+        }
+        else {
+            eventsTable = (
             <div className="table-responsive">
                 <table id="event-table" className="table borderless sortable tablesorter">
                     <thead>
@@ -229,8 +238,9 @@ var EventsTable = React.createClass({
                     </tbody>
                 </table>
             </div>
-        </div>
-        );
+            );
+        }
+        return eventsTable;
     }
 });
 
@@ -275,12 +285,10 @@ var FilesList = React.createClass({
                 <tbody id="technician-table-body">
                 {
                 this.state.list_of_files.map(function(record, i) {
-                    var uploaded_at = record.uploaded_at[0] + " " + record.uploaded_at[1];
-
                     return (<tr>
                         <td>{record.file_name}</td>
                         <td>{(record.file_size / (1024 * 1024)).toFixed(2)}</td>
-                        <td>{uploaded_at}</td>
+                        <td>{record.uploaded_at}</td>
                         <td>{record.user_name}</td>
                         <td>
                             <form method="POST" action="/api/download_file">
