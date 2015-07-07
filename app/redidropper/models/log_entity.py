@@ -1,7 +1,13 @@
 """
 ORM for RediDropper.Log table
+
+@authors:
+  Andrei Sura             <sura.andrei@gmail.com>
+  Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+  Sanath Pasumarthy       <sanath@ufl.edu>
+  Taeber Rapczak          <taeber@ufl.edu>
 """
-# import datetime
+
 import datetime
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.main import app, db
@@ -40,6 +46,26 @@ class LogEntity(db.Model, CRUDMixin):
     log_type = db.relationship(LogTypeEntity, uselist=False, lazy='joined')
     web_session = db.relationship(WebSessionEntity, uselist=False,
                                   lazy='joined')
+
+
+    @staticmethod
+    def get_logs(per_page=25, page_num=1):
+        """
+        Helper for formating the event details
+        """
+        def item_from_entity(entity):
+            return {
+                'id': entity.id,
+                'type': entity.log_type.type,
+                'details': entity.details,
+                'web_session_id': entity.web_session.session_id,
+                'web_session_ip': entity.web_session.ip,
+                'date_time': entity.date_time,
+            }
+
+        pagination = LogEntity.query.paginate(page_num, per_page, False)
+        items = map(item_from_entity, pagination.items)
+        return items, pagination.pages
 
     @staticmethod
     def _log(log_type, session_id, details=''):

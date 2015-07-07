@@ -273,14 +273,7 @@ def api_list_logs():
         per_page = utils.get_safe_int(request.args.get('per_page'))
         page_num = utils.get_safe_int(request.args.get('page_num'))
 
-    """
-    pagination = LogEntity.query.paginate(page_num, per_page, False)
-    items = [i.serialize() for i in pagination.items]
-    app.logger.debug("per_page: {}, page_num: {}".format(per_page, page_num))
-    return jsonify_success(dict(total_pages=pagination.pages,
-                                list_of_events=items))
-    """
-    logs, total_pages = log_manager.get_logs(per_page, page_num)
+    logs, total_pages = LogEntity.get_logs(per_page, page_num)
 
     return utils.jsonify_success(
         dict(list_of_events=logs, total_pages=total_pages))
