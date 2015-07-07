@@ -8,7 +8,7 @@
 }
 
 .next-page a {
-    background: gray !important;
+    background: #eee !important;
 }
 
 .file-drop-css {
@@ -20,7 +20,7 @@
     content: "";
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-left: 20px solid gray!important;
+    border-left: 20px solid #eee !important;
     position: absolute; right: -20px; top: 0;
     z-index: 1;
 }
@@ -47,21 +47,21 @@ th {
     display: block;
     float: left;
     height: 41px;
-    background: #2C3E50;
+    color: #000;
+    background: #D9534F;
     text-align: center;
     padding: 8px 20px 0 40px;
     position: relative;
     margin: 0 8px 0 0;
     font-size: 20px;
     text-decoration: none;
-    color: #fff;
 }
 
 #crumbs ul li a:after {
     content: "";
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-left: 20px solid #2C3E50;
+    border-left: 20px solid #D9534F;
     position: absolute; right: -20px; top: 0;
     z-index: 1;
 }

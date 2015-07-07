@@ -16,6 +16,7 @@
         {% call macros.render_form(form,
                                     action_url=url_for('index'),
                                     action_text='Login',
+                                    btn_class='btn btn-danger',
                                     class_='login-form') %}
         {{ macros.render_field(form.email,
                                 label_visible=false,
@@ -29,6 +30,10 @@
         {{ macros.render_field(form.next,
                                 value=next_page,
                                 type='hidden') }}
+        {{ macros.render_field(form.next,
+                                value=next_page,
+                                type='hidden') }}
+
         {% endcall %}
     </div>
 </div>
