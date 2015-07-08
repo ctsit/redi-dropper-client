@@ -20,6 +20,7 @@ var AdminEventsTable = React.createClass({
                 <thead>
                     <tr>
                         <th className="text-right"> ID </th>
+                        <th className="text-right"> User ID </th>
                         <th className="text-center"> Type </th>
                         <th className="text-center"> Details </th>
                         <th className="text-center"> WebSession ID </th>
@@ -32,11 +33,12 @@ var AdminEventsTable = React.createClass({
                     this.state.list_of_events.map(function(record, i) {
                         return (<tr>
                                 <td className="text-right"> {record.id}</td>
-                                <td className="text-left">  {record.type}</td>
-                                <td className="text-left">  {record.details}</td>
-                                <td className="text-left">  {record.web_session_id}</td>
-                                <td className="text-right">  {record.web_session_ip}</td>
-                                <td className="text-left">  {record.date_time}</td>
+                                <td className="text-right"> {record.user_id}</td>
+                                <td className="text-left"> {record.type}</td>
+                                <td className="text-left"> {record.details}</td>
+                                <td className="text-left"> {record.web_session_id}</td>
+                                <td className="text-right"> {record.web_session_ip}</td>
+                                <td className="text-left"> {record.date_time}</td>
                                 </tr>
                                );
                     })
@@ -126,7 +128,7 @@ var AdminEventsList = React.createClass({
         return {
             list_of_events: undefined,
             total_pages: 0,
-            per_page: 10
+            per_page: 25
         };
     },
     componentWillMount: function() {

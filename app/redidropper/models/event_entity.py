@@ -3,7 +3,7 @@ ORM for Event table
 """
 
 from redidropper.main import db
-from redidropper.utils import dump_datetime
+from redidropper import utils
 from redidropper.database.crud_mixin import CRUDMixin
 
 
@@ -39,5 +39,5 @@ class EventEntity(db.Model, CRUDMixin):
             'redcap_event': self.redcap_event,
             'day_offset': self.day_offset,
             'unique_event_name': self.get_unique_event_name(),
-            'added_at': dump_datetime(self.added_at),
+            'added_at': utils.localize_est_date(self.added_at),
         }

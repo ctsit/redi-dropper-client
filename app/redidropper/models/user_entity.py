@@ -12,7 +12,7 @@ from redidropper.main import db
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.models.role_entity import RoleEntity
 from redidropper.models.user_role_entity import UserRoleEntity
-from redidropper.utils import dump_datetime, get_email_token
+from redidropper import utils
 
 
 class UserEntity(db.Model, UserMixin, CRUDMixin):
@@ -28,16 +28,16 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     first = db.Column("usrFirst", db.String(255), nullable=False)
     last = db.Column("usrLast", db.String(255), nullable=False)
     minitial = db.Column("usrMI", db.String(1), nullable=False)
-    added_at = db.Column("usrAddedAt", db.DateTime(), nullable=False,
+    added_at = db.Column("usrAddedAt", db.DateTime, nullable=False,
                          server_default='0000-00-00 00:00:00')
-    modified_at = db.Column("usrModifiedAt", db.TIMESTAMP(), nullable=False)
-    email_confirmed_at = db.Column("usrEmailConfirmedAt", db.DateTime(),
+    modified_at = db.Column("usrModifiedAt", db.TIMESTAMP, nullable=False)
+    email_confirmed_at = db.Column("usrEmailConfirmedAt", db.DateTime,
                                    nullable=False,
                                    server_default='0000-00-00 00:00:00')
     active = db.Column("usrIsActive", db.Boolean(), nullable=False,
                        server_default='1')
 
-    access_expires_at = db.Column("usrAccessExpiresAt", db.DateTime(),
+    access_expires_at = db.Column("usrAccessExpiresAt", db.DateTime,
                                   nullable=False,
                                   server_default='0000-00-00 00:00:00')
     password_hash = db.Column("usrPasswordHash", db.String(255),
@@ -102,11 +102,10 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
         :rtype string
         :return the email verification token stored in the database
         """
-        return get_email_token(self.email, salt, secret)
+        return utils.get_email_token(self.email, salt, secret)
 
     def serialize(self):
         """Return object data for jsonification"""
-
         return {
             'id': self.id,
             'email': self.email,
@@ -116,9 +115,11 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
             'minitial': self.minitial,
             'is_active': True if self.active else False,
             'is_expired': True if self.is_expired() else False,
-            'added_at': dump_datetime(self.added_at),
-            'email_confirmed_at': dump_datetime(self.email_confirmed_at),
-            'access_expires_at': dump_datetime(self.access_expires_at),
+            'added_at': utils.localize_est_date(self.added_at),
+            'email_confirmed_at':
+                utils.localize_est_datetime(self.email_confirmed_at),
+            'access_expires_at':
+                utils.localize_est_datetime(self.access_expires_at)
         }
 
     def __repr__(self):

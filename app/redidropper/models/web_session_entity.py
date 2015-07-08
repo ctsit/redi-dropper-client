@@ -4,18 +4,22 @@ ORM for RediDropper.WebSession table
 import datetime
 from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.models.user_agent_entity import UserAgentEntity
+from redidropper.models.user_entity import UserEntity
 from redidropper.main import db
+from sqlalchemy.ext.declarative import declared_attr
 
 
 class WebSessionEntity(db.Model, CRUDMixin):
-
     """Store web session details"""
     __tablename__ = 'WebSession'
 
     id = db.Column('webID', db.Integer, primary_key=True)
     session_id = db.Column('webSessID', db.String(255), nullable=False,
                            default='')
-    user_id = db.Column('usrID', db.Integer, nullable=False, default=0)
+    user_id = db.Column('usrID', db.Integer,
+                        db.ForeignKey('User.usrID'),
+                        nullable=False,
+                        default=0)
     ip = db.Column('webIP', db.String(15), nullable=False, default='')
     date_time = db.Column('webDateTime', db.DateTime, nullable=False,
                           default=datetime.datetime(datetime.MINYEAR, 1, 1))
@@ -23,8 +27,15 @@ class WebSessionEntity(db.Model, CRUDMixin):
                               db.ForeignKey('UserAgent.uaID'),
                               nullable=False)
     # @OneToMany
-    user_agent = db.relationship(UserAgentEntity,
-                                 lazy='joined')
+    user_agent = db.relationship(UserAgentEntity, lazy='joined')
+    # user = db.relationship(UserEntity, lazy='joined')
+
+    # @declared_attr
+    # def target(cls):
+    #     #
+    #     http://docs.sqlalchemy.org/en/latest/orm/extensions/declarative/mixins.html?highlight=primaryjoin#using-advanced-relationship-arguments-e-g-primaryjoin-etc
+    #     return db.relationship(UserEntity,
+    #                            primaryjoin=lambda: UserEntity.id == cls.user_id)
 
     @staticmethod
     def get_by_session_id(session_id):

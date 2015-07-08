@@ -8,8 +8,8 @@ from redidropper.database.crud_mixin import CRUDMixin
 
 class UserRoleEntity(db.Model, CRUDMixin):
     """ Stores the user-role mapping """
-
     __tablename__ = 'UserRole'
+
     id = db.Column("urID", db.Integer, primary_key=True)
     user_id = db.Column("usrID", db.Integer, db.ForeignKey('User.usrID',
                         ondelete='CASCADE'), nullable=False)
