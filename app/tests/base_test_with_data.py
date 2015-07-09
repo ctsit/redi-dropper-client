@@ -19,6 +19,7 @@ from redidropper.models.role_entity import RoleEntity
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
 from redidropper.models.log_type_entity import LogTypeEntity
+from redidropper.models.user_agent_entity import UserAgentEntity
 from redidropper.models.log_type_entity import LOG_TYPE_LOGIN, LOG_TYPE_LOGOUT
 
 
@@ -28,6 +29,8 @@ class BaseTestCaseWithData(BaseTestCase):
 
     def setUp(self):
         db.create_all()
+        self.create_log_types()
+        self.create_user_agents()
         self.create_sample_data()
 
     def create_log_types(self):
@@ -36,10 +39,19 @@ class BaseTestCaseWithData(BaseTestCase):
         self.assertEquals(1, log_login.id)
         self.assertEquals(2, log_logout.id)
 
+    def create_user_agents(self):
+        user_agent_string = ""
+        hash = utils.compute_text_md5(user_agent_string)
+        user_agent = UserAgentEntity.create(user_agent=user_agent_string,
+                                            hash=hash,
+                                            platform="Linux",
+                                            browser="Firefox",
+                                            version="latest",
+                                            language="EN-US")
+        self.assertIsNotNone(user_agent)
+
     def create_sample_data(self):
         """ Add some data """
-
-        self.create_log_types()
         # == Create users
         added_date = datetime.today()
         access_end_date = utils.get_expiration_date(180)
@@ -80,11 +92,11 @@ class BaseTestCaseWithData(BaseTestCase):
         self.assertIsNotNone(evt2.id)
 
         files = [
-            {'name': 'a.png', 'size': '1MB', 'event': evt.id},
-            {'name': 'b.png', 'size': '2MB', 'event': evt.id},
-            {'name': 'c.png', 'size': '3MB', 'event': evt2.id},
-            {'name': 'd.png', 'size': '4MB', 'event': evt2.id},
-            {'name': 'e.png', 'size': '5MB', 'event': evt2.id},
+            {'name': 'a.png', 'size': '123', 'event': evt.id},
+            {'name': 'b.png', 'size': '1234', 'event': evt.id},
+            {'name': 'c.png', 'size': '12345', 'event': evt2.id},
+            {'name': 'd.png', 'size': '123456', 'event': evt2.id},
+            {'name': 'e.png', 'size': '1234567', 'event': evt2.id},
         ]
 
         # Create subject files

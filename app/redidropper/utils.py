@@ -18,7 +18,12 @@ import hmac
 import base64
 from subprocess import Popen
 from subprocess import PIPE
+import pytz as tz
 
+FORMAT_US_DATE = "%x"
+FORMAT_US_DATE_TIME = '%x %X'
+FORMAT_US_DATE_TIME_ZONE = '%x %X %Z%z'
+FORMAT_DATABASE_DATE_TIME = "%Y-%m-%d %H:%M:%S"
 
 # @TODO: move to the configs
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff',
@@ -104,10 +109,16 @@ def is_valid_auth(pepper, salt, candidate_password, correct_hash):
     return correct_hash == candidate_hash
 
 
+def clean_str(dangerous):
+    """ Return the trimmed string """
+    if dangerous is None:
+        return None
+    return str(dangerous).strip()
+
+
 def clean_int(dangerous):
     """
     Return None for non-integer input
-    Warning: do not use the
     """
     if dangerous is None:
         return None
@@ -196,11 +207,24 @@ def get_db_friendly_date_time():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
-def dump_datetime(value):
-    """Deserialize datetime object into string form for JSON processing."""
-    if value is None:
-        return None
-    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+def localize_datetime(value, zone_name='US/Eastern'):
+    """ Localize the specified datetime value according to a zone"""
+    # print(tz.all_timezones)
+    timezone = tz.timezone(zone_name)
+    localized_value = timezone.localize(value, is_dst=None)
+    return localized_value
+
+
+def localize_est_date(value):
+    """ Format the datetime value as `FORMAT_US_DATE` """
+    localized_value = localize_datetime(value)
+    return localized_value.strftime(FORMAT_US_DATE)
+
+
+def localize_est_datetime(value):
+    """ Format the datetime value as `FORMAT_US_DATE_TIME` """
+    localized_value = localize_datetime(value)
+    return localized_value.strftime(FORMAT_US_DATE_TIME)
 
 
 def get_expiration_date(offset_days):

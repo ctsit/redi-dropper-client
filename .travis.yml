@@ -9,11 +9,6 @@
 # The redidropper/startup/initializer.py does not need the env variable anymore
 #env: REDIDROPPER_CONFIG=~/build/ctsit/redi-dropper-client/app/deploy/application.conf
 
-notifications:
-  email:
-    - indera@gmail.com
-
-
 language: python
 python:
     - "2.7"
@@ -30,7 +25,7 @@ before_install:
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
     - pwd
-    - pip install fabric coveralls
+    - pip install fabric coveralls pytz
     - pushd app
     - fab prep_develop
     - popd

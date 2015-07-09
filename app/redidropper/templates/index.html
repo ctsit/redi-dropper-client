@@ -7,7 +7,7 @@
         <div class="col-sm-6">
             <div class="starter-template">
         <h1>Welcome! </h1>
-        <p class="lead">Please log-in.</p>
+        <p class="lead">Please Sign In.</p>
     </div>
 
 <div class="row">
@@ -16,6 +16,7 @@
         {% call macros.render_form(form,
                                     action_url=url_for('index'),
                                     action_text='Login',
+                                    btn_class='btn btn-danger',
                                     class_='login-form') %}
         {{ macros.render_field(form.email,
                                 label_visible=false,
@@ -26,6 +27,13 @@
                                 label_visible=false,
                                 placeholder='Password',
                                 type='password') }}
+        {{ macros.render_field(form.next,
+                                value=next_page,
+                                type='hidden') }}
+        {{ macros.render_field(form.next,
+                                value=next_page,
+                                type='hidden') }}
+
         {% endcall %}
     </div>
 </div>

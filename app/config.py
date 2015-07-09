@@ -21,7 +21,7 @@ MODE_DEBUG = 'mode_debug'   # for developer mode
 class DefaultConfig(object):
 
     """ Default configuration data """
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = logging.INFO
 
     # When we deploy we use /srv/apps/dropper/ folder
     CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR,

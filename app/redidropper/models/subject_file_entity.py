@@ -3,7 +3,7 @@ ORM for RediDropper.SubjectFile table
 """
 import os
 from redidropper.main import app, db
-from redidropper.utils import dump_datetime
+from redidropper import utils
 from redidropper.database.crud_mixin import CRUDMixin
 
 logger = app.logger
@@ -95,13 +95,13 @@ class SubjectFileEntity(db.Model, CRUDMixin):
 
     def serialize(self):
         """Return object data for jsonification """
-
+        # @TODO: add information about download counts
         return {
             'id': self.id,
             'file_name': self.file_name,
             'file_check_sum': self.file_check_sum,
             'file_size': self.file_size,
-            'uploaded_at': dump_datetime(self.uploaded_at),
+            'uploaded_at': utils.localize_est_datetime(self.uploaded_at),
             'subject_id': self.subject_id,
             'event_id': self.event_id,
             'user_id': self.user_id,
