@@ -19,7 +19,6 @@ MODE_DEBUG = 'mode_debug'   # for developer mode
 
 
 class DefaultConfig(object):
-
     """ Default configuration data """
     LOG_LEVEL = logging.INFO
 
@@ -79,46 +78,30 @@ class DefaultConfig(object):
     MAIL_USERNAME = os.environ.get('REDIDROPPER_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('REDIDROPPER_MAIL_PASSWORD')
 
-    print MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
-    # Database configuration is stored outside version control
-    # in the `application.cfg` file
-    DB_HOST = ''
-    DB_NAME = ''
-
     # Limit the max upload size for the app to 20 MB
     # @see https://pythonhosted.org/Flask-Uploads/
     DEFAULT_MAX_CONTENT_LENGTH = 20 * 1024 * 1024
-    MAX_CONTENT_LENGTH = os.getenv(
-        'REDIDROPPER_MAX_CONTENT_LENGTH',
-        DEFAULT_MAX_CONTENT_LENGTH)
+    MAX_CONTENT_LENGTH = DEFAULT_MAX_CONTENT_LENGTH
 
     # THREADS_PER_PAGE = 8
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = ""
 
     # override as needed in the settings file
-    REDIDROPPER_UPLOAD_TEMP_DIR = os.getenv('REDIDROPPER_UPLOAD_TEMP_DIR',
-                                            os.path.join(BASEDIR,
-                                                         'upload/temp'))
-
-    REDIDROPPER_UPLOAD_SAVED_DIR = os.getenv('REDIDROPPER_UPLOAD_SAVED_DIR',
-                                             os.path.join(BASEDIR,
-                                                          'upload/saved'))
+    REDIDROPPER_UPLOAD_TEMP_DIR = os.path.join(BASEDIR, 'upload/temp')
+    REDIDROPPER_UPLOAD_SAVED_DIR = os.path.join(BASEDIR, 'upload/saved')
 
 
 class DebugConfig(DefaultConfig):
-
     """ Extra flag for debugging """
     DEBUG = True
     DEBUG_TB_ENABLED = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     # same folder as config.py
-    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR,
-                                              'deploy/settings.conf')
+    CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
 
 
 class TestConfig(DefaultConfig):
-
     """ Configuration for running tests """
     TESTING = True
     CSRF_ENABLED = False
