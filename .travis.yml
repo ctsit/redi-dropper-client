@@ -9,6 +9,8 @@
 # The redidropper/startup/initializer.py does not need the env variable anymore
 #env: REDIDROPPER_CONFIG=~/build/ctsit/redi-dropper-client/app/deploy/application.conf
 
+# http://docs.travis-ci.com/user/migrating-from-legacy/
+sudo: false
 language: python
 python:
     - "2.7"
