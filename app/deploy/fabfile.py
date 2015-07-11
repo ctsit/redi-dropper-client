@@ -12,19 +12,18 @@ Fabric deployment file.
 """
 
 import imp
-# import sys
-from os.path import isfile, join, abspath
-# from os.path import isdir
-# from pprint import pprint
-
+import os.path
 from fabric import colors
 from fabric.api import cd, env, local, lcd
 from fabric.context_managers import hide, prefix, settings
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists, upload_template
 from fabric.operations import require, run, sudo
-# from fabric.operations import get, put
 from fabric.utils import abort
+# from pprint import pprint
+
+def help():
+    local('fab --list')
 
 
 # =========================================================================
@@ -34,8 +33,8 @@ from fabric.utils import abort
 def load_environ(target, new_settings={}):
     """ Helper for loading an 'environ/fabric.py' file"""
     # pprint(sys.path)
-    fab_conf_file = join(target, 'fabric.py')
-    if not isfile(fab_conf_file):
+    fab_conf_file = os.path.join(target, 'fabric.py')
+    if not os.path.isfile(fab_conf_file):
         abort("Please create the '{}' file".format(fab_conf_file))
 
     try:
@@ -70,13 +69,12 @@ def _remove_directories():
 
 def _init_directories():
     """Creates initial directories"""
-    # Note: this is not affecting the "project_repo_path" used for "git clone"
+    # @TODO: create a backup if directory exists
     print('\n\nCreating initial directories...')
 
     _remove_directories()
 
     sudo('mkdir -p %(project_path)s' % env)
-    sudo('mkdir -p %(project_path)s/uploaded_files' % env)
     sudo('mkdir -p %(project_path)s/logs' % env)
     # sudo('do something as user', user=notme)
     sudo('chown -R %(user)s:%(server_group)s %(project_path)s' % env)
@@ -100,8 +98,7 @@ def _clone_repo():
 
 def _checkout_repo(branch="master"):
     """Updates the Git repository and checks out the specified branch"""
-    print('\n\nUpdating repository branch...')
-    print('\t Branch: {}'.format(branch))
+    print('\n\nUpdating repository to branch [{}]...'.format(branch))
     print('\t CWD: {}'.format(env.project_repo_path))
 
     with cd(env.project_repo_path):
@@ -132,21 +129,21 @@ def _update_requirements():
         run('chmod -R go=u,go-w %(env_path)s' % env)
 
 
-def is_prod():
+def _is_prod():
     """Shortcut for env.environment == 'production'"""
     require('environment', provided_by=[production, staging])
     return env.environment == 'production'
 
 
-def motd():
+def _motd():
     """Print the message of the day"""
-    print(MOTD_PROD if is_prod() else MOTD_STAG)
+    print(MOTD_PROD if _is_prod() else MOTD_STAG)
 
 
 def bootstrap(branch="master"):
     """Bootstraps the deployment using the specified branch"""
     require('environment', provided_by=[production, staging])
-    motd()
+    _motd()
 
     if (not exists('%(project_path)s' % env) or
         confirm('\n%(project_path)s already exists. Do you want to continue?'
@@ -257,7 +254,7 @@ def mysql_list_tables():
 
 
 def mysql_create_tables():
-    """ Create tables required for the application
+    """ Create app tables.
     Assumes that the database was already created and
     an user was granted `create` privileges.
     """
@@ -279,6 +276,7 @@ def mysql_create_tables():
 
 
 def mysql_drop_tables():
+    """ Drop the app tables"""
     require('environment', provided_by=[production, staging])
 
     question = ("Do you want to drop the tables in '%(db_name)s'?" % env)
@@ -407,6 +405,7 @@ def update_code(branch="master"):
     with settings(hide('stdout', 'stderr')):
         _checkout_repo(branch=branch)
         _update_requirements()
+        _install_requirements()  # if we add new dependencies
 
 
 def update_config():
@@ -424,9 +423,12 @@ def update_config():
 
     with settings(hide('stdout', 'stderr')):
 
-        local_file_wsgi = abspath('dropper.wsgi')  # same file for prod/ stag
-        local_file_vhost = abspath('%(environment)s/virtualhost.conf' % env)
-        local_file_settings = abspath('%(environment)s/settings.conf' % env)
+        local_file_wsgi = os.path.abspath(
+            'dropper.wsgi')  # same file for prod/ stag
+        local_file_vhost = os.path.abspath(
+            '%(environment)s/virtualhost.conf' % env)
+        local_file_settings = os.path.abspath(
+            '%(environment)s/settings.conf' % env)
 
         # Create a map of files to upload:
         #   local_file ==> remote_file
@@ -439,7 +441,7 @@ def update_config():
         # print files_map
 
         for local_file, remote_file in files_map.iteritems():
-            if not isfile(local_file):
+            if not os.path.isfile(local_file):
                 abort("Please create the file: {}".format(local_file))
 
             print('\nUploading {} \n to ==> {}'
@@ -455,34 +457,50 @@ def update_config():
                             pty=None)
 
 
-def install_site():
-    """Configures the server and enables the site"""
+def deploy(branch="master"):
+    """Updates the code, config, requirements, and enables the site"""
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
+        disable_site()  # execute a2dissite
+
+        update_code(branch=branch)
         update_config()  # upload new config files
-        # check_syntax_apache()
         enable_site()  # execute a2ensite
 
 
-def deploy(branch="master"):
-    """Updates the code and installs the production site"""
-    require('environment', provided_by=[production, staging])
-
-    with settings(hide('stdout', 'stderr')):
-        update_code(branch=branch)
-        install_site()
+def bootstrap_develop():
+    """ Convenience method for calling: fab HOST bootstrap:develop"""
+    bootstrap(branch='develop')
 
 
-def touch():
+def deploy_develop():
+    """ Convenience method for calling: fab HOST deploy:develop"""
+    deploy(branch="develop")
+
+
+def restart_wsgi_app():
     """Reloads daemon processes by touching the WSGI file"""
     require('environment', provided_by=[production, staging])
-
-    print('\n\nRunning `touch`...')
 
     with settings(hide('stdout', 'stderr')):
         run('touch %(wsgi_file)s' % env)
 
+
+def check_app():
+    """cURLs the target server to check if the app is up"""
+    require('environment', provided_by=[production, staging])
+    #run('curl -sk https://localhost')
+    local('curl -sk https://%(project_url)s' % env)
+
+def print_project_repo():
+    print("%(project_repo)s" % env)
+
+def print_project_name():
+    print("%(project_name)s" % env)
+
+
+# -----------------------------------------------------------------------------
 MOTD_PROD = """
   ____                                        __    ____                _
  |  _ \ _ __ ___  _ __  _ __   ___ _ __   ____\ \  |  _ \ _ __ ___   __| |
