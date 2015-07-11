@@ -12,7 +12,6 @@ and modify as needed (the files will be be ignored by git).
 $ cp sample.fabric.py production/fabric.py
 """
 
-
 def get_settings(overrides={}):
     """Returns a dictionary with settings for Fabric.
     Allow to override some settings through a parameter.
@@ -25,47 +24,30 @@ def get_settings(overrides={}):
     # SSH connections
     # =========================================================================
     # List of hosts to work on
-    SETTINGS['hosts'] = ['example.com']
+    SETTINGS['hosts'] = ['dropper.example.com']
     # Username to log in in the remote machine
     SETTINGS['user'] = 'user'
 
     # =========================================================================
     # Database
     # =========================================================================
-    SETTINGS['db_name'] = overrides.get('db_name', 'ctsi_dropper')
+    SETTINGS['db_user'] = 'db_user'
+    SETTINGS['db_pass'] = 'db_pass'
+    SETTINGS['db_host'] = 'db_host'
+    SETTINGS['db_name'] = overrides.get('db_name', 'my_db_name')
 
-    # Name of the database that will be copied for feature testing deployment.
-    # This database must exist and the database user must have
-    # enough rights to dump it.
-    SETTINGS['source_db'] = 'ctsi_dropper_s'
+    # =========================================================================
+    # File storage
+    # =========================================================================
+    SETTINGS['redidropper_upload_temp_dir'] = '/ext/images_temp'
+    SETTINGS['redidropper_upload_saved_dir'] = '/ext/images'
 
-    # Database user used for create_db()
-    SETTINGS['db_user'] = 'ctsi_dropper'
-
-    # Password for db_user - included in settings, and ~user/.my.cnf if
-    # you create that with mysql_conf().  If you don't enable the corresponding
-    # option below, you will be prompted for a password.
-    SETTINGS['db_password'] = 'SET_DB_PASSWORD_HERE'
-
-    # Password for root DB user - included in ~user/.my.cnf if you create that
-    # with mysql_conf().  If you don't enable the corresponding option below,
-    # you will be prompted for a password for database creation (only).
-    SETTINGS['db_root_password'] = 'SET_ROOT_DB_PASSWORD_HERE'
-
-    # Command option for DB password.  The default ('-p') option will prompt
-    # you for the password.  The alternate ('' - i.e. empty) can be used to
-    # avoid password prompting, but only after you have run mysql_conf(), e.g.
-    # `fab settings mysql_conf` to set up user's .my.cnf file.
-    SETTINGS['db_password_opt'] = '-p'
-    #SETTINGS['db_password_opt'] = ''
-
-    # Command option for root DB password. The default ('-p') option will
-    # prompt you for the password. The alternate
-    # ('--defaults-group-suffix=_root') can be used to avoid password
-    # prompting, but only after you have run mysql_conf(), e.g.
-    # `fab settings mysql_conf` to set up user's .my.cnf file.
-    SETTINGS['db_root_password_opt'] = '-p'
-    #SETTINGS['db_root_password_opt'] = '--defaults-group-suffix=_root'
+    # =========================================================================
+    # REDCap
+    # =========================================================================
+    SETTINGS['redcap_api_url'] = 'https:/redcap.example.com/redcap/api/'
+    SETTINGS['redcap_api_token'] = ''
+    SETTINGS['redcap_demographics_subject_id'] = 'subject_id'
 
     # A meaningful name for the instance
     SETTINGS['project_name'] = overrides.get('project_name', 'dropper')
@@ -75,11 +57,12 @@ def get_settings(overrides={}):
     # Change the prefix for the Apache apps paths
     SETTINGS['project_path'] = '/srv/apps/%(project_name)s' % SETTINGS
     SETTINGS['project_repo_path'] = '%(project_path)s/src' % SETTINGS
-    SETTINGS['project_repo'] = overrides.get('project_repo',
+    SETTINGS['project_repo'] = overrides.get(
+        'project_repo',
         'git://github.com/ctsit/redi-dropper-client.git')
 
     # =========================================================================
-    # Secret key
+    # Secret key (stored in settings.conf when we deploy)
     # =========================================================================
     from base64 import b64encode
     from os import urandom
@@ -88,17 +71,20 @@ def get_settings(overrides={}):
     # =========================================================================
     # Virtualenv
     # =========================================================================
-    # Python version that will be used in the virtualenv
     SETTINGS['python'] = 'python2.7'
     SETTINGS['env_path'] = '%(project_path)s/env' % SETTINGS
 
     # =========================================================================
     # Apache + VirtualHost + WSGI
     # =========================================================================
-    # The group your web server is running on
-    SETTINGS['server_group'] = 'www-data'
+    # The user/group your web server is running on
+    SETTINGS['server_user'] = 'app-runner'
+    SETTINGS['server_group'] = 'app-runner'
     SETTINGS['vhost_file'] = ('/etc/apache2/sites-available/%(project_name)s' %
                               SETTINGS)
-    SETTINGS['wsgi_file'] = '%(project_path)s/deploy/dropper.wsgi' % SETTINGS
+    SETTINGS['wsgi_file'] = ('%(project_path)s/dropper.wsgi' %
+                             SETTINGS)
+    SETTINGS['settings_file'] = ('%(project_path)s/settings.conf' %
+                                 SETTINGS)
 
     return SETTINGS

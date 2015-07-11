@@ -12,11 +12,14 @@ https://docs.google.com/document/d/1EQnPwvKQLCYa7ifHXaHCr4lEJK7QcX7VDJOQvEtkbk8/
 
 Technical Specifications
 ------------------------
-@TODO:
+
+- Front end: ReacJS - https://facebook.github.io/react/docs/tutorial.html
+- Back end: Flask framework - http://flask.pocoo.org/
+- Database: 5.6.24-enterprise-commercial-advanced-log MySQL Enterprise Server
 
 
-Workflow
---------
+Developer's Workflow
+--------------------
 
 There are three great tools for python development:
 
@@ -43,27 +46,57 @@ There are three great tools for python development:
     mkvirtualenv -p /usr/local/bin/python2.7 redi-dropper-client
     workon redi-dropper-client
     cd ~/git/redi-dropper-client/app
-    fab install_requirements
+    fab prep_develop
     fab init_db
 
-    # create/update important configuration params
-    cp redidropper/application.conf.sample ~/redidropper_application.conf
+    # create and edit the settings file
+    cp deploy/sample.settings.conf deploy/settings.conf
 
     # run the application
-    REDIDROPPER_CONFIG=~/redidropper_application.conf python run.py
-
-    # to avoid typing the REDIDROPPER_CONFIG=... you can create a permanent
-    # environment entry in your ~/.bashrc
-    echo 'export REDIDROPPER_CONFIG=~/redidropper_application.conf' >> ~/.bashrc && . ~/.bashrc
-    # ... and then you can simply run
-    ./run.sh
+    fab run
         or
     python run.py
-	or
-    fab run
 
-    Finally you can opn your browser at https://localhost:5000/ and login as 
+    Finally you can open your browser at https://localhost:5000/ and login as
     admin@example.com with any password
+
+
+Initial Deployment
+------------------
+
+For deployment we use the deploy/deploy.sh shell script.
+This script invokes fabric tasks defined in the app/deploy/fabfile.py
+aginst the server specified as an argument.
+
+After you clone the repository, execute the following commands to deploy to
+staging (or production):
+
+- create three files in your local `deployment` folder:
+.. raw:: bash
+    $ cp sample.fabric.py staging/fabric.py
+    $ cp sample.deploy.settings.conf staging/settings.conf
+    $ cp sample.fabric.py staging/fabric.py
+- edit the created files to reflect the proper username/passwords/hosts/paths
+- execute the initial deployment (requires sudo access on the target server)
+.. raw:: bash
+    $ deploy/deploy.sh -i staging
+    OR
+    $ deploy/deploy.sh -i production
+
+
+Re-Deployment
+-------------
+
+Once the application was deployed to the target server we have to re-upload
+configuration and code changes by executing one of the following command:
+
+.. raw:: bash
+    $ deploy/deploy.sh staging
+    OR
+    $ deploy/deploy.sh production
+
+Note: that the '-i' flag is used only for the initial deployment.
+
 
 Files & Folders
 ---------------
@@ -72,30 +105,24 @@ Files & Folders
 | **File**           | **Description**                                                             |
 +====================+=============================================================================+
 | run.py             |  This is the file that is invoked to start up a development server.         |
-|                    |  It gets a copy of the app from your package and runs it.                   |
-|                    |  This won't be used in production, but it will see a lot of mileage         |
-|                    |  in development.                                                            |
+|                    |  This is not used in production, but it will see a lot of mileage           |
+|                    |  in development. In production we use the dropper.wsgi file for Apache.     |
 +--------------------+-----------------------------------------------------------------------------+
-| requirements.txt   |  This file lists all of the Python packages that your app depends on.       |
-|                    |  You may have separate files for production and development dependencies.   |
+| requirements/.txt   | This folder stores lists of Python packages that the app depends on.       |
+|                    |  We have separate files for production and development dependencies.        |
 +--------------------+-----------------------------------------------------------------------------+
-| config.py          |  This file contains most of the configuration variables that your app needs.|
+| config.py          |  This file contains most of the configuration variables that the app needs. |
 +--------------------+-----------------------------------------------------------------------------+
-| application.cfg    |  This file contains configuration variables that shouldn't be in version    |
+| settings.conf      |  This file contains configuration variables that shouldn't be in version    |
 |                    |  control.                                                                   |
 |                    |  This includes things like API keys and database URIs containing passwords. |
 |                    |  This also contains variables that are specific to this particular instance |
 |                    |  of your application.                                                       |
 |                    |  For example, you might have                                                |
 |                    |      DEBUG = False // in config.py but                                      |
-|                    |      DEBUG = True  // in application.cfg for development.                   |
-|                    |  Since this file will be read in after config.py, it will override it and   |
-|                    |  set DEBUG = True.                                                          |
+|                    |      DEBUG = True  // in sttings.conf for development.                      |
 +--------------------+-----------------------------------------------------------------------------+
-| yourapp/           |  This is the package that contains your application.                        |
-+--------------------+-----------------------------------------------------------------------------+
-| yourapp/__init__.py|  This file initializes your application and brings together all of          |
-|                    |  the various components.                                                    |
+| yourapp/           |  This is the package that containsthe bulk of the application code.         |
 +--------------------+-----------------------------------------------------------------------------+
 | yourapp/routes     |  This is where the routes are defined.                                      |
 |                    |  It may be split into a package of its own.                                 |
@@ -107,7 +134,7 @@ Files & Folders
 |                    |  that require to be public for the app. It is accessible from               |
 |                    |  yourapp.com/static/ by default.                                            |
 +--------------------+-----------------------------------------------------------------------------+
-| yourapp/templates/ |   This is where you'll put the Jinja2 templates for your app.               |
+| yourapp/templates/ |  This is where we store the Jinja2 templates for the app.                   |
 +--------------------+-----------------------------------------------------------------------------+
 
 
@@ -115,20 +142,6 @@ Debugging
 ---------
 
 Install http://flask-debugtoolbar.readthedocs.org/en/latest/
-
-.. code:: python
-
-    from flask import Flask
-    from flask_debugtoolbar import DebugToolbarExtension
-    app = Flask(__name__)
-
-    # the toolbar is only enabled in debug mode:
-    app.debug = True
-    # set a 'SECRET_KEY' to enable the Flask session cookies
-    app.config['SECRET_KEY'] = '<replace with a secret key>'
-    toolbar = DebugToolbarExtension(app)
-
-
 The toolbar will automatically be injected into Jinja templates when debug mode is on.
 In production, setting app.debug = False will disable the toolbar.
 
