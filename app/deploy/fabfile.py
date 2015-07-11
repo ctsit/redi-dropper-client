@@ -12,6 +12,7 @@ Fabric deployment file.
 """
 
 import imp
+import sys
 import os.path
 from fabric import colors
 from fabric.api import cd, env, local, lcd
@@ -21,6 +22,7 @@ from fabric.contrib.files import exists, upload_template
 from fabric.operations import require, run, sudo
 from fabric.utils import abort
 # from pprint import pprint
+
 
 def help():
     local('fab --list')
@@ -145,17 +147,19 @@ def bootstrap(branch="master"):
     require('environment', provided_by=[production, staging])
     _motd()
 
-    if (not exists('%(project_path)s' % env) or
-        confirm('\n%(project_path)s already exists. Do you want to continue?'
-                % env, default=False)):
-            with settings(hide('stdout', 'stderr')):
-                _init_directories()
-                _init_virtualenv()
-                _clone_repo()
-                _checkout_repo(branch=branch)
-                _install_requirements()
+    msg = colors.red('\n%(project_path)s exists. '
+                     'Do you want to continue anyway?' % env)
+
+    if (not exists('%(project_path)s' % env)
+            or confirm(msg, default=False)):
+        with settings(hide('stdout', 'stderr')):
+            _init_directories()
+            _init_virtualenv()
+            _clone_repo()
+            _checkout_repo(branch=branch)
+            _install_requirements()
     else:
-        abort('\nAborting.')
+        sys.exit('\nAborting.')
 
 
 def mysql_conf():
@@ -490,11 +494,12 @@ def restart_wsgi_app():
 def check_app():
     """cURLs the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
-    #run('curl -sk https://localhost')
-    local('curl -sk https://%(project_url)s' % env)
+    local('curl -sk https://%(project_url)s | grep "Please login" ' % env)
+
 
 def print_project_repo():
     print("%(project_repo)s" % env)
+
 
 def print_project_name():
     print("%(project_name)s" % env)
