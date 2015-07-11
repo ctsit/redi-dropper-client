@@ -62,14 +62,11 @@ There are three great tools for python development:
 
 
 Initial Deployment
-----------
+------------------
 
-For deployment we use the shell scripts in the app/deploy folder:
-
-- stage_init
-- prod_init
-
-Those scripts invoke fabric tasks defined in the app/deploy/fabfile.py.
+For deployment we use the deploy/deploy.sh shell script.
+This script invokes fabric tasks defined in the app/deploy/fabfile.py
+aginst the server specified as an argument.
 
 After you clone the repository, execute the following commands to deploy to
 staging (or production):
@@ -82,19 +79,23 @@ staging (or production):
 - edit the created files to reflect the proper username/passwords/hosts/paths
 - execute the initial deployment (requires sudo access on the target server)
 .. raw:: bash
-    $ ./stage_init
+    $ deploy/deploy.sh -i staging
+    OR
+    $ deploy/deploy.sh -i production
 
 
 Re-Deployment
 -------------
 
 Once the application was deployed to the target server we have to re-upload
-configuration and code changes by executing one of the following shell scripts:
+configuration and code changes by executing one of the following command:
 
-- stage_update
-- prod_update
+.. raw:: bash
+    $ deploy/deploy.sh staging
+    OR
+    $ deploy/deploy.sh production
 
-@TODO: implement the scripts
+Note: that the '-i' flag is used only for the initial deployment.
 
 
 Files & Folders
@@ -112,7 +113,7 @@ Files & Folders
 +--------------------+-----------------------------------------------------------------------------+
 | config.py          |  This file contains most of the configuration variables that the app needs. |
 +--------------------+-----------------------------------------------------------------------------+
-| sttings.conf       |  This file contains configuration variables that shouldn't be in version    |
+| settings.conf      |  This file contains configuration variables that shouldn't be in version    |
 |                    |  control.                                                                   |
 |                    |  This includes things like API keys and database URIs containing passwords. |
 |                    |  This also contains variables that are specific to this particular instance |
