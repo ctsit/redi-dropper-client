@@ -90,13 +90,6 @@ def save_uploaded_file():
     logger.info("User uploaded chunk: {}".format(fchunk))
     file_name = fchunk.file_name
 
-    if not utils.allowed_file(file_name):
-        err = utils.pack_error("Invalid file type: {}."
-                               "Allowed extensions: {}"
-                               .format(file_name, utils.ALLOWED_EXTENSIONS))
-        logger.error(err)
-        return err
-
     if not fchunk.afile:
         err = utils.pack_error("No file specified.")
         logger.error(err)
