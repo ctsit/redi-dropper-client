@@ -36,7 +36,6 @@ fi
 eval export HOME=~$(id -un)
 REPO_DIR=$HOME/git/redi-dropper-client
 VENV_DIR=$HOME/venv
-# REMOTE=`whoami`@dropper-stage1.ctsi.ufl.edu
 HOST=$1
 echo "Using REPO_DIR: $REPO_DIR"
 echo "Using VENV_DIR: $VENV_DIR"
@@ -54,7 +53,6 @@ export PYTHONPATH=$REPO_DIR:$PYTHONPATH
 # CWD to where the fabfile.py is located so we don-t have to use 'fab --fabfile'
 pushd $REPO_DIR/app/deploy
 
-
 if [[ "yes" == "$INITIAL_DEPLOY_ONLY" ]]; then
     # create folders, install venv, clone repo from the given branch
     fab $HOST bootstrap_develop
@@ -62,8 +60,10 @@ fi
 
 # re-check code an requirements (assumes that bootstrap was performed)
 fab $HOST print_project_repo
-fab $HOST deploy:fix-deployment-docs
+fab $HOST deploy:develop
 fab $HOST restart_wsgi_app
+sleep 2
+fab $HOST check_app
 
 # show error log from the remote server
 #fab staging show_config_apache

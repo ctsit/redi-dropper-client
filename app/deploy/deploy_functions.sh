@@ -18,19 +18,19 @@ function check_requirements() {
 }
 
 function activate_venv() {
-    if [ -d $VENV_DIR ]; then
+    echo "$VENV_DIR"
+    if test -d $VENV_DIR; then
         echo "Venv folder: [$VENV_DIR] already exists."
         read -p "Do you want to continue? [y/N] " -n 1 -r
 
         echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            echo "Executing: $3"
-            `$3`
-        else
+        if ! [[ $REPLY =~ ^[Yy]$ ]]; then
             exit 1
         fi
+    else
+        virtualenv $VENV_DIR
     fi
-    . $VENV_DIR/bin/activate
+    source $VENV_DIR/bin/activate
 }
 
 function install_fabric() {
