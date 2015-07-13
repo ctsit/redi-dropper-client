@@ -152,20 +152,6 @@ def get_safe_int(unsafe, default=1, min_allowed=1, max_allowed=None):
     return unsafe
 
 
-def allowed_file(filename):
-    """
-    Checks if the specified file name should be allowed for downloading
-
-    :rtype Boolean
-    :return True if the filename is in the ALLOWED_EXTENSIONS whitelist
-    """
-    if filename is None:
-        return False
-
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
 def flash_error(msg):
     """ Put a message in the "error" queue for display """
     flash(msg, FLASH_CATEGORY_ERROR)

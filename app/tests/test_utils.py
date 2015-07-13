@@ -75,33 +75,6 @@ class UtilsTests(BaseTestCase):
             expected = case['exp']
             assert actual == expected
 
-    def test_allowed_file(self):
-        cases = [
-            {"x": None,     "exp": False},
-            {"x": "",       "exp": False},
-            {"x": "  ",     "exp": False},
-            {"x": "  0x0",  "exp": False},
-            {"x": "x.rar",  "exp": False},
-            {"x": "tgz",    "exp": False},
-
-            {"x": "a .txt", "exp": True},
-            {"x": "b.pdf",  "exp": True},
-            {"x": "c.png",  "exp": True},
-            {"x": "d.jpg",  "exp": True},
-            {"x": "e.jpeg", "exp": True},
-            {"x": "f.gif",  "exp": True},
-            {"x": "g.tiff", "exp": True},
-            {"x": "h.zip",  "exp": True},
-            {"x": "i.tar",  "exp": True},
-            {"x": "j.tgz",  "exp": True},
-            {"x": "k.bz2",  "exp": True},
-            ]
-
-        for case in cases:
-            actual = utils.allowed_file(case['x'])
-            expected = case['exp']
-            assert actual == expected
-
     def test_pack(self):
         assert '{"message":"msg","status":"error"}' == utils.pack_error("msg") \
             .replace(' ', '').replace('\n', '')
