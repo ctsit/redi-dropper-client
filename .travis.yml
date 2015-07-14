@@ -9,6 +9,8 @@
 # The redidropper/startup/initializer.py does not need the env variable anymore
 #env: REDIDROPPER_CONFIG=~/build/ctsit/redi-dropper-client/app/deploy/application.conf
 
+# http://docs.travis-ci.com/user/migrating-from-legacy/
+sudo: false
 language: python
 python:
     - "2.7"
@@ -20,7 +22,7 @@ branches:
 
 # __1 Use this to prepare the system to install prerequisites or dependencies
 before_install:
-    - sudo apt-get install -y python-setuptools python-dev
+    - echo "apt-get install -y python-setuptools python-dev"
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:

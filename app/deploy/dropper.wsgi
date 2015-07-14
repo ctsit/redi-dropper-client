@@ -21,7 +21,6 @@ sys.path.insert(0, app_home)
 
 from redidropper.main import app as application, mail
 from redidropper import initializer
-from config import MODE_PROD
 
 # Configures routes, models
 application = initializer.do_init(application)
