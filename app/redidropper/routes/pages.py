@@ -289,7 +289,7 @@ def get_role_landing_page():
 
     # Per Chris's request all users land on the same page
     next_page = request.form.get('next')
-    return next_page if next_page != 'None' else url_for('upload_files')
+    return next_page if next_page is not None else url_for('upload_files')
 
 
 @identity_loaded.connect_via(app)
@@ -364,4 +364,4 @@ def logout():
     LogEntity.logout(session['uuid'])
     # Also pop the session id
     session.pop('uuid')
-    return redirect(request.args.get('next') or '/')
+    return redirect('/')
