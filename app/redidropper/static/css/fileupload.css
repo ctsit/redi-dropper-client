@@ -1,64 +1,49 @@
-
-.table-curved {
-    border-collapse: separate;
-}
-.table-curved {
-    border: solid #ccc 1px;
-    border-radius: 6px;
-    border-left:0px;
-}
-.table-curved td, .table-curved th {
-    text-align: center;
-    border-left: 1px solid #ccc;
-    border-top: 1px solid #ccc;
-}
-.table-curved th {
-    border-top: none;
-}
-.table-curved th:first-child {
-    border-radius: 6px 0 0 0;
-}
-.table-curved th:last-child {
-    border-radius: 0 6px 0 0;
-}
-.table-curved th:only-child{
-    border-radius: 6px 6px 0 0;
-}
-.table-curved tr:last-child td:first-child {
-    border-radius: 0 0 0 6px;
-}
-.table-curved tr:last-child td:last-child {
-    border-radius: 0 0 6px 0;
-}
-
-
 .cursor-pointer {
     cursor:pointer;
 }
 
 .file-progress-status {
-  padding-left: 10px;
-  padding-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .file-drop-css {
-  padding: 30px;
-  font-size: 13px;
-  text-align: center;
-  color: #666;
-  font-weight: bold;
-  background-color: #eee;
-  border: 2px dashed #aaa;
-  border-radius: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  z-index: 9999;
+    padding: 2em;
+    margin: 20px auto;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue",Roboto,Arial,Verdana,Helvetica,sans-serif;
+    font-size: 1.5em;
+    font-weight: 300;
+    color: #008BFF;
+    border: 3px dashed #008AFF;
+    border-radius: 12px;
+    transition: opacity 0.3s ease;
+}
+
+.file-drop-css:hover {
+    background: repeating-linear-gradient(
+      -45deg,
+      #efefef,
+      #efefef 10px,
+      #fff 10px,
+      #fff 20px
+    );
 }
 
 .file-dragover-css {
-  padding:30px;
-  color:#555;
-  background-color:#ddd;
-  border:1px 
-  solid #999;
+    background-color: #eee;
+}
+
+.or {
+    font-size: 1em;
+    color: #008BFF;
+}
+.or::before, .or::after {
+    content: "";
+    width: 3em;
+    border-top: 1px solid #008BFF;
+    height: 1px;
+    display: inline-block;
+    vertical-align: 0.2em;
+    margin: 0px 0.25em;
 }
