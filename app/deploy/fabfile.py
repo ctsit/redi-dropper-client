@@ -109,6 +109,7 @@ def _checkout_repo(branch="master"):
         run('git checkout %s' % branch)
 
     run('chmod -R go=u,go-w %(project_repo_path)s' % env)
+    # run('chmod -R 770 %(project_repo_path)s' % env)
 
 
 def _install_requirements():
@@ -119,6 +120,7 @@ def _install_requirements():
         run('pip install -r %(project_repo_path)s/app/requirements/deploy.txt'
             % env)
         run('chmod -R go=u,go-w %(env_path)s' % env)
+        # run('chmod -R 770 %(env_path)s' % env)
 
 
 def _update_requirements():
@@ -189,28 +191,35 @@ def mysql_conf():
     local(cmd, capture=True)
 
 
-def mysql_check_connect():
-    """ Check if a configuration was created for the host"""
-    # @TODO: finish implementation
-    # mysql_config_editor print --all | grep fabric_
-    config_exists = True
-
-    if not config_exists:
-        abort(colors.green("Please store the database credentials first"
-                           " by executing: $ fab server mysql_conf " % env))
-
-
-def mysql_connect():
-    """ Helper task for creating quick connections """
+def mysql_login_path():
     require('environment', provided_by=[production, staging])
-    mysql_check_connect()
-    local("mysql --login-path=fabric_%(db_host)s %(db_name)s " % env)
+    return "fabric_%(db_host)s" % env
+
+
+def mysql_conf_test():
+    """ Check if a configuration was created for the host"""
+    require('environment', provided_by=[production, staging])
+
+    from subprocess import Popen, PIPE
+    login_path = mysql_login_path()
+    cmd = ("mysql_config_editor print --login-path={} 2> /dev/null"
+           .format(login_path) % env)
+    proc = Popen(cmd, shell=True, stdout=PIPE)
+    (out, err) = proc.communicate()
+    # print("Checking mysql login path: {}".format(login_path))
+    has_config = ("" != out)
+
+    if not has_config:
+        print("There are no mysql credentials stored in ~/.mylogin.cnf file."
+              " Please store the database credentials by running: \n\t"
+              " fab {} mysql_conf".format(env.environment))
+        sys.exit('\nAborting.')
 
 
 def mysql_check_db_exists():
     """ Check if the specified database was already created """
     require('environment', provided_by=[production, staging])
-    mysql_check_connect()
+    mysql_conf_test()
 
     cmd = ("echo 'SELECT COUNT(*) FROM information_schema.SCHEMATA "
            " WHERE SCHEMA_NAME = \"%(db_name)s\" ' "
@@ -218,7 +227,7 @@ def mysql_check_db_exists():
            " | sort | head -1"
            % env)
     result = local(cmd, capture=True)
-    print("check_db_exists: {}".format(result))
+    # print("check_db_exists: {}".format(result))
     return result
 
 
@@ -231,13 +240,14 @@ def mysql_count_tables():
         abort(colors.red("Unable to list database '%(db_name)s' tables."
                          "The database does not exist." % env))
 
+    login_path = mysql_login_path()
     cmd = ("echo 'SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES "
            " WHERE TABLE_SCHEMA = \"%(db_name)s\" ' "
-           " | mysql --login-path=fabric_%(db_host)s"
-           " | sort | head -1"
+           " | mysql --login-path={}"
+           " | sort | head -1".format(login_path)
            % env)
     result = local(cmd, capture=True)
-    return result
+    return int(result)
 
 
 def mysql_list_tables():
@@ -249,9 +259,10 @@ def mysql_list_tables():
         abort(colors.red("Unable to list database '%(db_name)s' tables."
                          "The database does not exist." % env))
 
+    login_path = mysql_login_path()
     cmd = ("echo 'SELECT table_name, table_rows FROM INFORMATION_SCHEMA.TABLES "
            " WHERE TABLE_SCHEMA = \"%(db_name)s\" ' "
-           " | mysql --login-path=fabric_%(db_host)s"
+           " | mysql --login-path={}".format(login_path)
            % env)
     result = local(cmd, capture=True)
     print(result)
@@ -269,12 +280,22 @@ def mysql_create_tables():
         abort(colors.red("Unable to create tables in database '%(db_name)s'."
                          "The database does not exist" % env))
 
+    total_tables = mysql_count_tables()
+
+    if total_tables > 0:
+        print(colors.red("The database already contains {} tables."
+                         .format(total_tables)))
+        sys.exit("If you need to re-create the tables please run: "
+                 "\n\t fab {} mysql_reset_tables"
+                 .format(env.environment))
+
+    login_path = mysql_login_path()
     files = ['001/upgrade.sql', '002/upgrade.sql', '002/data.sql']
 
     with lcd('../db/'):
         for sql in files:
-            cmd = ("mysql --login-path=fabric_%(db_host)s %(db_name)s < {}"
-                   .format(sql)
+            cmd = ("mysql --login-path={} %(db_name)s < {}"
+                   .format(login_path, sql)
                    % env)
             local(cmd)
 
@@ -283,7 +304,9 @@ def mysql_drop_tables():
     """ Drop the app tables"""
     require('environment', provided_by=[production, staging])
 
-    question = ("Do you want to drop the tables in '%(db_name)s'?" % env)
+    total_tables = mysql_count_tables()
+    question = ("Do you want to drop the {} tables in '%(db_name)s'?"
+                .format(total_tables) % env)
     if not confirm(question):
         abort(colors.yellow("Aborting at user request."))
 
@@ -303,50 +326,12 @@ def mysql_drop_tables():
 
 
 def mysql_reset_tables():
-    count = mysql_count_tables()
-    print("(!) Database contains: {} tables".format(count))
+    total_tables = mysql_count_tables()
 
-    if int(count) > 0:
+    if total_tables > 0:
         mysql_drop_tables()
 
     mysql_create_tables()
-
-
-# def create_db():
-#     """Creates a new DB"""
-#     require('environment', provided_by=[production, staging])
-#
-#     create_db_cmd = ("CREATE DATABASE `%(db_name)s` "
-#                      "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
-#                      % env)
-#     grant_db_cmd = ("GRANT ALL PRIVILEGES ON `%(db_name)s`.* TO `%(db_user)s`"
-#                     "@localhost IDENTIFIED BY \"%(db_password)s\"; "
-#                     "FLUSH PRIVILEGES;"
-#                     % env)
-#
-#     print('\n\nCreating DB...')
-#
-#     with settings(hide('stderr')):
-#         run(("mysql -u %(db_user)s %(db_password_opt)s -e '" % env) +
-#             create_db_cmd +
-#             ("' || { test root = '%(db_user)s' && exit $?; " % env) +
-#             "echo 'Trying again, with MySQL root DB user'; " +
-#             ("mysql -u root %(db_root_password_opt)s -e '" % env) +
-#             create_db_cmd + grant_db_cmd + "';}")
-#
-#
-# def drop_db():
-#     """Drops the current DB - losing all data!"""
-#     require('environment', provided_by=[production, staging])
-#
-#     print('\n\nDropping DB...')
-#
-#     if confirm('\nDropping the %s DB loses ALL its data! Are you sure?'
-#                % (env['db_name']), default=False):
-#         run("echo 'DROP DATABASE `%s`' | mysql -u %s %s" %
-#             (env['db_name'], env['db_user'], env['db_password_opt']))
-#     else:
-#         abort('\nAborting.')
 
 
 def _toggle_apache_site(state):
@@ -459,15 +444,19 @@ def update_config():
                             mirror_local_mode=False,
                             mode=None,  # 640
                             pty=None)
+            print("Uploaded file: {}".format(remote_file))
+            # sudo('do something as user', user=notme)
+            # sudo('chown root:root {}'.format(remote_file))
+            # sudo('chmod 770 {}'.format(remote_file))
 
 
 def deploy(branch="master"):
-    """Updates the code, config, requirements, and enables the site"""
+    """Updates the code, config, requirements, and enables the site
+    Note: you have to run the disable_site task before running this task
+    """
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
-        disable_site()  # execute a2dissite
-
         update_code(branch=branch)
         update_config()  # upload new config files
         enable_site()  # execute a2ensite
