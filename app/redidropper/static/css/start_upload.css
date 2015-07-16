@@ -11,11 +11,6 @@
     background: #eee !important;
 }
 
-.file-drop-css {
-    margin-left: 40px;
-    margin-right: 40px;
-}
-
 .next-page a:after {
     content: "";
     border-top: 20px solid transparent;

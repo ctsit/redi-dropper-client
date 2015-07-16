@@ -12,8 +12,13 @@
             ondragenter="jQuery(this).addClass('file-dragover-css');"
             ondragend="jQuery(this).removeClass('file-dragover-css');"
             ondrop="jQuery(this).removeClass('file-dragover-css');">
-            Drop files here to upload or <a id="file-select" class="resumable-browse">
-                <u>select from your computer</u></a>
+            Drag files here
+            <div class="or">
+                or
+            </div>
+            <a id="file-select" class="resumable-browse">
+                <button class="btn btn-danger">Select files</button>
+            </a>
         </div>
 
         <!-- Progress Bar -->
