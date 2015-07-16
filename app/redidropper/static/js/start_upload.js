@@ -315,7 +315,7 @@ var NavController = React.createClass({
         }
         else if(current_tab === 2) {
             selected_subject_id = "Subject ID: " + this.state.subject_id;
-            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_arm + " " + this.state.eventEntity.redcap_event;
             window.location.hash = 'Files';
             $("#upload-files").show();
             $("#files-list").empty();
