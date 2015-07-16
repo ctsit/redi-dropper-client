@@ -43,7 +43,7 @@ function install_fabric() {
 
 function execute_fresh_script() {
     echo "Checking if repo was updated..."
-    SUM_NEW="$(md5sum $0 | cut -d ' ' -f1):$(md5sum deploy_functions.sh | cut -d ' ' -f1)"
+    SUM_NEW="$(md5 $0 | cut -d ' ' -f1):$(md5 deploy_functions.sh | cut -d ' ' -f1)"
     echo "Compare checksums: $1 vs $SUM_NEW"
 
     if (cd $REPO_DIR && git pull && git checkout develop); then

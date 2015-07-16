@@ -45,7 +45,7 @@ activate_venv
 install_fabric
 
 # Update local Git repository and re-exec this script if updated
-SUM="$(md5sum $0 | cut -d ' ' -f1):$(md5sum deploy_functions.sh | cut -d ' ' -f1)"
+SUM="$(md5 $0 | cut -d ' ' -f1):$(md5 deploy_functions.sh | cut -d ' ' -f1)"
 # execute_fresh_script $SUM
 
 # set up PYTHONPATH
