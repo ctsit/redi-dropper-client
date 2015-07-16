@@ -22,6 +22,7 @@ from werkzeug import secure_filename
 
 from redidropper import utils
 from redidropper.main import app
+from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
 
 logger = app.logger
@@ -45,7 +46,7 @@ class FileChunk(object):
         self.file_name = secure_filename(request.form['resumableFilename'])
         self.afile = request.files['file']
         self.total_parts = int(request.form['resumableTotalChunks'])
-        self.subject_id = int(request.form['subject_id'])
+        self.redcap_id = int(request.form['subject_id'])  # @TODO: rename
         self.event_id = int(request.form['event_id'])
         return self
 
@@ -63,11 +64,11 @@ def save_file_metadata(fchunk):
 
     @return SubjectFileEntity
     """
-    # uploader = SubjectEntity.get_by_id(current_user.id)
     added_date = datetime.today()
+    subject = SubjectEntity.get_by_redcap_id(fchunk.redcap_id)
 
     subject_file = SubjectFileEntity.create(
-        subject_id=fchunk.subject_id,
+        subject_id=subject.id,
         event_id=fchunk.event_id,
         file_name=fchunk.file_name,
         file_check_sum='pending',

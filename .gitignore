@@ -6,8 +6,7 @@
 
 /app/deploy/settings.conf
 
-/app/upload/saved/*/
-/app/upload/temp/*/
+/app/upload/
 
 .vagrant
 *.pyc

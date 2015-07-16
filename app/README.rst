@@ -71,11 +71,11 @@ aginst the server specified as an argument.
 After you clone the repository, execute the following commands to deploy to
 staging (or production):
 
-- create three files in your local `deployment` folder:
+- create three files in your local `deploy` folder:
 .. raw:: bash
     $ cp sample.fabric.py staging/fabric.py
     $ cp sample.deploy.settings.conf staging/settings.conf
-    $ cp sample.fabric.py staging/fabric.py
+    $ cp sample.virtualhost.conf staging/virtualhost.conf
 - edit the created files to reflect the proper username/passwords/hosts/paths
 - execute the initial deployment (requires sudo access on the target server)
 .. raw:: bash
