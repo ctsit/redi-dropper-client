@@ -63,29 +63,42 @@ There are three great tools for python development:
 
 Initial Deployment
 ------------------
+Assumptions:
+ - The 'deployer' has an account on the target server and it is in the 'sudoers' group
+ - The 'deployer' uses a Darwin/Linux operating system to run the deployment script
 
-For deployment we use the deploy/deploy.sh shell script.
+For code deployment we use the app/deploy/deploy.sh shell script.
 This script invokes fabric tasks defined in the app/deploy/fabfile.py
 aginst the server specified as an argument.
 
-After you clone the repository, execute the following commands to deploy to
-staging (or production):
+After you clone the repository:
 
 - create three files in your local `deploy` folder:
 .. raw:: bash
-    $ cp sample.fabric.py staging/fabric.py
-    $ cp sample.deploy.settings.conf staging/settings.conf
-    $ cp sample.virtualhost.conf staging/virtualhost.conf
-- edit the created files to reflect the proper username/passwords/hosts/paths
-- execute the initial deployment (requires sudo access on the target server)
+    $ redi-dropper-client/app
+    $ cp sample.fabric.py               staging/fabric.py
+    $ cp sample.deploy.settings.conf    staging/settings.conf
+    $ cp sample.virtualhost.conf        staging/virtualhost.conf
+- edit the files in the staging (or production) folder to reflect
+  the proper username/passwords/hosts/paths
+- execute the 'initial deploy' command for staging (or production):
 .. raw:: bash
     $ deploy/deploy.sh -i staging
     OR
     $ deploy/deploy.sh -i production
 
+For database tables creation please run:
+.. raw:: bash
+    $ fab staging mysql_conf
+    $ fab staging mysql_list_tables
+    $ fab staging mysql_create_tables
+
 
 Re-Deployment
 -------------
+
+Assumptions:
+ - See the "Initial Deployment" assumptions
 
 Once the application was deployed to the target server we have to re-upload
 configuration and code changes by executing one of the following command:
