@@ -29,6 +29,11 @@ There are three great tools for python development:
 
 @see https://virtualenvwrapper.readthedocs.org/en/latest/
 
+Developers have the option of using the vagrant or run the application
+manually using Python's embedded webserver.
+
+The manual process requires the following commands for setup:
+
 .. raw:: bash
 
     brew install mysql
@@ -69,13 +74,13 @@ Assumptions:
 
 For code deployment we use the app/deploy/deploy.sh shell script.
 This script invokes fabric tasks defined in the app/deploy/fabfile.py
-aginst the server specified as an argument.
+aginst the "staging" or "production" server specified as an argument.
 
 After you clone the repository:
 
 - create three files in your local `deploy` folder:
 .. raw:: bash
-    $ redi-dropper-client/app
+    $ cd redi-dropper-client/app/deploy
     $ cp sample.fabric.py               staging/fabric.py
     $ cp sample.deploy.settings.conf    staging/settings.conf
     $ cp sample.virtualhost.conf        staging/virtualhost.conf
@@ -83,15 +88,25 @@ After you clone the repository:
   the proper username/passwords/hosts/paths
 - execute the 'initial deploy' command for staging (or production):
 .. raw:: bash
-    $ deploy/deploy.sh -i staging
+    $ cd redi-dropper-client/app/deploy
+    $ ./deploy.sh -i staging
     OR
-    $ deploy/deploy.sh -i production
+    $ ./deploy/deploy.sh -i production
 
-For database tables creation please run:
+Once you have the fabric tool installed you can create the database tables
+in staging or production databases:
 .. raw:: bash
     $ fab staging mysql_conf
     $ fab staging mysql_list_tables
     $ fab staging mysql_create_tables
+
+If tables already exist in the database and you wish to re-create them
+please run:
+.. raw:: bash
+    $ fab staging mysql_reset_tables
+
+Note: Reseting tables does not create a backup of the tables so please
+make sure the existing data can be discarded.
 
 
 Re-Deployment
