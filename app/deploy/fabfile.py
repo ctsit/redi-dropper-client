@@ -73,7 +73,6 @@ def _init_directories():
     """Creates initial directories"""
     # @TODO: create a backup if directory exists
     print('\n\nCreating initial directories...')
-
     _remove_directories()
 
     sudo('mkdir -p %(project_path)s/logs' % env)
@@ -86,7 +85,6 @@ def _init_directories():
 
 def _fix_perms(folder):
     """ Fixes permissions for a specified folder:
-
         $ chgrp authorized-group some-folder
         $ chmod -R g+w,o-rwx some-folder
     """
@@ -108,7 +106,6 @@ def _clone_repo():
     """Clones the Git repository"""
     print('\n\nCloning the repository...')
     run('git clone %(project_repo)s %(project_repo_path)s' % env)
-    # sudo('chown -R %(user)s:%(server_group)s %(project_path)s' % env)
     _fix_perms(env.project_repo_path)
 
 
@@ -122,10 +119,7 @@ def _checkout_repo(branch="master"):
         run('git fetch')
         run('git checkout -f %s' % branch)
 
-    # run('chmod -R go=u,go-w %(project_repo_path)s' % env)
     _fix_perms(env.project_repo_path)
-    # run('chgrp -R %(server_group)s %(project_repo_path)s' % env)
-    # run('chmod -R o-rwx %(project_repo_path)s' % env)
 
 
 def _install_requirements():
@@ -135,8 +129,6 @@ def _install_requirements():
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -r %(project_repo_path)s/app/requirements/deploy.txt'
             % env)
-        # run('chmod -R go=u,go-w %(env_path)s' % env)
-        # run('chgrp -R %(server_group)s %(project_repo_path)s' % env)
 
     _fix_perms(env.env_path)
 
@@ -148,7 +140,6 @@ def _update_requirements():
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -U '
             ' -r %(project_repo_path)s/app/requirements/deploy.txt' % env)
-        # run('chmod -R go=u,go-w %(env_path)s' % env)
 
     _fix_perms(env.env_path)
 
@@ -357,7 +348,6 @@ def mysql_reset_tables():
 
 def _toggle_apache_site(state):
     """Switches site's status to enabled or disabled"""
-
     action = "Enabling" if state else "Disabling"
     print('\n%s site...' % action)
     env.apache_command = 'a2ensite' if state else 'a2dissite'
@@ -368,7 +358,6 @@ def _toggle_apache_site(state):
 def check_syntax_apache():
     """Check the syntax of apache configurations"""
     require('environment', provided_by=[production, staging])
-
     out = sudo('apache2ctl -S')
     print("\n ==> Apache syntax check: \n{}".format(out))
 
@@ -376,7 +365,6 @@ def check_syntax_apache():
 def show_errors_apache():
     """Show info about apache"""
     require('environment', provided_by=[production, staging])
-
     out = sudo('cat %(project_path)s/logs/error.log' % env)
     print("\n ==> Apache errors: \n{}".format(out))
 
@@ -465,8 +453,6 @@ def update_config():
 
             print('\nUploading {} \n to ==> {} with mode {}'
                   .format(local_file, remote_file, mode))
-
-            # @TODO: check if we still need to execute: chmod -R g=r,o-rwx
             upload_template(filename=local_file,
                             destination=remote_file,
                             context=env,
