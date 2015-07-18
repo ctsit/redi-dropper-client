@@ -76,26 +76,40 @@ def _init_directories():
 
     _remove_directories()
 
-    sudo('mkdir -p %(project_path)s' % env)
     sudo('mkdir -p %(project_path)s/logs' % env)
     # sudo('do something as user', user=notme)
     sudo('chown -R %(user)s:%(server_group)s %(project_path)s' % env)
+
+    # Let group members to delete files
+    sudo('chmod -R 770 %(project_path)s' % env)
+
+
+def _fix_perms(folder):
+    """ Fixes permissions for a specified folder:
+
+        $ chgrp authorized-group some-folder
+        $ chmod -R g+w,o-rwx some-folder
+    """
+    run('chgrp -R {} {}'.format(env.server_group, folder))
+    run('chmod -R g+sw,o-rwx {}'.format(folder))
 
 
 def _init_virtualenv():
     """Creates initial virtualenv"""
     print('\n\nCreating virtualenv...')
-
     run('virtualenv -p %(python)s --no-site-packages %(env_path)s' % env)
     with prefix('source %(env_path)s/bin/activate' % env):
         run('easy_install pip')
+
+    _fix_perms(env.env_path)
 
 
 def _clone_repo():
     """Clones the Git repository"""
     print('\n\nCloning the repository...')
-
     run('git clone %(project_repo)s %(project_repo_path)s' % env)
+    # sudo('chown -R %(user)s:%(server_group)s %(project_path)s' % env)
+    _fix_perms(env.project_repo_path)
 
 
 def _checkout_repo(branch="master"):
@@ -104,12 +118,14 @@ def _checkout_repo(branch="master"):
     print('\t CWD: {}'.format(env.project_repo_path))
 
     with cd(env.project_repo_path):
-        run('git checkout master')
-        run('git pull')
-        run('git checkout %s' % branch)
+        # run('git checkout master')
+        run('git fetch')
+        run('git checkout -f %s' % branch)
 
-    run('chmod -R go=u,go-w %(project_repo_path)s' % env)
-    # run('chmod -R 770 %(project_repo_path)s' % env)
+    # run('chmod -R go=u,go-w %(project_repo_path)s' % env)
+    _fix_perms(env.project_repo_path)
+    # run('chgrp -R %(server_group)s %(project_repo_path)s' % env)
+    # run('chmod -R o-rwx %(project_repo_path)s' % env)
 
 
 def _install_requirements():
@@ -119,8 +135,10 @@ def _install_requirements():
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -r %(project_repo_path)s/app/requirements/deploy.txt'
             % env)
-        run('chmod -R go=u,go-w %(env_path)s' % env)
-        # run('chmod -R 770 %(env_path)s' % env)
+        # run('chmod -R go=u,go-w %(env_path)s' % env)
+        # run('chgrp -R %(server_group)s %(project_repo_path)s' % env)
+
+    _fix_perms(env.env_path)
 
 
 def _update_requirements():
@@ -130,7 +148,9 @@ def _update_requirements():
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -U '
             ' -r %(project_repo_path)s/app/requirements/deploy.txt' % env)
-        run('chmod -R go=u,go-w %(env_path)s' % env)
+        # run('chmod -R go=u,go-w %(env_path)s' % env)
+
+    _fix_perms(env.env_path)
 
 
 def _is_prod():
@@ -159,6 +179,7 @@ def bootstrap(branch="master"):
             _init_virtualenv()
             _clone_repo()
             _checkout_repo(branch=branch)
+            # after we get the requirements files we install them
             _install_requirements()
     else:
         sys.exit('\nAborting.')
@@ -411,30 +432,39 @@ def update_config():
     print('\n\nUpdating server configuration...')
 
     with settings(hide('stdout', 'stderr')):
-
-        local_file_wsgi = os.path.abspath(
-            'dropper.wsgi')  # same file for prod/ stag
-        local_file_vhost = os.path.abspath(
-            '%(environment)s/virtualhost.conf' % env)
-        local_file_settings = os.path.abspath(
-            '%(environment)s/settings.conf' % env)
-
-        # Create a map of files to upload:
-        #   local_file ==> remote_file
+        # Create a map of files to upload
+        # https://github.com/fabric/fabric/blob/master/fabric/operations.py#put
         files_map = {
-            local_file_wsgi: env.wsgi_file,
-            local_file_vhost: env.vhost_file,
-            local_file_settings: env.settings_file,
+            0: {
+                'local': os.path.abspath('dropper.wsgi'),
+                'remote': env.wsgi_file,
+                'mode': '644',
+            },
+            1: {
+                'local': os.path.abspath('%(environment)s/virtualhost.conf'
+                                         % env),
+                'remote': env.vhost_file,
+                'mode': '644',
+                'group': 'root'
+            },
+            2: {
+                'local': os.path.abspath('%(environment)s/settings.conf' % env),
+                'remote': env.settings_file,
+                'mode': '640'
+            }
         }
-
         # print files_map
 
-        for local_file, remote_file in files_map.iteritems():
+        for key, file_data in files_map.iteritems():
+            local_file = file_data['local']
+            remote_file = file_data['remote']
+            mode = file_data['mode']
+
             if not os.path.isfile(local_file):
                 abort("Please create the file: {}".format(local_file))
 
-            print('\nUploading {} \n to ==> {}'
-                  .format(local_file, remote_file))
+            print('\nUploading {} \n to ==> {} with mode {}'
+                  .format(local_file, remote_file, mode))
 
             # @TODO: check if we still need to execute: chmod -R g=r,o-rwx
             upload_template(filename=local_file,
@@ -442,12 +472,15 @@ def update_config():
                             context=env,
                             use_sudo=True,
                             mirror_local_mode=False,
-                            mode=None,  # 640
+                            mode=mode,
                             pty=None)
-            print("Uploaded file: {}".format(remote_file))
-            # sudo('do something as user', user=notme)
-            # sudo('chown root:root {}'.format(remote_file))
-            # sudo('chmod 770 {}'.format(remote_file))
+
+            if 'group' in file_data:
+                sudo('chgrp {} {}'.format(file_data['group'], remote_file))
+                print("Changed group to {} for {}"
+                      .format(file_data['group'], remote_file))
+            else:
+                sudo('chgrp {} {}'.format(env.server_group, remote_file))
 
 
 def deploy(branch="master"):
@@ -492,6 +525,55 @@ def print_project_repo():
 
 def print_project_name():
     print("%(project_name)s" % env)
+
+
+def git_tags(url=None, last_only=False):
+    """ Show repo tags"""
+    require('environment', provided_by=[production, staging])
+
+    if url is None:
+        url = '%(project_repo)s' % env
+
+    cmd = ('git ls-remote --tags {} '
+           ' | cut -d / -f3 '
+           ' | sort -t. -k 1,1n -k 2,2n -k 3,3n '.format(url))
+
+    if last_only:
+        cmd += ' | tail -1'
+    result = local(cmd, capture=True)
+    return result
+
+
+def git_clone_tag(url=None, tag=None):
+    """ Clone a `slim` version of the code """
+    require('environment', provided_by=[production, staging])
+
+    if url is None:
+        url = '%(project_repo)s' % env
+    if tag is None:
+        tag = git_tags(url=url, last_only=True)
+
+    destination = 'v{}'.format(tag)
+
+    cmd = ('git clone -b {} --single-branch %(project_repo)s {}'
+           .format(tag, destination) % env)
+
+    local(cmd)
+
+
+def git_archive_tag():
+    """ Create a vTAG_NUMBER.tar archive file of the code
+    suitable for deployment (excludes .git folder)
+
+    Note: does not work with --remote=https://github.com/...)
+    """
+    require('environment', provided_by=[production, staging])
+    last_tag = git_tags(last_only=True)
+    archive_name = "v{}.tar".format(last_tag)
+
+    local('git archive --format=tar --remote=. {} ../app > {}'
+          .format(last_tag, archive_name))
+    print("Created archive file: {}".format(archive_name))
 
 
 # -----------------------------------------------------------------------------
