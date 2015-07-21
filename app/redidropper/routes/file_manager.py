@@ -46,7 +46,7 @@ class FileChunk(object):
         self.file_name = secure_filename(request.form['resumableFilename'])
         self.afile = request.files['file']
         self.total_parts = int(request.form['resumableTotalChunks'])
-        self.redcap_id = int(request.form['subject_id'])  # @TODO: rename
+        self.redcap_id = request.form['subject_id']  # @TODO: rename
         self.event_id = int(request.form['event_id'])
         return self
 
