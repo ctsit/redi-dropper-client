@@ -15,7 +15,8 @@ import imp
 import sys
 import os.path
 from fabric import colors
-from fabric.api import cd, env, local, lcd
+from fabric.api import cd
+from fabric.api import env, local, lcd
 from fabric.context_managers import hide, prefix, settings
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists, upload_template
@@ -102,24 +103,24 @@ def _init_virtualenv():
     _fix_perms(env.env_path)
 
 
-def _clone_repo():
-    """Clones the Git repository"""
-    print('\n\nCloning the repository...')
-    run('git clone %(project_repo)s %(project_repo_path)s' % env)
-    _fix_perms(env.project_repo_path)
+# def _clone_repo():
+#     """Clones the Git repository"""
+#     print('\n\nCloning the repository...')
+#     run('git clone %(project_repo)s %(project_repo_path)s' % env)
+#     _fix_perms(env.project_repo_path)
 
 
-def _checkout_repo(branch="master"):
-    """Updates the Git repository and checks out the specified branch"""
-    print('\n\nUpdating repository to branch [{}]...'.format(branch))
-    print('\t CWD: {}'.format(env.project_repo_path))
-
-    with cd(env.project_repo_path):
-        # run('git checkout master')
-        run('git fetch')
-        run('git checkout -f %s' % branch)
-
-    _fix_perms(env.project_repo_path)
+# def _checkout_repo(branch="master"):
+#     """Updates the Git repository and checks out the specified branch"""
+#     print('\n\nUpdating repository to branch [{}]...'.format(branch))
+#     print('\t CWD: {}'.format(env.project_repo_path))
+#
+#     with cd(env.project_repo_path):
+#         # run('git checkout master')
+#         run('git fetch')
+#         run('git checkout -f %s' % branch)
+#
+#     _fix_perms(env.project_repo_path)
 
 
 def _install_requirements():
@@ -155,7 +156,7 @@ def _motd():
     print(MOTD_PROD if _is_prod() else MOTD_STAG)
 
 
-def bootstrap(branch="master"):
+def bootstrap(tag='master'):
     """Bootstraps the deployment using the specified branch"""
     require('environment', provided_by=[production, staging])
     _motd()
@@ -168,12 +169,28 @@ def bootstrap(branch="master"):
         with settings(hide('stdout', 'stderr')):
             _init_directories()
             _init_virtualenv()
-            _clone_repo()
-            _checkout_repo(branch=branch)
+            # _clone_repo()
+            # _checkout_repo(tag)
+            _git_clone_tag(tag=tag)
             # after we get the requirements files we install them
             _install_requirements()
     else:
         sys.exit('\nAborting.')
+
+
+def deploy(tag='master'):
+    """Updates the code, config, requirements, and enables the site
+    Note: you have to run the disable_site task before running this task
+    """
+    require('environment', provided_by=[production, staging])
+
+    with settings(hide('stdout', 'stderr')):
+        _git_clone_tag(tag=tag)
+        _update_requirements()
+        _install_requirements()  # if we add new dependencies
+        # update_code(tag=tag)
+        update_config()  # upload new config files
+        enable_site()  # execute a2ensite
 
 
 def mysql_conf():
@@ -396,20 +413,9 @@ def disable_site():
         _toggle_apache_site(False)
 
 
-def update_code(branch="master"):
-    """Updates the source code and its requirements"""
-    require('environment', provided_by=[production, staging])
-
-    with settings(hide('stdout', 'stderr')):
-        _checkout_repo(branch=branch)
-        _update_requirements()
-        _install_requirements()  # if we add new dependencies
-
-
 def update_config():
-    """Updates server configuration files"""
+    """Updates server configuration files
 
-    """
     Warnings:
         - the CWD of the fabfile is used to specify paths
         - if you use the "%(var)s/ % env" syntax make *sure*
@@ -469,27 +475,6 @@ def update_config():
                 sudo('chgrp {} {}'.format(env.server_group, remote_file))
 
 
-def deploy(branch="master"):
-    """Updates the code, config, requirements, and enables the site
-    Note: you have to run the disable_site task before running this task
-    """
-    require('environment', provided_by=[production, staging])
-
-    with settings(hide('stdout', 'stderr')):
-        update_code(branch=branch)
-        update_config()  # upload new config files
-        enable_site()  # execute a2ensite
-
-
-def bootstrap_develop():
-    """ Convenience method for calling: fab HOST bootstrap:develop"""
-    bootstrap(branch='develop')
-
-
-def deploy_develop():
-    """ Convenience method for calling: fab HOST deploy:develop"""
-    deploy(branch="develop")
-
 
 def restart_wsgi_app():
     """Reloads daemon processes by touching the WSGI file"""
@@ -506,11 +491,11 @@ def check_app():
 
 
 def print_project_repo():
-    print("%(project_repo)s" % env)
+    print("Project repo: {}".format(env.project_repo))
 
 
 def print_project_name():
-    print("%(project_name)s" % env)
+    print("Project name: {}".format(env.project_name))
 
 
 def git_tags(url=None, last_only=False):
@@ -530,21 +515,38 @@ def git_tags(url=None, last_only=False):
     return result
 
 
-def git_clone_tag(url=None, tag=None):
+def _git_clone_tag(tag=None):
     """ Clone a `slim` version of the code """
     require('environment', provided_by=[production, staging])
 
-    if url is None:
-        url = '%(project_repo)s' % env
+    url = env.project_repo
     if tag is None:
+        print(colors.yellow(
+            "No tag specified. Attempt to read the last tag from: {}"
+            .format(url)))
         tag = git_tags(url=url, last_only=True)
 
-    destination = 'v{}'.format(tag)
+    if not tag:
+        abort(colors.red('\nPlease specify a valid tag.'))
 
+    # Clone the code to src/v0.0.1`
+    destination = ('%(project_repo_path)s/v{}'.format(tag) % env)
     cmd = ('git clone -b {} --single-branch %(project_repo)s {}'
            .format(tag, destination) % env)
 
-    local(cmd)
+    msg = "Destination folder {} already exists. Continue anyway?".format(destination)
+    #if (exists(destination) or confirm(msg, default=False)):
+    if (exists(destination)):
+        with settings(hide('stdout', 'stderr')):
+            with cd('%(project_repo_path)s' % env):
+                run('mv v{} backup_`date "+%Y-%m-%d"`_v{}'.format(tag, tag))
+
+    run(cmd)
+    _fix_perms(destination)
+
+    with cd(env.project_repo_path):
+        # Create symlink
+        run('ln -sf {} current'.format(destination))
 
 
 def git_archive_tag():

@@ -9,7 +9,7 @@ MSG_INSTALL="Please install it first"
 
 function usage() {
     echo "Usage: "
-    echo "   $0 [-i initialize only] [-h help] target <staging|production>"
+    echo "   $0 [-i initial deployment] [-h help] [-t tag_number] target <staging|production>"
 }
 
 function get_md5_exe() {
@@ -28,6 +28,7 @@ function get_md5_exe() {
 function check_requirements() {
     echo "Using REPO_DIR: $REPO_DIR"
     echo "Using VENV_DIR: $VENV_DIR"
+    echo "Using REPO_URL: $REPO_URL"
     OS=`uname -s`
 
     if [ "Darwin" == $OS ]; then
