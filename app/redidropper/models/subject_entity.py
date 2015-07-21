@@ -28,6 +28,13 @@ class SubjectEntity(db.Model, CRUDMixin):
         return """<SubjectEntity (sbjID: {0.id},
         sbjRedcapID: {0.redcap_id}, sbjAddedAt: {0.added_at})>""".format(self)
 
+    @staticmethod
+    def get_by_redcap_id(redcap_id):
+        """ Search helper: WHERE redcap_id = 123"""
+        subject = SubjectEntity.query.filter_by(redcap_id=redcap_id).first()
+        print subject
+        return subject
+
     def serialize(self):
         """Return object data for jsonification
 
