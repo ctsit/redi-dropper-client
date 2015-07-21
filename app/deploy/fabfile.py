@@ -166,7 +166,7 @@ def deploy(tag='master'):
         _git_clone_tag(tag=tag)
         _update_requirements()
         _install_requirements()  # if we add new dependencies
-        update_config()  # upload new config files
+        update_config(tag=tag)  # upload new config files
         enable_site()  # execute a2ensite
 
 
@@ -394,7 +394,7 @@ def disable_site():
         _toggle_apache_site(False)
 
 
-def update_config():
+def update_config(tag='master'):
     """Update server configuration files
 
     Warnings:
@@ -405,6 +405,10 @@ def update_config():
     require('environment', provided_by=[production, staging])
 
     print('\n\nUpdating server configuration...')
+
+    local_settings_file = os.path.abspath('%(environment)s/settings.conf' % env)
+    local("""sed -i "s|^APP_VERSION.*|APP_VERSION = '{}'| {}"""
+          .format(tag, local_settings_file))
 
     with settings(hide('stdout', 'stderr')):
         # Create a map of files to upload
@@ -423,7 +427,7 @@ def update_config():
                 'group': 'root'
             },
             2: {
-                'local': os.path.abspath('%(environment)s/settings.conf' % env),
+                'local': local_settings_file,
                 'remote': env.settings_file,
                 'mode': '640'
             }
