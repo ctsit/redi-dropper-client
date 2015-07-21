@@ -108,7 +108,7 @@ def _install_requirements():
     print('\n\nInstalling requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -r %(project_repo_path)s/app/requirements/deploy.txt'
+        run('pip install -r %(project_repo_path)s/current/app/requirements/deploy.txt'
             % env)
 
     _fix_perms(env.env_path)
@@ -120,7 +120,7 @@ def _update_requirements():
 
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -U '
-            ' -r %(project_repo_path)s/app/requirements/deploy.txt' % env)
+            ' -r %(project_repo_path)s/current/app/requirements/deploy.txt' % env)
 
     _fix_perms(env.env_path)
 
