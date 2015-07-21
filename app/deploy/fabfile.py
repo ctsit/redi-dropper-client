@@ -34,7 +34,7 @@ def help():
 # =========================================================================
 
 def load_environ(target, new_settings={}):
-    """ Helper for loading an 'environ/fabric.py' file"""
+    """ Load an environment properties file 'environ/fabric.py' """
     # pprint(sys.path)
     fab_conf_file = os.path.join(target, 'fabric.py')
     if not os.path.isfile(fab_conf_file):
@@ -60,7 +60,7 @@ def staging(new_settings={}):
 
 
 def _remove_directories():
-    """Removes initial directories"""
+    """Remove initial directories"""
     # Note: this is not affecting the "project_repo_path" used for "git clone"
     print('\n\nRemoving directories...')
 
@@ -71,7 +71,7 @@ def _remove_directories():
 
 
 def _init_directories():
-    """Creates initial directories"""
+    """Create initial directories"""
     # @TODO: create a backup if directory exists
     print('\n\nCreating initial directories...')
     _remove_directories()
@@ -85,7 +85,7 @@ def _init_directories():
 
 
 def _fix_perms(folder):
-    """ Fixes permissions for a specified folder:
+    """ Fixe permissions for a specified folder:
         $ chgrp authorized-group some-folder
         $ chmod -R g+w,o-rwx some-folder
     """
@@ -94,7 +94,7 @@ def _fix_perms(folder):
 
 
 def _init_virtualenv():
-    """Creates initial virtualenv"""
+    """Create initial virtualenv"""
     print('\n\nCreating virtualenv...')
     run('virtualenv -p %(python)s --no-site-packages %(env_path)s' % env)
     with prefix('source %(env_path)s/bin/activate' % env):
@@ -103,50 +103,30 @@ def _init_virtualenv():
     _fix_perms(env.env_path)
 
 
-# def _clone_repo():
-#     """Clones the Git repository"""
-#     print('\n\nCloning the repository...')
-#     run('git clone %(project_repo)s %(project_repo_path)s' % env)
-#     _fix_perms(env.project_repo_path)
-
-
-# def _checkout_repo(branch="master"):
-#     """Updates the Git repository and checks out the specified branch"""
-#     print('\n\nUpdating repository to branch [{}]...'.format(branch))
-#     print('\t CWD: {}'.format(env.project_repo_path))
-#
-#     with cd(env.project_repo_path):
-#         # run('git checkout master')
-#         run('git fetch')
-#         run('git checkout -f %s' % branch)
-#
-#     _fix_perms(env.project_repo_path)
-
-
 def _install_requirements():
-    """Installs dependencies defined in the requirements file"""
+    """Install dependencies defined in the requirements file"""
     print('\n\nInstalling requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -r %(project_repo_path)s/app/requirements/deploy.txt'
+        run('pip install -r %(project_repo_path)s/current/app/requirements/deploy.txt'
             % env)
 
     _fix_perms(env.env_path)
 
 
 def _update_requirements():
-    """Updates dependencies defined in the requirements file"""
+    """Update dependencies defined in the requirements file"""
     print('\n\nUpdating requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
         run('pip install -U '
-            ' -r %(project_repo_path)s/app/requirements/deploy.txt' % env)
+            ' -r %(project_repo_path)s/current/app/requirements/deploy.txt' % env)
 
     _fix_perms(env.env_path)
 
 
 def _is_prod():
-    """Shortcut for env.environment == 'production'"""
+    """ Check if env.environment == 'production'"""
     require('environment', provided_by=[production, staging])
     return env.environment == 'production'
 
@@ -157,7 +137,7 @@ def _motd():
 
 
 def bootstrap(tag='master'):
-    """Bootstraps the deployment using the specified branch"""
+    """Bootstrap the deployment using the specified branch"""
     require('environment', provided_by=[production, staging])
     _motd()
 
@@ -169,8 +149,6 @@ def bootstrap(tag='master'):
         with settings(hide('stdout', 'stderr')):
             _init_directories()
             _init_virtualenv()
-            # _clone_repo()
-            # _checkout_repo(tag)
             _git_clone_tag(tag=tag)
             # after we get the requirements files we install them
             _install_requirements()
@@ -179,7 +157,7 @@ def bootstrap(tag='master'):
 
 
 def deploy(tag='master'):
-    """Updates the code, config, requirements, and enables the site
+    """Update the code, config, requirements, and enable the site
     Note: you have to run the disable_site task before running this task
     """
     require('environment', provided_by=[production, staging])
@@ -188,13 +166,12 @@ def deploy(tag='master'):
         _git_clone_tag(tag=tag)
         _update_requirements()
         _install_requirements()  # if we add new dependencies
-        # update_code(tag=tag)
         update_config()  # upload new config files
         enable_site()  # execute a2ensite
 
 
 def mysql_conf():
-    """ Helper task for storing mysql login credentials to the encrypted file
+    """ Store mysql login credentials to the encrypted file
     ~/.mylogin.cnf
 
     Once created you can connect to the database without typing the password.
@@ -220,7 +197,10 @@ def mysql_conf():
     local(cmd, capture=True)
 
 
-def mysql_login_path():
+def _mysql_login_path():
+    """ Create a string to be used for storing credentials to ~/.mylogin.cnf
+    @see #mysql_conf()
+    """
     require('environment', provided_by=[production, staging])
     return "fabric_%(db_host)s" % env
 
@@ -230,7 +210,7 @@ def mysql_conf_test():
     require('environment', provided_by=[production, staging])
 
     from subprocess import Popen, PIPE
-    login_path = mysql_login_path()
+    login_path = _mysql_login_path()
     cmd = ("mysql_config_editor print --login-path={} 2> /dev/null"
            .format(login_path) % env)
     proc = Popen(cmd, shell=True, stdout=PIPE)
@@ -269,7 +249,7 @@ def mysql_count_tables():
         abort(colors.red("Unable to list database '%(db_name)s' tables."
                          "The database does not exist." % env))
 
-    login_path = mysql_login_path()
+    login_path = _mysql_login_path()
     cmd = ("echo 'SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES "
            " WHERE TABLE_SCHEMA = \"%(db_name)s\" ' "
            " | mysql --login-path={}"
@@ -288,7 +268,7 @@ def mysql_list_tables():
         abort(colors.red("Unable to list database '%(db_name)s' tables."
                          "The database does not exist." % env))
 
-    login_path = mysql_login_path()
+    login_path = _mysql_login_path()
     cmd = ("echo 'SELECT table_name, table_rows FROM INFORMATION_SCHEMA.TABLES "
            " WHERE TABLE_SCHEMA = \"%(db_name)s\" ' "
            " | mysql --login-path={}".format(login_path)
@@ -298,7 +278,7 @@ def mysql_list_tables():
 
 
 def mysql_create_tables():
-    """ Create app tables.
+    """ Create the application tables.
     Assumes that the database was already created and
     an user was granted `create` privileges.
     """
@@ -318,7 +298,7 @@ def mysql_create_tables():
                  "\n\t fab {} mysql_reset_tables"
                  .format(env.environment))
 
-    login_path = mysql_login_path()
+    login_path = _mysql_login_path()
     files = ['001/upgrade.sql', '002/upgrade.sql', '002/data.sql']
 
     with lcd('../db/'):
@@ -330,7 +310,7 @@ def mysql_create_tables():
 
 
 def mysql_drop_tables():
-    """ Drop the app tables"""
+    """ Drop the application tables"""
     require('environment', provided_by=[production, staging])
 
     total_tables = mysql_count_tables()
@@ -355,6 +335,7 @@ def mysql_drop_tables():
 
 
 def mysql_reset_tables():
+    """ Drop and re-create the application tables"""
     total_tables = mysql_count_tables()
 
     if total_tables > 0:
@@ -364,7 +345,7 @@ def mysql_reset_tables():
 
 
 def _toggle_apache_site(state):
-    """Switches site's status to enabled or disabled"""
+    """Switch site's status to enabled or disabled"""
     action = "Enabling" if state else "Disabling"
     print('\n%s site...' % action)
     env.apache_command = 'a2ensite' if state else 'a2dissite'
@@ -398,7 +379,7 @@ def show_config_apache():
 
 
 def enable_site():
-    """Enables the site"""
+    """Enable the site"""
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
@@ -406,7 +387,7 @@ def enable_site():
 
 
 def disable_site():
-    """Disables the site"""
+    """Disable the site"""
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
@@ -414,7 +395,7 @@ def disable_site():
 
 
 def update_config():
-    """Updates server configuration files
+    """Update server configuration files
 
     Warnings:
         - the CWD of the fabfile is used to specify paths
@@ -475,9 +456,8 @@ def update_config():
                 sudo('chgrp {} {}'.format(env.server_group, remote_file))
 
 
-
 def restart_wsgi_app():
-    """Reloads daemon processes by touching the WSGI file"""
+    """Reload the daemon processes by touching the WSGI file"""
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
@@ -485,16 +465,18 @@ def restart_wsgi_app():
 
 
 def check_app():
-    """cURLs the target server to check if the app is up"""
+    """cURL the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
     local('curl -sk https://%(project_url)s | grep "Please login" ' % env)
 
 
 def print_project_repo():
+    """ Show the git repository path specified in the fabric.py file"""
     print("Project repo: {}".format(env.project_repo))
 
 
 def print_project_name():
+    """ Show the project name uses as name for deploying the code"""
     print("Project name: {}".format(env.project_name))
 
 
@@ -516,7 +498,10 @@ def git_tags(url=None, last_only=False):
 
 
 def _git_clone_tag(tag=None):
-    """ Clone a `slim` version of the code """
+    """ Clone a `slim` version of the code
+
+    Note: if the tag was already deployed once we create a backup
+    """
     require('environment', provided_by=[production, staging])
 
     url = env.project_repo
@@ -534,8 +519,6 @@ def _git_clone_tag(tag=None):
     cmd = ('git clone -b {} --single-branch %(project_repo)s {}'
            .format(tag, destination) % env)
 
-    msg = "Destination folder {} already exists. Continue anyway?".format(destination)
-    #if (exists(destination) or confirm(msg, default=False)):
     if (exists(destination)):
         with settings(hide('stdout', 'stderr')):
             with cd('%(project_repo_path)s' % env):
