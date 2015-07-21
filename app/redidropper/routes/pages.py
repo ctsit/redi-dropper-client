@@ -270,26 +270,12 @@ def get_role_landing_page():
     Get the landing page for a user with specific role
     :return None if the user has no roles
     """
-    if not hasattr(current_user, 'roles'):
-        return None
-
-    # roles = current_user.get_roles()
-
-    # if ROLE_ADMIN in roles:
-    #     role_landing_page = url_for('admin')
-    # elif ROLE_TECHNICIAN in roles:
-    #     role_landing_page = url_for('upload_files')
-    # elif ROLE_RESEARCHER_ONE in roles:
-    #     role_landing_page = url_for('researcher_one')
-    # elif ROLE_RESEARCHER_TWO in roles:
-    #     role_landing_page = url_for('researcher_two')
-
-    # app.logger.info("Found roles: {}".format(roles))
-    # return request.args.get('next') or role_landing_page
-
-    # Per Chris's request all users land on the same page
     next_page = request.form.get('next')
-    return next_page if next_page is not None else url_for('upload_files')
+    # Per Chris's request all users land on the same page
+    if next_page is not None and next_page != 'None':
+        return next_page
+
+    return url_for('upload_files')
 
 
 @identity_loaded.connect_via(app)
