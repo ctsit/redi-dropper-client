@@ -89,9 +89,9 @@ After you clone the repository:
 - execute the 'initial deploy' command for staging (or production):
 .. raw:: bash
     $ cd redi-dropper-client/app/deploy
-    $ ./deploy.sh -i staging
+    $ ./deploy.sh -i -t tag_number staging
     OR
-    $ ./deploy/deploy.sh -i production
+    $ ./deploy/deploy.sh -i -t tag_number production
 
 Once you have the fabric tool installed you can create the database tables
 in staging or production databases:
@@ -119,9 +119,9 @@ Once the application was deployed to the target server we have to re-upload
 configuration and code changes by executing one of the following command:
 
 .. raw:: bash
-    $ deploy/deploy.sh staging
+    $ deploy/deploy.sh -t tag_number staging
     OR
-    $ deploy/deploy.sh production
+    $ deploy/deploy.sh -t tag_number production
 
 Note: that the '-i' flag is used only for the initial deployment.
 
