@@ -14,7 +14,6 @@ TAG_NUMBER=""
 set -- $(getopt hit: "$@")
 while [ $# -gt 0 ]
     do
-        echo "$1"
         case "$1" in
                 (-h) SHOW_HELP=yes;;
                 (-i) INITIAL_DEPLOY_ONLY=yes;;
@@ -32,8 +31,23 @@ if [[ $# -lt 1 ]] || [[ "yes" == "$SHOW_HELP" ]] ; then
 fi
 
 if ! [[ X"$1" = Xstaging ]] && ! [[ X"$1" = Xproduction ]]; then
-    usage
-    echo "Incorrect value specified for <target>"
+    usage && echo "Incorrect value specified for <target>"
+    exit 1
+fi
+
+# validate tag number
+VALID_TAGS=`git show-ref --tags | grep "refs/tags" | cut -d / -f 3 | paste -sd' '`
+
+if [[ X"$TAG_NUMBER" = "X" ]]; then
+    usage && echo "No deployment tag specified. Please specify a tag to deploy."
+    echo "Valid tags list: $VALID_TAGS"
+    exit 1
+fi
+
+echo $VALID_TAGS | grep -F -q -w "$TAG_NUMBER" 2>&1
+IS_VALID_TAG=$?
+if ! [[ X"$IS_VALID_TAG" = "X0" ]]; then
+    echo "Invalid deployment tag specified: $TAG_NUMBER. Valid tags list: $VALID_TAGS"
     exit 1
 fi
 
