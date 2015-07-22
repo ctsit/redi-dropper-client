@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.0.1b] - 2015-07-21
+
+### Fixed
+* Display APP_VERSION in the footer (fixes issue #74 ) (Andrei Sura)
+* Fix deploy/fabfile.py to properly reference the 'current' requirements (Andrei Sura)
+* Check if the tag number is valid during deployment (Andrei Sura)
+
+
 ## [0.0.1a] - 2015-07-21
 
 ### Added
