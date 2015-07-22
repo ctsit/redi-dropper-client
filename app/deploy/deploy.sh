@@ -76,17 +76,17 @@ install_fabric
 export PYTHONPATH=$REPO_DIR:$PYTHONPATH
 # CWD to where the fabfile.py is located so we don't have to use 'fab --fabfile'
 pushd $REPO_DIR/app/deploy
+    fab $HOST print_project_repo
+
     if [[ "yes" == "$INITIAL_DEPLOY_ONLY" ]]; then
         # create folders, install venv, clone repo from the given branch
         # fab $HOST bootstrap:develop
         fab $HOST bootstrap:$TAG_NUMBER
+        fab $HOST enable_site
+    else
+        fab $HOST deploy:$TAG_NUMBER
     fi
 
-    # re-check code an requirements (assumes that bootstrap was performed)
-    fab $HOST print_project_repo
-    fab $HOST disable_site
-    # @TODO: use a tag number instead of develop branch
-    fab $HOST deploy:$TAG_NUMBER
     fab $HOST restart_wsgi_app
     sleep 2
     fab $HOST check_app

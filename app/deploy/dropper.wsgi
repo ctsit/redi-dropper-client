@@ -15,7 +15,7 @@ logging.basicConfig(stream=sys.stderr)
 print("Using interpreter: {}".format(sys.version))
 
 # @TODO: Read from the environment or make it a fabric parameter
-app_home = '/srv/apps/dropper/src/app/current'
+app_home = '/srv/apps/dropper/src/current/app'
 print("Adding application path: {}".format(app_home))
 sys.path.insert(0, app_home)
 

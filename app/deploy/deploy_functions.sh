@@ -70,7 +70,7 @@ function check_requirements_darwin() {
             sudo pip install --upgrade virtualenv
         fi
     else
-        python --version
+        echo "USING" && python --version
     fi
 
     if ! has_required 'pip'; then
