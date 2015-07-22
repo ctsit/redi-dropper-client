@@ -47,3 +47,9 @@ table.borderless td, table.borderless th {
 .bordered {
     border: solid 1px black;
 }
+
+.footer {
+    min-height: 40px;
+    padding-top: 5px;
+    color: #888;
+}

@@ -42,6 +42,9 @@ def _load_confidential_settings(app):
 
 
 def _check_config(app):
+    """
+    @TODO: add more extensive checks
+    """
     upload_dirs = [
         app.config['REDIDROPPER_UPLOAD_SAVED_DIR'],
         app.config['REDIDROPPER_UPLOAD_TEMP_DIR']]
