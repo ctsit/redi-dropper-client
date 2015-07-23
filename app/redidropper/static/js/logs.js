@@ -20,12 +20,11 @@ var AdminEventsTable = React.createClass({
                 <thead>
                     <tr>
                         <th className="text-right"> ID </th>
-                        <th className="text-right"> User ID </th>
-                        <th className="text-center"> Type </th>
-                        <th className="text-center"> Details </th>
-                        <th className="text-center"> WebSession ID </th>
-                        <th className="text-center"> WebSession IP </th>
-                        <th className="text-center"> Date</th>
+                        <th className="text-left"> User Email </th>
+                        <th className="text-left"> Type </th>
+                        <th className="text-left" width="40%"> Details </th>
+                        <th className="text-left"> WebSession IP </th>
+                        <th className="text-right"> Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,12 +32,11 @@ var AdminEventsTable = React.createClass({
                     this.state.list_of_events.map(function(record, i) {
                         return (<tr>
                                 <td className="text-right"> {record.id}</td>
-                                <td className="text-right"> {record.user_id}</td>
+                                <td className="text-left"> {record.user_email} </td>
                                 <td className="text-left"> {record.type}</td>
                                 <td className="text-left"> {record.details}</td>
-                                <td className="text-left"> {record.web_session_id}</td>
-                                <td className="text-right"> {record.web_session_ip}</td>
-                                <td className="text-left"> {record.date_time}</td>
+                                <td className="text-left"> {record.web_session_ip}</td>
+                                <td className="text-right"> {record.date_time}</td>
                                 </tr>
                                );
                     })
