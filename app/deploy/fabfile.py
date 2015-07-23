@@ -60,8 +60,7 @@ def staging(new_settings={}):
 
 
 def _remove_directories():
-    """Remove initial directories"""
-    # Note: this is not affecting the "project_repo_path" used for "git clone"
+    """Remove the top project directory"""
     print('\n\nRemoving directories...')
 
     if exists('%(project_path)s' % env):
@@ -89,8 +88,8 @@ def _fix_perms(folder):
         $ chgrp authorized-group some-folder
         $ chmod -R g+w,o-rwx some-folder
     """
-    run('chgrp -R {} {}'.format(env.server_group, folder))
-    run('chmod -R g+sw,o-rwx {}'.format(folder))
+    sudo('chgrp -R {} {}'.format(env.server_group, folder))
+    sudo('chmod -R g+sw,o-rwx {}'.format(folder))
 
 
 def _init_virtualenv():
@@ -108,7 +107,8 @@ def _install_requirements():
     print('\n\nInstalling requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -r %(project_repo_path)s/current/app/requirements/deploy.txt'
+        run('pip install -r '
+            ' %(project_repo_path)s/app/requirements/deploy.txt'
             % env)
 
     _fix_perms(env.env_path)
@@ -119,8 +119,8 @@ def _update_requirements():
     print('\n\nUpdating requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -U '
-            ' -r %(project_repo_path)s/current/app/requirements/deploy.txt' % env)
+        run('pip install -U  -r '
+            ' %(project_repo_path)s/app/requirements/deploy.txt' % env)
 
     _fix_perms(env.env_path)
 
@@ -150,24 +150,25 @@ def bootstrap(tag='master'):
             _init_directories()
             _init_virtualenv()
             _git_clone_tag(tag=tag)
-            # after we get the requirements files we install them
             _install_requirements()
+            update_config(tag=tag)  # upload new config files
+            enable_site()
     else:
         sys.exit('\nAborting.')
 
 
 def deploy(tag='master'):
     """Update the code, config, requirements, and enable the site
-    Note: you have to run the disable_site task before running this task
     """
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
+        disable_site()
         _git_clone_tag(tag=tag)
+        _install_requirements()
         _update_requirements()
-        _install_requirements()  # if we add new dependencies
         update_config(tag=tag)  # upload new config files
-        enable_site()  # execute a2ensite
+        enable_site()
 
 
 def mysql_conf():
@@ -407,7 +408,7 @@ def update_config(tag='master'):
     print('\n\nUpdating server configuration...')
 
     local_settings_file = os.path.abspath('%(environment)s/settings.conf' % env)
-    local("""sed -i "s|^APP_VERSION.*|APP_VERSION = '{}'| {}"""
+    local("""sed -i "s|^APP_VERSION.*|APP_VERSION = '{}'|" {}"""
           .format(tag, local_settings_file))
 
     with settings(hide('stdout', 'stderr')):
@@ -434,6 +435,8 @@ def update_config(tag='master'):
         }
         # print files_map
 
+        # upload files but create a bakup with *.bak extension if the
+        # remote file already exists
         for key, file_data in files_map.iteritems():
             local_file = file_data['local']
             remote_file = file_data['remote']
@@ -465,7 +468,7 @@ def restart_wsgi_app():
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
-        run('touch %(wsgi_file)s' % env)
+        sudo('touch %(wsgi_file)s' % env)
 
 
 def check_app():
@@ -476,7 +479,7 @@ def check_app():
 
 def print_project_repo():
     """ Show the git repository path specified in the fabric.py file"""
-    print("Project repo: {}".format(env.project_repo))
+    print("\n Project repo: {}".format(env.project_repo))
 
 
 def print_project_name():
@@ -519,21 +522,21 @@ def _git_clone_tag(tag=None):
         abort(colors.red('\nPlease specify a valid tag.'))
 
     # Clone the code to src/v0.0.1`
-    destination = ('%(project_repo_path)s/v{}'.format(tag) % env)
+    destination = ('%(project_path_src)s/v{}'.format(tag) % env)
     cmd = ('git clone -b {} --single-branch %(project_repo)s {}'
            .format(tag, destination) % env)
 
-    if (exists(destination)):
-        with settings(hide('stdout', 'stderr')):
-            with cd('%(project_repo_path)s' % env):
-                run('mv v{} backup_`date "+%Y-%m-%d"`_v{}'.format(tag, tag))
+    if exists(destination):
+        with cd(env.project_path_src):
+            cmd_mv = 'mv v{} backup_`date "+%Y-%m-%d"`_v{}'.format(tag, tag)
+            sudo(cmd_mv, user=env.server_user)
 
-    run(cmd)
+    sudo(cmd, user=env.server_user)
     _fix_perms(destination)
 
-    with cd(env.project_repo_path):
+    with cd(env.project_path_src):
         # Create symlink
-        run('ln -sf {} current'.format(destination))
+        sudo('ln -nsf {} current'.format(destination), user=env.server_user)
 
 
 def git_archive_tag():

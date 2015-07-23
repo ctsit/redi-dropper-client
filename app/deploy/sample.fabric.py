@@ -56,8 +56,9 @@ def get_settings(overrides={}):
                                             'dropper.example.com')
     # Change the prefix for the Apache apps paths
     SETTINGS['project_path'] = '/srv/apps/%(project_name)s' % SETTINGS
-    SETTINGS['project_repo_path'] = '%(project_path)s/src' % SETTINGS
-    SETTINGS['project_repo'] ='git://github.com/ctsit/redi-dropper-client.git'
+    SETTINGS['project_path_src'] = '%(project_path)s/src' % SETTINGS
+    SETTINGS['project_repo_path'] = '%(project_path)s/src/current' % SETTINGS
+    SETTINGS['project_repo'] = 'git://github.com/ctsit/redi-dropper-client.git'
 
     # =========================================================================
     # Secret key (stored in settings.conf when we deploy)

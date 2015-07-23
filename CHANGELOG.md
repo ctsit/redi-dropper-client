@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.1c] - 2015-07-23
+
+### Fixed
+* Fix bugs in deployment script (Andrei Sura)
+
+
 ## [0.0.1b] - 2015-07-21
 
 ### Fixed

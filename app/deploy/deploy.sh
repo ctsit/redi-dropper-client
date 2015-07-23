@@ -36,7 +36,8 @@ if ! [[ X"$1" = Xstaging ]] && ! [[ X"$1" = Xproduction ]]; then
 fi
 
 # validate tag number
-VALID_TAGS=`git show-ref --tags | grep "refs/tags" | cut -d / -f 3 | paste -sd' '`
+VALID_TAGS=`git show-ref --tags | grep "refs/tags" | cut -d / -f 3 | paste -sd ' ' -`
+VALID_TAGS_ARRAY=( $(git show-ref --tags | grep "refs/tags" | cut -d / -f 3 | paste -sd ' ' -) )
 
 if [[ X"$TAG_NUMBER" = "X" ]]; then
     usage && echo "No deployment tag specified. Please specify a tag to deploy."
@@ -44,12 +45,17 @@ if [[ X"$TAG_NUMBER" = "X" ]]; then
     exit 1
 fi
 
-echo $VALID_TAGS | grep -F -q -w "$TAG_NUMBER" 2>&1
-IS_VALID_TAG=$?
-if ! [[ X"$IS_VALID_TAG" = "X0" ]]; then
-    echo "Invalid deployment tag specified: $TAG_NUMBER. Valid tags list: $VALID_TAGS"
+# declare the internal field separator and then check if element is in the array
+IFS=:
+if ! [[ ":${VALID_TAGS_ARRAY[*]}:" =~ ":$TAG_NUMBER:" ]]; then
+    echo "Invalid deployment tag specified: $TAG_NUMBER. Valid tags: $VALID_TAGS"
+    unset IFS
     exit 1
+else
+    echo "Using tag:"
+    git show $TAG_NUMBER
 fi
+unset IFS
 
 eval export HOME=~$(id -un)
 
@@ -76,17 +82,17 @@ install_fabric
 export PYTHONPATH=$REPO_DIR:$PYTHONPATH
 # CWD to where the fabfile.py is located so we don't have to use 'fab --fabfile'
 pushd $REPO_DIR/app/deploy
+    fab $HOST print_project_repo
+
     if [[ "yes" == "$INITIAL_DEPLOY_ONLY" ]]; then
         # create folders, install venv, clone repo from the given branch
         # fab $HOST bootstrap:develop
         fab $HOST bootstrap:$TAG_NUMBER
+        fab $HOST enable_site
+    else
+        fab $HOST deploy:$TAG_NUMBER
     fi
 
-    # re-check code an requirements (assumes that bootstrap was performed)
-    fab $HOST print_project_repo
-    fab $HOST disable_site
-    # @TODO: use a tag number instead of develop branch
-    fab $HOST deploy:$TAG_NUMBER
     fab $HOST restart_wsgi_app
     sleep 2
     fab $HOST check_app
