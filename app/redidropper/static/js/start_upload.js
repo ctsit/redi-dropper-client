@@ -5,7 +5,7 @@
 // Components used:
 //
 //      __1 SubjectsList
-//      __2 EventsList
+//      __2 EventsTable
 //      __3 FilesUpload
 //      __4 NavController
 
@@ -111,65 +111,82 @@ var SubjectsList = React.createClass({
   }
 });
 
-// ============ __2  EventsList
-var EventsList = React.createClass({
-  getInitialState: function() {
-    return {list_of_events: []};
-  },
-  componentWillMount: function() {
-    var _this = this;
-    var url = "/api/list_events";
-    var request = Utils.api_post_json(url, {});
+// ============ __2  EventsTable
+var EventsTable = React.createClass({
+    getInitialState: function() {
+        return {
+            list_of_events: []
+        };
+    },
+    componentDidMount: function() {
+    },
+    componentWillReceiveProps: function(nextProps) {
+    },
+    componentWillMount: function() {
+        var _this = this;
+        var url = "/api/list_events";
+        var request = Utils.api_post_json(url, {});
 
-    request.success( function(json) {
-       _this.setState({
-           list_of_events: json.data.events
-       });
-       $(".sortable").tablesorter();
-    });
-    request.fail(function (jqXHR, textStatus, error) {
-        console.log('Failed: ' + textStatus + error);
-    });
-  },
-  render: function() {
-    var rows = [];
-    var _this = this;
-    this.state.list_of_events.map(function(record, i) {
-        var callback = _this.props.eventSelected.bind(null, record);
+        request.success( function(json) {
+            _this.setState({
+                list_of_events: json.data.events
+            });
+            $(".sortable").tablesorter();
+        });
+        request.fail(function (jqXHR, textStatus, error) {
+            console.log('Failed: ' + textStatus + error);
+        });
+    },
+    render: function() {
+        var rows = [];
+        var _this = this;
+        var rowCount = this.state.list_of_events.length,
+            eventsData = this.state.list_of_events;
 
-        rows.push(
+        this.state.list_of_events.map(function(record, i) {
+            var callback = _this.props.eventSelected.bind(null, record);
+
+            rows.push(
             <tr>
                 <td> {record.redcap_arm} </td>
                 <td> {record.day_offset} </td>
                 <td>
-                    <button className="btn btn-lg2 btn-primary"
-                        onClick={callback}>
-                        Select {record.redcap_event}
-                    </button>
+                    <button className="btn btn-lg2 btn-primary" onClick={callback}>
+                    Select {record.redcap_event} </button>
                 </td>
             </tr>
-        );
-    });
+            );
+        });
 
-    return (
-    <div>
-    <div className="table-responsive">
-        <table id="event-table" className="table borderless sortable tablesorter">
-            <thead>
-                <tr>
-                    <th> REDCap Event Arm </th>
-                    <th> Day Offset </th>
-                    <th> REDCap Event Name </th>
-                </tr>
-            </thead>
-            <tbody id="subject-table-body">
-                {rows}
-            </tbody>
-        </table>
-    </div>
-    </div>
-    );
-  }
+        var eventsTable;
+        if (eventsData === undefined) {
+            //@TODO: show a "loading" animation
+        }
+        else if (rowCount === 0) {
+            eventsTable = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
+        }
+        else {
+            eventsTable = (
+            <div>
+            <div className="table-responsive">
+                <table id="event-table" className="table borderless sortable tablesorter">
+                    <thead>
+                        <tr>
+                            <th> REDCap Event Arm </th>
+                            <th> Day Offset </th>
+                            <th> REDCap Event Name </th>
+                        </tr>
+                    </thead>
+                    <tbody id="subject-table-body">
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            );
+        }
+        return eventsTable;
+    }
 });
 
 // ============ __3 FilesUpload
@@ -311,7 +328,7 @@ var NavController = React.createClass({
             selected_subject_id = "Subject ID: " + this.state.subject_id;
             selected_event_id = "";
             window.location.hash = 'Events';
-            visible_tab = <EventsList eventSelected = {this.eventSelected}/>;
+            visible_tab = <EventsTable eventSelected = {this.eventSelected}/>;
         }
         else if(current_tab === 2) {
             selected_subject_id = "Subject ID: " + this.state.subject_id;
