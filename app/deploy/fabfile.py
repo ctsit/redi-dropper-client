@@ -88,8 +88,8 @@ def _fix_perms(folder):
         $ chgrp authorized-group some-folder
         $ chmod -R g+w,o-rwx some-folder
     """
-    run('chgrp -R {} {}'.format(env.server_group, folder))
-    run('chmod -R g+sw,o-rwx {}'.format(folder))
+    sudo('chgrp -R {} {}'.format(env.server_group, folder))
+    sudo('chmod -R g+sw,o-rwx {}'.format(folder))
 
 
 def _init_virtualenv():
@@ -435,6 +435,8 @@ def update_config(tag='master'):
         }
         # print files_map
 
+        # upload files but create a bakup with *.bak extension if the
+        # remote file already exists
         for key, file_data in files_map.iteritems():
             local_file = file_data['local']
             remote_file = file_data['remote']
@@ -466,7 +468,7 @@ def restart_wsgi_app():
     require('environment', provided_by=[production, staging])
 
     with settings(hide('stdout', 'stderr')):
-        run('touch %(wsgi_file)s' % env)
+        sudo('touch %(wsgi_file)s' % env)
 
 
 def check_app():
@@ -526,14 +528,15 @@ def _git_clone_tag(tag=None):
 
     if exists(destination):
         with cd(env.project_path_src):
-            run('mv v{} backup_`date "+%Y-%m-%d"`_v{}'.format(tag, tag))
+            cmd_mv = 'mv v{} backup_`date "+%Y-%m-%d"`_v{}'.format(tag, tag)
+            sudo(cmd_mv, user=env.server_user)
 
-    run(cmd)
+    sudo(cmd, user=env.server_user)
     _fix_perms(destination)
 
     with cd(env.project_path_src):
         # Create symlink
-        run('ln -nsf {} current'.format(destination))
+        sudo('ln -nsf {} current'.format(destination), user=env.server_user)
 
 
 def git_archive_tag():
