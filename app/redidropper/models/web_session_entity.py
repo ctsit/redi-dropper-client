@@ -6,7 +6,6 @@ from redidropper.database.crud_mixin import CRUDMixin
 from redidropper.models.user_agent_entity import UserAgentEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.main import db
-from sqlalchemy.ext.declarative import declared_attr
 
 
 class WebSessionEntity(db.Model, CRUDMixin):
@@ -28,14 +27,7 @@ class WebSessionEntity(db.Model, CRUDMixin):
                               nullable=False)
     # @OneToMany
     user_agent = db.relationship(UserAgentEntity, lazy='joined')
-    # user = db.relationship(UserEntity, lazy='joined')
-
-    # @declared_attr
-    # def target(cls):
-    #     #
-    #     http://docs.sqlalchemy.org/en/latest/orm/extensions/declarative/mixins.html?highlight=primaryjoin#using-advanced-relationship-arguments-e-g-primaryjoin-etc
-    #     return db.relationship(UserEntity,
-    #                            primaryjoin=lambda: UserEntity.id == cls.user_id)
+    user = db.relationship(UserEntity, lazy='joined')
 
     @staticmethod
     def get_by_session_id(session_id):
