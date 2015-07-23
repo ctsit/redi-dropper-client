@@ -474,7 +474,7 @@ def restart_wsgi_app():
 def check_app():
     """cURL the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
-    local('curl -sk https://%(project_url)s | grep "Please login" ' % env)
+    local('curl -sk https://%(project_url)s | grep "Version " ' % env)
 
 
 def print_project_repo():
