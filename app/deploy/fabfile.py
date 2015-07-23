@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @TODO: add license
+# Goal: Implement simple tasks executed during deployment with deploy.sh
+#
+# @authors
+#   Andrei Sura             <sura.andrei@gmail.com>
+#   Taeber Rapczak          <taeber@ufl.edu>
+
 
 """
 Fabric deployment file.

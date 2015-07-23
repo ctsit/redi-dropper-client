@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+#
+# Goal: Implement a `one-click` deployment tool
+#
+# @authors
+#   Andrei Sura             <sura.andrei@gmail.com>
+#   Taeber Rapczak          <taeber@ufl.edu>
+
 
 # import helper functions
 . deploy_functions.sh
@@ -96,8 +103,4 @@ pushd $REPO_DIR/app/deploy
     fab $HOST restart_wsgi_app
     sleep 2
     fab $HOST check_app
-
-    # show error log from the remote server
-    #fab staging show_config_apache
-    #fab staging show_errors_apache
 popd
