@@ -408,7 +408,7 @@ def update_config(tag='master'):
     print('\n\nUpdating server configuration...')
 
     local_settings_file = os.path.abspath('%(environment)s/settings.conf' % env)
-    local("""sed -i "s|^APP_VERSION.*|APP_VERSION = '{}'|" {}"""
+    local("""sed -i'.bak' -e "s|^APP_VERSION.*|APP_VERSION = '{}'|" {}"""
           .format(tag, local_settings_file))
 
     with settings(hide('stdout', 'stderr')):
