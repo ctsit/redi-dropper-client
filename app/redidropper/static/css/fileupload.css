@@ -8,6 +8,7 @@
 }
 
 .file-drop-css {
+    line-height: 5em;
     padding: 2em;
     margin: 20px auto;
     box-sizing: border-box;
@@ -18,9 +19,6 @@
     border: 3px dashed #008AFF;
     border-radius: 12px;
     transition: opacity 0.3s ease;
-}
-
-.file-drop-css:hover {
     background: repeating-linear-gradient(
       -45deg,
       #efefef,
@@ -28,6 +26,10 @@
       #fff 10px,
       #fff 20px
     );
+}
+
+.file-drop-css:hover {
+    background: #eee;
 }
 
 .file-dragover-css {
