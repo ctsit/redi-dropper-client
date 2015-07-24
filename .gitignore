@@ -5,7 +5,6 @@
 /app/deploy/*/virtualhost.conf
 
 /app/deploy/settings.conf
-
 /app/upload/
 
 .vagrant
@@ -21,7 +20,9 @@ coverage.xml
 nosetests.xml
 .coverage
 
+dist/
 *.egg-info
+.eggs/
 mock-*
 nosexcover-*
 .ropeproject/
