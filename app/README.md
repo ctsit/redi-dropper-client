@@ -1,40 +1,40 @@
-REDI-Dropper Client
-===================
+# Application README
 
-Introduction
-------------
+## Introduction
 
-This folder is dedicated to storing the code for REDI-Dropper Client Application.
-
-Functional Specifications
--------------------------
-https://docs.google.com/document/d/1EQnPwvKQLCYa7ifHXaHCr4lEJK7QcX7VDJOQvEtkbk8/edit
-
-Technical Specifications
-------------------------
-
-- Front end: ReacJS - https://facebook.github.io/react/docs/tutorial.html
-- Back end: Flask framework - http://flask.pocoo.org/
-- Database: 5.6.24-enterprise-commercial-advanced-log MySQL Enterprise Server
+This folder stores the code for RediDropper web application.
 
 
-Developer's Workflow
---------------------
+# Functional Specifications
+
+@TODO: import from Forge wiki
+
+
+# Technical Specifications
+
+- Front end: [ReacJS](https://facebook.github.io/react/docs/tutorial.html)
+- Back end: [Flask framework](http://flask.pocoo.org)
+- Database: [MySQL Enterprise Server v5.6.24](http://dev.mysql.com/doc/relnotes/mysql/5.6/en/news-5-6-24.html)
+
+
+## Developer's Workflow
 
 There are three great tools for python development:
 
- * virtualenv (allows to isolate python packages required for your application)
- * virtualenvwrapper (allows to switch between virtualenvs)
- * fabric (allows to execute common python tasks in similar way to Makefiles)
+ * [virtualenv](https://virtualenv.pypa.io/en/latest/)
+    --> allows to isolate python packages required for your application
+ * [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/)
+    --> allows to switch between virtualenvs
+ * [fabric](https://fabric.readthedocs.org/en/latest/)
+    --> allows to execute common python tasks in similar way to Makefiles
 
-@see https://virtualenvwrapper.readthedocs.org/en/latest/
 
 Developers have the option of using the vagrant or run the application
 manually using Python's embedded webserver.
 
 The manual process requires the following commands for setup:
 
-.. raw:: bash
+```
 
     brew install mysql
     mysql --version
@@ -64,13 +64,16 @@ The manual process requires the following commands for setup:
 
     Finally you can open your browser at https://localhost:5000/ and login as
     admin@example.com with any password
+```
 
 
-Initial Deployment
-------------------
+# Initial Deployment
+
 Assumptions:
- - The 'deployer' has an account on the target server and it is in the 'sudoers' group
- - The 'deployer' uses a Darwin/Linux operating system to run the deployment script
+ - The 'deployer' has an account on the target server and it is in the
+    `sudoers` group
+ - The 'deployer' uses a Darwin/Linux operating system to run the
+    deployment script
 
 For code deployment we use the app/deploy/deploy.sh shell script.
 This script invokes fabric tasks defined in the app/deploy/fabfile.py
@@ -79,56 +82,76 @@ aginst the "staging" or "production" server specified as an argument.
 After you clone the repository:
 
 - create three files in your local `deploy` folder:
-.. raw:: bash
+
+```
+
     $ cd redi-dropper-client/app/deploy
     $ cp sample.fabric.py               staging/fabric.py
     $ cp sample.deploy.settings.conf    staging/settings.conf
     $ cp sample.virtualhost.conf        staging/virtualhost.conf
+```
+
 - edit the files in the staging (or production) folder to reflect
   the proper username/passwords/hosts/paths
-- execute the 'initial deploy' command for staging (or production):
-.. raw:: bash
+  Note: an easier option would be to ask another developer to provide these
+  files to you.
+
+- execute the initial deploy' command for staging (or production):
+
+```
+
     $ cd redi-dropper-client/app/deploy
     $ ./deploy.sh -i -t tag_number staging
     OR
     $ ./deploy/deploy.sh -i -t tag_number production
+```
 
 Once you have the fabric tool installed you can create the database tables
 in staging or production databases:
-.. raw:: bash
+
+```
+
     $ fab staging mysql_conf
     $ fab staging mysql_list_tables
     $ fab staging mysql_create_tables
+```
 
 If tables already exist in the database and you wish to re-create them
 please run:
-.. raw:: bash
+
+```
+
     $ fab staging mysql_reset_tables
+```
 
 Note: Reseting tables does not create a backup of the tables so please
 make sure the existing data can be discarded.
 
 
-Re-Deployment
--------------
+## Re-Deployment
+
+This is the process through which the developers will commonly deploy
+fixes and improvements **after** an instance was deployed to production.
 
 Assumptions:
  - See the "Initial Deployment" assumptions
 
-Once the application was deployed to the target server we have to re-upload
-configuration and code changes by executing one of the following command:
+Re-upload configuration and code changes by executing one of the following:
 
-.. raw:: bash
+```
+
     $ deploy/deploy.sh -t tag_number staging
     OR
     $ deploy/deploy.sh -t tag_number production
+```
 
-Note: that the '-i' flag is used only for the initial deployment.
+Warning: **Do not use** the `-i` flag since it is intended only for the
+        initial deployment.
 
 
-Files & Folders
----------------
+## Files & Folders
 
+<pre>
 +--------------------+-----------------------------------------------------------------------------+
 | **File**           | **Description**                                                             |
 +====================+=============================================================================+
@@ -164,17 +187,16 @@ Files & Folders
 +--------------------+-----------------------------------------------------------------------------+
 | yourapp/templates/ |  This is where we store the Jinja2 templates for the app.                   |
 +--------------------+-----------------------------------------------------------------------------+
+</pre>
 
 
-Debugging
----------
+## Debugging
 
 Install http://flask-debugtoolbar.readthedocs.org/en/latest/
 The toolbar will automatically be injected into Jinja templates when debug mode is on.
 In production, setting app.debug = False will disable the toolbar.
 
 
-Credits
--------
+## Credits
 
-See `Explore flask page <https://exploreflask.com/organizing.html`__ for more details.
+See [Explore flask page](<https://exploreflask.com/organizing.html)
