@@ -35,14 +35,11 @@ html, body {
 
 /* additional sections */
 #home {
-  background: url(../images/bottles_sm.jpg) no-repeat center center fixed; 
+  background: url(../images/bottles.jpg) no-repeat center center fixed; 
   display: table;
   height: 50%;
   position: relative;
   width: 100%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
 }
 
@@ -53,6 +50,7 @@ html, body {
   background-color: #a51a11;
   color: #ffffff;
 }
+
 #services .glyphicon {
   border: 2px solid #FFFFFF;
   border-radius: 50%;
@@ -66,22 +64,15 @@ html, body {
 }
 
 #information {
-  background: url(../images/oil_red.jpg) no-repeat center center fixed; 
+  background: url(../images/oil.jpg) no-repeat center center fixed; 
   display: table;
   height: 300px;
   position: relative;
   width: 100%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
 }
 #information .panel {
   opacity: 0.85;
-}
-
-#google_map {
-  height: 500px;
 }
 
 footer {
