@@ -476,14 +476,14 @@ var Dashboard = React.createClass({
             visible_tab = <SubjectsTable subjectSelected = {this.subjectSelected} />;
         }
         else if (current_tab === 1) {
-            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.redcap_id;
             selected_event_id = "";
             window.location.hash = 'Events';
             visible_tab = <EventsTable subjectEntity = {this.state.subjectEntity} eventSelected = {this.eventSelected}/>;
         }
         else if (current_tab === 2) {
-            selected_subject_id = "Subject ID: " + this.state.subjectEntity.id;
-            selected_event_id = "Event: " + this.state.eventEntity.redcap_event;
+            selected_subject_id = "Subject ID: " + this.state.subjectEntity.redcap_id;
+            selected_event_id = "Event: " + this.state.eventEntity.redcap_arm + " " + this.state.eventEntity.redcap_event;
             window.location.hash = 'Files';
             visible_tab = <FilesList subjectEntity = {this.state.subjectEntity} eventEntity = {this.state.eventEntity}/>;
         }

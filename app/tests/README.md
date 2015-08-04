@@ -1,35 +1,36 @@
 
-Intro 
------
+Introduction 
+------------
 
 This folder stores all unit tests for this Flask application.
 
-Note: pytest is used to run the tests
+<pre>
+| File                      | Description                                          |
+| ------------------------- | ----------------------------------------------------:|
+| base_test.py              | Base class for unit tests                            |
+| base_test_with_data.py    | Base class for unit tests with minimum database rows |
+| test_*.py                 | Unit test files (must use the "test_" prefix)        |
+</pre>
 
-| File           | Description |
---------------------------------
-| .coverage      | Configuration file for the test coverage tool (fab test_cov) |
-| conftest.py    | Stores module level test fixtures for pytest |
-| test_*.py      | Unit test files (must use the "test_" prefix) |
 
-
-Install
+Setup
 -------
 
-The command line tool is named 'py.test' (with a dot)
+To run tests easier we use the fabric tool:
 
 <pre>
-pip install pytest
+pip install fabric
+cd app
+fab prep_develop
 </pre>
 
 
 Usage
 -----
 
+Once you have installed the dependencies you can run the tests by executing:
+
 <pre>
-
 cd app
-py.test -s tests/ 
-py.test -s  --cov redidropper  --cov-config tests/.coveragerc  --cov-report term-missing  tests/
-
+fab test
 </pre>
