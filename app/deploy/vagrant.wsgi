@@ -15,7 +15,7 @@ logging.basicConfig(stream=sys.stderr)
 print("Using interpreter: {}".format(sys.version))
 
 # @TODO: Read from the environment
-app_home = '/var/www/app'
+app_home = '/var/www/dropper/app'
 print("Adding application path: {}".format(app_home))
 sys.path.insert(0, app_home)
 
@@ -25,4 +25,5 @@ from config import MODE_DEBUG
 
 # Configures routes, models
 application = initializer.do_init(application, mode=MODE_DEBUG)
+print("do_init() in debug mode...")
 mail.init_app(application)
