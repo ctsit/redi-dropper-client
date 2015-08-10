@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.box = "puphpet/debian75-x64"
   config.vm.box = "debian/jessie64"
   config.vm.hostname = "redi-dropper-client"
-  config.vm.synced_folder "../app", "/var/www/app"
+  config.vm.synced_folder "../app", "/var/www/dropper/app"
   config.vm.network "forwarded_port", guest: 80, host: 8088
   config.vm.network :forwarded_port, guest: 443, host: 7088
 
@@ -16,9 +16,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.path = "bootstrap.sh"
   end
 
+  # Restart apache when all done (if using apache)
+  config.vm.provision "shell", run: "always", inline: "service apache2 restart"
+
   config.trigger.after [:up] do
     if Vagrant::Util::Platform.darwin?
       system("open -a 'Google Chrome.app' https://localhost:7088")
     end
   end
+
 end

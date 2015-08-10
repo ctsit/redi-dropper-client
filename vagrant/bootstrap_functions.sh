@@ -7,7 +7,17 @@ function configure_base() {
 
    # Update packages
    apt-get update -y
-   apt-get upgrade -y
+   #apt-get upgrade -y
+}
+
+function install_utils() {
+   cp $SHARED_FOLDER/aliases /home/vagrant/.bash_aliases
+   cp $SHARED_FOLDER/aliases /root/.bash_aliases
+   cp $SHARED_FOLDER/vimrc /home/vagrant/.vimrc
+   cp $SHARED_FOLDER/vimrc /root/.vimrc
+   apt-get install -y \
+      vim \
+      ack-grep
 }
 
 function install_apache_for_python() {
@@ -18,67 +28,72 @@ function install_apache_for_python() {
       mysql-server libmysqlclient-dev \
       libffi-dev \
       libsqlite3-dev
-
-   # Setting up a virtual environment will keep the application and its dependencies isolated from the main system.
-   # Changes to it will not affect the cloud server's system configurations.
-   pip install virtualenv fabric
 }
 
-# The vagrant uses the dedicated startup script ==> vagrant.wsgi
-# in order to avoid changing the default ==> dropper.wsgi
-#
-# Note: Apache is configured to set the python-path
-#   ==> /var/www/app/venv/lib/python2.7/site-packages
 function install_dropper() {
-   pushd /var/www/app
+    # The vagrant uses the dedicated startup script ==> vagrant.wsgi
+    # in order to avoid changing the default ==> dropper.wsgi
+    #
+    # Note: Apache is configured to set the python-path
+    #   ==> /var/www/dropper/venv/lib/python2.7/site-packages
 
-      echo "Creating virtual environment: /var/www/app/venv"
-      virtualenv venv
-      source venv/bin/activate
-         echo "Installing application required packages..."
-         pip install -r requirements/dev.txt
+    pushd /var/www/dropper
+        # Setting up a virtual environment will keep the application and its
+        # dependencies isolated from the main system.
 
-         echo "Creating database and tables..."
-         sleep 2
-         mysql < db/001/upgrade.sql
-         mysql < db/002/upgrade.sql
-         mysql < db/002/data.sql
-      deactivate
+        log "Install via pip: virtualenv..."
+        pip install virtualenv
+        log "Creating virtual environment: /var/www/app/venv"
+        virtualenv venv
+        . venv/bin/activate
+            log "Installing required python packages..."
+            pip install -r app/requirements/dev.txt
+        deactivate
+    popd
 
-      # Copy most of the sample settings, but change the DB user and password
-      cat ./deploy/sample.settings.conf | grep -v DB_USER | grep -v DB_PASS \
-         > ./deploy/settings.conf
-      echo "DB_USER = 'root'" >> ./deploy/settings.conf
-      echo "DB_PASS = ''" >> ./deploy/settings.conf
+    pushd /var/www/dropper/app
+        log "Creating database and tables..."
 
-      echo "Stop apache in order to disable the default site"
-      service apache2 stop
-      a2dissite 000-default
+        if [ -d /var/lib/mysql/$DB_NAME ]; then
+            log "Database $DB_NAME already exists... removing"
+            mysql < db/000/downgrade.sql
+        fi
 
-      echo "Link config files for apache port 80 and 443"
-      ln -s /vagrant/apache.conf /etc/apache2/sites-available/dropper.conf
-      ln -s /vagrant/apache-ssl.conf /etc/apache2/sites-available/dropper-ssl.conf
-      ln -s /vagrant/apache.conf /etc/apache2/sites-enabled/dropper.conf
-      ln -s /vagrant/apache-ssl.conf /etc/apache2/sites-enabled/dropper-ssl.conf
-      a2enmod ssl
-      a2enmod headers
+        log "Execute sql: db/000/upgrade.sql"
+        mysql < db/000/upgrade.sql
+        log "Execute sql: db/001/upgrade.sql"
+        mysql ctsi_dropper_s   < db/001/upgrade.sql
+        log "Execute sql: db/002/upgrade.sql"
+        mysql ctsi_dropper_s   < db/002/upgrade.sql
+        log "Execute sql: db/002/data.sql"
+        mysql ctsi_dropper_s   < db/002/data.sql
 
-      echo "Restaring Apache with new config..."
-      sleep 2
-      service apache2 start
+        log "Stop apache in order to disable the default site"
+        service apache2 stop
+        a2dissite 000-default
 
-   popd
+        log "Link config files for apache port 80 and 443"
+        ln -sfv /vagrant/apache.conf /etc/apache2/sites-available/dropper.conf
+        ln -sfv /vagrant/apache-ssl.conf /etc/apache2/sites-available/dropper-ssl.conf
+        ln -sfv /vagrant/apache.conf /etc/apache2/sites-enabled/dropper.conf
+        ln -sfv /vagrant/apache-ssl.conf /etc/apache2/sites-enabled/dropper-ssl.conf
+
+        log "Enable apache modules: ssl, headers"
+        a2enmod ssl
+        a2enmod headers
+
+        log "Restaring Apache with new config..."
+        sleep 2
+        service apache2 start
+
+        log "Activate the python wsgi app"
+        touch /var/www/dropper/app/deploy/vagrant.wsgi
+        curl -sk https://localhost | grep -i welcome
+    popd
 }
 
-function install_utils() {
-   cp $SHARED_FOLDER/aliases /home/vagrant/.bash_aliases
-   cp $SHARED_FOLDER/aliases /root/.bash_aliases
-   cp $SHARED_FOLDER/vimrc /home/vagrant/.vimrc
-   cp $SHARED_FOLDER/vimrc /root/.vimrc
-   apt-get install -y \
-      vim \
-      ack-grep \
-      git \
-      curl
-}
 
+function log() {
+    echo -n "Log: "
+    echo $*
+}

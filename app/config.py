@@ -19,7 +19,10 @@ MODE_DEBUG = 'mode_debug'   # for developer mode
 
 
 class DefaultConfig(object):
-    """ Default configuration data """
+    """ Implement the "Default configuration" class.
+    Note: we pass the 'mode' paramter to
+        app/redidropper/initializer.py#do_init() choose the "config" class.
+    """
     LOG_LEVEL = logging.INFO
 
     # When we deploy we use /srv/apps/dropper/ folder
@@ -93,11 +96,10 @@ class DefaultConfig(object):
 
 
 class DebugConfig(DefaultConfig):
-    """ Extra flag for debugging """
+    """ Extend the default config with options useful during debugging """
     DEBUG = True
     DEBUG_TB_ENABLED = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    # same folder as config.py
     CONFIDENTIAL_SETTINGS_FILE = os.path.join(BASEDIR, 'deploy/settings.conf')
 
 

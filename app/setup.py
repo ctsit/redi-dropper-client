@@ -18,7 +18,7 @@ setup(
     keywords = ['MRI','Flask'],
     license='BSD 3-Clause',
     description='MRI File Uploader',
-    long_description=open('README.rst').read(),
+    long_description=open('../docs/README.md').read(),
     install_requires=[
     ],
     entry_points={
