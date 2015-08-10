@@ -28,6 +28,7 @@ nosexcover-*
 .ropeproject/
 .idea/
 .coveralls.yml
+coverage.json
 pylint.out
 
 app/ssl/server.crt

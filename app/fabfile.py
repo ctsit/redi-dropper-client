@@ -93,12 +93,12 @@ def coverage():
     local('python setup.py nosetests')
     """
     local("""
-    py.test \
-        --tb=short -s \
-        --cov redidropper \
-        --cov-config tests/.coveragerc \
-        --cov-report term-missing \
-        --cov-report html \
+    py.test
+        --tb=short -s
+        --cov redidropper
+        --cov-config tests/.coveragerc
+        --cov-report term-missing
+        --cov-report html
         tests/""")
 
 
