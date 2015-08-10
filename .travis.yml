@@ -49,12 +49,11 @@ script:
     - ls -al deploy/
     # put config file in the place expected by config.py
     - cp deploy/sample.settings.conf deploy/settings.conf
-    - fab coverage
+    - python setup.py nosetests
     - popd
 
 # __5a after_success
 after_success:
-    #- coveralls --output=coverage.json
     - coveralls
 
 # __5b
