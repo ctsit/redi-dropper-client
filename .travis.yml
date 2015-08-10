@@ -22,7 +22,7 @@ branches:
 
 # __1 Use this to prepare the system to install prerequisites or dependencies
 before_install:
-    - echo "apt-get install -y python-setuptools python-dev"
+    - echo "Nothing to do"
 
 # __2 Use this to install any prerequisites or dependencies necessary to run your build
 install:
@@ -54,7 +54,9 @@ script:
 
 # __5a after_success
 after_success:
-    - coveralls
+    - pushd app
+    - coveralls -v
+    - popd
 
 # __5b
 after_failure:
