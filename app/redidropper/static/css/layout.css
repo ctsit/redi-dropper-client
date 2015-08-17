@@ -26,6 +26,11 @@
     color: #a51a11;
 }
 
+a.logo-name:hover, a.logo-name:active,
+ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
+    color: #FFF !important;
+}
+
 th.header {
     background-image: url(/static/img/small.gif);
     background-repeat: no-repeat;
