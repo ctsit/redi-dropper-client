@@ -21,6 +21,15 @@
     z-index:80002; /* ensures box appears above overlay */
 }
 
+.red-background {
+    background-color: #a51a11;
+}
+
+a.logo-name:hover, a.logo-name:active,
+ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
+    color: #FFF !important;
+}
+
 th.header {
     background-image: url(/static/img/small.gif);
     background-repeat: no-repeat;
@@ -47,6 +56,12 @@ table.borderless td, table.borderless th {
 
 .bordered {
     border: solid 1px black;
+}
+
+.login-form-container {
+    margin-top: 3em;
+    padding: 3em;
+    background-color: #a51a11;
 }
 
 .footer {
