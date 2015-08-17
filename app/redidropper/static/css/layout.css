@@ -21,6 +21,11 @@
     z-index:80002; /* ensures box appears above overlay */
 }
 
+.red-background {
+    background-color: #a51a11;
+    color: #a51a11;
+}
+
 th.header {
     background-image: url(/static/img/small.gif);
     background-repeat: no-repeat;
