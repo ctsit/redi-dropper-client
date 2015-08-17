@@ -49,6 +49,12 @@ table.borderless td, table.borderless th {
     border: solid 1px black;
 }
 
+.login-form-container {
+    margin-top: 3em;
+    padding: 3em;
+    background-color: #a51a11;
+}
+
 .footer {
     min-height: 40px;
     padding-top: 5px;
