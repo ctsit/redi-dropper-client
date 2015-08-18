@@ -196,6 +196,8 @@ def get_db_friendly_date_time():
 def localize_datetime(value, zone_name='US/Eastern'):
     """ Localize the specified datetime value according to a zone"""
     # print(tz.all_timezones)
+    if value is None:
+        return ''
     timezone = tz.timezone(zone_name)
     localized_value = timezone.localize(value, is_dst=None)
     return localized_value
@@ -210,6 +212,8 @@ def localize_est_date(value):
 def localize_est_datetime(value):
     """ Format the datetime value as `FORMAT_US_DATE_TIME` """
     localized_value = localize_datetime(value)
+    if value is None or '' == value:
+        return ''
     return localized_value.strftime(FORMAT_US_DATE_TIME)
 
 

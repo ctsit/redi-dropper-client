@@ -98,3 +98,9 @@ class UtilsTests(BaseTestCase):
             decoded = utils.get_email_from_token(token, salt,
                                                  secret, max_age=1)
         self.assertTrue('Signature age 2 > 1 seconds' in context.exception)
+
+    def test_localize_datetime_none_value(self):
+        assert '' == utils.localize_datetime(None)
+
+    def test_localize_est_datetime_none_value(self):
+        assert '' == utils.localize_est_datetime(None)
