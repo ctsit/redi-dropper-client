@@ -1,4 +1,4 @@
-
+.DS_Store
 # Server specific files
 /app/deploy/*/fabric.py
 /app/deploy/*/settings.conf

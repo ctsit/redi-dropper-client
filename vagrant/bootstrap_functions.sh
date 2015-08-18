@@ -51,6 +51,11 @@ function install_dropper() {
         deactivate
     popd
 
+    pushd /var/www/dropper/app/deploy
+        log "Link app config file"
+        ln -sfv sample.settings.conf settings.conf
+    popd
+
     pushd /var/www/dropper/app
         log "Creating database and tables..."
 
@@ -87,8 +92,8 @@ function install_dropper() {
         service apache2 start
 
         log "Activate the python wsgi app"
-        touch /var/www/dropper/app/deploy/vagrant.wsgi
-        curl -sk https://localhost | grep -i welcome
+        touch -af /var/www/dropper/app/deploy/vagrant.wsgi
+        curl -sk https://localhost | grep -i 'what is'
     popd
 }
 
