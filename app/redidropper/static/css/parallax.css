@@ -15,7 +15,31 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 #home {
   background: url(/static/img/bottles.jpg) no-repeat center center fixed; 
   display: table;
-  height: 50vh;
+  height: 45vh;
+  position: relative;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#image2 {
+  background: url(/static/img/oil.jpg) no-repeat center center fixed;
+  display: table;
+  height: 45vh;
+  position: relative;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#image3 {
+  background: url(/static/img/red-oil-flipped.jpg) no-repeat center center fixed;
+  display: table;
+  height: 45vh;
   position: relative;
   width: 100%;
   -webkit-background-size: cover;
@@ -25,11 +49,13 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #about {
+  height: 55vh;
 }
 
 #services {
   background-color: #a51a11;
   color: #ffffff;
+  height: 55vh;
 }
 
 #services .glyphicon {
@@ -44,14 +70,25 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   width: 140px;
 }
 
-#information {
-  background: url(/static/img/oil.jpg) no-repeat center center fixed; 
+#information .container {
+  background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed; 
+  height: 45vh;
   display: table;
-  height: 300px;
   position: relative;
   width: 100%;
   background-size: cover;
 }
-#information .panel {
-  opacity: 0.85;
+
+#gettingstarted {
+  height: 55vh;
+}
+
+#faq {
+  background-color: #a51a11;
+  color: #ffffff;
+  height: 55vh;
+}
+
+#support {
+  height: 55vh;
 }
