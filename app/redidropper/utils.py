@@ -196,6 +196,8 @@ def get_db_friendly_date_time():
 def localize_datetime(value, zone_name='US/Eastern'):
     """ Localize the specified datetime value according to a zone"""
     # print(tz.all_timezones)
+    if value is None:
+        return ''
     timezone = tz.timezone(zone_name)
     localized_value = timezone.localize(value, is_dst=None)
     return localized_value
@@ -210,6 +212,8 @@ def localize_est_date(value):
 def localize_est_datetime(value):
     """ Format the datetime value as `FORMAT_US_DATE_TIME` """
     localized_value = localize_datetime(value)
+    if value is None or '' == value:
+        return ''
     return localized_value.strftime(FORMAT_US_DATE_TIME)
 
 
@@ -253,31 +257,37 @@ def get_email_from_token(token, salt, secret, max_age=86400):
     return email
 
 
-def redcap_api_call(url, token, content, fields):
+def redcap_api_call(url, token, content, fields, max_time):
     """
-    @TODO: doku
+    Send an API request to the REDCap server.
+    Notes:
+        - when no fields are specified all fields are retrived
+        - the underlining cURL process is limited to complete
+            within `max_time` seconds
+
+    :rtype: dict
+    :return: the requested content if it is of valid type (event, record)
     """
     assert content in ['event', 'record']
 
-    # @TODO: specify events -- an array of unique event names that you wish
-    # to pull records for - only for longitudinal projects
-    # ' -d events="event_1_arm_1"' \
-    cmd = 'curl -skX POST {} ' \
+    # @TODO: add config flag for enabling/disabling the ssl
+    # certificate validation: curl -k
+    cmd = 'curl -m {} -sX POST {} ' \
         ' -d token={} ' \
         ' -d format=json ' \
         ' -d content={} ' \
         ' -d fields="{}"' \
         ' -d returnFormat=json ' \
         ' | python -m json.tool ' \
-        .format(url, token, content, fields)
+        .format(max_time, url, token, content, fields)
 
     proc = Popen(cmd, shell=True, stdout=PIPE)
     (out, err) = proc.communicate()
     # print("redcap_api_call: {}\n{}".format(cmd, out))
+
     if err:
         print("redcap_api_call error: \n{}".format(err))
 
-    # data = ast.literal_eval(out)
     data = []
     try:
         data = ast.literal_eval(out)
@@ -286,19 +296,17 @@ def redcap_api_call(url, token, content, fields):
     return data
 
 
-def retrieve_redcap_subjects(url, token, fields):
-    """
-    @TODO: doku
-    """
-    data = redcap_api_call(url, token, content='record', fields=fields)
+def retrieve_redcap_subjects(url, token, fields, max_time=30):
+    """Read the list of subjects from the REDCap instance using the API"""
+    data = redcap_api_call(url, token, content='record',
+                           fields=fields, max_time=max_time)
     # print("subjects: {}".format(data))
     return data
 
 
-def retrieve_redcap_events(url, token):
-    """
-    @TODO: doku
-    """
-    data = redcap_api_call(url, token, content='event', fields={})
+def retrieve_redcap_events(url, token, max_time=30):
+    """Read the list of events from the REDCap instance using the API"""
+    data = redcap_api_call(url, token, content='event',
+                           fields={}, max_time=max_time)
     # print("events: {}".format(data))
     return data

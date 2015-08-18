@@ -30,14 +30,14 @@ class UtilsTests(BaseTestCase):
             actual_agent = utils._get_user_agent()
             actual_hash = utils._create_salt()
 
-            assert '1.2.3.4' == actual_ip
-            assert 'cURL' == actual_agent
-            assert 16 == len(actual_hash)
+            self.assertEquals('1.2.3.4', actual_ip)
+            self.assertEquals('cURL', actual_agent)
+            self.assertEquals(16, len(actual_hash))
 
     def test_generate_sha512_hmac(self):
         expected = '8vhMgmofeNDCISwvPc9yB7XQiNSPZHwDVz6kuYuA7aPA43j8RQVy+xwI2+87u3Pkpvq/qiuRuDreUoSxblqGzA=='
         actual = utils._generate_sha512_hmac('pepper', 'salt', 'password')
-        assert actual == expected
+        self.assertEquals(actual, expected)
 
     def test_generate_auth(self):
         wsgi_env = {
@@ -46,8 +46,8 @@ class UtilsTests(BaseTestCase):
 
         with self.app.test_request_context(environ_base=wsgi_env):
             salt, actual_pass = utils.generate_auth('pepper', 'password')
-            assert actual_pass is not None
-            assert 88 == len(actual_pass)
+            self.assertIsNotNone(actual_pass)
+            self.assertEquals(88, len(actual_pass))
 
     def test_clean_int(self):
         """
@@ -73,28 +73,36 @@ class UtilsTests(BaseTestCase):
         for case in cases:
             actual = utils.clean_int(case['x'])
             expected = case['exp']
-            assert actual == expected
+            self.assertEquals(actual, expected)
 
     def test_pack(self):
-        assert '{"message":"msg","status":"error"}' == utils.pack_error("msg") \
-            .replace(' ', '').replace('\n', '')
+        self.assertEquals('{"message":"msg","status":"error"}',
+                          utils.pack_error("msg")
+                          .replace(' ', '').replace('\n', ''))
 
     def test_compute_text_md5(self):
         """ verify md5 generator """
         text = 'text'
-        assert '1cb251ec0d568de6a929b520c4aed8d1' == utils.compute_text_md5(text)
+        self.assertEquals('1cb251ec0d568de6a929b520c4aed8d1',
+                          utils.compute_text_md5(text))
 
     def test_get_email_token(self):
         email = 'a@a.com'
         salt = 'salt'
         secret = 'secret'
         token = utils.get_email_token(email, salt, secret)
-        assert 'ImFAYS5jb20i' == token[0:12]
+        self.assertEquals('ImFAYS5jb20i', token[0:12])
         decoded = utils.get_email_from_token(token, salt, secret)
-        assert email == decoded
+        self.assertEquals(email, decoded)
         time.sleep(2)
 
         with self.assertRaises(Exception) as context:
             decoded = utils.get_email_from_token(token, salt,
                                                  secret, max_age=1)
         self.assertTrue('Signature age 2 > 1 seconds' in context.exception)
+
+    def test_localize_datetime_none_value(self):
+        self.assertEquals('', utils.localize_datetime(None))
+
+    def test_localize_est_datetime_none_value(self):
+        self.assertEquals('', utils.localize_est_datetime(None))

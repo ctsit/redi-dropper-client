@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @TODO: add license
+# Goal: Implement simple tasks executed during deployment with deploy.sh
+#
+# @authors
+#   Andrei Sura             <sura.andrei@gmail.com>
+#   Taeber Rapczak          <taeber@ufl.edu>
+
 
 """
 Fabric deployment file.
@@ -408,7 +413,7 @@ def update_config(tag='master'):
     print('\n\nUpdating server configuration...')
 
     local_settings_file = os.path.abspath('%(environment)s/settings.conf' % env)
-    local("""sed -i "s|^APP_VERSION.*|APP_VERSION = '{}'|" {}"""
+    local("""sed -i'.bak' -e "s|^APP_VERSION.*|APP_VERSION = '{}'|" {}"""
           .format(tag, local_settings_file))
 
     with settings(hide('stdout', 'stderr')):
@@ -474,7 +479,7 @@ def restart_wsgi_app():
 def check_app():
     """cURL the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
-    local('curl -sk https://%(project_url)s | grep "Please login" ' % env)
+    local('curl -sk https://%(project_url)s | grep "Version " ' % env)
 
 
 def print_project_repo():
