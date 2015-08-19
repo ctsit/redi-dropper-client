@@ -24,9 +24,7 @@
                     type='hidden') }}
     {% endcall %}
 {% endblock %}
-
 {% block content %}
-
     <!-- first section - login -->
     <div id="home">
     </div>
@@ -40,6 +38,9 @@
                     <h2 class="text-center">What is RED-I Dropper?</h2> <hr />
                     <p class="lead">
                     RED-I Dropper is a web-based application used to assist in the secure transport of data from one location to another. This transfer can include both sensitive and non-sensitive data.</p>
+                    <div id="scrolldownicon">
+                        <a href="#information" class="anchorLink"> <i class="glyphicon glyphicon-chevron-down go-down"> </i> </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,7 +50,7 @@
     <div id="image2">
     </div>
 
-    <!-- fourth section - Information -->
+    <!-- third section - Information -->
     <div id="information">
         <div class="container">
             <div class="row">
@@ -65,17 +66,20 @@
                             for analysis that will advance the understanding of Alzheimer's
                             Disease.
                         </p>
+                        <div id="scrolldownicon">
+                            <a href="#services" class="anchorLink"> <i class="glyphicon glyphicon-chevron-down go-down"> </i> </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- /fourth section -->
+    <!-- /third section -->
 
     <div id="image2">
     </div>
 
-    <!-- third section - Services -->
+    <!-- fourth section - Services -->
     <div id="services">
         <div class="container">
             <h2 class="text-center">Dropper Resources</h2> <hr />
@@ -95,12 +99,12 @@
             </div>
         </div>
     </div>
-    <!-- /third section -->
+    <!-- /fourth section -->
 
     <div id="image3">
     </div>
 
-    <!-- fifth section -->
+    <!-- fifth section - Getting Started -->
     <div id="gettingstarted">
         <div class="container">
             <div class="row text-center">
@@ -113,7 +117,7 @@
     <div id="image2">
     </div>
 
-    <!-- fifth section -->
+    <!-- sixth section - FAQ -->
     <div id="faq">
         <div class="container">
             <div class="row text-center">
@@ -121,20 +125,41 @@
             </div>
         </div>
     </div>
-    <!-- /fifth section -->
+    <!-- /sixth section -->
 
     <div id="image3">
     </div>
 
-    <!-- fifth section -->
+    <!-- seventh section - Support -->
     <div id="support">
         <div class="container">
             <div class="row text-center">
                 <h2 class="text-center">Support</h2> <hr />
             </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <h4>Location</h4>
+                    <address>
+                        University of Florida - CTS-IT<br>
+                        2405 SW Archer Road<br>
+                        Gainesville, FL 32608<br>
+                    </address>
+                </div>
+                <div class="col-sm-3">
+                    <h4>Phone Number</h4>
+                    <p>(352) 294-5210</p>
+                </div>
+                <div class="col-sm-3">
+                    <h4>Email Address</h4>
+                    <p>ctsit@ctsi.ufl.edu</p>
+                </div>
+                <div class="col-sm-3">
+                    <h4>Website</h4>
+                    <a href="https://www.ctsi.ufl.edu/research/study-development/informatics-consulting/" target="_blank">CTS-IT Website</a>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- /fifth section -->
-
+    <!-- /seventh section -->
 
 {% endblock %}

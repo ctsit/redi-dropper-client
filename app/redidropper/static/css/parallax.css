@@ -11,6 +11,18 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   padding: 50px 0;
 }
 
+.go-down {
+  border: 2px solid;
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 28px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  vertical-align: middle;
+  width: 60px;
+}
+
 /* additional sections */
 #home {
   background: url(/static/img/bottles.jpg) no-repeat center center fixed; 
@@ -52,13 +64,12 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   height: 55vh;
 }
 
-#about .container {
-  position: relative;
-  top: 10%;
+#scrolldownicon a {
+  color: #000000;
 }
 
 #services {
-  background-color: #a51a11;
+  background-color: #993333;
   color: #ffffff;
   height: 100vh;
 }
@@ -78,6 +89,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   text-align: center;
   vertical-align: middle;
   width: 140px;
+}
+
+#services a {
+  color: #FFFFFF;
 }
 
 #information .container {
@@ -104,7 +119,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #faq {
-  background-color: #a51a11;
+  background-color: #993333;
   color: #ffffff;
   height: 100vh;
 }
@@ -120,5 +135,9 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #support .container {
   position: relative;
-  top: 10%;
+  top: 5%;
+}
+
+#support button {
+  color: #FFFFFF;
 }
