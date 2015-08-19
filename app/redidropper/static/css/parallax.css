@@ -55,7 +55,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 #services {
   background-color: #a51a11;
   color: #ffffff;
-  height: 55vh;
+  height: 100vh;
 }
 
 #services .glyphicon {
@@ -72,7 +72,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #information .container {
   background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed; 
-  height: 45vh;
+  height: 100vh;
   display: table;
   position: relative;
   width: 100%;
@@ -80,15 +80,15 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #gettingstarted {
-  height: 55vh;
+  height: 100vh;
 }
 
 #faq {
   background-color: #a51a11;
   color: #ffffff;
-  height: 55vh;
+  height: 100vh;
 }
 
 #support {
-  height: 55vh;
+  height: 100vh;
 }
