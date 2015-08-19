@@ -26,7 +26,8 @@
 }
 
 a.logo-name:hover, a.logo-name:active,
-ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
+ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active,
+a.anchorLink {
     color: #FFF !important;
 }
 
