@@ -52,10 +52,20 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   height: 55vh;
 }
 
+#about .container {
+  position: relative;
+  top: 10%;
+}
+
 #services {
   background-color: #a51a11;
   color: #ffffff;
   height: 100vh;
+}
+
+#services .container {
+  position: relative;
+  top: 20vh;
 }
 
 #services .glyphicon {
@@ -79,8 +89,18 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   background-size: cover;
 }
 
+#stardiv {
+  position: relative;
+  top: 20vh;
+}
+
 #gettingstarted {
   height: 100vh;
+}
+
+#gettingstarted .container {
+  position: relative;
+  top: 10%;
 }
 
 #faq {
@@ -89,6 +109,16 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   height: 100vh;
 }
 
+#faq .container {
+  position: relative;
+  top: 10%;
+}
+
 #support {
   height: 100vh;
+}
+
+#support .container {
+  position: relative;
+  top: 10%;
 }
