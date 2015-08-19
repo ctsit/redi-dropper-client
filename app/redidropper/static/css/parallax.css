@@ -23,6 +23,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   width: 60px;
 }
 
+.sublead {
+  color: #D8D8D8;
+}
+
 /* additional sections */
 #home {
   background: url(/static/img/bottles.jpg) no-repeat center center fixed; 
