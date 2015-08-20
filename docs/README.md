@@ -17,7 +17,27 @@ This folder stores the code for RediDropper web application.
 - Database: [MySQL Enterprise Server v5.6.24](http://dev.mysql.com/doc/relnotes/mysql/5.6/en/news-5-6-24.html)
 
 
-## Developer's Workflow
+## Developer's Workflow - With Vagrant
+
+* git clone git@github.com:ctsit/redi-dropper-client.git
+* cd redi-dropper-client/vagrant
+* vagrant up
+* open the browser at https://localhost:7088/ (accept the "Your connection is not private" message)
+
+Optional step - create a self-signed certificate:
+
+<pre>
+cd redi-dropper-client/app/ssl
+./gen_cert.sh
+</pre>
+
+The above command will produce two files used in debug mode:
+
+- server.crt
+- server.key
+
+
+## Developer's Workflow - Without Vagrant
 
 There are three great tools for python development:
 
