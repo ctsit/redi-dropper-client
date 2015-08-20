@@ -11,11 +11,51 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   padding: 50px 0;
 }
 
+.go-down {
+  border: 2px solid;
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 28px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  vertical-align: middle;
+  width: 60px;
+}
+
+.grey-color {
+  color: #D8D8D8;
+}
+
 /* additional sections */
 #home {
   background: url(/static/img/bottles.jpg) no-repeat center center fixed; 
   display: table;
-  height: 50vh;
+  height: 45vh;
+  position: relative;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#image2 {
+  background: url(/static/img/oil.jpg) no-repeat center center fixed;
+  display: table;
+  height: 45vh;
+  position: relative;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#image3 {
+  background: url(/static/img/red-oil-flipped.jpg) no-repeat center center fixed;
+  display: table;
+  height: 45vh;
   position: relative;
   width: 100%;
   -webkit-background-size: cover;
@@ -25,11 +65,22 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #about {
+  height: 55vh;
+}
+
+#scrolldownicon a {
+  color: #000000;
 }
 
 #services {
-  background-color: #a51a11;
+  background-color: #993333;
   color: #ffffff;
+  height: 100vh;
+}
+
+#services .container {
+  position: relative;
+  top: 20vh;
 }
 
 #services .glyphicon {
@@ -44,14 +95,53 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   width: 140px;
 }
 
-#information {
-  background: url(/static/img/oil.jpg) no-repeat center center fixed; 
+#services a {
+  color: #FFFFFF;
+}
+
+#information .container {
+  background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed; 
+  height: 100vh;
   display: table;
-  height: 300px;
   position: relative;
   width: 100%;
   background-size: cover;
 }
-#information .panel {
-  opacity: 0.85;
+
+#stardiv {
+  position: relative;
+  top: 20vh;
+}
+
+#gettingstarted {
+  height: 100vh;
+}
+
+#gettingstarted .container {
+  position: relative;
+  top: 10%;
+}
+
+#faq {
+  background-color: #993333;
+  color: #ffffff;
+  height: 100vh;
+}
+
+#faq .container {
+  position: relative;
+  top: 10%;
+}
+
+#support {
+  height: 100vh;
+}
+
+#support .container {
+  position: relative;
+  top: 5%;
+}
+
+#support button {
+  color: #FFFFFF;
 }
