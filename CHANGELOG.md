@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.2a] - 2015-08-20
+
+### Added
+ * adding authors file (Kevin Steven Hanson)
+
 ## [0.0.2] - 2015-08-18
 
 ### Fixed
