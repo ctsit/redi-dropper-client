@@ -28,8 +28,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 /* additional sections */
-#home {
-  background: url(/static/img/bottles.jpg) no-repeat center center fixed; 
+#home,
+#image2,
+#image3 {
+  background: no-repeat center center fixed;
   display: table;
   height: 45vh;
   position: relative;
@@ -38,30 +40,20 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+
+#home {
+    background-image: url(/static/img/bottles.jpg);
 }
 
 #image2 {
-  background: url(/static/img/oil.jpg) no-repeat center center fixed;
-  display: table;
-  height: 45vh;
-  position: relative;
-  width: 100%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    background-image: url(/static/img/oil.jpg);
 }
 
 #image3 {
-  background: url(/static/img/red-oil-flipped.jpg) no-repeat center center fixed;
-  display: table;
-  height: 45vh;
-  position: relative;
-  width: 100%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    background-image: url(/static/img/oil.jpg);
+    transform: scaleY(-1);
+    filter: FlipV;
 }
 
 #about {
@@ -99,14 +91,37 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   color: #FFFFFF;
 }
 
-#information .container {
-  background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed; 
-  height: 100vh;
-  display: table;
-  position: relative;
-  width: 100%;
-  background-size: cover;
+
+#information {
+    height: 100vh;
+    background: #fff no-repeat center center fixed;
+    display: table;
+    position: relative;
+    width: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
+
+#information:before {
+    background-image: url(/static/img/oil.jpg);
+    background-repeat: no-repeat;
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.3;
+    background-position: 50% 0;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 
 #stardiv {
   position: relative;
