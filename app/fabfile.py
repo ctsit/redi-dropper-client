@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The 'fabfile.py' is used by Fabric and must reside in the
 application root directory.
@@ -11,6 +12,9 @@ from fabric import colors
 from fabric.context_managers import settings
 from fabric.contrib.console import confirm
 from contextlib import contextmanager
+
+STATUS_PASS = '✔'
+STATUS_FAIL = '✗'
 
 
 @task
@@ -92,7 +96,9 @@ def coverage():
     # https://pytest.org/latest/example/pythoncollection.html
     local('python setup.py nosetests')
     """
-    local('py.test --tb=short -s --cov redidropper --cov-config tests/.coveragerc --cov-report term-missing --cov-report html tests/')
+    local(
+        'py.test --tb=short -s --cov redidropper --cov-config tests/.coveragerc --cov-report term-missing --cov-report html tests/')
+
 
 @task
 def lint():
@@ -106,6 +112,33 @@ def run():
     Start the web application using the WSGI webserver provided by Flask
     """
     local('python run.py')
+
+
+@task
+def show_versions(url='https://localhost:5000'):
+    """ display latest tag and deployed tag at a specific url
+    Example: fab show_versions:url=https://stage.dropper.ctsi.ufl.edu
+    """
+    local('git fetch --tags')
+
+    cmd = """git tag \
+        | sort -t. -k 1,1n -k 2,2n -k 3,3n \
+        | tail -1"""
+    last_tag = local(cmd, capture=True)
+
+    cmd2 = 'curl -sk {}'.format(url) + """ \
+        | grep Version \
+        | grep -oE "[0-9.]{1,2}[0-9.]{1,2}[0-9a-z.]{1,4}" \
+        | tail -1"""
+    deployed_tag = local(cmd2, capture=True)
+
+    print("\nLast tag: {}".format(colors.yellow(last_tag)))
+    print("Deployed tag: {}".format(colors.yellow(deployed_tag)))
+
+    if last_tag != deployed_tag:
+        print("[{}] Tags do not match!".format(colors.red(STATUS_FAIL)))
+    else:
+        print("[{}] Tags do match.".format(colors.green(STATUS_PASS)))
 
 
 @contextmanager

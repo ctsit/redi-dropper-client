@@ -1,7 +1,8 @@
-Kevin S. Hanson hansonks@gmail.com
-Andrei Sura asura@ufl.edu
-Christopher P. Barnes senrabc@gmail.com
-Philip Chase philipbchase@gmail.com
-Michael Buchholz ufbuck72@gmail.com
-Ruchi V. Desai ruchivdesai@gmail.com
-Taeber Rapczak taeber@ufl.edu
+# Authors
+
+* Andrei Sura             <sura.andrei@gmail.com>
+* Ruchi Vivek Desai       <ruchivdesai@gmail.com>
+* Sanath Pasumarthy       <sanath@ufl.edu>
+* Taeber Rapczak          <taeber@ufl.edu>
+* Kevin S. Hanson         <hansonks@gmail.com>
+* Christopher P. Barnes   <senrabc@gmail.com>
