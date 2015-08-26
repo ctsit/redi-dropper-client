@@ -336,18 +336,18 @@ def logout():
         https://shib.ncsu.edu/docs/logout.html
         https://wiki.shibboleth.net/confluence/display/CONCEPT/SLOIssues
     """
+    # Log the logout
+    if 'uuid' in session:
+        LogEntity.logout(session['uuid'])
+
     logout_user()
 
-    # Remove session keys set by Flask-Principal
-    for key in ('identity.name', 'identity.auth_type'):
+    # Remove session keys set by Flask-Principal, and `uuid` key set manually
+    for key in ('identity.name', 'identity.auth_type', 'uuid'):
         session.pop(key, None)
 
     # Tell Flask-Principal the user is anonymous
     identity_changed.send(current_app._get_current_object(),
                           identity=AnonymousIdentity())
 
-    # Log the logout
-    LogEntity.logout(session['uuid'])
-    # Also pop the session id
-    session.pop('uuid')
     return redirect('/')
