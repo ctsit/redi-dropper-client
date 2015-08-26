@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.0.3] - 2015-08-26
+
+### Fixed
+* Issue #109 - AttributeError: 'NoneType' object has no attribute 'email' (Andrei)
+
+### Changed
+* Update AUTHORS.md (Andrei)
+
+### Added
+* Add sections for getting started, faq and support (Ruchi Vivek Desai)
+
+
 ## [0.0.2a] - 2015-08-20
 
 ### Added
