@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.3a] - 2015-08-27
+### Added
+* Add sample config files for deploying two application instances 
+Paths ==> `/alz` and `/onefl` (Andrei Sura)
+
 ## [0.0.3] - 2015-08-26
 
 ### Fixed
