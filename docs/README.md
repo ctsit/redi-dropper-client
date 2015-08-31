@@ -121,6 +121,7 @@ After you clone the repository:
 ```
 
     $ cd redi-dropper-client/app/deploy
+    $ git fetch --tags upstream
     $ ./deploy.sh -i -t tag_number -r ~/git staging
     OR
     $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
@@ -164,6 +165,12 @@ Re-upload configuration and code changes by executing one of the following:
     OR
     $ deploy/deploy.sh -t tag_number -r ~/git  production
 ```
+
+Note: You might need to refresh the list of tags from the upstream
+
+<pre>
+$ git fetch --tags upstream
+</pre>
 
 Warning: **Do not use** the `-i` flag since it is intended only for the
         initial deployment.
