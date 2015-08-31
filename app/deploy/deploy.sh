@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+#
+# Goal: Implement a `one-click` deployment tool
+#
+# @authors
+#   Andrei Sura             <sura.andrei@gmail.com>
+#   Taeber Rapczak          <taeber@ufl.edu>
+
 
 # import helper functions
 . deploy_functions.sh
@@ -11,13 +18,18 @@ INITIAL_DEPLOY_ONLY=no
 SHOW_HELP=no
 TAG_NUMBER=""
 
-set -- $(getopt hit: "$@")
+# folder for storing a local copy of the code
+REPO_PARENT_DIR=$HOME/git
+
+
+set -- $(getopt hit:r: "$@")
 while [ $# -gt 0 ]
     do
         case "$1" in
                 (-h) SHOW_HELP=yes;;
                 (-i) INITIAL_DEPLOY_ONLY=yes;;
                 (-t) TAG_NUMBER=$2; shift;;
+                (-r) REPO_PARENT_DIR=$2; shift;;
                 (--) shift; break;;
                 (-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
                 (*)  break;;
@@ -59,8 +71,6 @@ unset IFS
 
 eval export HOME=~$(id -un)
 
-# folder for storing a local copy of the code
-REPO_PARENT_DIR=$HOME/git
 REPO_DIR=$REPO_PARENT_DIR/redi-dropper-client
 GIT_REPO=https://github.com/ctsit/redi-dropper-client
 VENV_DIR=$HOME/venv
@@ -96,8 +106,4 @@ pushd $REPO_DIR/app/deploy
     fab $HOST restart_wsgi_app
     sleep 2
     fab $HOST check_app
-
-    # show error log from the remote server
-    #fab staging show_config_apache
-    #fab staging show_errors_apache
 popd

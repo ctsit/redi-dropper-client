@@ -1,11 +1,10 @@
-
+.DS_Store
 # Server specific files
 /app/deploy/*/fabric.py
 /app/deploy/*/settings.conf
 /app/deploy/*/virtualhost.conf
 
 /app/deploy/settings.conf
-
 /app/upload/
 
 .vagrant
@@ -21,12 +20,15 @@ coverage.xml
 nosetests.xml
 .coverage
 
+dist/
 *.egg-info
+.eggs/
 mock-*
 nosexcover-*
 .ropeproject/
 .idea/
 .coveralls.yml
+coverage.json
 pylint.out
 
 app/ssl/server.crt

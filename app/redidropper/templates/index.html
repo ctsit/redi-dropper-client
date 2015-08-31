@@ -1,50 +1,29 @@
 {% extends "layout.html" %}
 {% import 'macros.html' as macros %}
 
+{% block login %}
+    {% call macros.render_form(form,
+                    action_url=url_for('index'),
+                    action_text='Login',
+                    btn_class='btn btn-default',
+                    class_='navbar-form navbar-right') %}
+         {{ macros.render_field(form.email,
+                    label_visible=false,
+                    placeholder='Email Address',
+                    autocomplete='on',
+                    type='email') }}
+         {{ macros.render_field(form.password,
+                    label_visible=false,
+                    placeholder='Password',
+                    type='password') }}
+         {{ macros.render_field(form.next,
+                    value=next_page,
+                    type='hidden') }}
+         {{ macros.render_field(form.next,
+                    value=next_page,
+                    type='hidden') }}
+    {% endcall %}
+{% endblock %}
 {% block content %}
-<div class="container">
-      <div class="row">
-        <div class="col-sm-6">
-            <div class="starter-template">
-        <h1>Welcome! </h1>
-        <p class="lead">Please Sign In.</p>
-    </div>
-
-<div class="row">
-    <div class="col-xs-12 col-md-4 col-sm-4 col-sm-offset-4 col-md-offset-4
-        col-lg-4 col-lg-offset-4">
-        {% call macros.render_form(form,
-                                    action_url=url_for('index'),
-                                    action_text='Login',
-                                    btn_class='btn btn-danger',
-                                    class_='login-form') %}
-        {{ macros.render_field(form.email,
-                                label_visible=false,
-                                placeholder='Emai Address',
-                                autocomplete='on',
-                                type='email') }}
-        {{ macros.render_field(form.password,
-                                label_visible=false,
-                                placeholder='Password',
-                                type='password') }}
-        {{ macros.render_field(form.next,
-                                value=next_page,
-                                type='hidden') }}
-        {{ macros.render_field(form.next,
-                                value=next_page,
-                                type='hidden') }}
-
-        {% endcall %}
-    </div>
-</div>
-        </div>
-        <div class="col-sm-6 text-center">
-          <h2>What is RED-I Dropper?</h2>
-          <p class="lead">
-RED-I Dropper is a web-based application used to assist in the secure transport of data from one location to another. This transfer can include both sensitive and non-sensitive data.</p>
-        </div>
-      </div>
-    </div>
-
-
+    {% include 'parallax.html' %}
 {% endblock %}

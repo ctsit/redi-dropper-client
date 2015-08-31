@@ -14,6 +14,7 @@
     <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/start_upload.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/parallax.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 
@@ -29,7 +30,14 @@
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"> </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"> </script>
+    <script src="{{ url_for('static', filename='js/jquery.anchor.js') }}"></script>
+<!--
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.eot" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.svg" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.ttf" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.woff" charset="utf-8">
+-->
 
     {% block scripts %}
         <!-- allow to insert page specific js -->
@@ -44,7 +52,7 @@
 {%endif%}
 
         <!-- Sidebar -->
-        <div id="sidebar-wrapper" class="bg-primary">
+        <div id="sidebar-wrapper" class="bg-primary red-background">
             <ul class="sidebar-nav">
                 {% for link in user_links %}
                     {{ render_nav_link(link[0], link[1]) }}
@@ -54,17 +62,18 @@
 
         <div id="page-content-wrapper">
             <nav class="navbar">
-                <div class="container-fluid bg-primary">
+                <div class="container-fluid bg-primary red-background">
                     <div class="navbar-header">
                         <div class="navbar-brand" href="/">
                             {% if current_user.is_authenticated() %}
                                 <i id="menu-toggle"
                                     title="Logged in as {{ current_user.email }}"
-                                    class="fa fa-bars fa-lg icon-white cursor-pointer"></i>
+                                    class="fa fa-angle-left fa-lg icon-white cursor-pointer"></i>
                             {% endif %}
                             <a class="logo-name" href="/">Redi Dropper</a>
                         </div>
                     </div>
+                    <p>{% block login %} {% endblock %}</p>
                 </div>
             </nav>
             <div class="col-sm-12 col-md-12 col-lg-12 main-content">
@@ -93,8 +102,8 @@
         <div class="container text-center footer">
 <a href="https://www.ctsi.ufl.edu/research/study-development/informatics-consulting/">CTS-IT</a>
             at the University of Florida
-            • All Rights Reserved
-            • <a href="https://github.com/ctsit/redi-dropper-client/tree/{{config['APP_VERSION']}}">Version {{config['APP_VERSION']}}</a>
+            &middot; All Rights Reserved
+            &middot; <a href="https://github.com/ctsit/redi-dropper-client/tree/{{config['APP_VERSION']}}">Version {{config['APP_VERSION']}}</a>
         </div>
     </div>
 

@@ -60,9 +60,6 @@ def do_init(app, mode=config.MODE_PROD, extra_settings={}):
     """
     Initialize the app.
 
-    @TODO: remove the `db` paramter if not used
-    @see run.py
-
     :rtype Flask
     :return the initialized application object
     """
@@ -152,7 +149,10 @@ def get_config_summary(app):
 
 def get_ssl_context(app):
     """
-    Get a SSL context in debug mode
+    Get a SSL context in debug mode if the developer does not provide the
+    public/private key files for the certificate.
+    Note: In production mode we specify the "SSL context" by configuring Apache
+
     @see http://werkzeug.pocoo.org/docs/0.10/serving/#quickstart
     """
     ssl_public_key_file = app.config['SERVER_SSL_CRT_FILE']

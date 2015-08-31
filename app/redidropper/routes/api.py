@@ -464,9 +464,10 @@ def api_import_redcap_subjects():
     local_subjects = SubjectEntity.query.all()
     url = app.config['REDCAP_API_URL']
     redcap_subjects = utils.retrieve_redcap_subjects(
-        url,
-        app.config['REDCAP_API_TOKEN'],
-        app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID'])
+        url=url,
+        token=app.config['REDCAP_API_TOKEN'],
+        fields=app.config['REDCAP_DEMOGRAPHICS_SUBJECT_ID'],
+        max_time=app.config['REDCAP_CURL_API_MAX_TIME'])
     new_subjects = find_new_subjects(local_subjects, redcap_subjects)
 
     added_date = datetime.today()
@@ -552,8 +553,9 @@ def api_import_redcap_events():
     url = app.config['REDCAP_API_URL']
     local_events = EventEntity.query.all()
     redcap_events = utils.retrieve_redcap_events(
-        url,
-        app.config['REDCAP_API_TOKEN'])
+        url=url,
+        token=app.config['REDCAP_API_TOKEN'],
+        max_time=app.config['REDCAP_CURL_API_MAX_TIME'])
     new_events = find_new_events(local_events, redcap_events)
 
     added_date = datetime.today()

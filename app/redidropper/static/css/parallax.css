@@ -1,0 +1,143 @@
+/* ============================================================================================== 
+This copyright notice must be kept untouched in the stylesheet at all times.
+The original version of this stylesheet and the associated (x)html 
+is available at http://www.script-tutorials.com/bootstrap-one-page-template-with-parallax-effect/
+Copyright (c) Script Tutorials. All rights reserved.
+This stylesheet and the associated (x)html may be modified in any way to fit your requirements.
+================================================================================================= */
+
+/* padded section */
+.pad-section {
+  padding: 50px 0;
+}
+
+.go-down {
+  border: 2px solid;
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 28px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  vertical-align: middle;
+  width: 60px;
+}
+
+.grey-color {
+  color: #D8D8D8;
+}
+
+/* additional sections */
+#home,
+#image2,
+#image3 {
+  background: no-repeat center center fixed;
+  display: table;
+  height: 45vh;
+  position: relative;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#home {
+    background-image: url(/static/img/bottles.jpg);
+}
+
+#image2 {
+    background-image: url(/static/img/oil.jpg);
+}
+
+#image3 {
+    background-image: url(/static/img/oil.jpg);
+    filter: FlipV;
+}
+
+#about {
+  height: 55vh;
+}
+
+#scrolldownicon a {
+  color: #000000;
+}
+
+#services {
+  background-color: #993333;
+  color: #ffffff;
+  height: 100vh;
+}
+
+#services .container {
+  position: relative;
+  top: 20vh;
+}
+
+#services .glyphicon {
+  border: 2px solid #FFFFFF;
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 60px;
+  height: 140px;
+  line-height: 140px;
+  text-align: center;
+  vertical-align: middle;
+  width: 140px;
+}
+
+#services a {
+  color: #FFFFFF;
+}
+
+
+#information {
+    height: 100vh;
+    background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed;
+    display: table;
+    position: relative;
+    width: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+#stardiv {
+  position: relative;
+  top: 20vh;
+}
+
+#gettingstarted {
+  height: 100vh;
+}
+
+#gettingstarted .container {
+  position: relative;
+  top: 10%;
+}
+
+#faq {
+  background-color: #993333;
+  color: #ffffff;
+  height: 100vh;
+}
+
+#faq .container {
+  position: relative;
+  top: 10%;
+}
+
+#support {
+  height: 100vh;
+}
+
+#support .container {
+  position: relative;
+  top: 5%;
+}
+
+#support button {
+  color: #FFFFFF;
+}

@@ -55,13 +55,13 @@ class LogEntity(db.Model, CRUDMixin):
         def item_from_entity(entity):
             return {
                 'id': entity.id,
-                'user_id': entity.web_session.user_id,
+                'user_email': entity.web_session.user.email
+                if entity.web_session.user is not None else '',
                 'type': entity.log_type.type,
                 'details': entity.details,
-                'web_session_id': entity.web_session.session_id,
                 'web_session_ip': entity.web_session.ip,
                 'date_time': utils.localize_est_datetime(entity.date_time),
-            }
+                }
 
         pagination = LogEntity.query.paginate(page_num, per_page, False)
         items = map(item_from_entity, pagination.items)

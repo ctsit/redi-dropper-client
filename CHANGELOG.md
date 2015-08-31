@@ -1,5 +1,55 @@
 # Change Log
 
+## [0.0.3b] - 2015-08-31
+
+### Changed
+* Add option for accepting parent repo path (Ruchi Vivek Desai)
+* Restore click functionality for main page "getting started" (Andrei Sura)
+* Simplify sample.virtualhost.conf used on prod (Andrei Sura)
+
+
+## [0.0.3a] - 2015-08-27
+### Added
+* Add sample config files for deploying two application instances 
+Paths ==> `/alz` and `/onefl` (Andrei Sura)
+
+## [0.0.3] - 2015-08-26
+
+### Fixed
+* Issue #109 - AttributeError: 'NoneType' object has no attribute 'email' (Andrei)
+
+### Changed
+* Update AUTHORS.md (Andrei)
+
+### Added
+* Add sections for getting started, faq and support (Ruchi Vivek Desai)
+
+
+## [0.0.2a] - 2015-08-20
+
+### Added
+ * adding authors file (Kevin Steven Hanson)
+
+## [0.0.2] - 2015-08-18
+
+### Fixed
+* Fix issue with settings.conf not linked when doing `vagrant up` + improve docs/README.md (Andrei Sura)
+* Fix issue #104 and add tests for it (Ruchi Vivek Desai)
+* Fix issue #44 - parallax the login page (Ruchi Vivek Desai)
+* Fix issue #75 - cURL max time (configurable in settings.conf with `REDCAP_CURL_API_MAX_TIME` (Andrei Sura)
+* Fix issue #73 - show user email instead of id in logs  (Andrei Sura)
+
+### Removed
+* Remove duplicate vagrant to avoid confusion (Andrei Sura)
+
+### Changed
+* Make "upload box" larger - related to issue #34 (Andrei Sura)
+* Change sed call to work with BSD and GNU versions (Taeber Rapczak)
+
+### Added
+* Added bootstrap parallax design to `prototype` dir for later integration (Kevin Steven Hanson)
+
+
 ## [0.0.1c] - 2015-07-23
 
 ### Fixed
@@ -31,6 +81,6 @@
 * Save code with working deployment script
 
 
-## [EMPTY] - 2015-03-13 
+## [0.0.0] - 2015-03-13
 ### Added
 * Initial commit with a one line README.md
