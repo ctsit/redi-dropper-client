@@ -18,13 +18,18 @@ INITIAL_DEPLOY_ONLY=no
 SHOW_HELP=no
 TAG_NUMBER=""
 
-set -- $(getopt hit: "$@")
+# folder for storing a local copy of the code
+REPO_PARENT_DIR=$HOME/git
+
+
+set -- $(getopt hit:r: "$@")
 while [ $# -gt 0 ]
     do
         case "$1" in
                 (-h) SHOW_HELP=yes;;
                 (-i) INITIAL_DEPLOY_ONLY=yes;;
                 (-t) TAG_NUMBER=$2; shift;;
+                (-r) REPO_PARENT_DIR=$2; shift;;
                 (--) shift; break;;
                 (-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
                 (*)  break;;
@@ -66,8 +71,6 @@ unset IFS
 
 eval export HOME=~$(id -un)
 
-# folder for storing a local copy of the code
-REPO_PARENT_DIR=$HOME/git
 REPO_DIR=$REPO_PARENT_DIR/redi-dropper-client
 GIT_REPO=https://github.com/ctsit/redi-dropper-client
 VENV_DIR=$HOME/venv

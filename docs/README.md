@@ -121,9 +121,9 @@ After you clone the repository:
 ```
 
     $ cd redi-dropper-client/app/deploy
-    $ ./deploy.sh -i -t tag_number staging
+    $ ./deploy.sh -i -t tag_number -r ~/git staging
     OR
-    $ ./deploy/deploy.sh -i -t tag_number production
+    $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
 ```
 
 Once you have the fabric tool installed you can create the database tables
@@ -160,9 +160,9 @@ Re-upload configuration and code changes by executing one of the following:
 
 ```
 
-    $ deploy/deploy.sh -t tag_number staging
+    $ deploy/deploy.sh -t tag_number -r ~/git staging
     OR
-    $ deploy/deploy.sh -t tag_number production
+    $ deploy/deploy.sh -t tag_number -r ~/git  production
 ```
 
 Warning: **Do not use** the `-i` flag since it is intended only for the

@@ -9,7 +9,7 @@ MSG_INSTALL="Please install it first"
 
 function usage() {
     echo "Usage: "
-    echo "   $0 [-i initial deployment] [-h help] [-t tag_number] target <staging|production>"
+    echo "   $0 [-i initial deployment] [-h help] -t tag_number [-r repo parent path] target <staging|production>"
 }
 
 function get_md5_exe() {
