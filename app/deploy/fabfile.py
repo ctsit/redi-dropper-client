@@ -479,7 +479,9 @@ def restart_wsgi_app():
 def check_app():
     """cURL the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
-    local('curl -sk https://%(project_url)s | grep "Version " ' % env)
+    local('curl -sk https://%(project_url)s | grep "Version " '
+          ' | grep -oE "[0-9.]{1,2}[0-9.]{1,2}[0-9a-z.]{1,4}" | head -1 ' % env)
+
 
 
 def print_project_repo():
