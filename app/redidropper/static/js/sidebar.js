@@ -5,8 +5,8 @@ $(document).ready(function() {
         $("#wrapper").toggleClass("toggled");
         var icon = $(this).parent().find(".fa")
         if (icon.hasClass('fa-angle-left'))
-            icon.removeClass('fa-angle-left').addClass("fa-angle-right");
+            icon.removeClass('fa-angle-left').addClass("fa-bars");
         else
-            icon.removeClass('fa-angle-right').addClass("fa-angle-left");
+            icon.removeClass('fa-bars').addClass("fa-angle-left");
     });
 });

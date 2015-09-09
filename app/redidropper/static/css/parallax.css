@@ -141,3 +141,34 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 #support button {
   color: #FFFFFF;
 }
+
+/*So that all content and icon is visible on smaller screens*/
+@media all and (max-width: 1000px) {
+  #home {
+    height: 600px;
+  }
+  #about {
+    height: 600px;
+  }
+  #information {
+    height: 600px;
+  }
+  #services {
+    height: 600px;
+  }
+  #gettingstarted {
+    height: 600px;
+  }
+  #faq {
+    height: 600px;
+  }
+  #support {
+    height: 600px;
+  }
+  #image2 {
+    height: 600px;
+  }
+  #image3 {
+    height: 600px;
+  }
+}

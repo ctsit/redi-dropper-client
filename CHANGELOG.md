@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.0.3b] - 2015-08-31
+
+### Changed
+* Add option for accepting parent repo path (Ruchi Vivek Desai)
+* Restore click functionality for main page "getting started" (Andrei Sura)
+* Simplify sample.virtualhost.conf used on prod (Andrei Sura)
+
+
 ## [0.0.3a] - 2015-08-27
 ### Added
 * Add sample config files for deploying two application instances 
