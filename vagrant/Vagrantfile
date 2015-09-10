@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "../app", "/var/www/dropper/app"
   config.vm.network "forwarded_port", guest: 80, host: 8088
   config.vm.network :forwarded_port, guest: 443, host: 7088
+  config.vm.network :forwarded_port, guest: 9392, host: 9392
 
   config.vm.provision "shell" do |s|
     s.path = "bootstrap.sh"

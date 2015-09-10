@@ -11,13 +11,24 @@ function configure_base() {
 }
 
 function install_utils() {
-   cp $SHARED_FOLDER/aliases /home/vagrant/.bash_aliases
-   cp $SHARED_FOLDER/aliases /root/.bash_aliases
-   cp $SHARED_FOLDER/vimrc /home/vagrant/.vimrc
-   cp $SHARED_FOLDER/vimrc /root/.vimrc
-   apt-get install -y \
-      vim \
-      ack-grep
+   cp $SHARED_FOLDER/dot_files/aliases /home/vagrant/.bash_aliases
+   cp $SHARED_FOLDER/dot_files/aliases /root/.bash_aliases
+
+   cp $SHARED_FOLDER/dot_files/vimrc /home/vagrant/.vimrc
+   cp $SHARED_FOLDER/dot_files/vimrc /root/.vimrc
+
+   cp $SHARED_FOLDER/dot_files/sqliterc /home/vagrant/.sqliterc
+   cp $SHARED_FOLDER/dot_files/sqliterc /root/.sqliterc
+
+   apt-get install -y vim ack-grep
+}
+
+function install_redis() {
+
+}
+
+function install_openvas() {
+
 }
 
 function install_apache_for_python() {
