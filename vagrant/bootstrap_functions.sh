@@ -43,10 +43,10 @@ function install_dropper() {
     pushd /var/www/dropper
         # Setting up a virtual environment will keep the application and its
         # dependencies isolated from the main system.
-
         log "Install via pip: virtualenv..."
         pip install virtualenv
         log "Creating virtual environment: /var/www/app/venv"
+
         virtualenv venv
         . venv/bin/activate
             log "Installing required python packages..."
@@ -54,9 +54,9 @@ function install_dropper() {
         deactivate
     popd
 
-    pushd /var/www/dropper/app/deploy
-        log "Link app config file"
-        ln -sfv sample.settings.conf settings.conf
+    pushd /var/www/dropper/app
+        log "Link app config file to make it visible in config.py... "
+        ln -sfv deploy/sample.vagrant.settings.conf deploy/settings.conf
     popd
 
     pushd /var/www/dropper/app

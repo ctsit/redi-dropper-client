@@ -6,9 +6,6 @@
 #   @unittest.skip("Unconditional skipping")
 #   @unittest.skipIf(os.getenv('CONTINUOUS_INTEGRATION', '') > '', reason='Travis VM')
 
-# The redidropper/startup/initializer.py does not need the env variable anymore
-#env: REDIDROPPER_CONFIG=~/build/ctsit/redi-dropper-client/app/deploy/application.conf
-
 # http://docs.travis-ci.com/user/migrating-from-legacy/
 sudo: false
 language: python
@@ -48,8 +45,8 @@ script:
     - pushd app
     - echo $TRAVIS_BUILD_DIR
     - ls -al deploy/
-    # put config file in the place expected by config.py
-    - cp deploy/sample.settings.conf deploy/settings.conf
+    # link the settings file to make it visible in config.py
+    - ln -sfv deploy/sample.vagrant.settings.conf deploy/settings.conf
     - python setup.py nosetests
     - popd
 
