@@ -23,14 +23,6 @@ function install_utils() {
    apt-get install -y vim ack-grep
 }
 
-function install_redis() {
-
-}
-
-function install_openvas() {
-
-}
-
 function install_apache_for_python() {
    # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
    apt-get install -y \
