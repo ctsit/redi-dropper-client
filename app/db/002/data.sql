@@ -5,6 +5,7 @@ SET @end = CONCAT(CURDATE() + interval 6 month, ' 23:59:59');
 SET @end2 = CONCAT(CURDATE() - interval 1 month, ' 23:59:59');
 
 
+-- Note: there is no value inserted in the usrPasswordHash
 INSERT INTO User (usrEmail, usrFirst, usrLast, usrAddedAt, usrAccessExpiresAt, usrIsActive, usrEmailConfirmedAt)
 VALUES
     ('asura@ufl.edu',           'Andrei',       'Şérenfaü',                     NOW(), @end, 1, NOW()),
@@ -12,9 +13,7 @@ VALUES
     ('cpb@ufl.edu',             'Christopher',  'Barnes',                       NOW(), @end2, 1, NOW()),
     ('pbc@ufl.edu',             'Philip',       'Chase',                        NOW(), @end, 0, NOW()),
     ('keyes@ufl.edu',           'Roy',          'Keyes',                        NOW(), @end, 0, NOW()),
-    ('taeber@ufl.edu',          'Taeber',       'Rapczak',                      NOW(), @end, 0, NOW()),
-    ('atloiaco@ufl.edu',        'Alex',         'Loiacono',                     NOW(), @end, 0, NOW()),
-    ('cavedivr@ufl.edu',        'Erik',         'Schmidt',                      NOW(), @end, 0, NOW())
+    ('taeber@ufl.edu',          'Taeber',       'Rapczak',                      NOW(), @end, 0, NOW())
 ;
 
 INSERT INTO Role (rolName, rolDescription)
@@ -35,26 +34,7 @@ UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'cpb@ufl.edu' 
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'pbc@ufl.edu' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'keyes@ufl.edu' AND rolName = 'technician'
 UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'taeber@ufl.edu' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'atloiaco@ufl.edu' AND rolName = 'technician'
-UNION SELECT usrID, rolID, NOW() FROM User, Role WHERE usrEmail = 'cavedivr@ufl.edu' AND rolName = 'technician'
 ;
-
--- REDCap Subjects (retrieve from server)
--- INSERT INTO Subject (sbjRedcapID, sbjAddedAt)
--- VALUES
---     ('001', NOW()),
---     ('002', NOW()),
---     ('003', NOW()),
---     ('004', NOW()),
---     ('005', NOW())
--- ;
-
-
--- REDCap event (retrieve from server)
--- INSERT INTO Event (evtRedcapArm, evtRedcapEvent, evtAddedAt)
---         SELECT 'Arm 1', 'Event 01', NOW()
--- UNION   SELECT 'Arm 1', 'Event 02', NOW()
--- ;
 
 
 -- Subject Files

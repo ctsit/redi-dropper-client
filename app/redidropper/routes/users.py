@@ -88,10 +88,10 @@ def get_user_links():
         'logout': ('logout', 'Logout'),
     }
     role = get_highest_role()
+    # print "highest role: {}".format(role)
+
     if role is None:
         return []
-
-    print "highest role: {}".format(role)
 
     if ROLE_ADMIN == role:
         links = [pages['admin'],

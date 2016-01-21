@@ -20,25 +20,18 @@ function install_utils() {
    cp $SHARED_FOLDER/dot_files/sqliterc /home/vagrant/.sqliterc
    cp $SHARED_FOLDER/dot_files/sqliterc /root/.sqliterc
 
-   apt-get install -y vim ack-grep
-}
-
-function install_redis() {
-
-}
-
-function install_openvas() {
-
+   apt-get install -y vim ack-grep nmap
 }
 
 function install_apache_for_python() {
-   # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
-   apt-get install -y \
-      apache2 libapache2-mod-wsgi \
-      python-dev python-pip \
-      mysql-server libmysqlclient-dev \
-      libffi-dev \
-      libsqlite3-dev
+    # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+    apt-get install -y \
+        libssl-dev \
+        apache2 libapache2-mod-wsgi \
+        python-dev python-pip \
+        mysql-server libmysqlclient-dev \
+        libffi-dev \
+        libsqlite3-dev
 }
 
 function install_dropper() {
@@ -51,10 +44,10 @@ function install_dropper() {
     pushd /var/www/dropper
         # Setting up a virtual environment will keep the application and its
         # dependencies isolated from the main system.
-
         log "Install via pip: virtualenv..."
         pip install virtualenv
         log "Creating virtual environment: /var/www/app/venv"
+
         virtualenv venv
         . venv/bin/activate
             log "Installing required python packages..."
@@ -63,8 +56,8 @@ function install_dropper() {
     popd
 
     pushd /var/www/dropper/app/deploy
-        log "Link app config file"
-        ln -sfv sample.settings.conf settings.conf
+        log "Link app config file to make it visible in config.py... "
+        ln -sfv sample.vagrant.settings.conf settings.conf
     popd
 
     pushd /var/www/dropper/app
