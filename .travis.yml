@@ -46,7 +46,7 @@ script:
     - echo $TRAVIS_BUILD_DIR
     - ls -al deploy/
     # link the settings file to make it visible in config.py
-    - ln -sfv deploy/sample.vagrant.settings.conf deploy/settings.conf
+    - cp deploy/sample.vagrant.settings.conf deploy/settings.conf
     - python setup.py nosetests
     - popd
 

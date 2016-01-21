@@ -24,13 +24,14 @@ function install_utils() {
 }
 
 function install_apache_for_python() {
-   # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
-   apt-get install -y \
-      apache2 libapache2-mod-wsgi \
-      python-dev python-pip \
-      mysql-server libmysqlclient-dev \
-      libffi-dev \
-      libsqlite3-dev
+    # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+    apt-get install -y \
+        libssl-dev \
+        apache2 libapache2-mod-wsgi \
+        python-dev python-pip \
+        mysql-server libmysqlclient-dev \
+        libffi-dev \
+        libsqlite3-dev
 }
 
 function install_dropper() {
@@ -54,9 +55,9 @@ function install_dropper() {
         deactivate
     popd
 
-    pushd /var/www/dropper/app
+    pushd /var/www/dropper/app/deploy
         log "Link app config file to make it visible in config.py... "
-        ln -sfv deploy/sample.vagrant.settings.conf deploy/settings.conf
+        ln -sfv sample.vagrant.settings.conf settings.conf
     popd
 
     pushd /var/www/dropper/app
