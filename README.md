@@ -1,4 +1,6 @@
-# RediDropper
+# REDI-Dropper
+
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.32500.svg)](http://dx.doi.org/10.5281/zenodo.32500)
 
 | Branch | [Travis-CI](https://travis-ci.org/ctsit/redi-dropper-client/builds) | [Coveralls](https://coveralls.io/github/ctsit/redi-dropper-client) |
 | :----- | :---------------------------: | :-------: |

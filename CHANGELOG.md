@@ -1,6 +1,30 @@
 # Change Log
 
+## [0.0.4] - 2016-01-21
+
+### Added
+* Add app/deploy/sample.virtualhost-ssl.conf because we need two apache config files (Andrei Sura)
+* Add support for saving the user email as a password (no password field is currently displayed)
+    Note: This password will be checked only if "local auth" is used (Andrei Sura)
+* Add doi link (Andrei Sura)
+
+### Changed
+* Rename `sample.vagrant.settings.conf` => `sample.vagrant.settings.conf` (Andrei Sura)
+* Remove space in app/deploy/sample.virtualhost.conf (Andrei Sura)
+* Rename `sample.settings.conf` -> sample.vagrant.settings.conf to properly refrlect the file's function (Andrei Sura)
+* Move config files to dot_files/aliases (Andrei Sura)
+
+
+# [0.0.3b] - 2015-08-31
+
+### Changed
+* Add option for accepting parent repo path (Ruchi Vivek Desai)
+* Restore click functionality for main page "getting started" (Andrei Sura)
+* Simplify sample.virtualhost.conf used on prod (Andrei Sura)
+
+
 ## [0.0.3a] - 2015-08-27
+
 ### Added
 * Add sample config files for deploying two application instances 
 Paths ==> `/alz` and `/onefl` (Andrei Sura)

@@ -136,16 +136,10 @@ def _is_prod():
     return env.environment == 'production'
 
 
-def _motd():
-    """Print the message of the day"""
-    print(MOTD_PROD if _is_prod() else MOTD_STAG)
-
-
 def bootstrap(tag='master'):
     """Bootstrap the deployment using the specified branch"""
     require('environment', provided_by=[production, staging])
-    _motd()
-
+    print(MOTD_PROD if _is_prod() else MOTD_STAG)
     msg = colors.red('\n%(project_path)s exists. '
                      'Do you want to continue anyway?' % env)
 
@@ -351,11 +345,16 @@ def mysql_reset_tables():
 
 
 def _toggle_apache_site(state):
-    """Switch site's status to enabled or disabled"""
+    """Switch site's status to enabled or disabled
+    Note: the `project_name` is used for referencing the config files
+    """
     action = "Enabling" if state else "Disabling"
     print('\n%s site...' % action)
     env.apache_command = 'a2ensite' if state else 'a2dissite'
     sudo('%(apache_command)s %(project_name)s' % env)
+
+    # We have to have the ssl config too because we use the NetScaler
+    sudo('%(apache_command)s %(project_name)s-ssl' % env)
     sudo('service apache2 reload')
 
 
@@ -433,6 +432,13 @@ def update_config(tag='master'):
                 'group': 'root'
             },
             2: {
+                'local': os.path.abspath('%(environment)s/virtualhost-ssl.conf'
+                                         % env),
+                'remote': env.vhost_ssl_file,
+                'mode': '644',
+                'group': 'root'
+            },
+            3: {
                 'local': local_settings_file,
                 'remote': env.settings_file,
                 'mode': '640'
@@ -479,7 +485,9 @@ def restart_wsgi_app():
 def check_app():
     """cURL the target server to check if the app is up"""
     require('environment', provided_by=[production, staging])
-    local('curl -sk https://%(project_url)s | grep "Version " ' % env)
+    local('curl -sk https://%(project_url)s | grep "Version " '
+          ' | grep -oE "[0-9.]{1,2}[0-9.]{1,2}[0-9a-z.]{1,4}" | head -1 ' % env)
+
 
 
 def print_project_repo():

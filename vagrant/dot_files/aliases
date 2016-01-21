@@ -1,17 +1,20 @@
 
 alias hist='history | less'
-alias refresh='. ~/.bash_aliases'
+alias refresh='. ~/.bashrc'
 alias ali='vim ~/.bash_aliases'
 
 alias ma='vim Makefile'
 alias va='vim Vagrantfile'
 alias re='vim README.md'
 alias fa='vim fabric.py'
+alias ba='vim ~/.bashrc'
 alias steps='vim steps'
 alias tree3='tree -L 3'
 
 alias db='      mysql --prompt="(\u@\h) [\d]> " --pager="less -niSFX" -u ctsi_dropper_s -pinsecurepassword ctsi_dropper_s -h localhost'
 alias db_root=' mysql --prompt="(\u@\h) [\d]> " --pager="less -niSFX" -u root ctsi_dropper_s -h localhost'
+alias db_openvas='sqlite3 /usr/local/var/lib/openvas/mgr/tasks.db'
+alias db_openvas_tables='sqlite3 /usr/local/var/lib/openvas/mgr/tasks.db ".tables" '
 
 alias port_5000='sudo netstat -tulpn | grep :5000'
 alias check_5000='curl -k https://localhost:5000 && echo'
@@ -47,6 +50,11 @@ alias lss='ls -ltr'
 alias dua='du -hcs'
 alias duf="du -h --max-depth=1 ./ | sort -n -r"
 alias cdd='cd ..'
+
+alias big='du -hcs * | grep -E "M|G"'
+alias big_find='find ./ -size +10000k  | xargs ls -hsS'
+alias big_10='ls -hsS | head -10'
+alias fin='find . -iname'
 
 alias gst='git status'
 alias glog='git log'

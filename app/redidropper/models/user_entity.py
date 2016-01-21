@@ -67,6 +67,8 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
 
     def is_expired(self):
         """ An user can be blocked by setting expiration date to yesterday"""
+        if self.access_expires_at is None:
+            return False
         return self.access_expires_at < datetime.today()
 
     def is_anonymous(self):

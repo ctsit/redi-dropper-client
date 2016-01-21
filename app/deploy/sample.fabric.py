@@ -81,6 +81,8 @@ def get_settings(overrides={}):
     SETTINGS['server_group'] = 'app-runner'
     SETTINGS['vhost_file'] = ('/etc/apache2/sites-available/%(project_name)s' %
                               SETTINGS)
+    SETTINGS['vhost_ssl_file'] = ('/etc/apache2/sites-available/%(project_name)s-ssl' %
+                              SETTINGS)
     SETTINGS['wsgi_file'] = ('%(project_path)s/dropper.wsgi' %
                              SETTINGS)
     SETTINGS['settings_file'] = ('%(project_path)s/settings.conf' %

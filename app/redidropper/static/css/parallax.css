@@ -52,7 +52,6 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #image3 {
     background-image: url(/static/img/oil.jpg);
-    transform: scaleY(-1);
     filter: FlipV;
 }
 
@@ -94,28 +93,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #information {
     height: 100vh;
-    background: #fff no-repeat center center fixed;
+    background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed;
     display: table;
     position: relative;
     width: 100%;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-#information:before {
-    background-image: url(/static/img/oil.jpg);
-    background-repeat: no-repeat;
-    content: ' ';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    opacity: 0.3;
-    background-position: 50% 0;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -159,4 +140,35 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #support button {
   color: #FFFFFF;
+}
+
+/*So that all content and icon is visible on smaller screens*/
+@media all and (max-width: 1000px) {
+  #home {
+    height: 600px;
+  }
+  #about {
+    height: 600px;
+  }
+  #information {
+    height: 600px;
+  }
+  #services {
+    height: 600px;
+  }
+  #gettingstarted {
+    height: 600px;
+  }
+  #faq {
+    height: 600px;
+  }
+  #support {
+    height: 600px;
+  }
+  #image2 {
+    height: 600px;
+  }
+  #image3 {
+    height: 600px;
+  }
 }
