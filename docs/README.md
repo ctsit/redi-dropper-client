@@ -34,6 +34,9 @@ The above command will produce two files used in debug mode:
 - server.crt
 - server.key
 
+Note: if you get errors related to mising "Guest Additions" please try:
+
+    vagrant plugin install vagrant-vbguest
 
 ## Developer's Workflow - Without Vagrant
 

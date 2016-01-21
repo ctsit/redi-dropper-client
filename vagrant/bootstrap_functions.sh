@@ -20,7 +20,7 @@ function install_utils() {
    cp $SHARED_FOLDER/dot_files/sqliterc /home/vagrant/.sqliterc
    cp $SHARED_FOLDER/dot_files/sqliterc /root/.sqliterc
 
-   apt-get install -y vim ack-grep
+   apt-get install -y vim ack-grep nmap
 }
 
 function install_apache_for_python() {
