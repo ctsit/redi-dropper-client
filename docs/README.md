@@ -26,16 +26,17 @@ This folder stores the code for RediDropper web application.
 
 Optional step - create a self-signed certificate:
 
-<pre>
-cd redi-dropper-client/app/ssl
-./gen_cert.sh
-</pre>
+    $ cd redi-dropper-client/app/ssl
+    $ ./gen_cert.sh
 
 The above command will produce two files used in debug mode:
 
 - server.crt
 - server.key
 
+Note: if you get errors related to mising "Guest Additions" please try:
+
+    vagrant plugin install vagrant-vbguest
 
 ## Developer's Workflow - Without Vagrant
 
@@ -53,8 +54,6 @@ Developers have the option of using the vagrant or run the application
 manually using Python's embedded webserver.
 
 The manual process requires the following commands for setup:
-
-```
 
     brew install mysql
     mysql --version
@@ -74,8 +73,8 @@ The manual process requires the following commands for setup:
     fab prep_develop
     fab init_db
 
-    # create and edit the settings file
-    cp deploy/sample.settings.conf deploy/settings.conf
+    # create and edit the settings file to make it visible in config.py
+    cp deploy/sample.vagrant.settings.conf deploy/settings.conf
 
     # run the application
     fab run
@@ -84,7 +83,6 @@ The manual process requires the following commands for setup:
 
     Finally you can open your browser at https://localhost:5000/ and login as
     admin@example.com with any password
-```
 
 
 # Initial Deployment
@@ -101,15 +99,13 @@ aginst the "staging" or "production" server specified as an argument.
 
 After you clone the repository:
 
-- create three files in your local `deploy` folder:
-
-```
+- create the required files in your local `deploy` folder:
 
     $ cd redi-dropper-client/app/deploy
     $ cp sample.fabric.py               staging/fabric.py
     $ cp sample.deploy.settings.conf    staging/settings.conf
     $ cp sample.virtualhost.conf        staging/virtualhost.conf
-```
+    $ cp sample.virtualhost-ssl.conf    staging/virtualhost-ssl.conf
 
 - edit the files in the staging (or production) folder to reflect
   the proper username/passwords/hosts/paths
@@ -118,31 +114,23 @@ After you clone the repository:
 
 - execute the initial deploy' command for staging (or production):
 
-```
-
     $ cd redi-dropper-client/app/deploy
-    $ ./deploy.sh -i -t tag_number staging
+    $ git fetch --tags upstream
+    $ ./deploy.sh -i -t tag_number -r ~/git staging
     OR
-    $ ./deploy/deploy.sh -i -t tag_number production
-```
+    $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
 
 Once you have the fabric tool installed you can create the database tables
 in staging or production databases:
 
-```
-
     $ fab staging mysql_conf
     $ fab staging mysql_list_tables
     $ fab staging mysql_create_tables
-```
 
 If tables already exist in the database and you wish to re-create them
 please run:
 
-```
-
     $ fab staging mysql_reset_tables
-```
 
 Note: Reseting tables does not create a backup of the tables so please
 make sure the existing data can be discarded.
@@ -158,12 +146,15 @@ Assumptions:
 
 Re-upload configuration and code changes by executing one of the following:
 
-```
-
-    $ deploy/deploy.sh -t tag_number staging
+    $ deploy/deploy.sh -t tag_number -r ~/git staging
     OR
-    $ deploy/deploy.sh -t tag_number production
-```
+    $ deploy/deploy.sh -t tag_number -r ~/git  production
+
+Note: You might need to refresh the list of tags from the upstream
+
+<pre>
+$ git fetch --tags upstream
+</pre>
 
 Warning: **Do not use** the `-i` flag since it is intended only for the
         initial deployment.

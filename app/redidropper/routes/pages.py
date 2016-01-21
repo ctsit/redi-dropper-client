@@ -167,9 +167,14 @@ def render_login_local():
             LogEntity.login(uuid, "No such email: {}".format(email))
             return redirect(url_for('index'))
 
-        # if utils.is_valid_auth(app.config['SECRET_KEY'], auth.uathSalt,
-        # password, auth.uathPassword):
-        if '' == user.password_hash:
+        password_hash = user.password_hash
+
+        # @TODO: enforce the `local password` policy
+        if '' == password_hash or \
+                utils.is_valid_auth(app.config['SECRET_KEY'],
+                                    password_hash[0:16],
+                                    password,
+                                    password_hash[17:]):
             app.logger.info('Log login event for: {}'.format(user))
             LogEntity.login(uuid, 'Successful login via email/password')
             login_user(user, remember=False, force=False)
@@ -181,6 +186,7 @@ def render_login_local():
         else:
             app.logger.info('Incorrect pass for: {}'.format(user))
             LogEntity.login_error(uuid, 'Incorrect pass for: {}'.format(user))
+            utils.flash_error("Incorrect username/password.")
 
     # When sending a GET request render the login form
     return render_template('index.html', form=form,

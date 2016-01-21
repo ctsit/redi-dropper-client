@@ -183,7 +183,9 @@ def download_file():
 @app.route('/api/save_user', methods=['POST'])
 @login_required
 def api_save_user():
-    """ Save a new user to the database """
+    """ Save a new user to the database
+    TODO: Add support for reading a password field
+    """
     email = request.form['email']
     first = request.form['first']
     last = request.form['last']
@@ -201,11 +203,14 @@ def api_save_user():
         return utils.jsonify_error(
             {'message': 'Sorry. This email is already taken.'})
 
-    # @TODO: fix hardcoded values
-    # salt, hashed_pass = generate_auth(app.config['SECRET_KEY'], password)
+    # @TODO: use a non-gatorlink password here
+    password = email
+    salt, password_hash = utils.generate_auth(app.config['SECRET_KEY'],
+                                              password)
     added_date = datetime.today()
     access_end_date = utils.get_expiration_date(180)
 
+    # Note: we store the salt as a prefix
     user = UserEntity.create(email=email,
                              first=first,
                              last=last,
@@ -213,7 +218,7 @@ def api_save_user():
                              added_at=added_date,
                              modified_at=added_date,
                              access_expires_at=access_end_date,
-                             password_hash="")
+                             password_hash="{}:{}".format(salt, password_hash))
 
     user_roles = []
     try:
