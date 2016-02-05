@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.0.4a] - 2016-02-05
+
+ * Use sudo for `pip install` during deployment (Andrei Sura)
+ * Minor fixes for sample.fabric.py (Andrei Sura)
+ * Update docs/README.md formatting (Andrei Sura)
+ * Add mkdocs.yml (Andrei Sura)
+ * Update .gitignore (Andrei Sura)
+ * Save older documentation files (needs some polishing) (Andrei Sura)
+ * Improve pattern matching for fabric task `check_app` (Andrei Sura)
+ * Fix "TypeError: can't compare datetime.datetime to NoneType" in user_entity.py (Andrei Sura)
+ * Make parallax page responsive (Ruchi Vivek Desai)
+ * Change right angle icon on top navigation bar to menu icon (Ruchi Vivek Desai)
+ * update changelog for release 0.0.3b (Ruchi Vivek Desai)
+
+
 ## [0.0.4] - 2016-01-21
 
 ### Added

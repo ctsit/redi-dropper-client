@@ -3,6 +3,7 @@
 /app/deploy/*/fabric.py
 /app/deploy/*/settings.conf
 /app/deploy/*/virtualhost.conf
+/app/deploy/*/virtualhost-ssl.conf
 
 /app/deploy/settings.conf
 /app/upload/

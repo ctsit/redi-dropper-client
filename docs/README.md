@@ -101,11 +101,11 @@ After you clone the repository:
 
 - create the required files in your local `deploy` folder:
 
-    $ cd redi-dropper-client/app/deploy
-    $ cp sample.fabric.py               staging/fabric.py
-    $ cp sample.deploy.settings.conf    staging/settings.conf
-    $ cp sample.virtualhost.conf        staging/virtualhost.conf
-    $ cp sample.virtualhost-ssl.conf    staging/virtualhost-ssl.conf
+        $ cd redi-dropper-client/app/deploy
+        $ cp sample.fabric.py               staging/fabric.py
+        $ cp sample.deploy.settings.conf    staging/settings.conf
+        $ cp sample.virtualhost.conf        staging/virtualhost.conf
+        $ cp sample.virtualhost-ssl.conf    staging/virtualhost-ssl.conf
 
 - edit the files in the staging (or production) folder to reflect
   the proper username/passwords/hosts/paths
@@ -114,11 +114,11 @@ After you clone the repository:
 
 - execute the initial deploy' command for staging (or production):
 
-    $ cd redi-dropper-client/app/deploy
-    $ git fetch --tags upstream
-    $ ./deploy.sh -i -t tag_number -r ~/git staging
-    OR
-    $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
+        $ cd redi-dropper-client/app/deploy
+        $ git fetch --tags upstream
+        $ ./deploy.sh -i -t tag_number -r ~/git staging
+        OR
+        $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
 
 Once you have the fabric tool installed you can create the database tables
 in staging or production databases:

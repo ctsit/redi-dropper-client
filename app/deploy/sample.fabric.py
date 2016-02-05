@@ -12,6 +12,7 @@ and modify as needed (the files will be be ignored by git).
 $ cp sample.fabric.py production/fabric.py
 """
 
+
 def get_settings(overrides={}):
     """Returns a dictionary with settings for Fabric.
     Allow to override some settings through a parameter.
@@ -34,7 +35,7 @@ def get_settings(overrides={}):
     SETTINGS['db_user'] = 'db_user'
     SETTINGS['db_pass'] = 'db_pass'
     SETTINGS['db_host'] = 'db_host'
-    SETTINGS['db_name'] = overrides.get('db_name', 'my_db_name')
+    SETTINGS['db_name'] = 'db_name'
 
     # =========================================================================
     # File storage
@@ -45,7 +46,7 @@ def get_settings(overrides={}):
     # =========================================================================
     # REDCap
     # =========================================================================
-    SETTINGS['redcap_api_url'] = 'https:/redcap.example.com/redcap/api/'
+    SETTINGS['redcap_api_url'] = 'https://redcap.example.com/redcap/api/'
     SETTINGS['redcap_api_token'] = ''
     SETTINGS['redcap_demographics_subject_id'] = 'subject_id'
 
