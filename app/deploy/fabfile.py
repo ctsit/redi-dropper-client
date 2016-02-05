@@ -112,7 +112,7 @@ def _install_requirements():
     print('\n\nInstalling requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -r '
+        sudo('pip install -r '
             ' %(project_repo_path)s/app/requirements/deploy.txt'
             % env)
 
@@ -124,7 +124,7 @@ def _update_requirements():
     print('\n\nUpdating requirements...')
 
     with prefix('source %(env_path)s/bin/activate' % env):
-        run('pip install -U  -r '
+        sudo('pip install -U  -r '
             ' %(project_repo_path)s/app/requirements/deploy.txt' % env)
 
     _fix_perms(env.env_path)
