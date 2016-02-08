@@ -1,9 +1,19 @@
 # Change Log
 
+
+## [0.1.0] - 2016-02-05
+
+### Changed
+ * Improve logging: show the shib email (Andrei Sura)
+ * docs/README.md: list variables that need to be changed for deployment (Andrei Sura)
+
+
+
 ## [0.0.4b] - 2016-02-08
 
-### Changelog
+### Changed
 * Try runnning `pip` as `www-data` to avoid fixing permissions (Andrei Sura)
+
 
 
 ## [0.0.4a] - 2016-02-05
@@ -21,6 +31,7 @@
  * update changelog for release 0.0.3b (Ruchi Vivek Desai)
 
 
+
 ## [0.0.4] - 2016-01-21
 
 ### Added
@@ -34,6 +45,7 @@
 * Remove space in app/deploy/sample.virtualhost.conf (Andrei Sura)
 * Rename `sample.settings.conf` -> sample.vagrant.settings.conf to properly refrlect the file's function (Andrei Sura)
 * Move config files to dot_files/aliases (Andrei Sura)
+
 
 
 # [0.0.3b] - 2015-08-31
