@@ -25,36 +25,36 @@ def get_settings(overrides={}):
     # SSH connections
     # =========================================================================
     # List of hosts to work on
-    SETTINGS['hosts'] = ['dropper.example.com']
+    SETTINGS['hosts'] = ['PLEASE_EDIT_ME']  # ['dropper1.ctsi.ufl.edu']
     # Username to log in in the remote machine
-    SETTINGS['user'] = 'user'
+    SETTINGS['user'] = 'PLEASE_EDIT_ME'
 
     # =========================================================================
     # Database
     # =========================================================================
-    SETTINGS['db_user'] = 'db_user'
-    SETTINGS['db_pass'] = 'db_pass'
-    SETTINGS['db_host'] = 'db_host'
-    SETTINGS['db_name'] = 'db_name'
+    SETTINGS['db_user'] = 'PLEASE_EDIT_ME'
+    SETTINGS['db_pass'] = 'PLEASE_EDIT_ME'
+    SETTINGS['db_host'] = 'PLEASE_EDIT_ME'
+    SETTINGS['db_name'] = 'PLEASE_EDIT_ME'
 
     # =========================================================================
     # File storage
     # =========================================================================
-    SETTINGS['redidropper_upload_temp_dir'] = '/ext/images_temp'
-    SETTINGS['redidropper_upload_saved_dir'] = '/ext/images'
+    SETTINGS['redidropper_upload_temp_dir'] = 'PLEASE_EDIT_ME'  # '/ext/www/prod/mri_images_temp'
+    SETTINGS['redidropper_upload_saved_dir'] = 'PLEASE_EDIT_ME'  # '/ext/www/prod/mri_images'
 
     # =========================================================================
     # REDCap
     # =========================================================================
     SETTINGS['redcap_api_url'] = 'https://redcap.example.com/redcap/api/'
-    SETTINGS['redcap_api_token'] = ''
-    SETTINGS['redcap_demographics_subject_id'] = 'subject_id'
+    SETTINGS['redcap_api_token'] = 'PLEASE_EDIT_ME'  # 'the secret'
+    SETTINGS['redcap_demographics_subject_id'] = 'PLEASE_EDIT_ME'  # 'ptid'
 
     # A meaningful name for the instance
-    SETTINGS['project_name'] = overrides.get('project_name', 'dropper')
+    SETTINGS['project_name'] = 'PLEASE_EDIT_ME'  # 'dropper'
     # This URL will be used in the VirtualHost section
-    SETTINGS['project_url'] = overrides.get('project_url',
-                                            'dropper.example.com')
+    SETTINGS['project_url'] = 'PLEASE_EDIT_ME'  # 'dropper.ctsi.ufl.edu'
+
     # Change the prefix for the Apache apps paths
     SETTINGS['project_path'] = '/srv/apps/%(project_name)s' % SETTINGS
     SETTINGS['project_path_src'] = '%(project_path)s/src' % SETTINGS
@@ -78,12 +78,12 @@ def get_settings(overrides={}):
     # Apache + VirtualHost + WSGI
     # =========================================================================
     # The user/group your web server is running on
-    SETTINGS['server_user'] = 'app-runner'
-    SETTINGS['server_group'] = 'app-runner'
+    SETTINGS['server_user'] = 'PLEASE_EDIT_ME'  # 'www-data'
+    SETTINGS['server_group'] = 'PLEASE_EDIT_ME'  # 'www-data'
     SETTINGS['vhost_file'] = ('/etc/apache2/sites-available/%(project_name)s' %
                               SETTINGS)
     SETTINGS['vhost_ssl_file'] = ('/etc/apache2/sites-available/%(project_name)s-ssl' %
-                              SETTINGS)
+                                  SETTINGS)
     SETTINGS['wsgi_file'] = ('%(project_path)s/dropper.wsgi' %
                              SETTINGS)
     SETTINGS['settings_file'] = ('%(project_path)s/settings.conf' %
