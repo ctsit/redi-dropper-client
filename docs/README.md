@@ -2,27 +2,17 @@
 
 ## Introduction
 
-This folder stores the code for RediDropper web application.
-
-
-# Functional Specifications
-
-@TODO: import from Forge wiki
-
-
-# Technical Specifications
-
-- Front end: [ReacJS](https://facebook.github.io/react/docs/tutorial.html)
-- Back end: [Flask framework](http://flask.pocoo.org)
-- Database: [MySQL Enterprise Server v5.6.24](http://dev.mysql.com/doc/relnotes/mysql/5.6/en/news-5-6-24.html)
+Welcome to the REDIDropper web application.
 
 
 ## Developer's Workflow - With Vagrant
 
-* git clone git@github.com:ctsit/redi-dropper-client.git
-* cd redi-dropper-client/vagrant
-* vagrant up
-* open the browser at https://localhost:7088/ (accept the "Your connection is not private" message)
+Steps:
+
+    $ git clone git@github.com:ctsit/redi-dropper-client.git
+    $ cd redi-dropper-client/vagrant
+    $ vagrant up
+    $ open the browser at https://localhost:7088/ (accept the "Your connection is not private" message)
 
 Optional step - create a self-signed certificate:
 
@@ -88,18 +78,24 @@ The manual process requires the following commands for setup:
 # Initial Deployment
 
 Assumptions:
+
  - The 'deployer' has an account on the target server and it is in the
     `sudoers` group
  - The 'deployer' uses a Darwin/Linux operating system to run the
     deployment script
 
-For code deployment we use the app/deploy/deploy.sh shell script.
-This script invokes fabric tasks defined in the app/deploy/fabfile.py
-aginst the "staging" or "production" server specified as an argument.
+For code deployment we use the **app/deploy/deploy.sh** shell script.
+This script invokes fabric tasks defined in the **app/deploy/fabfile.py**
+against the "staging" or "production" server specified as an argument.
 
-After you clone the repository:
+Steps:
 
-- create the required files in your local `deploy` folder:
+- Clone the repository
+- Refresh the list of tags from the repository:
+
+    $ git fetch --tags
+
+- Create the required files in your local **deploy** folder:
 
         $ cd redi-dropper-client/app/deploy
         $ cp sample.fabric.py               staging/fabric.py
@@ -107,15 +103,15 @@ After you clone the repository:
         $ cp sample.virtualhost.conf        staging/virtualhost.conf
         $ cp sample.virtualhost-ssl.conf    staging/virtualhost-ssl.conf
 
-- edit the files in the staging (or production) folder to reflect
+- Edit the files in the staging (or production) folder to reflect
   the proper username/passwords/hosts/paths
   Note: an easier option would be to ask another developer to provide these
   files to you.
 
-- execute the initial deploy' command for staging (or production):
+- Execute the **initial deploy** (using `-i` option) command for staging (or production):
 
         $ cd redi-dropper-client/app/deploy
-        $ git fetch --tags upstream
+        $ git fetch --tags
         $ ./deploy.sh -i -t tag_number -r ~/git staging
         OR
         $ ./deploy/deploy.sh -i -t tag_number -r ~/git production
@@ -127,13 +123,13 @@ in staging or production databases:
     $ fab staging mysql_list_tables
     $ fab staging mysql_create_tables
 
-If tables already exist in the database and you wish to re-create them
+If tables already exist in the database and you wish to **re-create** them
 please run:
 
     $ fab staging mysql_reset_tables
 
 Note: Reseting tables does not create a backup of the tables so please
-make sure the existing data can be discarded.
+**make sure** the existing data can be discarded.
 
 
 ## Re-Deployment
@@ -141,24 +137,26 @@ make sure the existing data can be discarded.
 This is the process through which the developers will commonly deploy
 fixes and improvements **after** an instance was deployed to production.
 
-Assumptions:
- - See the "Initial Deployment" assumptions
+Steps:
 
-Re-upload configuration and code changes by executing one of the following:
+- Create and update the configuration files to reflect the latest settings
+(see the "Initial Deployment")
+- Refresh the list of tags from the repository:
 
-    $ deploy/deploy.sh -t tag_number -r ~/git staging
+    $ git fetch --tags
+
+- Re-upload configuration and code changes by executing one of the following:
+
+    $ deploy/deploy.sh -t `tag_number` -r ~/git staging
+    
     OR
-    $ deploy/deploy.sh -t tag_number -r ~/git  production
 
-Note: You might need to refresh the list of tags from the upstream
+    $ deploy/deploy.sh -t `tag_number` -r ~/git  production
 
-<pre>
-$ git fetch --tags upstream
-</pre>
-
-Warning: **Do not use** the `-i` flag since it is intended only for the
+<div style="border: solid 1px red; padding: 2em; font-weigh: bold">
+Warning: **Do not use** the <b>-i</b> flag since it is intended only for the
         initial deployment.
-
+</div>
 
 ## Files & Folders
 
@@ -206,6 +204,18 @@ Warning: **Do not use** the `-i` flag since it is intended only for the
 Install http://flask-debugtoolbar.readthedocs.org/en/latest/
 The toolbar will automatically be injected into Jinja templates when debug mode is on.
 In production, setting app.debug = False will disable the toolbar.
+
+
+# Functional Specifications
+
+@TODO: import from Forge wiki
+
+
+# Technical Specifications
+
+- Front end: [ReacJS](https://facebook.github.io/react/docs/tutorial.html)
+- Back end: [Flask framework](http://flask.pocoo.org)
+- Database: [MySQL Enterprise Server v5.6.24](http://dev.mysql.com/doc/relnotes/mysql/5.6/en/news-5-6-24.html)
 
 
 ## Credits
