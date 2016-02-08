@@ -25,7 +25,7 @@ from fabric.api import env, local, lcd
 from fabric.context_managers import hide, prefix, settings
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists, upload_template
-from fabric.operations import require, run, sudo
+from fabric.operations import require, sudo
 from fabric.utils import abort
 # from pprint import pprint
 
@@ -99,12 +99,13 @@ def _fix_perms(folder):
 
 def _init_virtualenv():
     """Create initial virtualenv"""
-    print('\n\nCreating virtualenv...')
-    run('virtualenv -p %(python)s --no-site-packages %(env_path)s' % env)
-    with prefix('source %(env_path)s/bin/activate' % env):
-        run('easy_install pip')
 
-    _fix_perms(env.env_path)
+    print('\n\nCreating virtualenv...')
+    sudo('virtualenv -p %(python)s --no-site-packages %(env_path)s' % env,
+         user=env.server_user)
+
+    with prefix('source %(env_path)s/bin/activate' % env):
+        sudo('easy_install pip', user=env.server_user)
 
 
 def _install_requirements():
@@ -113,10 +114,8 @@ def _install_requirements():
 
     with prefix('source %(env_path)s/bin/activate' % env):
         sudo('pip install -r '
-            ' %(project_repo_path)s/app/requirements/deploy.txt'
-            % env)
-
-    _fix_perms(env.env_path)
+             ' %(project_repo_path)s/app/requirements/deploy.txt'
+             % env, user=env.server_user)
 
 
 def _update_requirements():
@@ -125,9 +124,8 @@ def _update_requirements():
 
     with prefix('source %(env_path)s/bin/activate' % env):
         sudo('pip install -U  -r '
-            ' %(project_repo_path)s/app/requirements/deploy.txt' % env)
-
-    _fix_perms(env.env_path)
+             ' %(project_repo_path)s/app/requirements/deploy.txt' % env,
+             % env, user=env.server_user)
 
 
 def _is_prod():
@@ -160,6 +158,7 @@ def deploy(tag='master'):
     """Update the code, config, requirements, and enable the site
     """
     require('environment', provided_by=[production, staging])
+    print(MOTD_PROD if _is_prod() else MOTD_STAG)
 
     with settings(hide('stdout', 'stderr')):
         disable_site()
@@ -487,7 +486,6 @@ def check_app():
     require('environment', provided_by=[production, staging])
     local('curl -sk https://%(project_url)s | grep "Version " '
           ' | grep -oE "[0-9.]{1,2}[0-9.]{1,2}[0-9a-z.]{1,4}" | head -1 ' % env)
-
 
 
 def print_project_repo():
