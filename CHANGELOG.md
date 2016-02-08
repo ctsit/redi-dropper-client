@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.4b] - 2016-02-08
+
+### Changelog
+* Try runnning `pip` as `www-data` to avoid fixing permissions (Andrei Sura)
+
+
 ## [0.0.4a] - 2016-02-05
 
  * Use sudo for `pip install` during deployment (Andrei Sura)
