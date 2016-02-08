@@ -99,7 +99,6 @@ def _fix_perms(folder):
 
 def _init_virtualenv():
     """Create initial virtualenv"""
-
     print('\n\nCreating virtualenv...')
     sudo('virtualenv -p %(python)s --no-site-packages %(env_path)s' % env,
          user=env.server_user)
@@ -114,8 +113,8 @@ def _install_requirements():
 
     with prefix('source %(env_path)s/bin/activate' % env):
         sudo('pip install -r '
-             ' %(project_repo_path)s/app/requirements/deploy.txt'
-             % env, user=env.server_user)
+             ' %(project_repo_path)s/app/requirements/deploy.txt' % env,
+             user=env.server_user)
 
 
 def _update_requirements():
@@ -125,7 +124,7 @@ def _update_requirements():
     with prefix('source %(env_path)s/bin/activate' % env):
         sudo('pip install -U  -r '
              ' %(project_repo_path)s/app/requirements/deploy.txt' % env,
-             % env, user=env.server_user)
+             user=env.server_user)
 
 
 def _is_prod():
