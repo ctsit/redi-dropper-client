@@ -236,19 +236,22 @@ def shibb_return():
     if not user:
         utils.flash_error("No such user: {}".format(email))
         LogEntity.login_error(uuid,
-                              "Shibboleth user is not registered for this app")
+                              "Shibboleth user {} is not registered for this "
+                              "app".format(email))
 
         return redirect(url_for('index'))
 
     if not user.is_active():
         utils.flash_error("Inactive user: {}".format(email))
-        LogEntity.login_error(uuid, 'Inactive user tried to login')
+        LogEntity.login_error(uuid, "Inactive user {} tried to login"
+                              .format(email))
         return redirect(url_for('index'))
 
     if user.is_expired():
         utils.flash_error("User account for {} expired on {}"
                           .format(email, user.access_expires_at))
-        LogEntity.login_error(uuid, 'Expired user tried to login')
+        LogEntity.login_error(uuid, "Expired user {} tried to login"
+                              .format(email))
         return redirect(url_for('index'))
 
     # Log it
