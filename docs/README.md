@@ -104,7 +104,23 @@ Steps:
         $ cp sample.virtualhost-ssl.conf    staging/virtualhost-ssl.conf
 
 - Edit the files in the staging (or production) folder to reflect
-  the proper username/passwords/hosts/paths
+  the proper username/passwords/hosts/paths.
+  This is the list of variables that need to be changed:
+
+    * SETTINGS[`hosts`]
+    * SETTINGS[`user`]
+    * SETTINGS[`db_user`]
+    * SETTINGS[`db_pass`]
+    * SETTINGS[`db_host`]
+    * SETTINGS[`db_name`]
+    * SETTINGS[`redidropper_upload_temp_dir`]
+    * SETTINGS[`redidropper_upload_saved_dir`]
+    * SETTINGS[`redcap_api_url`]
+    * SETTINGS[`redcap_api_token`]
+    * SETTINGS[`redcap_demographics_subject_id`]
+    * SETTINGS[`server_user`]
+    * SETTINGS[`server_group`]
+
   Note: an easier option would be to ask another developer to provide these
   files to you.
 
