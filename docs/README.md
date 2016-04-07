@@ -107,19 +107,22 @@ Steps:
   the proper username/passwords/hosts/paths.
   This is the list of variables that need to be changed:
 
-    * SETTINGS[`hosts`]
-    * SETTINGS[`user`]
-    * SETTINGS[`db_user`]
-    * SETTINGS[`db_pass`]
-    * SETTINGS[`db_host`]
-    * SETTINGS[`db_name`]
-    * SETTINGS[`redidropper_upload_temp_dir`]
-    * SETTINGS[`redidropper_upload_saved_dir`]
-    * SETTINGS[`redcap_api_url`]
-    * SETTINGS[`redcap_api_token`]
-    * SETTINGS[`redcap_demographics_subject_id`]
-    * SETTINGS[`server_user`]
-    * SETTINGS[`server_group`]
+<pre>
+ 1.   SETTINGS['hosts'] = ['PLEASE_EDIT_ME']  # ['dropper1.ctsi.ufl.edu']
+ 2.   SETTINGS['user'] = 'PLEASE_EDIT_ME'  # 'the_deployer'
+ 3.   SETTINGS['db_user'] = 'PLEASE_EDIT_ME'
+ 4.   SETTINGS['db_pass'] = 'PLEASE_EDIT_ME'
+ 5.   SETTINGS['db_host'] = 'PLEASE_EDIT_ME'
+ 6.   SETTINGS['db_name'] = 'PLEASE_EDIT_ME'
+ 7.   SETTINGS['redidropper_upload_temp_dir'] = 'PLEASE_EDIT_ME'  # '/ext/www/prod/mri_images_temp'
+ 8.   SETTINGS['redidropper_upload_saved_dir'] = 'PLEASE_EDIT_ME'  # '/ext/www/prod/mri_images'
+ 9.   SETTINGS['redcap_api_token'] = 'PLEASE_EDIT_ME'  # 'the secret'
+ 10.  SETTINGS['redcap_demographics_subject_id'] = 'PLEASE_EDIT_ME'  # 'ptid'
+ 11.  SETTINGS['project_name'] = 'PLEASE_EDIT_ME'  # 'dropper'
+ 12.  SETTINGS['project_url'] = 'PLEASE_EDIT_ME'  # 'dropper.ctsi.ufl.edu'
+ 13.  SETTINGS['server_user'] = 'PLEASE_EDIT_ME'  # 'www-data'
+ 14.  SETTINGS['server_group'] = 'PLEASE_EDIT_ME'  # 'www-data'
+</pre>
 
   Note: an easier option would be to ask another developer to provide these
   files to you.
