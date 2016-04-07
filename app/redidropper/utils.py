@@ -272,7 +272,7 @@ def redcap_api_call(url, token, content, fields, max_time):
 
     # @TODO: add config flag for enabling/disabling the ssl
     # certificate validation: curl -k
-    cmd = 'curl -m {} -sX POST {} ' \
+    cmd = 'curl -m {} -ksX POST {} ' \
         ' -d token={} ' \
         ' -d format=json ' \
         ' -d content={} ' \
