@@ -25,7 +25,7 @@ var Utils = (function() {
                                 simultaneousUploads: 4,
                                 testChunks: false,
                                 throttleProgressCallbacks: 1,
-                                maxFileSize: 1 * 1024 * 1024 * 1024 // 1 GB max
+                                maxFileSize: 3 * 1024 * 1024 * 1024 // 3 GB max
                             });
     }
 
