@@ -1,6 +1,13 @@
 # Change Log
 
 
+## [0.1.2] - 2016-04-13
+
+### Changed
+ * Minor fix for js/utils.py to increase max upload filesize from 1gb to 3gb (Kevin S. Hanson)
+
+
+
 ## [0.1.1] - 2016-04-07
 
 ### Changed
