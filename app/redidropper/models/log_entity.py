@@ -23,7 +23,8 @@ from redidropper.models.log_type_entity import \
     LOG_TYPE_FILE_DOWNLOADED, \
     LOG_TYPE_ACCOUNT_MODIFIED, \
     LOG_TYPE_REDCAP_SUBJECTS_IMPORTED, \
-    LOG_TYPE_REDCAP_EVENTS_IMPORTED
+    LOG_TYPE_REDCAP_EVENTS_IMPORTED, \
+    LOG_TYPE_ACCOUNT_UPDATED
 
 
 class LogEntity(db.Model, CRUDMixin):
@@ -91,6 +92,11 @@ class LogEntity(db.Model, CRUDMixin):
     def account_created(session_id, details=''):
         """ Log account creation """
         LogEntity._log(LOG_TYPE_ACCOUNT_CREATED, session_id, details)
+
+    @staticmethod
+    def account_updated(session_id, details=''):
+        """ Log account updated """
+        LogEntity._log(LOG_TYPE_ACCOUNT_UPDATED, session_id, details)
 
     @staticmethod
     def login(session_id, details=''):

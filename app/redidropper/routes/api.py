@@ -234,6 +234,48 @@ def api_save_user():
     LogEntity.account_created(session['uuid'], user)
     return utils.jsonify_success({'user': user.serialize()})
 
+@app.route('/api/edit_user', methods=['POST'])
+@login_required
+def api_edit_user():
+    """ Save a new user to the database
+    TODO: Add support for reading a password field
+    """
+    email = request.form['email']
+    first = request.form['first']
+    last = request.form['last']
+    minitial = request.form['minitial']
+    roles = request.form.getlist('roles[]')
+
+    # @TODO: use a non-gatorlink password here
+    password = email
+    salt, password_hash = utils.generate_auth(app.config['SECRET_KEY'],
+                                              password)
+    added_date = datetime.today()
+    access_end_date = utils.get_expiration_date(180)
+
+    # Note: we store the salt as a prefix
+    user = UserEntity.update(email=email,
+                             first=first,
+                             last=last,
+                             minitial=minitial,
+                             added_at=added_date,
+                             modified_at=added_date,
+                             access_expires_at=access_end_date))
+                            # password_hash="{}:{}".format(salt, password_hash))
+
+    user_roles = []
+    try:
+        for role_name in roles:
+            role_entity = RoleEntity.query.filter_by(name=role_name).one()
+            user_roles.append(role_entity)
+    except Exception as exc:
+        app.logger.debug("Problem saving user: {}".format(exc))
+
+    [user.roles.append(rol) for rol in user_roles]
+    user = UserEntity.save(user)
+    app.logger.debug("updated user: {}".format(user))
+    LogEntity.account_created(session['uuid'], user)
+    return utils.jsonify_success({'user': user.serialize()})
 
 @app.route('/api/list_users', methods=['POST', 'GET'])
 @login_required
