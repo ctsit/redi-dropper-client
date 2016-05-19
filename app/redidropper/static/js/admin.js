@@ -5,16 +5,21 @@
 //  AddNewUserForm - ...
 
 var AdminUsersRow = React.createClass({
+
     getInitialState: function() {
         return {
             record: this.props.record,
-            row_num: this.props.row_num
+            row_num: this.props.row_num,
+            onEditUser: this.props.onEditUser,
+            editStatus: this.props.editStatus
         };
     },
     componentWillReceiveProps: function(nextProps) {
         this.setState({
             record: nextProps.record,
-            row_num: nextProps.row_num
+            row_num: nextProps.row_num,
+            onEditUser: nextProps.onEditUser,
+            editStatus: nextProps.editStatus
         });
     },
     sendEmailVerification: function() {
@@ -141,10 +146,13 @@ var AdminUsersRow = React.createClass({
     render: function() {
             var record = this.state.record;
             var row_num = this.state.row_num;
+            var onEditUser = this.state.onEditUser;
+            var edit_user_form;
             var roles,
                 emailButton,
                 expireButton,
                 deactivateButton,
+                editButton,
                 title = "",
                 display = "",
                 expirationDate = record.access_expires_at;
@@ -208,6 +216,26 @@ var AdminUsersRow = React.createClass({
                     </button>
             }
 
+            if (record.is_active && this.props.editStatus) {
+                // You want to pass a function that gets called. If passed with
+                // out the braces, the function will be called upon render.
+                // This is done using an arrow function.
+                // Delegate to parent component.
+                editButton = <button
+                    className="btn btn-primary"
+                    data-toggle="tooltip"
+                    title="Update user information"
+                    onClick={() => this.props.onEditUser(record)}>
+                        Edit
+                    </button>
+            }
+            else {
+                editButton = <button
+                    className="btn btn-primary disabled">
+                        Edit
+                    </button>
+            }
+
             return (<tr>
                             <td className="text-right">{record.id}</td>
                             <td className="text-left">{record.email}</td>
@@ -218,31 +246,40 @@ var AdminUsersRow = React.createClass({
                             <td className="text-left">{emailButton}</td>
                             <td className="text-center">{expireButton}</td>
                             <td className="text-center">{deactivateButton}</td>
+                            <td className="text-center">{editButton}</td>
                         </tr>
             );
     }
 });
 
 var AdminUsersTable = React.createClass({
+
     getInitialState: function() {
         return {
-            list_of_users: this.props.list_of_users
+            list_of_users: this.props.list_of_users,
+            onEditUser: this.props.onEditUser,
+            editStatus: this.props.editStatus,
         };
     },
     componentDidMount: function() {
         $('[data-toggle="tooltip"]').tooltip()
     },
     componentWillReceiveProps: function(nextProps) {
-        this.setState({list_of_users: nextProps.list_of_users});
+        this.setState(
+          {
+            list_of_users: nextProps.list_of_users,
+            onEditUser: nextProps.onEditUser,
+            editStatus: nextProps.editStatus,
+          });
     },
     render: function() {
         var rows = [];
         this.state.list_of_users.map(function(record, i) {
             rows.push(
-                <AdminUsersRow record={record} row_num={i+1} key={i} />
+                // Delegate the onEditUser function call from child to parent.
+                <AdminUsersRow record={record} row_num={i+1} onEditUser={this.props.onEditUser} editStatus={this.props.editStatus} key={i} />
             );
-        });
-
+        }.bind(this));
         return (
     <div className="table-responsive">
         <table className="table borderless sortable">
@@ -257,6 +294,7 @@ var AdminUsersTable = React.createClass({
                     <th className="text-center">Email Verified</th>
                     <th className="text-center">Account Expiration</th>
                     <th className="text-center">Account Status</th>
+                    <th className="text-center">Update User</th>
                 </tr>
             </thead>
             <tbody>
@@ -339,7 +377,18 @@ var AdminUsersPagination = React.createClass({
 
 var AddNewUserForm = React.createClass({
     getInitialState: function() {
-        return {error: ""};
+        return {
+          error: "",
+          editRecord: this.props.editRecord,
+        };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        this.setState(
+          {
+            error: nextProps.error,
+            editRecord: nextProps.editRecord,
+          });
     },
 
     clearError: function() {
@@ -441,54 +490,58 @@ var AddNewUserForm = React.createClass({
   },
   render: function() {
     var error;
-
+    var editRecord = this.state.editRecord;
+    console.log("Render of edit user" + editRecord)
     // Add generic function for displaying errors
-    if (this.state.error !== "") {
+    if (!this.state.error) {
       error = <div className="alert alert-danger alert-dismissible">
               <button type="button" onClick={this.clearError} className="close">&times;</button>
               {this.state.error}
             </div>
     }
-
     return (
 <div className="col-sm-offset-3 col-sm-6">
 
-    {error}
-
+    {this.state.error ? error : ""}
     <div className="form-horizontal">
         <h4> Please enter user details </h4>
         <div className="form-group">
             <label for="id-user-email" className="col-sm-4 control-label">Email</label>
             <div className="col-sm-8">
-                <input type="email" className="form-control" id="id-user-email" ref="user_email" placeholder="Email" />
+                <input type="email" className="form-control" id="id-user-email" ref="user_email" placeholder="Email"
+                defaultValue = {editRecord ? editRecord.email : ""}/>
             </div>
         </div>
         <div className="form-group">
             <label for="id-user-first" className="col-sm-4 control-label">First Name</label>
             <div className="col-sm-8">
-                <input type="text" className="form-control" id="id-user-first" ref="user_first_name" placeholder="First Name" />
+                <input type="text" className="form-control" id="id-user-first" ref="user_first_name" placeholder="First Name"
+                defaultValue = {this.state.editRecord ? this.state.editRecord.first : ""} />
             </div>
         </div>
         <div className="form-group">
             <label for="id-user-mi" className="col-sm-4 control-label">Middle Name</label>
             <div className="col-sm-8">
-                <input type="text" className="form-control" id="id-user-mi" ref="user_middle_name" placeholder="Middle Name" />
+                <input type="text" className="form-control" id="id-user-mi" ref="user_middle_name" placeholder="Middle Name"
+                defaultValue = {this.state.editRecord ? this.state.editRecord.minitial : ""} />
             </div>
         </div>
         <div className="form-group">
             <label for="id-user-last" className="col-sm-4 control-label">Last Name</label>
             <div className="col-sm-8">
-                <input type="text" className="form-control" id="id-user-last" ref="user_last_name" placeholder="Last Name" />
+                <input type="text" className="form-control" id="id-user-last" ref="user_last_name" placeholder="Last Name"
+                defaultValue = {this.state.editRecord ? this.state.editRecord.last : ""} />
             </div>
         </div>
         <div className="form-group">
             <label for="id-user-roles" className="col-sm-4 control-label">Roles</label>
             <div className="col-sm-8">
-              <select ref="user_roles" className="form-control" id="id-user-roles" multiple={true}>
+              <select ref="user_roles" className="form-control" id="id-user-roles" multiple={true}
+              defaultValue = {this.state.editRecord ? this.state.editRecord.roles : []}>
                   <option value="admin">Admin</option>
                   <option value="technician">Technician</option>
-                  <option value="researcher_one">Researcher 1</option>
-                  <option value="researcher_two">Researcher 2</option>
+                  <option value="researcher_one" >Researcher 1</option>
+                  <option value="researcher_two" >Researcher 2</option>
                 </select>
             </div>
         </div>
@@ -510,9 +563,18 @@ var AdminUserManagement = React.createClass({
             list_of_users: undefined,
             total_pages: 1,
             show_user_form: false,
-            error: ""
+            error: "",
+            editRecord: "",
+            editStatus: true,
         };
     },
+    componentWillReceiveProps: function(nextProps) {
+        this.setState(
+          {
+            editRecord: nextProps.editRecord,
+          });
+    },
+
     componentWillMount: function() {
         this.changeData(1);
         /*
@@ -591,7 +653,22 @@ var AdminUserManagement = React.createClass({
         this.setState({
             list_of_users   :  this.state.list_of_users,
             total_pages     :  this.state.total_pages,
-            show_user_form  :  show_user_form
+            show_user_form  :  show_user_form,
+            editRecord      :  "",
+            editStatus      :  true,
+        });
+    },
+    toggleEditUserForm: function(record) {
+        //change the bool value of show_user_form variable to opposite
+        console.log("Final call > "+ record ? record.email : "")
+        // Always make this visible.
+        var show_user_form = true
+        this.setState({
+            list_of_users   :  this.state.list_of_users,
+            total_pages     :  this.state.total_pages,
+            show_user_form  :  show_user_form,
+            editRecord      :  record,
+            editStatus      :  false,
         });
     },
     render: function() {
@@ -600,6 +677,8 @@ var AdminUserManagement = React.createClass({
         var pagination;
         var show_user_form;
         var button_text = "Open 'Add User' Form";
+        var editRecord = this.state.editRecord;
+        var editStatus = this.state.editStatus;
 
         if(total_pages > 1) {
             pagination = <AdminUsersPagination total_pages={total_pages} changePage={this.changePage}/>;
@@ -607,7 +686,14 @@ var AdminUserManagement = React.createClass({
 
         if(this.state.show_user_form) {
             button_text = "Close 'Add User' Form";
-            show_user_form = <AddNewUserForm addNewUser = {this.addNewUser}/>
+            if(editStatus) {
+                show_user_form = <AddNewUserForm addNewUser = {this.addNewUser} />
+            }
+            else {
+                console.log("editing user record with email id " + this.state.editRecord.email)
+                show_user_form = <AddNewUserForm addNewUser = {this.addNewUser} editRecord = {this.state.editRecord}/>
+                button_text = "Ignore Changes"
+            }
         }
 
         var users_table;
@@ -622,7 +708,7 @@ var AdminUserManagement = React.createClass({
             users_table = <div>There is no data to display. If you think this is an error please contact your support personnel.</div>;
         }
         else {
-            users_table = <AdminUsersTable list_of_users={this.state.list_of_users}/>
+            users_table = <AdminUsersTable list_of_users={this.state.list_of_users} onEditUser={this.toggleEditUserForm} editStatus={this.state.editStatus}/>
         }
         return (
                 <div>
