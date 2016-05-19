@@ -401,6 +401,7 @@ var AddNewUserForm = React.createClass({
         var usrFirst = this.refs.user_first_name.getDOMNode().value.trim();
         var usrMI = this.refs.user_middle_name.getDOMNode().value.trim();
         var usrLast  = this.refs.user_last_name.getDOMNode().value.trim();
+        var isEdit  = typeof this.state.editRecord === "object" && typeof this.state.editRecord.email === "string";
         var roles = [];
 
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionsCollection
@@ -451,7 +452,7 @@ var AddNewUserForm = React.createClass({
 
     console.log('sending data: ' + Utils.print_r(data));
 
-    var request = Utils.api_post_json("/api/save_user", data);
+    var request = Utils.api_post_json(isEdit ? "/api/edit_user" : "/api/save_user", data);
     var _this = this;
 
     request.success( function(json) {
