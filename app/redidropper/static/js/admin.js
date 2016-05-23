@@ -402,6 +402,7 @@ var AddNewUserForm = React.createClass({
         var usrMI = this.refs.user_middle_name.getDOMNode().value.trim();
         var usrLast  = this.refs.user_last_name.getDOMNode().value.trim();
         var isEdit  = typeof this.state.editRecord === "object" && typeof this.state.editRecord.email === "string";
+        var usrId  = (this.state.editRecord || {}).id;
         var roles = [];
 
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionsCollection
@@ -447,7 +448,9 @@ var AddNewUserForm = React.createClass({
             "first"     : usrFirst,
             "minitial"  : usrMI,
             "last"      : usrLast,
-            "roles[]"   : roles
+            "roles[]"   : roles,
+            "usrId"     : usrId,
+            "isEdit"    : isEdit,
         };
 
     console.log('sending data: ' + Utils.print_r(data));
@@ -473,7 +476,11 @@ var AddNewUserForm = React.createClass({
                     'is_active'     : record.is_active,
                     'roles'         : record.roles
                 };
-                _this.props.addNewUser(data);
+                if (isEdit) {
+                    _this.props.updateUser(data);
+                } else {
+                    _this.props.addNewUser(data);
+                }
             }
         }
         else {
@@ -521,7 +528,7 @@ var AddNewUserForm = React.createClass({
             </div>
         </div>
         <div className="form-group">
-            <label for="id-user-mi" className="col-sm-4 control-label">Middle Name</label>
+            <label for="id-user-mi" className="col-sm-4 control-label">Middle Initial</label>
             <div className="col-sm-8">
                 <input type="text" className="form-control" id="id-user-mi" ref="user_middle_name" placeholder="Middle Name"
                 defaultValue = {this.state.editRecord ? this.state.editRecord.minitial : ""} />
@@ -648,6 +655,20 @@ var AdminUserManagement = React.createClass({
         });
     },
 
+    updateUser: function(data) {
+        var users = this.state.list_of_users,
+            user_ids = users.map((item) => item.id);
+        users[user_ids.indexOf(data.id)] = data;
+        console.log(users[user_ids.indexOf(data.id)]);
+
+        this.setState({
+            list_of_users: users,
+            total_pages: this.state.total_pages,
+            show_user_form: false,
+            editStatus: true,
+        });
+    },
+
     toggleAddUserForm: function() {
         //change the bool value of show_user_form variable to opposite
         var show_user_form = !this.state.show_user_form;
@@ -692,7 +713,7 @@ var AdminUserManagement = React.createClass({
             }
             else {
                 console.log("editing user record with email id " + this.state.editRecord.email)
-                show_user_form = <AddNewUserForm addNewUser = {this.addNewUser} editRecord = {this.state.editRecord}/>
+                show_user_form = <AddNewUserForm addNewUser = {this.addNewUser} updateUser = {this.updateUser} editRecord = {this.state.editRecord}/>
                 button_text = "Ignore Changes"
             }
         }

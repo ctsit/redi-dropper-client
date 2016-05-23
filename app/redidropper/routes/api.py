@@ -186,20 +186,22 @@ def __extract_user_information(request):
         "last": request.form['last'],
         "minitial": request.form['minitial'],
         "roles": request.form.getlist('roles[]'),
-        "is_edit": request.form.getlist('isEdit'),
+        "is_edit": request.form['isEdit'],
+        "usr_id": request.form['usrId'],
     }
 
 def __get_date_information():
     return {
         "added_at": datetime.today(),
-        "access_expires_at": get_expiration_date(180),
+        "access_expires_at": utils.get_expiration_date(180),
     }
 
 def __generate_credentials(email):
     # @TODO: use a non-gatorlink password here
     password = email
-    salt, password_hash = generate_auth(app.config['SECRET_KEY'],
+    salt, password_hash = utils.generate_auth(app.config['SECRET_KEY'],
                                               password)
+    # Note: we store the salt as a prefix
     return {
         "email": email,
         "salt": salt,
@@ -238,7 +240,6 @@ def api_save_user():
         return utils.jsonify_error(
             {'message': 'Sorry. This email is already taken.'})
 
-    # Note: we store the salt as a prefix
     user = UserEntity.create(email=request_data["email"],
                              first=request_data["first"],
                              last=request_data["last"],
@@ -265,21 +266,21 @@ def api_edit_user():
     credentials = __generate_credentials(request_data["email"])
     date_data = __get_date_information()
 
-    # Note: we store the salt as a prefix
-    user = UserEntity.update(email=request_data["email"],
-                             first=request_data["first"],
-                             last=request_data["last"],
-                             minitial=request_data["minitial"],
-                             added_at=date_data["added_at"],
-                             modified_at=date_data["added_at"],
-                             access_expires_at=date_data["access_expires_at"],
-                             password_hash="{}:{}".format(credentials["salt"],
-                                                          credentials["password_hash"]))
+    user = UserEntity.get_by_id(id=request_data["usr_id"])
+    user.update(email=request_data["email"],
+                first=request_data["first"],
+                last=request_data["last"],
+                minitial=request_data["minitial"],
+                added_at=date_data["added_at"],
+                modified_at=date_data["added_at"],
+                access_expires_at=date_data["access_expires_at"],
+                password_hash="{}:{}".format(credentials["salt"],
+                                            credentials["password_hash"]))
 
     __assign_roles(request_data["roles"], user)
 
     app.logger.debug("updated user: {}".format(user))
-    LogEntity.account_created(session['uuid'], user)
+    LogEntity.account_updated(session['uuid'], user)
     return utils.jsonify_success({'user': user.serialize()})
 
 @app.route('/api/list_users', methods=['POST', 'GET'])
