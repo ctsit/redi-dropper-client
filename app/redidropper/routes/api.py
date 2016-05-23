@@ -179,15 +179,60 @@ def download_file():
     LogEntity.file_downloaded(session['uuid'], file_path)
     return send_file(file_path, as_attachment=True)
 
+def __extract_user_information(request):
+    return {
+        "email": request.form['email'],
+        "first": request.form['first'],
+        "last": request.form['last'],
+        "minitial": request.form['minitial'],
+        "roles": request.form.getlist('roles[]'),
+        "is_edit": request.form.getlist('isEdit'),
+    }
+
+def __get_date_information():
+    return {
+        "added_at": datetime.today(),
+        "access_expires_at": get_expiration_date(180),
+    }
+
+def __generate_credentials(email):
+    # @TODO: use a non-gatorlink password here
+    password = email
+    salt, password_hash = generate_auth(app.config['SECRET_KEY'],
+                                              password)
+    return {
+        "email": email,
+        "salt": salt,
+        "password_hash": password_hash,
+    }
+
+def __assign_roles(roles, user):
+    user_roles = []
+    try:
+        for role_name in roles:
+            role_entity = RoleEntity.query.filter_by(name=role_name).one()
+            user_roles.append(role_entity)
+    except Exception as exc:
+        app.logger.debug("Problem saving user: {}".format(exc))
+    [user.roles.append(rol) for rol in user_roles]
+    user = UserEntity.save(user)
+
+def __check_is_existing_user(email):
+    try:
+        existing_user = UserEntity.query.filter_by(email=email).one()
+        return True
+    except:
+        return False
+
 @app.route('/api/save_user', methods=['POST'])
 @login_required
 def api_save_user():
     """ Save a new user to the database
     TODO: Add support for reading a password field
     """
-    request_data = utils.extract_user_information(request)
-    credentials = utils.generate_credentials(request_data)
-    date_data = utils.get_date_information()
+    request_data = __extract_user_information(request)
+    credentials = __generate_credentials(request_data["email"])
+    date_data = __get_date_information()
 
     if utils.check_is_existing_user(request_data["email"]):
         return utils.jsonify_error(
@@ -204,7 +249,7 @@ def api_save_user():
                              password_hash="{}:{}".format(credentials["salt"],
                                                           credentials["password_hash"]))
 
-    utils.assign_roles(request_data["roles"], user)
+    __assign_roles(request_data["roles"], user)
 
     app.logger.debug("saved user: {}".format(user))
     LogEntity.account_created(session['uuid'], user)
@@ -216,9 +261,9 @@ def api_edit_user():
     """ Edit an existing user in the database
     TODO: Add support for reading a password field
     """
-    request_data = utils.extract_user_information(request)
-    credentials = utils.generate_credentials(request_data)
-    date_data = utils.get_date_information()
+    request_data = __extract_user_information(request)
+    credentials = __generate_credentials(request_data["email"])
+    date_data = __get_date_information()
 
     # Note: we store the salt as a prefix
     user = UserEntity.update(email=request_data["email"],
@@ -231,7 +276,7 @@ def api_edit_user():
                              password_hash="{}:{}".format(credentials["salt"],
                                                           credentials["password_hash"]))
 
-    utils.assign_roles(request_data["roles"], user)
+    __assign_roles(request_data["roles"], user)
 
     app.logger.debug("updated user: {}".format(user))
     LogEntity.account_created(session['uuid'], user)
