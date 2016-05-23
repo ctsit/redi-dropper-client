@@ -313,18 +313,18 @@ def retrieve_redcap_events(url, token, max_time=30):
 
 def extract_user_information(request):
     return {
-        "email": request.form['email'],
-        "first": request.form['first'],
-        "last": request.form['last'],
-        "minitial": request.form['minitial'],
-        "roles": request.form.getlist('roles[]'),
-        "is_edit": request.form.getlist('isEdit'),
+        "email": request.form['email']
+        "first": request.form['first']
+        "last": request.form['last']
+        "minitial": request.form['minitial']
+        "roles": request.form.getlist('roles[]')
+        "is_edit": request.form.getlist('isEdit')
     }
 
 def get_date_information():
     return {
-        "added_at": datetime.today(),
-        "access_expires_at": utils.get_expiration_date(180),
+        "added_at": datetime.today()
+        "access_expires_at": utils.get_expiration_date(180)
     }
 
 def generate_credentials(**kwargs):
@@ -333,9 +333,9 @@ def generate_credentials(**kwargs):
     salt, password_hash = utils.generate_auth(app.config['SECRET_KEY'],
                                               password)
     return {
-        "email": kwargs["email"],
-        "salt": salt,
-        "password_hash": password_hash,
+        "email": kwargs["email"]
+        "salt": salt
+        "password_hash": password_hash
     }
 
 def assign_roles(roles, user):

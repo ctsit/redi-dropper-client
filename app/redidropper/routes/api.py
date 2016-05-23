@@ -189,20 +189,19 @@ def api_save_user():
     credentials = utils.generate_credentials(request_data)
     date_data = utils.get_date_information()
 
-    if utils.check_is_existing_user(request_data["email"]):
+    if utils.check_is_existing_user(request["email"]):
         return utils.jsonify_error(
             {'message': 'Sorry. This email is already taken.'})
 
     # Note: we store the salt as a prefix
-    user = UserEntity.create(email=request_data["email"],
-                             first=request_data["first"],
-                             last=request_data["last"],
-                             minitial=request_data["minitial"],
-                             added_at=date_data["added_at"],
-                             modified_at=date_data["added_at"],
-                             access_expires_at=date_data["access_expires_at"],
-                             password_hash="{}:{}".format(credentials["salt"],
-                                                          credentials["password_hash"]))
+    user = UserEntity.create(email=email,
+                             first=first,
+                             last=last,
+                             minitial=minitial,
+                             added_at=added_date,
+                             modified_at=added_date,
+                             access_expires_at=access_end_date,
+                             password_hash="{}:{}".format(salt, password_hash))
 
     utils.assign_roles(request_data["roles"], user)
 
@@ -221,15 +220,14 @@ def api_edit_user():
     date_data = utils.get_date_information()
 
     # Note: we store the salt as a prefix
-    user = UserEntity.update(email=request_data["email"],
-                             first=request_data["first"],
-                             last=request_data["last"],
-                             minitial=request_data["minitial"],
-                             added_at=date_data["added_at"],
-                             modified_at=date_data["added_at"],
-                             access_expires_at=date_data["access_expires_at"],
-                             password_hash="{}:{}".format(credentials["salt"],
-                                                          credentials["password_hash"]))
+    user = UserEntity.update(email=email,
+                             first=first,
+                             last=last,
+                             minitial=minitial,
+                             added_at=added_date,
+                             modified_at=added_date,
+                             access_expires_at=access_end_date
+                             password_hash="{}:{}".format(salt, password_hash))
 
     utils.assign_roles(request_data["roles"], user)
 
