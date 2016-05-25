@@ -228,6 +228,7 @@ def __check_is_existing_user(email):
 
 @app.route('/api/save_user', methods=['POST'])
 @login_required
+@perm_admin.require(http_exception=403)
 def api_save_user():
     """ Save a new user to the database
     TODO: Add support for reading a password field
@@ -258,6 +259,7 @@ def api_save_user():
 
 @app.route('/api/edit_user', methods=['POST'])
 @login_required
+@perm_admin.require(http_exception=403)
 def api_edit_user():
     """ Edit an existing user in the database
     TODO: Add support for reading a password field
