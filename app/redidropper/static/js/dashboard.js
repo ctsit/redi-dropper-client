@@ -96,6 +96,24 @@ var SubjectsTable = React.createClass({
     componentWillReceiveProps: function(nextProps) {
         this.changeData(1, nextProps.max_events);
     },
+
+    onInputChange: function(event) {
+        var hasMatchingProperty = function (isMatching, property) {
+                if (typeof property === "String") {
+                    isMatching = isMatching || property.includes(text);
+                }
+                return isMatching;
+            },
+            matchEventText = function(subject) {
+                var text = event.target.value,
+                    properties = Object.keys(subject).map((key) => subject[key]);
+                return properties.reduce(hasMatchingProperty, false);
+            };
+            this.setState({
+                subjects: (this.subjects || []).filter(matchEventText)
+        });
+    },
+
     render: function() {
         var table_rows = [];
         var subjects_data = this.state.subjects;
@@ -146,6 +164,7 @@ var SubjectsTable = React.createClass({
 
     return (
         <div className="row">
+            <input type="text" onChange={this.onInputChange}/>
             {subjects_table}
             {pagination}
         </div>
