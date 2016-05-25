@@ -66,7 +66,8 @@ var SubjectsTable = React.createClass({
         return {
             subjects: [],
             max_events: this.props.max_events,
-            no_of_pages: 0
+            no_of_pages: 0,
+            previous_changeData_args: []
         };
     },
     changePage: function(i) {
@@ -76,11 +77,15 @@ var SubjectsTable = React.createClass({
         // if needed we will allow the user to select how many rows to display per page
         var per_page = 25;
         var request_data = {'per_page': per_page, 'page_num': page_num};
-        var _this = this;
         var request = Utils.api_post_json("/api/list_local_subjects", request_data);
+        var self = this;
+
+        this.setState({
+            previous_changeData_args: arguments,
+        });
 
         request.success( function(json) {
-            _this.setState({
+            self.setState({
                 subjects: json.data.list_of_subjects,
                 max_events: max_events,
                 no_of_pages: json.data.total_pages
@@ -92,9 +97,16 @@ var SubjectsTable = React.createClass({
     },
     componentWillMount: function() {
         this.changeData(1, this.props.max_events);
+
+        this.setState({
+            intervalUpdateHandler: window.setInterval(this.updateData, 5000)
+        });
     },
     componentWillReceiveProps: function(nextProps) {
         this.changeData(1, nextProps.max_events);
+    },
+    componentWillUnmount: function() {
+        window.clearInterval(this.state.updateIntervalHandler);
     },
 
     onInputChange: function(event) {
@@ -112,6 +124,10 @@ var SubjectsTable = React.createClass({
             this.setState({
                 subjects: (this.subjects || []).filter(matchEventText)
         });
+    },
+
+    updateData: function() {
+        this.changeData.apply(this, this.state.previous_changeData_args.slice(1));
     },
 
     render: function() {
