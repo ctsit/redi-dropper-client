@@ -127,7 +127,7 @@ var SubjectsTable = React.createClass({
     },
 
     updateData: function() {
-        this.changeData.apply(this, this.state.previous_changeData_args.slice(1));
+        this.changeData.apply(this, this.state.previous_changeData_args);
     },
 
     render: function() {
