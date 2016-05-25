@@ -208,23 +208,26 @@ def __generate_credentials(email):
         "password_hash": password_hash,
     }
 
-def __assign_roles(roles, user):
-    user_roles = []
-    try:
-        for role_name in roles:
-            role_entity = RoleEntity.query.filter_by(name=role_name).one()
-            user_roles.append(role_entity)
-    except Exception as exc:
-        app.logger.debug("Problem saving user: {}".format(exc))
-    [user.roles.append(rol) for rol in user_roles]
-    user = UserEntity.save(user)
+
+def __assign_roles(roles_required, user):
+    """
+    Delete all roles for the user if not in the
+    provided `roles_required` list and assing new roles.
+    """
+    all_roles = RoleEntity.query.all()
+    user_roles = [role for role in all_roles if role.name in roles_required]
+    user = UserEntity.update(user, roles=user_roles)
+    return user
+
 
 def __check_is_existing_user(email):
-    try:
-        existing_user = UserEntity.query.filter_by(email=email).one()
-        return True
-    except:
-        return False
+    """
+    :rtype boolean
+    :return True if a user exists in the database with the given email
+    """
+    existing_user = UserEntity.query.filter_by(email=email).one_or_none()
+    return existing_user is not None
+
 
 @app.route('/api/save_user', methods=['POST'])
 @login_required
@@ -248,8 +251,9 @@ def api_save_user():
                              added_at=date_data["added_at"],
                              modified_at=date_data["added_at"],
                              access_expires_at=date_data["access_expires_at"],
-                             password_hash="{}:{}".format(credentials["salt"],
-                                                          credentials["password_hash"]))
+                             password_hash="{}:{}"
+                             .format(credentials["salt"],
+                                     credentials["password_hash"]))
 
     __assign_roles(request_data["roles"], user)
 
@@ -277,7 +281,7 @@ def api_edit_user():
                 modified_at=date_data["added_at"],
                 access_expires_at=date_data["access_expires_at"],
                 password_hash="{}:{}".format(credentials["salt"],
-                                            credentials["password_hash"]))
+                                             credentials["password_hash"]))
 
     __assign_roles(request_data["roles"], user)
 
