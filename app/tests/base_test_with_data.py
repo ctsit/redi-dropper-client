@@ -55,10 +55,19 @@ class BaseTestCaseWithData(BaseTestCase):
         # == Create users
         added_date = datetime.today()
         access_end_date = utils.get_expiration_date(180)
-        user = UserEntity.create(email="admin@example.com",
+        admin_user = UserEntity.create(email="admin@example.com",
                                  first="First",
                                  last="Last",
                                  minitial="M",
+                                 added_at=added_date,
+                                 modified_at=added_date,
+                                 email_confirmed_at=added_date,
+                                 access_expires_at=access_end_date)
+
+        tech_user = UserEntity.create(email="tech@example.com",
+                                 first="First",
+                                 last="Last",
+                                 minitial="T",
                                  added_at=added_date,
                                  modified_at=added_date,
                                  email_confirmed_at=added_date,
@@ -69,7 +78,8 @@ class BaseTestCaseWithData(BaseTestCase):
         role_tech = RoleEntity.create(name=ROLE_TECHNICIAN, description='role')
         role_res1 = RoleEntity.create(name=ROLE_RESEARCHER_ONE, description='')
         role_res2 = RoleEntity.create(name=ROLE_RESEARCHER_TWO, description='')
-        user.roles.extend([role_admin, role_tech, role_res1, role_res2])
+        admin_user.roles.extend([role_admin, role_tech, role_res1, role_res2])
+        tech_user.roles.extend([role_tech])
 
         # == Create subject
         subject = SubjectEntity.create(
@@ -108,6 +118,6 @@ class BaseTestCaseWithData(BaseTestCase):
                 file_check_sum=utils.compute_text_md5(fdata['name']),
                 file_size=fdata['size'],
                 uploaded_at=added_date,
-                user_id=user.id)
+                user_id=admin_user.id)
             self.assertIsNotNone(subject_file.id)
             # app.logger.debug("Init test case with: {}".format(subject_file))

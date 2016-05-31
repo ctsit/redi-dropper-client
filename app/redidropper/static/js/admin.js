@@ -399,21 +399,16 @@ var AddNewUserForm = React.createClass({
         //Get the values entered by the user in the form
         var usrEmail = this.refs.user_email.getDOMNode().value.trim();
         var usrFirst = this.refs.user_first_name.getDOMNode().value.trim();
-        var usrMI = this.refs.user_middle_name.getDOMNode().value.trim();
+        var usrMI = this.refs.user_middle_initial.getDOMNode().value.trim();
         var usrLast  = this.refs.user_last_name.getDOMNode().value.trim();
         var isEdit  = typeof this.state.editRecord === "object" && typeof this.state.editRecord.email === "string";
         var usrId  = (this.state.editRecord || {}).id;
-        var roles = [];
 
-        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionsCollection
-        // https://github.com/facebook/react/blob/057f41ec0f01e5e716358ad18cf7166d5cc00d68/src/browser/ui/dom/components/__tests__/ReactDOMSelect-test.js
-        var collection = this.refs.user_roles.getDOMNode().options;
+        var roleCheckboxes = document.getElementsByClassName("roleCheckbox")
+        var roles = Array.prototype.map.call(roleCheckboxes, (input) => {
+            return input.checked && input.value;
+        }).filter(Boolean);
 
-        for (var i = 0; i < collection.length; i++) {
-            if (collection.item(i).selected) {
-                roles.push(collection.item(i).value);
-            }
-        }
         console.log("roles: " + roles);
 
         if (usrEmail === "") {
@@ -499,12 +494,13 @@ var AddNewUserForm = React.createClass({
   render: function() {
     var error;
     var editRecord = this.state.editRecord;
+    var isChecked = (role) => this.state.editRecord && this.state.editRecord.roles.indexOf(role) > -1;
     console.log("Render of edit user" + editRecord)
     // Add generic function for displaying errors
     if (!this.state.error) {
-      error = <div className="alert alert-danger alert-dismissible">
-              <button type="button" onClick={this.clearError} className="close">&times;</button>
-              {this.state.error}
+    error = <div className="alert alert-danger alert-dismissible">
+            <button type="button" onClick={this.clearError} className="close">&times;</button>
+            {this.state.error}
             </div>
     }
     return (
@@ -530,7 +526,7 @@ var AddNewUserForm = React.createClass({
         <div className="form-group">
             <label for="id-user-mi" className="col-sm-4 control-label">Middle Initial</label>
             <div className="col-sm-8">
-                <input type="text" className="form-control" id="id-user-mi" ref="user_middle_name" placeholder="Middle Name"
+                <input type="text" className="form-control" id="id-user-mi" ref="user_middle_initial" placeholder="Middle Initial"
                 defaultValue = {this.state.editRecord ? this.state.editRecord.minitial : ""} />
             </div>
         </div>
@@ -543,24 +539,21 @@ var AddNewUserForm = React.createClass({
         </div>
         <div className="form-group">
             <label for="id-user-roles" className="col-sm-4 control-label">Roles</label>
-            <div className="col-sm-8">
-              <select ref="user_roles" className="form-control" id="id-user-roles" multiple={true}
-              defaultValue = {this.state.editRecord ? this.state.editRecord.roles : []}>
-                  <option value="admin">Admin</option>
-                  <option value="technician">Technician</option>
-                  <option value="researcher_one" >Researcher 1</option>
-                  <option value="researcher_two" >Researcher 2</option>
-                </select>
+            <div className="col-sm-8" style={{textAlign: "left", paddingTop: "0.7rem"}}>
+                <div><input className="roleCheckbox" type="checkbox" value="admin" defaultChecked={isChecked("admin")}/> Admin</div>
+                <div><input className="roleCheckbox" type="checkbox" value="technician" defaultChecked={isChecked("technician")}/> Technician</div>
+                <div><input className="roleCheckbox" type="checkbox" value="researcher_one" defaultChecked={isChecked("researcher_one")}/> Researcher 1</div>
+                <div><input className="roleCheckbox" type="checkbox" value="researcher_two" defaultChecked={isChecked("researcher_two")}/> Researcher 2</div>
             </div>
         </div>
         <div className="form-group">
             <div className="col-sm-offset-2 col-sm-10">
                 <button onClick={this.addUser} className="btn btn-danger">Save User</button>
-            </div>
+             </div>
         </div>
     </div>
 </div>
-    )
+    );
   }
 
 });

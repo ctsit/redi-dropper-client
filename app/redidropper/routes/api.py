@@ -181,13 +181,13 @@ def download_file():
 
 def __extract_user_information(request):
     return {
-        "email": request.form['email'],
-        "first": request.form['first'],
-        "last": request.form['last'],
-        "minitial": request.form['minitial'],
+        "email": request.form.get('email'),
+        "first": request.form.get('first'),
+        "last": request.form.get('last'),
+        "minitial": request.form.get('minitial'),
         "roles": request.form.getlist('roles[]'),
-        "is_edit": request.form['isEdit'],
-        "usr_id": request.form['usrId'],
+        "is_edit": request.form.get('isEdit'),
+        "usr_id": request.form.get('usrId'),
     }
 
 def __get_date_information():
@@ -225,8 +225,11 @@ def __check_is_existing_user(email):
     :rtype boolean
     :return True if a user exists in the database with the given email
     """
-    existing_user = UserEntity.query.filter_by(email=email).one_or_none()
-    return existing_user is not None
+    try:
+        existing_user = UserEntity.query.filter_by(email=email).one()
+        return True
+    except:
+        return False
 
 
 @app.route('/api/save_user', methods=['POST'])
@@ -240,7 +243,7 @@ def api_save_user():
     credentials = __generate_credentials(request_data["email"])
     date_data = __get_date_information()
 
-    if utils.check_is_existing_user(request_data["email"]):
+    if __check_is_existing_user(request_data["email"]):
         return utils.jsonify_error(
             {'message': 'Sorry. This email is already taken.'})
 
