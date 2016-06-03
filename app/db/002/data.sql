@@ -73,6 +73,7 @@ INSERT INTO UserAgent(uaUserAgent, uaHash, uaPlatform, uaBrowser, uaVersion, uaL
 
 -- INSERT INTO Log (logtID, webID, logDateTime, logDetails)
 --       SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_created'
+-- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'account_updated'
 -- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login'
 -- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'logout'
 -- UNION SELECT logtID, 1, NOW(), 'no details' FROM LogType WHERE logtType = 'login_error'

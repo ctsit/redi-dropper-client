@@ -13,7 +13,7 @@ LOG_TYPE_FILE_DOWNLOADED = 'file_downloaded'
 LOG_TYPE_ACCOUNT_MODIFIED = 'account_modified'
 LOG_TYPE_REDCAP_SUBJECTS_IMPORTED = 'redcap_subjects_impported'
 LOG_TYPE_REDCAP_EVENTS_IMPORTED = 'redcap_events_imported'
-LOG_TYPE_ACCOUNT_UPDATED = 'account updated'
+LOG_TYPE_ACCOUNT_UPDATED = 'account_updated'
 # LOG_TYPE_ = ''
 
 
