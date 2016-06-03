@@ -49,6 +49,7 @@ INSERT INTO LogType
     (logtType, logtDescription)
 VALUES
     ('account_created', ''),
+    ('account_updated',''),
     ('login', ''),
     ('logout', ''),
     ('login_error', ''),
