@@ -297,7 +297,7 @@ def mysql_create_tables():
                  .format(env.environment))
 
     login_path = _mysql_login_path()
-    files = ['001/upgrade.sql', '002/upgrade.sql', '002/data.sql']
+    files = ['001/upgrade.sql', '002/upgrade.sql', '002/data.sql', '003/upgrade.sql']
 
     with lcd('../db/'):
         for sql in files:
@@ -322,7 +322,7 @@ def mysql_drop_tables():
         abort(colors.red("Unable to drop tables in database '%(db_name)s'."
                          "The database does not exist" % env))
 
-    files = ['002/downgrade.sql', '001/downgrade.sql']
+    files = ['003/downgrade.sql', '002/downgrade.sql', '001/downgrade.sql']
 
     with lcd('../db/'):
         for sql in files:
