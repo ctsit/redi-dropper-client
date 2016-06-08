@@ -274,6 +274,57 @@ def mysql_list_tables():
     result = local(cmd, capture=True)
     print(result)
 
+def _is_valid_version(version_number):
+    """Checks if the version has the right number of digits"""
+    version_string = str(version_number)
+    return len(version_string) <= 3
+
+def _get_version_string(version_number):
+    """Produces a three char string that corresponds to the desired db folder"""
+    version_string = str(version_number)
+    while len(version_string) < 3:
+        version_string = '0' + version_string
+    return version_string
+
+def _step_to_version(version_number, is_upgrade):
+    """Step once to the passed version. Must be on adjacent version
+    Version numbers are given by the number for the folder
+    in app/db/
+    """
+    require('environment', provided_by=[production, staging])
+
+    exists = mysql_check_db_exists()
+    if not exists:
+        abort(colors.red("Unable to create tables in database '%(db_name)s'."
+                         "The database does not exist" % env))
+    if not _is_valid_version(version_number) is True:
+        abort(colors.red("Unable to upgrade to version {} '%(db_name)s'."
+                         "Please look in app/db for valid versions".format(version_number)
+                         % env))
+
+    login_path = _mysql_login_path()
+    sql_file = 'upgrade.sql' if is_upgrade else 'downgrade.sql'
+    sql = _get_version_string(version_number) + '/' + sql_file
+
+    with lcd('../db/'):
+        cmd = ("mysql --login-path={} %(db_name)s < {}"
+                .format(login_path, sql)
+                % env)
+        local(cmd)
+
+def mysql_version_upgrade(version_number):
+    """Upgrade to the passed version. Must be on adjacent version
+    Version numbers are given by the number for the folder
+    in app/db/
+    """
+    _step_to_version(version_number, True)
+
+def mysql_version_downgrade(version_number):
+    """Downgrade to the passed version. Must be on adjacent version
+    Version numbers are given by the number for the folder
+    in app/db/
+    """
+    _step_to_version(version_number, False)
 
 def mysql_create_tables():
     """ Create the application tables.

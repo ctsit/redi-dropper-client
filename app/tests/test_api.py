@@ -30,7 +30,7 @@ class TestAPI(BaseTestCaseWithData):
         self.assertEqual(response._status_code, 302)
 
     def test_save_user_no_admin_login(self):
-        res_login = self.__login("tech@admin")
+        res_login = self.__login("tech@example.com")
         response = self.client.post("/api/save_user", data={})
         #TODO: fix the 302 error to be a 403 forbidden error
         self.assertEqual(response._status_code, 302)
