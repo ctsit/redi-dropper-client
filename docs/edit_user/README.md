@@ -15,7 +15,8 @@ Welcome to the edit_user feature branch readme
 
 1) Go through standard deploy/upgrade process to get new codebase
 2) Run "fab mysql_version_upgrade:3"'
-Alt2) Migrate MySQL to db/003/upgrade.sql via mysql command line
+Alternate:
+Migrate MySQL to db/003/upgrade.sql via mysql command line (ex. sudo mysql ctsi_dropper_s < db/003/upgrade.sql)
 
 ## Smoketest
 
