@@ -33,28 +33,16 @@ var SubjectsRow = React.createClass({
     */
     render: function() {
         var column_count = this.state.max_events;
-        var table_columns = [];
         var row_data = this.state.row_data;
         var events_count = 0;
         var i;
 
-        /*
-        for (i = events_count + 2; i <= column_count; i++) {
-            table_columns.push(<td><i className="fa fa-lg fa-plus-circle" onClick={this.showAlert}></i></td>);
-        }
-        */
-
         var selectSubject = this.props.subjectSelected.bind(null, row_data);
         return (
-            <tr>
-                <td>
-                    <button className="btn btn-lg2 btn-primary"
-                        onClick={selectSubject}>
-                        Select subject: {row_data.redcap_id}
-                    </button>
-                </td>
-                {table_columns}
-            </tr>
+            <button className="btn btn-lg2 btn-primary subject-button"
+                onClick={selectSubject}>
+                Select subject: {row_data.redcap_id}
+            </button>
        );
     }
 });
@@ -74,65 +62,56 @@ var SubjectsTable = React.createClass({
         this.changeData(i, this.state.max_events);
     },
     changeData: function(page_num, max_events) {
+        var subjects,
+            success = (json) => {
+                this.setState({
+                    subjects: json.data.list_of_subjects
+                });
+            },
+            failure = function (jqXHR, textStatus, error) {
+                console.log('Failed: ' + textStatus + error);
+            };
+        this.getSubjectList(page_num, max_events, success, failure);
+    },
+    componentWillMount: function() {
+        this.changeData(1, this.props.max_events);
+    },
+    componentWillReceiveProps: function(nextProps) {
+        this.changeData(1, nextProps.max_events);
+    },
+
+    getSubjectList: function (page_num, max_events, successCallback, failureCallback) {
         // if needed we will allow the user to select how many rows to display per page
         var per_page = 25;
         var request_data = {'per_page': per_page, 'page_num': page_num};
         var request = Utils.api_post_json("/api/list_local_subjects", request_data);
         var self = this;
 
-        this.setState({
-            previous_changeData_args: arguments,
-        });
-
-        request.success( function(json) {
-            self.setState({
-                subjects: json.data.list_of_subjects,
-                max_events: max_events,
-                no_of_pages: json.data.total_pages
-            });
-        });
-        request.fail(function (jqXHR, textStatus, error) {
-            console.log('Failed: ' + textStatus + error);
-        });
-    },
-    componentWillMount: function() {
-        this.changeData(1, this.props.max_events);
-
-        this.setState({
-            intervalUpdateHandler: window.setInterval(this.updateData, 5000)
-        });
-    },
-    componentWillReceiveProps: function(nextProps) {
-        this.changeData(1, nextProps.max_events);
-    },
-    componentWillUnmount: function() {
-        window.clearInterval(this.state.updateIntervalHandler);
+        request.success(successCallback);
+        request.fail(failureCallback);
     },
 
     onInputChange: function(event) {
-        var hasMatchingProperty = function (isMatching, property) {
-                if (typeof property === "String") {
-                    isMatching = isMatching || property.includes(text);
-                }
-                return isMatching;
+        var text = event.target.value,
+            matchesRedcapId = function(subject) {
+                return subject.redcap_id.includes(text);
             },
-            matchEventText = function(subject) {
-                var text = event.target.value,
-                    properties = Object.keys(subject).map((key) => subject[key]);
-                return properties.reduce(hasMatchingProperty, false);
+            success = (json) => {
+                this.setState({
+                    subjects: (json.data.list_of_subjects || []).filter(matchesRedcapId)
+                });
+            },
+            failure = function (jqXHR, textStatus, error) {
+                console.log('Failed: ' + textStatus + error);
             };
-            this.setState({
-                subjects: (this.subjects || []).filter(matchEventText)
-        });
-    },
-
-    updateData: function() {
-        this.changeData.apply(this, this.state.previous_changeData_args);
+        this.getSubjectList(undefined, undefined, success, failure);
     },
 
     render: function() {
         var table_rows = [];
-        var subjects_data = this.state.subjects;
+        var subjects_data = this.state.subjects.sort((a, b) => {
+            return Number(a.redcap_id) < Number(b.redcap_id) ? -1 : 1;
+        });
         var row_count = subjects_data.length;
         var column_count = this.state.max_events;
 
@@ -166,21 +145,14 @@ var SubjectsTable = React.createClass({
         else {
             subjects_table = (
                 <div className="table-responsive">
-                    <table id="technician-table" className="table borderless">
-                    <thead>
-                        <tr> {table_columns} </tr>
-                    </thead>
-                    <tbody id="technician-table-body">
                         {table_rows}
-                    </tbody>
-                    </table>
                 </div>
             );
         }
 
     return (
         <div className="row">
-            <input type="text" onChange={this.onInputChange}/>
+            <input className="form-control search-subjects" type="text" onChange={this.onInputChange} placeholder="Search Redcap ID"/>
             {subjects_table}
             {pagination}
         </div>
