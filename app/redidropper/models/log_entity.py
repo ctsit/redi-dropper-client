@@ -20,6 +20,7 @@ from redidropper.models.log_type_entity import \
     LOG_TYPE_LOGOUT, \
     LOG_TYPE_LOGIN_ERROR, \
     LOG_TYPE_FILE_UPLOADED, \
+    LOG_TYPE_FILE_DELETED, \
     LOG_TYPE_FILE_DOWNLOADED, \
     LOG_TYPE_ACCOUNT_MODIFIED, \
     LOG_TYPE_REDCAP_SUBJECTS_IMPORTED, \
@@ -117,6 +118,11 @@ class LogEntity(db.Model, CRUDMixin):
     def file_uploaded(session_id, details=''):
         """ Log file upload """
         LogEntity._log(LOG_TYPE_FILE_UPLOADED, session_id, details)
+
+    @staticmethod
+    def file_deleted(session_id, details=''):
+        """ Log account creation """
+        LogEntity._log(LOG_TYPE_FILE_DELETED, session_id, details)
 
     @staticmethod
     def file_downloaded(session_id, details=''):

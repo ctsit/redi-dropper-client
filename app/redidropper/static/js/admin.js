@@ -544,6 +544,7 @@ var AddNewUserForm = React.createClass({
                 <div><input className="roleCheckbox" type="checkbox" value="technician" defaultChecked={isChecked("technician")}/> Technician</div>
                 <div><input className="roleCheckbox" type="checkbox" value="researcher_one" defaultChecked={isChecked("researcher_one")}/> Researcher 1</div>
                 <div><input className="roleCheckbox" type="checkbox" value="researcher_two" defaultChecked={isChecked("researcher_two")}/> Researcher 2</div>
+                <div><input className="roleCheckbox" type="checkbox" value="deleter" defaultChecked={isChecked("deleter")}/> Deleter</div>
             </div>
         </div>
         <div className="form-group">

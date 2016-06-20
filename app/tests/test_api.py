@@ -83,3 +83,8 @@ class TestAPI(BaseTestCaseWithData):
         else:
             self.fail('user not existing')
         print('edit user test')
+
+    def __get_file_list_data(self, response):
+        d = Decoder()
+        data = d.decode(response.data)
+        return data.get('data').get('subject_event_files')

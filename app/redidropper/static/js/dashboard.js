@@ -251,6 +251,29 @@ var FilesList = React.createClass({
         };
     },
 
+    deleteFile: function(file_id) {
+        var request = Utils.api_post_json("/api/delete_file", {file_id: file_id}),
+            self = this;
+
+        request.success((json) => {
+            self.setState({
+                list_of_files: self.state.list_of_files.filter((file) => file.id != json.data.file_id)
+            });
+        });
+    },
+
+    toggleCanDelete: function(id) {
+        var toggle = function (file) {
+            if (id === file.id) {
+                file.canDelete = !file.canDelete;
+            }
+            return file
+        };
+        this.setState({
+            list_of_files: this.state.list_of_files.map(toggle)
+        });
+    },
+
     componentWillMount: function() {
         var _this = this;
         var request_data = {
@@ -269,6 +292,7 @@ var FilesList = React.createClass({
             console.log('Failed: ' + textStatus + error);
         });
     },
+
     render: function() {
         return (
         <div className="table-responsive" >
@@ -284,7 +308,7 @@ var FilesList = React.createClass({
                 </thead>
                 <tbody id="technician-table-body">
                 {
-                this.state.list_of_files.map(function(record, i) {
+                this.state.list_of_files.map((record, i) => {
                     return (<tr>
                         <td>{record.file_name}</td>
                         <td>{(record.file_size / (1024 * 1024)).toFixed(2)}</td>
@@ -295,6 +319,18 @@ var FilesList = React.createClass({
                                 <input type="hidden" name="file_id" value={record.id} />
                                 <button className="btn btn-primary">Download File</button>
                             </form>
+                        </td>
+                        <td>
+                            <button
+                            onClick={this.deleteFile.bind(this, record.id)}
+                            disabled={!record.canDelete}
+                            className="btn btn-primary">Delete File</button>
+                        </td>
+                        <td>
+                            Enable delete file? <input type="checkbox"
+                            checked={!!record.canDelete}
+                            onChange={this.toggleCanDelete.bind(this, record.id)}
+                            ></input>
                         </td>
                     </tr>);
                 })}
