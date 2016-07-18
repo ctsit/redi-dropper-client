@@ -81,9 +81,9 @@ var SubjectsTable = React.createClass({
         this.changeData(1, nextProps.max_events);
     },
 
-    getSubjectList: function (page_num, max_events, successCallback, failureCallback) {
+    getSubjectList: function (page_num, max_events, successCallback, failureCallback, resultsPerPage) {
         // if needed we will allow the user to select how many rows to display per page
-        var per_page = 25;
+        var per_page = resultsPerPage || 50;
         var request_data = {'per_page': per_page, 'page_num': page_num};
         var request = Utils.api_post_json("/api/list_local_subjects", request_data);
         var self = this;
@@ -105,7 +105,7 @@ var SubjectsTable = React.createClass({
             failure = function (jqXHR, textStatus, error) {
                 console.log('Failed: ' + textStatus + error);
             };
-        this.getSubjectList(undefined, undefined, success, failure);
+        this.getSubjectList(undefined, undefined, success, failure, 9999);
     },
 
     render: function() {
@@ -152,11 +152,13 @@ var SubjectsTable = React.createClass({
         }
 
     return (
-        <div className="row">
-            <input className="form-control search-subjects" type="text" onChange={this.onInputChange} placeholder="Search Redcap ID"/>
-            {subjects_table}
-            {pagination}
-        </div>
+            <div>
+                <div className="row">
+                    <input className="form-control search-subjects" type="text" onChange={this.onInputChange} placeholder="Search Redcap ID"/>
+                    {subjects_table}
+                </div>
+                {pagination}
+            </div>
     );
   }
 });
