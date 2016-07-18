@@ -8,9 +8,6 @@ from redidropper.database.crud_mixin import CRUDMixin
 
 logger = app.logger
 
-PATH_PREFIX = "/var/www/dropper/app/upload/saved"
-
-
 class SubjectFileEntity(db.Model, CRUDMixin):
     """ Stores the uploaded file metadata """
     __tablename__ = 'SubjectFile'

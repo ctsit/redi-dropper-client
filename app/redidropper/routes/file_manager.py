@@ -23,7 +23,7 @@ from werkzeug import secure_filename
 from redidropper import utils
 from redidropper.main import app, db
 from redidropper.models.subject_entity import SubjectEntity
-from redidropper.models.subject_file_entity import SubjectFileEntity, PATH_PREFIX
+from redidropper.models.subject_file_entity import SubjectFileEntity
 
 logger = app.logger
 
@@ -212,7 +212,7 @@ def delete_file(subject_file_id):
     """
 
     file_entity = SubjectFileEntity.query.filter_by(id=subject_file_id).one()
-    file_path = file_entity.get_full_path(PATH_PREFIX)
+    file_path = file_entity.get_full_path(app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
     os.remove(file_path)
     file_entity.delete()
     db.session.commit()
