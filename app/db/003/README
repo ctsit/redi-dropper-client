@@ -1,0 +1,7 @@
+These database changes are from the editUser feature branch
+
+This schema change adds a unique constraint on the UserRole table to
+prevent duplicate roles for individual users
+
+It also adds a new log type to account for the edit_user api call
+
