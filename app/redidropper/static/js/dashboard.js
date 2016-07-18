@@ -55,7 +55,6 @@ var SubjectsTable = React.createClass({
             subjects: [],
             max_events: this.props.max_events,
             no_of_pages: 0,
-            previous_changeData_args: []
         };
     },
     changePage: function(i) {
@@ -65,7 +64,9 @@ var SubjectsTable = React.createClass({
         var subjects,
             success = (json) => {
                 this.setState({
-                    subjects: json.data.list_of_subjects
+                    subjects: json.data.list_of_subjects,
+                    max_events: this.props.max_events,
+                    no_of_pages: json.data.total_pages,
                 });
             },
             failure = function (jqXHR, textStatus, error) {
