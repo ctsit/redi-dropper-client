@@ -21,7 +21,7 @@ from redidropper.models.log_entity import LogEntity
 from werkzeug import secure_filename
 
 from redidropper import utils
-from redidropper.main import app
+from redidropper.main import app, db
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
 
@@ -203,3 +203,17 @@ def merge_files(fchunk):
         logger.error("There was an issue in merge_files(): {}".format(exc))
 
     return subject_file
+
+def delete_file(subject_file_id):
+    """deletes a particular file
+
+    :rtype tuple
+    :return (subject_file_id, deleted_file_path)
+    """
+
+    file_entity = SubjectFileEntity.query.filter_by(id=subject_file_id).one()
+    file_path = file_entity.get_full_path(app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
+    os.remove(file_path)
+    file_entity.delete()
+    db.session.commit()
+    return (subject_file_id, file_path)

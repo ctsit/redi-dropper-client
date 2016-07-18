@@ -30,7 +30,7 @@ from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
 
-from redidropper.routes.users import perm_admin, perm_admin_or_technician
+from redidropper.routes.users import perm_admin, perm_admin_or_technician, perm_deleter
 
 
 @app.route('/api/list_subject_events', methods=['POST', 'GET'])
@@ -161,6 +161,27 @@ def api_upload():
     @TODO: respond with an error if upload failed
     """
     return make_response(file_manager.save_uploaded_file(), 200)
+
+@app.route('/api/delete_file', methods=['POST'])
+@login_required
+@perm_deleter.require(http_exception=403)
+def api_delete_file():
+    """ Deletes the passed file    """
+    #get the file from the response
+    subject_file_id = request.form.get('file_id')
+
+    try:
+        ret_value = file_manager.delete_file(subject_file_id)
+        deleted_id = ret_value[0]
+        deleted_path = ret_value[1]
+        app.logger.debug("deleted file id: {}".format(subject_file_id))
+        LogEntity.file_deleted(session['uuid'], deleted_path)
+        response = utils.jsonify_success({"file_id": deleted_id})
+
+    except:
+        response = utils.jsonify_error({"exception": ret_value})
+
+    return response
 
 
 @app.route("/api/download_file", methods=['POST'])

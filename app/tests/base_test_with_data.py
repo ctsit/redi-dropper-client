@@ -12,7 +12,7 @@ from redidropper import utils
 from redidropper.main import db
 
 from redidropper.models.role_entity import ROLE_ADMIN, ROLE_TECHNICIAN, \
-    ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
+    ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO, ROLE_DELETER
 from redidropper.models.event_entity import EventEntity
 from redidropper.models.user_entity import UserEntity
 from redidropper.models.role_entity import RoleEntity
@@ -78,7 +78,8 @@ class BaseTestCaseWithData(BaseTestCase):
         role_tech = RoleEntity.create(name=ROLE_TECHNICIAN, description='role')
         role_res1 = RoleEntity.create(name=ROLE_RESEARCHER_ONE, description='')
         role_res2 = RoleEntity.create(name=ROLE_RESEARCHER_TWO, description='')
-        admin_user.roles.extend([role_admin, role_tech, role_res1, role_res2])
+        role_deleter = RoleEntity.create(name=ROLE_DELETER, description='role')
+        admin_user.roles.extend([role_admin, role_tech, role_res1, role_res2, role_deleter])
         tech_user.roles.extend([role_tech])
 
         # == Create subject
