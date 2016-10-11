@@ -1,6 +1,31 @@
 # Change Log
 
 
+## [0.2.0] - 2016-10-11
+
+### New Features
+ * Admin Users can edit existing users.
+ * Deleter users can delete files that exist.
+ * The dashboard is easier to search.
+
+### Changed
+ * Fixes for pagination. (Patrick White)
+ * Use config to find out where the deleted files are (Patrick White)
+ * Delete File changes and additions (Patrick White)
+ * Fixed dashboard presentation. (Patrick White)
+ * Update README.md (Kevin Hanson)
+ * deploy/fabfile.py enhancement to allow for easy database upgrades and downgrades (Patrick White)
+ * Made both the app/fabfile.py and bootstrap_functions.sh apply the most recent database version. (Patrick White)
+ * Edit user logging (ndavuluri)
+ * Unit tests and client side edit form changes (Patrick White)
+ * UserID and Role should be unique, adding an Unique Index for usrID,rolID. (ndavuluri)
+ * Only Admin User is allowed to create and edit User (ndavuluri)
+ * Polling for new subject data (Patrick White)
+ * Filter function for dashboard subject search (Patrick White)
+ * Initial Changes for Edit User:Adding a new route and updating db and loging (ndavuluri)
+ * Edit user changes (Patrick White, ndavuluri)
+
+
 ## [0.1.2] - 2016-04-13
 
 ### Changed
