@@ -182,7 +182,23 @@ def api_delete_file():
         response = utils.jsonify_error({"exception": ret_value})
 
     return response
+    
+@app.route('/api/update_fileType', methods=['POST'])
+@login_required
+def api_update_fileType():
+    """ Deletes the passed file    """
+    #get the file from the response
+    subject_file_id = request.form.get('file_id')
+    subject_file_type = request.form.get('file_type')
+    try:
+        ret_value = file_manager.update_filetype(subject_file_id, subject_file_type)
+        #app.logger.debug("updated file id: {}".format(subject_file_id))
+        response = utils.jsonify_success({"file_id": ret_value[0], "file_type": ret_value[1]})
 
+    except:
+        response = utils.jsonify_error({"exception": ret_value})
+
+    return response
 
 @app.route("/api/download_file", methods=['POST'])
 @login_required
