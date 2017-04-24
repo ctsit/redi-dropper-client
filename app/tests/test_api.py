@@ -19,6 +19,7 @@ from redidropper.models.user_entity import UserEntity
 from redidropper.models.event_entity import EventEntity
 from redidropper.models.subject_entity import SubjectEntity
 from redidropper.models.subject_file_entity import SubjectFileEntity
+import json
 
 class TestAPI(BaseTestCaseWithData):
 
@@ -131,6 +132,11 @@ class TestAPI(BaseTestCaseWithData):
         self.assertEqual(after_edit_file.file_type, "MRI")
         print('update file test')
 
+    def test_all_files_info(self):
+        response = self.client.get("/api/all_files_info")
+        self.assertEqual(response._status_code, 200)
+        jsondata = json.loads(response.data)
+        self.assertGreater(len(jsondata['data']['list_of_files']),1)
 
     def __get_file_list_data(self, response):
         d = Decoder()

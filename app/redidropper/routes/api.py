@@ -216,6 +216,20 @@ def download_file():
     LogEntity.file_downloaded(session['uuid'], file_path)
     return send_file(file_path, as_attachment=True)
 
+@app.route("/api/all_files_info", methods=['GET'])
+#@login_required
+def all_files_info():
+    """ Get the list of all uploaded files and their path """
+    
+    all_files = SubjectFileEntity.query
+    return_list = []
+    for subject_file in all_files:
+        path = subject_file.get_full_path(app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
+        file_json = subject_file.serialize()
+        file_json['path'] = path
+        return_list.append(file_json)
+    return utils.jsonify_success({'list_of_files' : return_list})
+
 def __extract_user_information(request):
     return {
         "email": request.form.get('email'),
