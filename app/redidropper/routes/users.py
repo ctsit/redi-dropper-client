@@ -14,7 +14,7 @@ from flask_login import current_user
 from flask_principal import Principal, Permission, RoleNeed
 
 from redidropper.models.role_entity import \
-    ROLE_ADMIN, ROLE_TECHNICIAN, ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO
+    ROLE_ADMIN, ROLE_TECHNICIAN, ROLE_RESEARCHER_ONE, ROLE_RESEARCHER_TWO, ROLE_DELETER
 from redidropper.main import app
 
 # @TODO: read https://pythonhosted.org/Flask-Security/api.html
@@ -31,6 +31,7 @@ perm_researcher_one = Permission(RoleNeed(ROLE_RESEARCHER_ONE))
 perm_researcher_two = Permission(RoleNeed(ROLE_RESEARCHER_TWO))
 perm_admin_or_technician = Permission(RoleNeed(ROLE_ADMIN),
                                       RoleNeed(ROLE_TECHNICIAN))
+perm_deleter = Permission(RoleNeed(ROLE_DELETER))
 
 
 @app.route('/admin')

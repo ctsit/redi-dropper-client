@@ -28,6 +28,10 @@ Note: if you get errors related to mising "Guest Additions" please try:
 
     vagrant plugin install vagrant-vbguest
 
+If you get errors related to Unknown configuration section 'trigger', please try:
+
+    vagrant plugin install vagrant-triggers
+
 ## Developer's Workflow - Without Vagrant
 
 There are three great tools for python development:
@@ -167,7 +171,7 @@ Steps:
 - Re-upload configuration and code changes by executing one of the following:
 
     $ deploy/deploy.sh -t `tag_number` -r ~/git staging
-    
+
     OR
 
     $ deploy/deploy.sh -t `tag_number` -r ~/git  production

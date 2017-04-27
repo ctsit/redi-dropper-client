@@ -1,0 +1,2 @@
+This change is to add the deleter role to the Role table.
+The deleter role is able to delete files

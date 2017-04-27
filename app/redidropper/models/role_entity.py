@@ -10,6 +10,7 @@ ROLE_ADMIN = 'admin'
 ROLE_TECHNICIAN = 'technician'
 ROLE_RESEARCHER_ONE = 'researcher_one'
 ROLE_RESEARCHER_TWO = 'researcher_two'
+ROLE_DELETER = 'deleter'
 
 
 class RoleEntity(db.Model, CRUDMixin):  # RoleMixin

@@ -33,7 +33,7 @@ class UserEntity(db.Model, UserMixin, CRUDMixin):
     modified_at = db.Column("usrModifiedAt", db.TIMESTAMP, nullable=False)
     email_confirmed_at = db.Column("usrEmailConfirmedAt", db.DateTime,
                                    nullable=False,
-                                   server_default='0000-00-00 00:00:00')
+                                   server_default='1901-10-04 11:17:00')
     active = db.Column("usrIsActive", db.Boolean(), nullable=False,
                        server_default='1')
 

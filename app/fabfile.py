@@ -62,6 +62,8 @@ def init_db():
     local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
     local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
     local('sudo mysql ctsi_dropper_s < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/003/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/004/upgrade.sql')
 
 
 @task
@@ -78,6 +80,8 @@ def reset_db():
     local('sudo mysql ctsi_dropper_s < db/001/upgrade.sql')
     local('sudo mysql ctsi_dropper_s < db/002/upgrade.sql')
     local('sudo mysql ctsi_dropper_s < db/002/data.sql')
+    local('sudo mysql ctsi_dropper_s < db/003/upgrade.sql')
+    local('sudo mysql ctsi_dropper_s < db/004/upgrade.sql')
 
 
 @task

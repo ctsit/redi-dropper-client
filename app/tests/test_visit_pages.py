@@ -55,7 +55,7 @@ class TestVisitPages(BaseTestCaseWithData):
 
             # Skip routes for protcted_pages
             if url in protected_pages:
-                print("Skip special page: {}".format(url))
+                print("Skip protected page: {}".format(url))
                 continue
 
             # Simulate visiting the page
