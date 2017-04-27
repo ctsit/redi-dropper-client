@@ -2,6 +2,7 @@
 Goal: Simulate api calls
 
 Authors:
+    Akash Agarwal <agarwala989@gmail.com
     Patrick White <pfwhite9@gmail.com> <pfwhite@ufl.edu>
 
 """

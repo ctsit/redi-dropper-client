@@ -2,6 +2,7 @@
 Goal: Delegate requests to the `/api` path to the appropriate controller
 
 @authors:
+  Akash Agarwal           <agarwala989@gmail.com
   Andrei Sura             <sura.andrei@gmail.com>
   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
   Sanath Pasumarthy       <sanath@ufl.edu>
@@ -186,7 +187,7 @@ def api_delete_file():
 @app.route('/api/update_fileType', methods=['POST'])
 @login_required
 def api_update_fileType():
-    """ Deletes the passed file    """
+    """ Updates the file type    """
     #get the file from the response
     subject_file_id = request.form.get('file_id')
     subject_file_type = request.form.get('file_type')

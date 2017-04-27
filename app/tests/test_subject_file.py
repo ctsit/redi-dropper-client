@@ -2,6 +2,7 @@
 Goal: test insert/search subject, subject file
 
 Authors:
+    Akash Agarwal <agarwala989@gmail.com
     Andrei Sura <sura.andrei@gmail.com>
 
 """
