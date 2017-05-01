@@ -344,7 +344,11 @@ var FilesList = React.createClass({
                         <td>{record.uploaded_at}</td>
                         <td>{record.user_name}</td>
                         <td>
-                            <select className="dash_drop" value={record.file_type} onChange={this.changeType.bind(this,record.id)}><option value="MRI">MRI</option><option value="PET">PET</option><option value="N/A">N/A</option></select>
+                            <select className="dash_drop" value={record.file_type} onChange={this.changeType.bind(this,record.id)}>
+                                <option value="MRI">MRI</option>
+                                <option value="PET">PET</option>
+                                <option value="N/A">N/A</option>
+                            </select>
                         </td>
                         <td>
                             <form method="POST" action="/api/download_file">

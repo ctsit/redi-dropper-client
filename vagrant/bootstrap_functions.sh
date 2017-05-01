@@ -80,7 +80,7 @@ function install_dropper() {
         mysql ctsi_dropper_s   < db/003/upgrade.sql
         log "Execute sql: db/004/upgrade.sql"
         mysql ctsi_dropper_s   < db/004/upgrade.sql
-	log "Execute sql: db/005/upgrade.sql"
+	    log "Execute sql: db/005/upgrade.sql"
         mysql ctsi_dropper_s   < db/005/upgrade.sql
 	
 	
