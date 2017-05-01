@@ -353,7 +353,7 @@ def mysql_create_tables():
              '002/data.sql',
              '003/upgrade.sql',
              '004/upgrade.sql',
-	         '005/upgrade.sql'	]
+             '005/upgrade.sql'	]
 
     with lcd('../db/'):
         for sql in files:
@@ -379,7 +379,7 @@ def mysql_drop_tables():
                          "The database does not exist" % env))
 
     files = ['005/downgrade.sql',
-	         '004/downgrade.sql',
+             '004/downgrade.sql',
              '003/downgrade.sql',
              '002/downgrade.sql',
              '001/downgrade.sql']

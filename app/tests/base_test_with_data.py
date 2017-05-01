@@ -118,7 +118,7 @@ class BaseTestCaseWithData(BaseTestCase):
                 event_id=fdata['event'],
                 file_name=fdata['name'],
                 file_type="N/A",
-		            file_check_sum=utils.compute_text_md5(fdata['name']),
+                file_check_sum=utils.compute_text_md5(fdata['name']),
                 file_size=fdata['size'],
                 uploaded_at=added_date,
                 user_id=admin_user.id)

@@ -102,12 +102,9 @@ class SubjectFileEntity(db.Model, CRUDMixin):
             'file_check_sum': self.file_check_sum,
             'file_size': self.file_size,
             'file_type': self.file_type,  
-	        'uploaded_at': utils.localize_est_datetime(self.uploaded_at),
+            'uploaded_at': utils.localize_est_datetime(self.uploaded_at),
             'subject_id': self.subject_id,
             'event_id': self.event_id,
             'user_id': self.user_id,
-            'user_name': self.user.get_name(),
-            # 'subject': self.subject.serialize(),
-            # 'event': self.event.serialize(),
-            # 'user': self.user.serialize(),
+            'user_name': self.user.get_name()
         }

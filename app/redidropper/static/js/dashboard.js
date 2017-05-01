@@ -308,8 +308,8 @@ var FilesList = React.createClass({
         });
     },
 
-    changeType: function(file_id){
-        var request = Utils.api_post_json("/api/update_fileType", {file_id: file_id, file_type: event.target.value}),
+    changeType: function(fileId){
+        var request = Utils.api_post_json("/api/update_fileType", {file_id: fileId, file_type: event.target.value}),
             self = this;
 
         request.success((json) => {
@@ -355,7 +355,6 @@ var FilesList = React.createClass({
                         <td>
                             <button
                             onClick={this.deleteFile.bind(this, record.id)}
-                           // disabled={!record.canDelete}
                             className="btn btn-primary">Delete File</button>
                         </td>
                     </tr>);
