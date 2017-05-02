@@ -20,6 +20,7 @@ class SubjectFileEntity(db.Model, CRUDMixin):
     file_name = db.Column("sfFileName", db.String(255), nullable=False)
     file_check_sum = db.Column("sfFileCheckSum", db.String(32), nullable=False)
     file_size = db.Column("sfFileSize", db.String(255), nullable=False)
+    file_type = db.Column("sfFileType", db.String(255), nullable=False)
     uploaded_at = db.Column("sfUploadedAt", db.DateTime, nullable=False,
                             server_default='0000-00-00 00:00:00')
     user_id = db.Column("usrID", db.Integer, db.ForeignKey('User.usrID'),
@@ -100,12 +101,10 @@ class SubjectFileEntity(db.Model, CRUDMixin):
             'file_name': self.file_name,
             'file_check_sum': self.file_check_sum,
             'file_size': self.file_size,
+            'file_type': self.file_type,  
             'uploaded_at': utils.localize_est_datetime(self.uploaded_at),
             'subject_id': self.subject_id,
             'event_id': self.event_id,
             'user_id': self.user_id,
-            'user_name': self.user.get_name(),
-            # 'subject': self.subject.serialize(),
-            # 'event': self.event.serialize(),
-            # 'user': self.user.serialize(),
+            'user_name': self.user.get_name()
         }

@@ -2,6 +2,7 @@
 Goal: Delegate requests to the `/api` path to the appropriate controller
 
 @authors:
+  Akash Agarwal           <agarwala989@gmail.com
   Andrei Sura             <sura.andrei@gmail.com>
   Ruchi Vivek Desai       <ruchivdesai@gmail.com>
   Sanath Pasumarthy       <sanath@ufl.edu>
@@ -182,7 +183,23 @@ def api_delete_file():
         response = utils.jsonify_error({"exception": ret_value})
 
     return response
+    
+@app.route('/api/update_fileType', methods=['POST'])
+@login_required
+def api_update_fileType():
+    """ Updates the file type    """
+    #get the file from the response
+    subject_file_id = request.form.get('file_id')
+    subject_file_type = request.form.get('file_type')
+    try:
+        ret_value = file_manager.update_filetype(subject_file_id, subject_file_type)
+        #app.logger.debug("updated file id: {}".format(subject_file_id))
+        response = utils.jsonify_success({"file_id": ret_value[0], "file_type": ret_value[1]})
 
+    except:
+        response = utils.jsonify_error({"exception": ret_value})
+
+    return response
 
 @app.route("/api/download_file", methods=['POST'])
 @login_required
@@ -199,6 +216,22 @@ def download_file():
         app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
     LogEntity.file_downloaded(session['uuid'], file_path)
     return send_file(file_path, as_attachment=True)
+
+@app.route("/api/all_files_info", methods=['GET'])
+@login_required
+def all_files_info():
+    """ Get the list of all uploaded files and their path """
+    all_files = db.session.query(SubjectFileEntity,EventEntity.redcap_event,SubjectEntity.redcap_id).join(EventEntity).join(SubjectEntity)
+    return_list = [__build_files_info_json(subject_file,event,subject) for subject_file,event,subject in all_files]
+    return utils.jsonify_success({'list_of_files' : return_list})
+
+def __build_files_info_json(subject_file,event,subject):
+    path = subject_file.get_full_path(app.config['REDIDROPPER_UPLOAD_SAVED_DIR'])
+    file_json = subject_file.serialize()
+    file_json['path'] = path
+    file_json['redcap_id'] = subject
+    file_json['redcap_event'] = event
+    return file_json
 
 def __extract_user_information(request):
     return {
