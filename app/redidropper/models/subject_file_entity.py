@@ -101,7 +101,7 @@ class SubjectFileEntity(db.Model, CRUDMixin):
             'file_name': self.file_name,
             'file_check_sum': self.file_check_sum,
             'file_size': self.file_size,
-            'file_type': self.file_type,  
+            'file_type': self.file_type,
             'uploaded_at': utils.localize_est_datetime(self.uploaded_at),
             'subject_id': self.subject_id,
             'event_id': self.event_id,

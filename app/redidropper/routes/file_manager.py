@@ -115,6 +115,11 @@ def save_uploaded_file():
     # When all chunks are received we merge them
     subject_file = merge_files(fchunk)
 
+    """
+    get the path of the file or directory
+    add the directory to a queue
+    """
+
     if subject_file is not None:
         prefix = app.config['REDIDROPPER_UPLOAD_SAVED_DIR']
         file_path = subject_file.get_full_path(prefix)

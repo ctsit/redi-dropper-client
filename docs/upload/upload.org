@@ -1,0 +1,54 @@
+* Scenario
+Tim the file uploader doesnt want to spend a lot of time uploading a files.
+He wants to be able to upload many files at one time and not have to put in subjects or 
+their events one at a time.
+* Implementation
+** Front End
+The front end file upload component will have much of its functionality removed.
+Instead of selecting subjects and events then uploading, we will instead go directly
+to the upload screen and let Tim upload the file. 
+This screen will be reworked to make it more clear when a file is done uploading
+
+*** path to done
+**** DONE working
+CLOSED: [2017-06-15 Thu 12:23]
+**** DONE better communication of files being done
+CLOSED: [2017-06-15 Thu 12:30]
+This could be done simply by decreasing the size of the upload box so we can tell 
+what is happening as it is happening
+**** TODO code refactored to removed dead code
+
+** Back End
+The current back end process requires that there is information submitted with the object
+about the event and subject.
+It will be enhanced so that the subject_file_entity will be saved anyways.
+
+*** path to done
+**** TODO able to save file without haveing a subject or event
+
+** Separate process
+Later on, a separate service will call into the database, find subject files that 
+lack the subject and event information and delegate to polyjuice.
+This different process will update the database as well as clean the file.
+This whole portion needs to be very modular and stand alone.
+Could need to unzip things.
+Will need to be able to infer the event from the date that the image was taken
+
+*** path to done
+**** TODO polyjuice harness which calls the other functionality and pushed to db
+this doesnt necessarily need to use sqlalchemy.
+**** TODO polyjuice enhanced to return data out of image
+maybe this isnt a command line usage, could just be that we import some
+of the polyjuice classes for use in the harness
+**** TODO polyjuice included in vagrant setup and normal deploy processes
+This should be a stand alone script to update an existing deplot
+
+** Displaying the files
+Files without subjects or events will not show up in the normal download workflow.
+However, we need to make sure that they will not cause the server to error.
+When batch downloads become a reality, they will not be able to be pulled down at all
+until the PHI is cleaned and the file has the subject and event information
+
+*** path to done
+**** TODO determine what happens when files exist in the database without subjects or events
+this could be a non-issue depending on the implementation of the backend

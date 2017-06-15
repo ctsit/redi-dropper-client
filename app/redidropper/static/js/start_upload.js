@@ -295,7 +295,8 @@ var NavController = React.createClass({
         var selected_subject_id = "";
         var selected_event_id = "";
         var breadcrumbs = [];
-        var current_tab = this.state.current_tab;
+        // var current_tab = this.state.current_tab;
+        var current_tab = 2;
         var tabs = this.state.tabs;
 
         for(var i = 0; i < tabs.length; i++) {
@@ -317,54 +318,18 @@ var NavController = React.createClass({
         $("#upload-files").hide();
         $("#upload-complete-button").hide();
 
-        if(current_tab === 0) {
-            window.location.hash = 'Subjects';
-            // By passing the "subjectSelected" function to the SubjectsList component
-            // we are allowing the SubjectsList component to execute it when
-            // it is time to change the visible tab
-            visible_tab = <SubjectsList subjectSelected = {this.subjectSelected} />;
-        }
-        else if(current_tab === 1) {
-            selected_subject_id = "Subject ID: " + this.state.subject_id;
-            selected_event_id = "";
-            window.location.hash = 'Events';
-            visible_tab = <EventsTable eventSelected = {this.eventSelected}/>;
-        }
-        else if(current_tab === 2) {
-            selected_subject_id = "Subject ID: " + this.state.subject_id;
-            selected_event_id = "Event: " + this.state.eventEntity.redcap_arm + " " + this.state.eventEntity.redcap_event;
-            window.location.hash = 'Files';
-            $("#upload-files").show();
-            $("#files-list").empty();
+        window.location.hash = 'Files';
+        $("#upload-files").show();
+        $("#files-list").empty();
 
-            // pass data to Resumable object so we can map files to the subject
-            visible_tab = <FilesUpload showFiles = {this.showFiles}
-                subject_id = {this.state.subject_id}
-                eventEntity = {this.state.eventEntity}
-            />;
-        }
+        // pass data to Resumable object so we can map files to the subject
+        visible_tab = <FilesUpload showFiles = {this.showFiles}
+            subject_id = {this.state.subject_id}
+            eventEntity = {this.state.eventEntity}
+        />;
 
         return (
             <div>
-                <div className="panel-heading">
-                    <div id="crumbs">
-                        <ul>
-                            {breadcrumbs}
-                        </ul>
-                    </div>
-                </div>
-                <div className="row">
-                <div className="col-md-offset-4 col-md-4 col-xs-12">
-                <table id="technician-table" className="table borderless">
-                    <thead>
-                    <tr>
-                        <th>{selected_subject_id}</th>
-                        <th>{selected_event_id}</th>
-                     </tr>
-                </thead>
-                </table>
-                </div>
-                </div>
                 <div className="panel-body">
                     {visible_tab}
                 </div>
