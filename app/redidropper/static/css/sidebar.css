@@ -91,7 +91,7 @@
 
 .sidebar-nav li.active  {
     text-decoration: none;
-    background-color: #428bca;
+    background: rgba(255,255,255,0.2);
 }
 
 .sidebar-nav li a:hover {

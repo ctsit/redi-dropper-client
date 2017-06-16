@@ -8,15 +8,7 @@
     <div id="start-upload"> </div>
 
     <div id="upload-files" hidden>
-        <div id="file-drop" class="file-drop-css"
-            ondragenter="jQuery(this).addClass('file-dragover-css');"
-            ondragend="jQuery(this).removeClass('file-dragover-css');"
-            ondrop="jQuery(this).removeClass('file-dragover-css');">
-            Drag files here or,
-            <a id="file-select" class="resumable-browse">
-                <button class="btn btn-primary">Select files</button>
-            </a>
-        </div>
+
 
         <!-- Progress Bar -->
         <div id="file-upload-progress-bar" class="progress" hidden>
@@ -36,12 +28,29 @@
 
         <!-- Upload Finished -->
         <ul class="resumable-list"></ul>
-            <div id="files-status" hidden>
-                <div id="files-list" class="list-group" style="font-size: 2em">
+        <div id="files-status" hidden>
+            <div id="files-list" class="list-group" style="font-size: 2em">
 
-                </div>
             </div>
         </div>
+
+
+        <!-- Upload box area -->
+
+        <div id="file-drop" class="file-drop-css"
+            ondragenter="jQuery(this).addClass('file-dragover-css');"
+            ondragend="jQuery(this).removeClass('file-dragover-css');"
+            ondrop="jQuery(this).removeClass('file-dragover-css');">
+            Drag files here
+            <div class="or">
+                or
+            </div>
+            <a id="file-select" class="resumable-browse">
+                <button class="btn btn-primary">Select files</button>
+            </a>
+        </div>
+
+    </div>
 
 </div>
 
