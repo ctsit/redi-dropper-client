@@ -1,0 +1,5 @@
+vagrant-hostsupdater (1.0.2)
+vagrant-notify-forwarder (0.5.0)
+vagrant-share (1.1.8)
+vagrant-triggers (0.5.3)
+vagrant-vbguest (0.13.0)

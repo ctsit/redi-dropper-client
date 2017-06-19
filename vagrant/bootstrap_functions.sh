@@ -27,6 +27,7 @@ function install_apache_for_python() {
     # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
     apt-get install -y \
         libssl-dev \
+        curl \
         apache2 libapache2-mod-wsgi \
         python-dev python-pip \
         mysql-server libmysqlclient-dev \
