@@ -28,6 +28,7 @@ function install_apache_for_python() {
     apt-get install -y \
         libssl-dev \
         apache2 libapache2-mod-wsgi \
+        curl \
         python-dev python-pip \
         mysql-server libmysqlclient-dev \
         libffi-dev \
