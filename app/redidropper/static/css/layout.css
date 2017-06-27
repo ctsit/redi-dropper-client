@@ -25,6 +25,10 @@
     background-color: #993333;
 }
 
+.purple-background {
+    background-color: #5a4d9a;
+}
+
 a.logo-name:hover, a.logo-name:active,
 ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
     color: #FFF !important;

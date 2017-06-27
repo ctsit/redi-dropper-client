@@ -39,8 +39,17 @@
     padding: 0;
 }
 
+nav.sidenav {
+    padding-right: 0;
+    padding-left: 0;
+}
+
 .hidenav {
-    display: 'none';
+    display: none;
+}
+
+.logo {
+    max-width: 40rem;
 }
 
 @media (max-width: 991px) {
@@ -52,6 +61,10 @@
     }
     .hidenav {
         display: '';
+    }
+
+    .logo {
+        margin: 0 auto;
     }
 }
 
