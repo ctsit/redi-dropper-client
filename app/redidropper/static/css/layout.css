@@ -35,6 +35,23 @@ ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
     color: #FFF !important;
 }
 
+.logo_landing {
+    height: 60px;
+}
+
+.navbar-brand {
+    padding: 0;
+}
+
+.navbar {
+    border: none;
+    margin-bottom: 0;
+}
+
+.btn-default {
+    border: none;
+}
+
 h1, h2 {
     font-family: 'Montserrat', sans-serif;
 }
