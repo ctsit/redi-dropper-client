@@ -31,7 +31,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 #home,
 #image2,
 #image3 {
-  background: no-repeat center center fixed;
+  background: no-repeat center top;
   display: table;
   height: 45vh;
   position: relative;
