@@ -210,8 +210,9 @@
             </nav>
             {% else %}
 
+            <!-- This navbar is for the landing page only, which connects to parallax.html -->
             <nav class="navbar">
-                <div class="container-fluid bg-primary red-background">
+                <div class="container-fluid bg-primary purple-background">
                     <div class="navbar-header">
                         <div class="navbar-brand" href="/">
                             {% if current_user.is_authenticated() %}
@@ -219,7 +220,8 @@
                             title="Logged in as {{ current_user.email }}"
                             class="fa fa-angle-left fa-lg icon-white cursor-pointer"></i>
                             {% endif %}
-                            <a class="logo-name" href="/">Redi Dropper</a>
+                            <a href="/"><img class="logo_landing" src="{{ url_for('static', filename='img/dropper_logo_white_04.svg') }}">
+                            </a>
                         </div>
                     </div>
                 <p>{% block login %} {% endblock %}</p>
