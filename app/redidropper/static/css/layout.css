@@ -48,8 +48,13 @@ ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
     margin-bottom: 0;
 }
 
-.btn-default {
+.btn-default, .btn-primary  {
     border: none;
+}
+
+.form-control:focus {
+    border-color: #20c8ca;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(112, 203, 204);
 }
 
 h1, h2 {

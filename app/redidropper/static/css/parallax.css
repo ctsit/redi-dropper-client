@@ -44,6 +44,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #home {
     background-image: url(/static/img/bottles.jpg);
+    margin-top: -5px;
 }
 
 #image2 {
