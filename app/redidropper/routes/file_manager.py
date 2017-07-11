@@ -44,6 +44,7 @@ class FileChunk(object):
         self.total_size = int(request.form['resumableTotalSize'])
         self.uniqueid = request.form['resumableIdentifier']
         self.file_name = secure_filename(request.form['resumableFilename'])
+        self.file_type = request.form['resumableFileType']
         self.afile = request.files['file']
         self.total_parts = int(request.form['resumableTotalChunks'])
         self.redcap_id = request.form['subject_id']  # @TODO: rename
@@ -73,6 +74,7 @@ def save_file_metadata(fchunk):
         file_name=fchunk.file_name,
         file_check_sum='pending',
         file_size=fchunk.total_size,
+        file_type=fchunk.file_type,
         uploaded_at=added_date,
         user_id=current_user.id)
     logger.debug("Saved metadata to the db: ".format(subject_file))
@@ -217,3 +219,10 @@ def delete_file(subject_file_id):
     file_entity.delete()
     db.session.commit()
     return (subject_file_id, file_path)
+
+def update_filetype(subject_file_id, subject_file_type):
+    """ Updates the type field of the file """
+    file_entity = SubjectFileEntity.query.filter_by(id=subject_file_id).one()
+    file_entity.update(file_type=subject_file_type)
+    db.session.commit()
+    return (subject_file_id, subject_file_type)

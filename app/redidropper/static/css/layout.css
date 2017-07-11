@@ -25,9 +25,85 @@
     background-color: #993333;
 }
 
+.purple-background {
+    /*background-color: #5a4d9a;*/
+    background-color: #4b4080;
+}
+
 a.logo-name:hover, a.logo-name:active,
 ul.sidebar-nav li a:hover, ul.sidebar-nav li a:active {
     color: #FFF !important;
+}
+
+.logo_landing {
+    height: 60px;
+}
+
+.navbar-brand {
+    padding: 0;
+}
+
+.navbar {
+    border: none;
+    margin-bottom: 0;
+}
+
+.btn-default, .btn-primary  {
+    border: none;
+}
+
+.form-control:focus {
+    border-color: #20c8ca;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(112, 203, 204);
+}
+
+h1, h2 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+    font-size: 38px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-family: 'Hind', sans-serif;
+}
+
+body, p, .form-control, a {
+    font-family: 'Hind', sans-serif;
+    font-size: 18px;
+}
+
+a, a:visited { 
+    color: #20c8ca;
+}
+
+a:hover, a:focus {
+    text-decoration: underline;
+    color: #70cbcc;
+}
+
+.btn {
+    background-color: #18a5a6;
+    color: white;
+    font-size: 18px;
+}
+
+.cta {
+    background-color: #ffa110;
+}
+
+.btn.cta:hover, .btn.cta:focus {
+    background-color: #f3c173;
+}
+
+.btn:hover, .btn:focus {
+    background-color: #70cbcc;
+    color: white;
 }
 
 th.header {

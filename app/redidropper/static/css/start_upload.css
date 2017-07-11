@@ -43,7 +43,7 @@ th {
     float: left;
     height: 41px;
     color: #000;
-    background: #D9534F;
+    background: #18a5a6;
     text-align: center;
     padding: 8px 20px 0 40px;
     position: relative;
@@ -56,9 +56,10 @@ th {
     content: "";
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-left: 20px solid #D9534F;
+    border-left: 20px solid #18a5a6;
     position: absolute; right: -20px; top: 0;
     z-index: 1;
+    color: white;
 }
 
 #crumbs ul li a:before {

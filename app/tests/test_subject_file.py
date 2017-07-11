@@ -2,6 +2,7 @@
 Goal: test insert/search subject, subject file
 
 Authors:
+    Akash Agarwal <agarwala989@gmail.com
     Andrei Sura <sura.andrei@gmail.com>
 
 """
@@ -47,7 +48,7 @@ class TestSubjectFile(BaseTestCase):
         evt = EventEntity.create(redcap_arm='Arm 1', redcap_event='Event 1',
                                  added_at=added_date)
 
-        fdata = {'name': 'a.png', 'size': '1MB', 'event': evt.id}
+        fdata = {'name': 'a.png', 'size': '1MB', 'event': evt.id, 'file_type': 'MRI'}
         user = UserEntity.create(email="admin@example.com",
                                  first="",
                                  last="",
@@ -62,6 +63,7 @@ class TestSubjectFile(BaseTestCase):
             file_name=fdata['name'],
             file_check_sum=utils.compute_text_md5(fdata['name']),
             file_size=fdata['size'],
+            file_type=fdata['file_type'],
             uploaded_at=added_date,
             user_id=user.get_id())
         self.assertIsNotNone(subject_file.id)
@@ -74,4 +76,5 @@ class TestSubjectFile(BaseTestCase):
         self.assertEqual(1, actual_count)
 
         sfile = SubjectFileEntity.query.first()
-        self.assertEqual(user.id, sfile.user_id)
+        self.assertEqual(user.id, sfile.user_id) 
+        self.assertEqual('MRI', sfile.file_type)
