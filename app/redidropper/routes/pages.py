@@ -131,6 +131,7 @@ def check_session_id():
             app.logger.error("No row found for sess_id: {}".format(session_id))
 
 
+@app.route('/index', methods=['POST', 'GET'])
 @app.route('/', methods=['POST', 'GET'])
 def index():
     """ Render the login page"""
