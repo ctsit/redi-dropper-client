@@ -262,11 +262,6 @@ var FilesList = React.createClass({
     },
 
     deleteFile: function(file_id) {
-        var confirmed = confirm("Are you sure you want to delete the file?");
-        if(confirmed == false){
-            return;
-        }
-        
         var request = Utils.api_post_json("/api/delete_file", {file_id: file_id}),
             self = this;
 
@@ -308,20 +303,6 @@ var FilesList = React.createClass({
         });
     },
 
-    changeType: function(fileId){
-        var request = Utils.api_post_json("/api/update_fileType", {file_id: fileId, file_type: event.target.value}),
-            self = this;
-
-        request.success((json) => {
-            obj = self.state.list_of_files.find(function(ele){return ele.id==json.data.file_id})
-            obj.file_type=json.data.file_type
-            self.setState({
-                list_of_files: self.state.list_of_files
-            });
-        });
-
-    },
-
     render: function() {
         return (
         <div className="table-responsive" >
@@ -332,7 +313,7 @@ var FilesList = React.createClass({
                         <th className="text-center"> File Size (MB)</th>
                         <th className="text-center"> Uploaded </th>
                         <th className="text-center"> Uploaded By </th>
-                        <th className="text-center"> Image Type </th>
+                        <th className="text-center"></th>
                     </tr>
                 </thead>
                 <tbody id="technician-table-body">
@@ -344,13 +325,6 @@ var FilesList = React.createClass({
                         <td>{record.uploaded_at}</td>
                         <td>{record.user_name}</td>
                         <td>
-                            <select className="dash_drop" value={record.file_type} onChange={this.changeType.bind(this,record.id)}>
-                                <option value="MRI">MRI</option>
-                                <option value="PET">PET</option>
-                                <option value="N/A">N/A</option>
-                            </select>
-                        </td>
-                        <td>
                             <form method="POST" action="/api/download_file">
                                 <input type="hidden" name="file_id" value={record.id} />
                                 <button className="btn btn-primary">Download File</button>
@@ -359,7 +333,14 @@ var FilesList = React.createClass({
                         <td>
                             <button
                             onClick={this.deleteFile.bind(this, record.id)}
+                            disabled={!record.canDelete}
                             className="btn btn-primary">Delete File</button>
+                        </td>
+                        <td>
+                            Enable delete file? <input type="checkbox"
+                            checked={!!record.canDelete}
+                            onChange={this.toggleCanDelete.bind(this, record.id)}
+                            ></input>
                         </td>
                     </tr>);
                 })}

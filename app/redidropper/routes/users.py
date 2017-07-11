@@ -80,7 +80,6 @@ def get_user_links():
         the current_user doe not have a role
     """
     pages = {
-        'home': ('index', '1Florida ADRC RED-I Dropper'),
         'admin': ('admin', 'Manage Users'),
         'logs': ('logs', 'View Logs'),
         'dashboard': ('dashboard', 'View Dashboard'),
@@ -90,8 +89,10 @@ def get_user_links():
         'logout': ('logout', 'Logout'),
     }
     role = get_highest_role()
+    # print "highest role: {}".format(role)
 
-    links = []
+    if role is None:
+        return []
 
     if ROLE_ADMIN == role:
         links = [pages['admin'],

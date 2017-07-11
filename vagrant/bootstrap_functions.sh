@@ -28,7 +28,6 @@ function install_apache_for_python() {
     apt-get install -y \
         libssl-dev \
         apache2 libapache2-mod-wsgi \
-        curl \
         python-dev python-pip \
         mysql-server libmysqlclient-dev \
         libffi-dev \
@@ -81,10 +80,7 @@ function install_dropper() {
         mysql ctsi_dropper_s   < db/003/upgrade.sql
         log "Execute sql: db/004/upgrade.sql"
         mysql ctsi_dropper_s   < db/004/upgrade.sql
-	    log "Execute sql: db/005/upgrade.sql"
-        mysql ctsi_dropper_s   < db/005/upgrade.sql
-	
-	
+
         log "Stop apache in order to disable the default site"
         service apache2 stop
         a2dissite 000-default

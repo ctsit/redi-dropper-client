@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>REDI Dropper</title>
+    <title>REDIDropper</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -15,257 +15,97 @@
     <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/start_upload.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/parallax.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Hind|Montserrat" rel="stylesheet">
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <!--
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+    -->
 
     <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/resumable.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
-    <!-- <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"> </script>
     <script src="{{ url_for('static', filename='js/jquery.anchor.js') }}"></script>
+<!--
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.eot" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.svg" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.ttf" charset="utf-8">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/fonts/glyphicons-halflings-regular.woff" charset="utf-8">
+-->
 
     {% block scripts %}
         <!-- allow to insert page specific js -->
     {% endblock %}
   </head>
 
-  <body>
-    <!-- <div id="wrapper"> -->
-        
+<body>
+{% if current_user.is_authenticated() %}
+    <div id="wrapper">
+{%else%}
+    <div id="wrapper" class="toggled">
+{%endif%}
+
         <!-- Sidebar -->
-    <div class="container-fluid">
-        <div class="row">
-
-            {% if current_user.is_authenticated() %}
-            <nav class="sidenav bg-primary purple-background col-sm-12 col-md-3 col-lg-3">
-                <div class="logo">
-                    <!-- <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/dropper_logo_white_04.svg') }}"></a> -->
-
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 630.1 226.8" style="enable-background:new 0 0 630.1 226.8;" xml:space="preserve">
-<style type="text/css">
-    .st0{fill:#542963;}
-    .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#F6B221;}
-    .st2{fill:#7F3F97;}
-    .st3{fill:#6C2085;}
-    .st4{fill:none;stroke:#6C2085;stroke-width:2;stroke-miterlimit:10;}
-    .st5{fill-rule:evenodd;clip-rule:evenodd;fill:#6C2085;}
-    .st6{fill-rule:evenodd;clip-rule:evenodd;fill:#3C8D40;}
-    .st7{fill-rule:evenodd;clip-rule:evenodd;fill:#E9AC0C;}
-    .st8{fill-rule:evenodd;clip-rule:evenodd;fill:#DD8B19;}
-    .st9{fill-rule:evenodd;clip-rule:evenodd;fill:#54C637;}
-    .st10{fill-rule:evenodd;clip-rule:evenodd;fill:#FDFDFD;}
-    .st11{fill:#FAAF40;stroke:#FAAF40;stroke-miterlimit:10;}
-    .st12{clip-path:url(#SVGID_2_);}
-    .st13{fill:#F6B221;}
-    .st14{clip-path:url(#SVGID_4_);}
-    .st15{clip-path:url(#SVGID_6_);}
-    .st16{clip-path:url(#SVGID_8_);}
-    .st17{fill:#E9AC0C;}
-    .st18{clip-path:url(#SVGID_10_);}
-    .st19{clip-path:url(#SVGID_12_);}
-    .st20{clip-path:url(#SVGID_14_);}
-    .st21{fill:#FFFFFF;}
-    .st22{fill:#f3c173;stroke:#f3c173;stroke-miterlimit:10;}
-    .st23{fill:none;}
-    .st24{fill:none;stroke:#29ABE2;stroke-width:4;stroke-miterlimit:10;}
-    .st25{fill-rule:evenodd;clip-rule:evenodd;fill:#530577;}
-    .st26{fill-rule:evenodd;clip-rule:evenodd;fill:#7F3F97;}
-    .st27{fill:#C19EDB;}
-    .st28{fill:#FEFEFE;}
-    .st29{fill:#020202;}
-    .st30{fill:#FFFFFF;stroke:#FFFFFF;stroke-miterlimit:10;}
-</style>
-<g>
-    <g>
-        <path class="st21" d="M92.9,82.6h35.9v9.2h-23.8v20.6h20.8v9.1h-20.8v29h-12V82.6z"/>
-        <path class="st21" d="M135.1,82.6h12v54.2c0,1.8,0.4,3.1,1.2,3.8c0.8,0.7,2.4,1.1,4.7,1.3v9.2c-2.8,0-5.3-0.2-7.5-0.5
-            s-4.1-1-5.7-2c-1.5-1-2.7-2.4-3.5-4.1c-0.8-1.8-1.2-4.1-1.2-6.9V82.6z"/>
-        <path class="st21" d="M156.7,118.4c0-2,0.2-3.8,0.5-5.4c0.3-1.7,0.9-3.1,1.8-4.4c1.4-2.1,3.5-3.8,6.1-5.1c2.7-1.3,5.9-1.9,9.6-1.9
-            c3.7,0,6.9,0.6,9.6,1.9c2.7,1.3,4.7,3,6.1,5.1c0.9,1.3,1.5,2.7,1.8,4.4c0.3,1.7,0.5,3.5,0.5,5.4v15.9c0,2-0.2,3.8-0.5,5.4
-            c-0.3,1.7-0.9,3.1-1.8,4.4c-1.4,2.1-3.5,3.8-6.1,5.1c-2.7,1.3-5.9,1.9-9.6,1.9c-3.7,0-6.9-0.6-9.6-1.9c-2.7-1.3-4.7-3-6.1-5.1
-            c-0.9-1.3-1.5-2.7-1.8-4.4c-0.3-1.7-0.5-3.5-0.5-5.4V118.4z M168.8,135.8c0,1.8,0.5,3.2,1.6,4.1c1.1,0.9,2.5,1.4,4.3,1.4
-            c1.8,0,3.2-0.5,4.3-1.4c1.1-0.9,1.6-2.3,1.6-4.1v-19c0-1.8-0.5-3.2-1.6-4.1c-1.1-0.9-2.5-1.4-4.3-1.4c-1.8,0-3.2,0.5-4.3,1.4
-            c-1.1,0.9-1.6,2.3-1.6,4.1V135.8z"/>
-        <path class="st21" d="M201.5,102.2h12v5.1c2.4-1.8,4.8-3.2,7.2-4.2c2.4-1,5.3-1.5,8.7-1.5v10.3c-1.2-0.4-2.4-0.6-3.7-0.6
-            c-1.3,0-2.6,0.2-4.1,0.5c-1.5,0.3-2.8,0.9-4,1.8c-1.2,0.8-2.2,1.9-3,3.2c-0.8,1.3-1.2,3-1.2,5v28.7h-12V102.2z"/>
-        <path class="st21" d="M234.3,82.6h12v9.7h-12V82.6z M234.3,102.2h12v48.3h-12V102.2z"/>
-        <path class="st21" d="M280.2,146.1c-0.8,0.7-1.5,1.4-2.2,2c-0.7,0.6-1.5,1.1-2.4,1.6c-0.9,0.4-1.8,0.8-3,1
-            c-1.1,0.3-2.4,0.4-3.9,0.4c-5,0-8.5-1.5-10.5-4.6c-0.7-1.1-1.2-2.4-1.5-4c-0.3-1.6-0.5-3.7-0.5-6.4v-18.4c0-3.5,0.1-6.1,0.4-7.7
-            s0.7-3,1.5-4c1-1.3,2.3-2.3,4-3.1c1.6-0.8,3.9-1.2,6.8-1.2c2.4,0,4.5,0.4,6.3,1.3c1.8,0.9,3.4,2.1,4.8,3.7h0.2V82.6h12v67.9h-12
-            V146.1z M268.3,134.8c0,2,0.5,3.6,1.4,4.8c0.9,1.2,2.4,1.8,4.5,1.8c1.8,0,3.3-0.6,4.4-1.7c1.1-1.1,1.7-2.6,1.7-4.3v-18.8
-            c0-1.5-0.6-2.8-1.7-3.8c-1.1-1-2.6-1.5-4.3-1.5c-2.3,0-3.8,0.6-4.7,1.7c-0.8,1.1-1.2,2.5-1.2,4V134.8z"/>
-        <path class="st21" d="M324.9,145.5h-0.2c-1.6,1.8-3.2,3.1-4.8,4.1c-1.6,1-3.9,1.4-6.8,1.4c-1.4,0-2.9-0.2-4.4-0.5
-            c-1.5-0.3-2.9-1-4.2-1.9c-1.3-0.9-2.4-2.2-3.2-3.9c-0.8-1.7-1.2-3.9-1.2-6.5c0-2.7,0.3-5.1,0.8-7.2c0.5-2.1,1.6-3.8,3-5.1
-            c1.5-1.4,3.4-2.4,5.8-3c2.4-0.7,5.5-1,9.3-1c0.9,0,1.7,0,2.6,0.1c0.9,0.1,1.9,0.1,3.2,0.2V117c0-1.7-0.4-3-1.3-4.1
-            c-0.9-1.1-2.4-1.6-4.7-1.6c-1.6,0-3,0.4-4.3,1.2c-1.3,0.8-2.1,2-2.5,3.6h-11.7c0.4-4.4,2.2-7.9,5.4-10.5c1.6-1.3,3.5-2.3,5.7-3
-            c2.2-0.7,4.7-1.1,7.4-1.1c2.5,0,4.9,0.3,7.1,1c2.2,0.6,4.1,1.6,5.7,2.9c1.6,1.3,2.9,2.9,3.8,4.8c0.9,1.9,1.4,4.1,1.4,6.7v33.6h-12
-            V145.5z M324.9,129.7c-1.3-0.2-2.4-0.3-3.3-0.3c-2.6,0-4.8,0.5-6.7,1.5c-1.8,1-2.8,2.8-2.8,5.4c0,1.8,0.5,3.3,1.7,4.5
-            c1.1,1.1,2.6,1.7,4.6,1.7c2,0,3.6-0.5,4.8-1.6c1.1-1.1,1.7-2.6,1.7-4.6V129.7z"/>
-    </g>
-    <g>
-        <polygon class="st22" points="598,91.6 567.5,109.5 563,87.6         "/>
-        <polygon class="st22" points="598.5,133.6 563.4,138 567.9,116.1         "/>
-        <polygon class="st22" points="551.4,27.7 544.5,62.4 525.1,51.3      "/>
-        <polygon class="st22" points="510,15.4 519.4,49.5 497,48.1      "/>
-        <polygon class="st22" points="582.2,55.9 561.7,84.7 548.6,66.6      "/>
-        <polygon class="st22" points="467.7,22.4 490.2,49.7 469.2,57.6      "/>
-        <polygon class="st22" points="432.2,46.6 464.1,61.7 448.6,77.8      "/>
-    </g>
-    <g>
-        <path class="st21" d="M58,95.8l-21.6,12.8V90.2L58,77.3h21.6v121.9H58V95.8z"/>
-    </g>
-    <g>
-        <path class="st21" d="M92.8,199.8v-38.9h18.6c1.9,0,3.6,0.4,5.2,1.1c1.6,0.7,3,1.6,4.1,2.8c1.2,1.1,2.1,2.5,2.7,3.9
-            c0.6,1.5,1,2.9,1,4.4c0,1.4-0.2,2.8-0.7,4.1c-0.5,1.3-1.1,2.5-2,3.5c-0.8,1-1.9,1.9-3.1,2.6s-2.5,1.2-4,1.5l10.8,15h-4.9
-            l-10.3-14.3h-13v14.3H92.8z M97.1,182h14.4c1.3,0,2.4-0.2,3.5-0.7s1.9-1.2,2.7-2c0.7-0.8,1.3-1.8,1.7-2.8c0.4-1.1,0.6-2.2,0.6-3.3
-            c0-1.2-0.2-2.3-0.7-3.4c-0.5-1.1-1.1-2-1.9-2.8c-0.8-0.8-1.8-1.4-2.8-1.9c-1.1-0.5-2.2-0.7-3.4-0.7h-14V182z"/>
-        <path class="st21" d="M165.8,196.4v3.4h-29.5v-38.9h29v3.4h-24.6v14h21.5v3.2h-21.5v14.8H165.8z"/>
-        <path class="st21" d="M177.1,199.8v-38.9H192c3.5,0,6.6,0.5,9.2,1.5c2.6,1,4.8,2.4,6.6,4.2c1.8,1.8,3.1,3.8,4,6.2
-            c0.9,2.4,1.3,4.9,1.3,7.5c0,3-0.5,5.6-1.5,8c-1,2.4-2.4,4.4-4.2,6.1s-4,3-6.6,3.9c-2.6,0.9-5.5,1.4-8.7,1.4H177.1z M208.7,180.3
-            c0-2.3-0.4-4.5-1.1-6.4c-0.7-2-1.8-3.6-3.2-5.1s-3.2-2.5-5.2-3.3s-4.4-1.2-7.1-1.2h-10.6v32.1H192c2.7,0,5.1-0.4,7.2-1.2
-            s3.8-2,5.2-3.4s2.5-3.1,3.2-5.1C208.3,184.7,208.7,182.6,208.7,180.3z"/>
-        <path class="st21" d="M222.9,186.6v-3.5H241v3.5H222.9z"/>
-        <path class="st21" d="M253.6,199.8v-38.9h4.3v38.9H253.6z"/>
-        <path class="st21" d="M290.9,199.8v-38.9h14.9c3.5,0,6.6,0.5,9.2,1.5c2.6,1,4.8,2.4,6.6,4.2c1.8,1.8,3.1,3.8,4,6.2
-            c0.9,2.4,1.3,4.9,1.3,7.5c0,3-0.5,5.6-1.5,8c-1,2.4-2.4,4.4-4.2,6.1s-4,3-6.6,3.9c-2.6,0.9-5.5,1.4-8.7,1.4H290.9z M322.5,180.3
-            c0-2.3-0.4-4.5-1.1-6.4c-0.7-2-1.8-3.6-3.2-5.1s-3.2-2.5-5.2-3.3s-4.4-1.2-7.1-1.2h-10.6v32.1h10.6c2.7,0,5.1-0.4,7.2-1.2
-            s3.8-2,5.2-3.4s2.5-3.1,3.2-5.1C322.2,184.7,322.5,182.6,322.5,180.3z"/>
-        <path class="st21" d="M353.5,174.5c-2.8,0.1-5.3,0.8-7.4,2.1c-2.1,1.3-3.6,3.1-4.5,5.4v17.7h-4.2v-28.5h4v6.8
-            c1.2-2.2,2.8-3.9,4.8-5.1c2-1.2,4.2-1.9,6.5-1.9c0.3,0,0.6,0,0.8,0.1V174.5z"/>
-        <path class="st21" d="M374.3,200.3c-2.4,0-4.5-0.4-6.4-1.2c-1.9-0.8-3.6-1.9-5-3.2c-1.4-1.3-2.5-2.9-3.3-4.7
-            c-0.8-1.8-1.2-3.7-1.2-5.6c0-2,0.4-3.9,1.2-5.7c0.8-1.8,1.9-3.4,3.3-4.7c1.4-1.3,3.1-2.4,5-3.2c1.9-0.8,4.1-1.2,6.4-1.2
-            c2.3,0,4.4,0.4,6.4,1.2c2,0.8,3.7,1.9,5.1,3.2c1.4,1.4,2.5,2.9,3.3,4.7c0.8,1.8,1.2,3.7,1.2,5.7c0,2-0.4,3.9-1.2,5.6
-            c-0.8,1.8-1.9,3.4-3.3,4.7c-1.4,1.4-3.1,2.4-5.1,3.2C378.8,199.9,376.7,200.3,374.3,200.3z M362.6,185.6c0,1.6,0.3,3.1,0.9,4.5
-            c0.6,1.4,1.5,2.6,2.5,3.6c1.1,1,2.3,1.9,3.7,2.4c1.4,0.6,2.9,0.9,4.5,0.9s3.1-0.3,4.5-0.9c1.4-0.6,2.7-1.4,3.7-2.5
-            c1.1-1,1.9-2.3,2.5-3.6c0.6-1.4,0.9-2.9,0.9-4.5c0-1.6-0.3-3.1-0.9-4.5s-1.5-2.6-2.5-3.7c-1.1-1-2.3-1.9-3.7-2.5s-2.9-0.9-4.5-0.9
-            s-3.1,0.3-4.5,0.9c-1.4,0.6-2.6,1.4-3.7,2.5c-1.1,1.1-1.9,2.3-2.5,3.7C362.9,182.5,362.6,184,362.6,185.6z"/>
-        <path class="st21" d="M416.9,200.3c-2.7,0-5.1-0.6-7.2-1.8c-2.1-1.2-3.8-2.8-5-4.6v17.6h-4.2v-40.2h3.8v5.5c1.3-1.8,3-3.2,5.1-4.4
-            s4.4-1.7,6.9-1.7c2.2,0,4.3,0.4,6.1,1.2c1.9,0.8,3.5,1.9,4.8,3.3s2.4,2.9,3.2,4.7c0.8,1.8,1.1,3.6,1.1,5.5c0,2-0.4,3.9-1.1,5.7
-            c-0.7,1.8-1.7,3.4-3,4.7c-1.3,1.4-2.8,2.4-4.6,3.2C421.1,199.9,419.1,200.3,416.9,200.3z M415.8,197c1.7,0,3.3-0.3,4.7-1
-            s2.6-1.5,3.7-2.6c1-1.1,1.8-2.3,2.3-3.7s0.8-2.8,0.8-4.2c0-1.5-0.3-3-0.9-4.4c-0.6-1.4-1.5-2.6-2.5-3.7c-1.1-1.1-2.3-1.9-3.8-2.5
-            c-1.5-0.6-3-0.9-4.7-0.9c-1.1,0-2.2,0.2-3.4,0.6c-1.2,0.4-2.3,0.9-3.3,1.5c-1,0.6-1.9,1.4-2.6,2.2c-0.7,0.9-1.2,1.8-1.3,2.7v8.8
-            c0.5,1,1.1,2,1.9,2.8c0.8,0.9,1.6,1.6,2.6,2.3c1,0.6,2,1.1,3.1,1.5C413.4,196.8,414.6,197,415.8,197z"/>
-        <path class="st21" d="M458.2,200.3c-2.7,0-5.1-0.6-7.2-1.8c-2.1-1.2-3.8-2.8-5-4.6v17.6h-4.2v-40.2h3.8v5.5c1.3-1.8,3-3.2,5.1-4.4
-            s4.4-1.7,6.9-1.7c2.2,0,4.3,0.4,6.1,1.2c1.9,0.8,3.5,1.9,4.8,3.3s2.4,2.9,3.2,4.7c0.8,1.8,1.1,3.6,1.1,5.5c0,2-0.4,3.9-1.1,5.7
-            c-0.7,1.8-1.7,3.4-3,4.7c-1.3,1.4-2.8,2.4-4.6,3.2C462.3,199.9,460.4,200.3,458.2,200.3z M457,197c1.7,0,3.3-0.3,4.7-1
-            s2.6-1.5,3.7-2.6c1-1.1,1.8-2.3,2.3-3.7s0.8-2.8,0.8-4.2c0-1.5-0.3-3-0.9-4.4c-0.6-1.4-1.5-2.6-2.5-3.7c-1.1-1.1-2.3-1.9-3.8-2.5
-            c-1.5-0.6-3-0.9-4.7-0.9c-1.1,0-2.2,0.2-3.4,0.6c-1.2,0.4-2.3,0.9-3.3,1.5c-1,0.6-1.9,1.4-2.6,2.2c-0.7,0.9-1.2,1.8-1.3,2.7v8.8
-            c0.5,1,1.1,2,1.9,2.8c0.8,0.9,1.6,1.6,2.6,2.3c1,0.6,2,1.1,3.1,1.5C454.7,196.8,455.8,197,457,197z"/>
-        <path class="st21" d="M496.9,200.3c-2.4,0-4.5-0.4-6.5-1.2c-2-0.8-3.7-1.9-5.1-3.2c-1.4-1.4-2.6-2.9-3.4-4.7
-            c-0.8-1.8-1.2-3.7-1.2-5.8c0-2,0.4-3.9,1.2-5.7c0.8-1.8,1.9-3.3,3.3-4.7c1.4-1.3,3.1-2.4,5.1-3.2c2-0.8,4.1-1.2,6.4-1.2
-            c2.4,0,4.5,0.4,6.5,1.2c2,0.8,3.6,1.9,5,3.2c1.4,1.4,2.5,2.9,3.3,4.7c0.8,1.8,1.2,3.6,1.2,5.6c0,0.3,0,0.6,0,0.9
-            c0,0.3,0,0.5-0.1,0.6h-27.6c0.1,1.5,0.5,2.9,1.2,4.2s1.6,2.4,2.6,3.4c1.1,1,2.3,1.7,3.7,2.2c1.4,0.5,2.9,0.8,4.4,0.8
-            c1,0,2.1-0.1,3.1-0.4c1-0.3,2-0.6,2.8-1c0.9-0.4,1.6-1,2.4-1.6c0.7-0.6,1.2-1.3,1.6-2.1l3.7,0.9c-0.5,1.1-1.2,2-2.1,2.9
-            c-0.9,0.9-2,1.6-3.2,2.2c-1.2,0.6-2.5,1.1-4,1.5C500,200.1,498.5,200.3,496.9,200.3z M508.8,184c-0.1-1.5-0.5-2.9-1.2-4.2
-            c-0.7-1.3-1.5-2.3-2.6-3.3c-1.1-0.9-2.3-1.6-3.7-2.1c-1.4-0.5-2.9-0.8-4.4-0.8c-1.6,0-3.1,0.3-4.5,0.8c-1.4,0.5-2.6,1.2-3.7,2.1
-            c-1.1,0.9-1.9,2-2.5,3.3c-0.6,1.3-1,2.7-1.1,4.2H508.8z"/>
-        <path class="st21" d="M538.5,174.5c-2.8,0.1-5.3,0.8-7.4,2.1c-2.1,1.3-3.6,3.1-4.5,5.4v17.7h-4.2v-28.5h4v6.8
-            c1.2-2.2,2.8-3.9,4.8-5.1c2-1.2,4.2-1.9,6.5-1.9c0.3,0,0.6,0,0.8,0.1V174.5z"/>
-    </g>
-    <g>
-        <path class="st21" d="M372.8,83.6h9.9l18.5,66.9h-11.9l-3.5-14.4h-16.2l-3.5,14.4h-11.9L372.8,83.6z M377.8,102.8h-0.2l-5.8,24.3
-            h11.9L377.8,102.8z"/>
-        <path class="st21" d="M407,83.6h17.6c6.8,0,11.9,1.5,15.5,4.6c3.6,3,5.4,7.3,5.4,12.7v31.3c0,6.3-1.9,10.9-5.6,13.9
-            c-3.8,3-9.2,4.5-16.2,4.5H407V83.6z M418.9,141.5h5.5c3.3,0,5.7-0.7,7.1-2c1.4-1.3,2.1-3.5,2.1-6.3v-32.2c0-2.6-0.7-4.7-2-6.1
-            c-1.3-1.4-3.7-2.2-7.2-2.2h-5.5V141.5z"/>
-        <path class="st21" d="M456.6,83.6h19.1c14,0,21,6.5,21,19.6c0,3.9-0.8,7.2-2.3,10c-1.5,2.8-4.2,5-8,6.7l12.8,30.5h-12.6
-            l-11.1-28.6h-7.1v28.6h-11.9V83.6z M468.5,113.5h6.8c2.1,0,3.8-0.2,5-0.7c1.2-0.5,2.2-1.1,2.9-2c0.7-0.9,1.1-2,1.3-3.2
-            c0.2-1.3,0.3-2.8,0.3-4.5c0-1.7-0.1-3.2-0.3-4.5c-0.2-1.3-0.7-2.4-1.5-3.3c-0.7-0.9-1.8-1.6-3.1-2c-1.3-0.4-3.1-0.7-5.2-0.7h-6.2
-            V113.5z"/>
-        <path class="st21" d="M543.9,135.6c0,2.1-0.5,4-1.5,5.9c-1,1.9-2.3,3.5-4,4.9c-1.7,1.4-3.7,2.5-6,3.4c-2.3,0.8-4.8,1.3-7.4,1.3
-            c-2.3,0-4.5-0.3-6.9-0.8c-2.3-0.5-4.4-1.4-6.3-2.6c-1.9-1.2-3.4-2.8-4.6-4.8c-1.2-2-1.8-4.5-1.8-7.6V98.4c0-2.2,0.5-4.2,1.4-6.1
-            c0.9-1.9,2.2-3.5,4-4.9c1.7-1.4,3.7-2.5,6.1-3.2c2.4-0.8,5-1.2,7.9-1.2c2.7,0,5.2,0.4,7.6,1.2c2.3,0.8,4.3,1.9,6.1,3.3
-            c1.7,1.4,3,3.1,4,5.1c1,2,1.5,4.1,1.5,6.4v3.8h-11.9v-3.2c0-1.9-0.7-3.5-2-4.9c-1.3-1.4-3.1-2.1-5.4-2.1c-3,0-4.9,0.7-5.9,2.2
-            c-1,1.5-1.5,3.3-1.5,5.6v34.2c0,1.9,0.5,3.6,1.6,4.9s2.9,2,5.6,2c0.8,0,1.6-0.1,2.5-0.3c0.9-0.2,1.7-0.6,2.4-1.1
-            c0.7-0.5,1.3-1.2,1.8-2.1c0.5-0.9,0.7-2,0.7-3.3v-3.3h11.9V135.6z"/>
-    </g>
-</g>
-</svg>
-
-
-
-
-
-
-
-                    
-                    <button class="hidenav" onclick="document.querySelector('#sidebar-nav').style.display='none';">menu</button>
-                </div>
-                <ul id="sidebar-nav" class="sidebar-nav" >
-                    {% for link in user_links %}
+        <div id="sidebar-wrapper" class="bg-primary red-background">
+            <ul class="sidebar-nav">
+                {% for link in user_links %}
                     {{ render_nav_link(link[0], link[1]) }}
-                    {% endfor %}
-                </ul>
-            </nav>
-            {% else %}
+                {% endfor %}
+            </ul>
+        </div>
 
-            <!-- This navbar is for the landing page only, which connects to parallax.html -->
+        <div id="page-content-wrapper">
             <nav class="navbar">
-                <div class="container-fluid bg-primary purple-background">
+                <div class="container-fluid bg-primary red-background">
                     <div class="navbar-header">
                         <div class="navbar-brand" href="/">
                             {% if current_user.is_authenticated() %}
-                            <i id="menu-toggle"
-                            title="Logged in as {{ current_user.email }}"
-                            class="fa fa-angle-left fa-lg icon-white cursor-pointer"></i>
+                                <i id="menu-toggle"
+                                    title="Logged in as {{ current_user.email }}"
+                                    class="fa fa-angle-left fa-lg icon-white cursor-pointer"></i>
                             {% endif %}
-                            <a href="/"><img class="logo_landing" src="{{ url_for('static', filename='img/dropper_logo_white_04.svg') }}">
-                            </a>
+                            <a class="logo-name" href="/">Redi Dropper</a>
                         </div>
                     </div>
-                <p>{% block login %} {% endblock %}</p>
+                    <p>{% block login %} {% endblock %}</p>
                 </div>
             </nav>
+            <div class="col-sm-12 col-md-12 col-lg-12 main-content">
+                {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
 
-            {%endif%}
-
-            <div class="
-                        {% if current_user.is_authenticated() %}
-                        col-sm-12 col-md-9 col-lg-9
-                        {%else%}
-                        col-sm-12 col-md-12 col-lg-12
-                        {%endif%}
-                        main-content">
-                    {% with errors = get_flashed_messages(category_filter=["error"]) %}
-                        {% if errors %}
-                        <div class="alert-message block-message error">
-                            <a class="close" href="#">×</a>
-                            <ul>
-                                {%- for msg in errors %}
-                                <li>{{ msg }}</li>
-                                {% endfor -%}
-                            </ul>
-                        </div>
-                        {% endif %}
-                    {% endwith %}
-
-                    {% block content %}
-                    {% endblock %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="navbar-default navbar-fixed-bottom">
-                <div class=" text-center footer">
-                    <a href="https://www.ctsi.ufl.edu/research/study-development/informatics-consulting/">CTS-IT</a>
-                at the University of Florida
-                &middot; All Rights Reserved
-                &middot; <a href="https://github.com/ctsit/redi-dropper-client/tree/{{config['APP_VERSION']}}">Version {{config['APP_VERSION']}}</a>
+                <div class="alert-message block-message error">
+                    <a class="close" href="#">×</a>
+                    <ul>
+                        {%- for msg in errors %}
+                        <li>{{ msg }}</li>
+                        {% endfor -%}
+                    </ul>
                 </div>
+                {% endif %}
+                {% endwith %}
+
+
+                {% block content %}
+                {% endblock %}
             </div>
         </div>
     </div>
 
+    <div class="navbar-default navbar-fixed-bottom">
+        <div class="container text-center footer">
+<a href="https://www.ctsi.ufl.edu/research/study-development/informatics-consulting/">CTS-IT</a>
+            at the University of Florida
+            &middot; All Rights Reserved
+            &middot; <a href="https://github.com/ctsit/redi-dropper-client/tree/{{config['APP_VERSION']}}">Version {{config['APP_VERSION']}}</a>
+        </div>
+    </div>
 
 </body>
 </html>

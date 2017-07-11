@@ -454,7 +454,6 @@
       $.file = file;
       $.fileName = file.fileName||file.name; // Some confusion in different versions of Firefox
       $.size = file.size;
-      $.fileType = 'N/A';
       $.relativePath = file.webkitRelativePath || file.relativePath || $.fileName;
       $.uniqueIdentifier = $h.generateUniqueIdentifier(file);
       $._pause = false;
@@ -681,7 +680,6 @@
         params.push(['resumableType', encodeURIComponent($.fileObjType)].join('='));
         params.push(['resumableIdentifier', encodeURIComponent($.fileObj.uniqueIdentifier)].join('='));
         params.push(['resumableFilename', encodeURIComponent($.fileObj.fileName)].join('='));
-        params.push(['resumableFileType', encodeURIComponent($.fileObj.fileType)].join('='));
         params.push(['resumableRelativePath', encodeURIComponent($.fileObj.relativePath)].join('='));
         params.push(['resumableTotalChunks', encodeURIComponent($.fileObj.chunks.length)].join('='));
 
@@ -769,7 +767,6 @@
           resumableType: $.fileObjType,
           resumableIdentifier: $.fileObj.uniqueIdentifier,
           resumableFilename: $.fileObj.fileName,
-          resumableFileType: $.fileObj.fileType,
           resumableRelativePath: $.fileObj.relativePath,
           resumableTotalChunks: $.fileObj.chunks.length
         };
