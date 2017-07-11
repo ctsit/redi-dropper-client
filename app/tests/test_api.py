@@ -2,7 +2,6 @@
 Goal: Simulate api calls
 
 Authors:
-    Akash Agarwal <agarwala989@gmail.com
     Patrick White <pfwhite9@gmail.com> <pfwhite@ufl.edu>
 
 """
@@ -13,14 +12,8 @@ from flask import url_for
 from .base_test_with_data import BaseTestCaseWithData
 from redidropper.main import app
 from redidropper.main import db
-from datetime import datetime
 
-from redidropper import utils
 from redidropper.models.user_entity import UserEntity
-from redidropper.models.event_entity import EventEntity
-from redidropper.models.subject_entity import SubjectEntity
-from redidropper.models.subject_file_entity import SubjectFileEntity
-import json
 
 class TestAPI(BaseTestCaseWithData):
 
@@ -90,54 +83,6 @@ class TestAPI(BaseTestCaseWithData):
         else:
             self.fail('user not existing')
         print('edit user test')
-
-    def test_update_fileType(self):
-        """ Verify that we can change file type"""
-        res_login = self.__login("admin@example.com")
-
-        added_date = datetime.today()
-        subject = SubjectEntity.create(
-            redcap_id="002",
-            added_at=added_date,
-            last_checked_at=added_date,
-            was_deleted=0)
-
-        # == Create events
-        evt = EventEntity.create(redcap_arm='Arm 2',
-                                 redcap_event='Event 2',
-                                 day_offset=1,
-                                 added_at=added_date)
-
-        files = [
-            {'name': 'x.png', 'size': '123', 'event': evt.id},
-            {'name': 'y.png', 'size': '1234', 'event': evt.id}
-        ]
-
-        for fdata in files:
-            subject_file = SubjectFileEntity.create(
-                subject_id=subject.id,
-                event_id=fdata['event'],
-                file_name=fdata['name'],
-                file_type="N/A",
-                file_check_sum=utils.compute_text_md5(fdata['name']),
-                file_size=fdata['size'],
-                uploaded_at=added_date,
-                user_id='1')
-
-        file_entity = SubjectFileEntity.query.filter_by(file_name='x.png').one()
-        postdata = {'file_id': file_entity.id, 'file_type': 'MRI'}
-        response = self.client.post("/api/update_fileType", data=postdata)
-        self.assertEqual(response._status_code, 200)
-
-        after_edit_file = SubjectFileEntity.query.filter_by(file_name='x.png').one()
-        self.assertEqual(after_edit_file.file_type, "MRI")
-        print('update file test')
-
-    def test_all_files_info(self):
-        response = self.client.get("/api/all_files_info")
-        self.assertEqual(response._status_code, 200)
-        jsondata = json.loads(response.data)
-        self.assertGreater(len(jsondata['data']['list_of_files']),1)
 
     def __get_file_list_data(self, response):
         d = Decoder()
