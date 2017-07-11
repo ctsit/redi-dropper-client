@@ -91,6 +91,8 @@ def get_user_links():
     }
     role = get_highest_role()
 
+    links = []
+
     if ROLE_ADMIN == role:
         links = [pages['admin'],
                  pages['upload_files'],
@@ -103,9 +105,8 @@ def get_user_links():
     elif ROLE_RESEARCHER_TWO == role:
         links = [pages['res_two']]
 
-    # links.insert(0, pages['home'])
     links.append(pages['logout'])
-    return links if role else []
+    return links
 
 
 @app.route('/dashboard')
