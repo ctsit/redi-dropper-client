@@ -43,7 +43,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #home {
-    background-image: url(/static/img/bottles.jpg);
+    background-image: url(/static/img/bottles_test2.jpg);
     margin-top: -5px;
 }
 
@@ -56,7 +56,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     filter: FlipV;
 }
 
-#about, #features, #signup, #github, #help, #support {
+#about, #features, #signup, #github, #help, #footer {
   position: relative;
 }
 
@@ -107,9 +107,9 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }*/
 
 
-#features {
-    height: 100vh;
-    background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed;
+#features  {
+    height: 90vh;
+    background: url(/static/img/gradient_bg.png) no-repeat center center fixed;
     display: table;
     width: 100%;
     -webkit-background-size: cover;
@@ -118,25 +118,56 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     background-size: cover;
 }
 
+#help  {
+    height: 90vh;
+    background: url(/static/img/oil_opacity.jpg) no-repeat center center fixed;
+    display: table;
+    width: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.help_bg {
+    background: rgba(237, 235, 220, 0.74);
+    padding: 30px;
+}
+
+.signup_border {
+    border: #8eb7b7 inset 8px;
+    padding: 12rem 3rem;
+}
+
+.ul_features {
+  list-style-type: none;
+  text-align: left;
+  font-weight: 900;
+}
+
+.ul_features p {
+  font-weight: 400; 
+}
+
 #github {
   height: 25vh;
   background-color: #4b4080;
   color: white;
 }
 
-#help {
+/*#help {
   background-color: #993333;
   color: #ffffff;
   height: 100vh;
-}
+}*/
 
-#support {
+#footer {
   height: 50vh;
 }
 
 /*So that all content and icon is visible on smaller screens*/
 @media all and (max-width: 1000px) {
-  #about, #features, #signup, #github, #help, #support, #image2, #image3 {
+  #about, #features, #signup, #github, #help, #footer, #image2, #image3 {
     min-height: 100vh;
   }
   #home {
