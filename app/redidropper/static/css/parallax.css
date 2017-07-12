@@ -56,9 +56,12 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     filter: FlipV;
 }
 
+#about, #features, #signup, #github, #help, #support {
+  position: relative;
+}
+
 #about {
   height: 55vh;
-  position: relative;
 }
 
 #scrolldownicon a {
@@ -84,11 +87,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #signup {
-  position: relative;
-  height: 100vh;
+  height: 50vh;
 }
 
-#signup .glyphicon {
+/*#signup .glyphicon {
   border: 2px solid #FFFFFF;
   border-radius: 50%;
   display: inline-block;
@@ -102,14 +104,13 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #signup a {
   color: #FFFFFF;
-}
+}*/
 
 
 #features {
     height: 100vh;
     background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed;
     display: table;
-    position: relative;
     width: 100%;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -121,62 +122,22 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   height: 50vh;
 }
 
-#github {
-  position: relative;
-  top: 10%;
-}
-
 #help {
   background-color: #993333;
   color: #ffffff;
   height: 100vh;
 }
 
-#help {
-  position: relative;
-  top: 10%;
-}
-
 #support {
-  height: 100vh;
-}
-
-#support .container {
-  position: relative;
-  top: 5%;
-}
-
-#support button {
-  color: #FFFFFF;
+  height: 50vh;
 }
 
 /*So that all content and icon is visible on smaller screens*/
 @media all and (max-width: 1000px) {
+  #about, #features, #signup, #github, #help, #support, #image2, #image3 {
+    min-height: 100vh;
+  }
   #home {
-    height: 600px;
-  }
-  #about {
-    height: 600px;
-  }
-  #features {
-    height: 600px;
-  }
-  #signup {
-    height: 600px;
-  }
-  #gettingstarted {
-    height: 600px;
-  }
-  #help {
-    height: 600px;
-  }
-  #support {
-    height: 600px;
-  }
-  #image2 {
-    height: 600px;
-  }
-  #image3 {
-    height: 600px;
+    min-height: 45vh;
   }
 }
