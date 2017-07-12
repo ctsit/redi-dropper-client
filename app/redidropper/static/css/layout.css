@@ -68,17 +68,17 @@ h2 {
     font-size: 28px;
 }
 
-h3 {
+h3, body, p, .form-control, a {
     font-family: 'Hind', sans-serif;
 }
 
-body, p, .form-control, a {
-    font-family: 'Hind', sans-serif;
+body, p, .form-control {
     font-size: 18px;
 }
 
 a, a:visited { 
     color: #20c8ca;
+    font-size: inherit;
 }
 
 a:hover, a:focus {
@@ -86,7 +86,7 @@ a:hover, a:focus {
     color: #70cbcc;
 }
 
-.btn {
+.btn, a.btn {
     background-color: #18a5a6;
     color: white;
     font-size: 18px;

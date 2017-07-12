@@ -119,7 +119,9 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #github {
-  height: 50vh;
+  height: 25vh;
+  background-color: #4b4080;
+  color: white;
 }
 
 #help {
