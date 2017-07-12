@@ -58,24 +58,37 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #about {
   height: 55vh;
+  position: relative;
 }
 
 #scrolldownicon a {
   color: #000000;
 }
 
-#services {
+#scrolldownicon {
+    margin-top: 15px;
+}
+
+.vcenter {
+    position: absolute;
+    top: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+# {
   background-color: #993333;
   color: #ffffff;
   height: 100vh;
 }
 
-#services .container {
+#signup {
   position: relative;
-  top: 20vh;
+  height: 100vh;
 }
 
-#services .glyphicon {
+#signup .glyphicon {
   border: 2px solid #FFFFFF;
   border-radius: 50%;
   display: inline-block;
@@ -87,12 +100,12 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   width: 140px;
 }
 
-#services a {
+#signup a {
   color: #FFFFFF;
 }
 
 
-#information {
+#features {
     height: 100vh;
     background: url(/static/img/translucent-oil.jpg) no-repeat center center fixed;
     display: table;
@@ -104,28 +117,22 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     background-size: cover;
 }
 
-
-#stardiv {
-  position: relative;
-  top: 20vh;
+#github {
+  height: 50vh;
 }
 
-#gettingstarted {
-  height: 100vh;
-}
-
-#gettingstarted .container {
+#github {
   position: relative;
   top: 10%;
 }
 
-#faq {
+#help {
   background-color: #993333;
   color: #ffffff;
   height: 100vh;
 }
 
-#faq .container {
+#help {
   position: relative;
   top: 10%;
 }
@@ -151,16 +158,16 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   #about {
     height: 600px;
   }
-  #information {
+  #features {
     height: 600px;
   }
-  #services {
+  #signup {
     height: 600px;
   }
   #gettingstarted {
     height: 600px;
   }
-  #faq {
+  #help {
     height: 600px;
   }
   #support {
