@@ -162,7 +162,12 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }*/
 
 #footer {
-  height: 50vh;
+  height: 48vh;
+}
+
+.nia_logo {
+    border: solid #999 1pt;
+    border-radius: 9px;
 }
 
 /*So that all content and icon is visible on smaller screens*/
