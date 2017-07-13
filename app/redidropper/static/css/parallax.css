@@ -90,6 +90,15 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   height: 50vh;
 }
 
+.signup_icon {
+    color: #8eb7b7;
+}
+
+.signup_border {
+    border: #8eb7b7 inset 8px;
+    padding: 8rem 3rem 12rem;
+}
+
 /*#signup .glyphicon {
   border: 2px solid #FFFFFF;
   border-radius: 50%;
@@ -134,11 +143,6 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     padding: 30px;
 }
 
-.signup_border {
-    border: #8eb7b7 inset 8px;
-    padding: 12rem 3rem;
-}
-
 .ul_features {
   list-style-type: none;
   text-align: left;
@@ -163,6 +167,8 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #footer {
   height: 48vh;
+  color: white;
+  background-color: #3a4b69;
 }
 
 .nia_logo {

@@ -36,15 +36,11 @@
                         <h3>
                             <ul class="ul_features">
                                 <li>Unlimited image uploads</li>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua.</p>
+                                <p>Upload as many files as you need! There are no constraints set on the number of files you upload.</p><br>
                                 <li>Multi and single file downloads</li>
-                                <p>Ut enim ad minim veniam,
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.</p>
+                                <p>If you want to download multiple PET or MRI images for your research, you now have the ability to do so.</p><br>
                                 <li>Filtered downloads by visit date and image type</li>
-                                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse
-                                cillum dolore eu fugiat nulla pariatur.</p>
+                                <p>Options to select and filter only the files pertinent to you. No unnecessary downloads!</p>
                             </ul>
                         </h3>
                     </div>
@@ -65,6 +61,7 @@
     <!-- fourth section - Sign up -->
     <div id="signup">
         <div class="container vcenter signup_border">
+            <i class="fa fa-pencil-square-o fa-4x signup_icon"></i>
             <h2 class="text-center">How to sign up?</h2> <hr />
             <div class="row text-center">
                 <div class="col-sm-12">
@@ -110,9 +107,24 @@
     <!-- Site footer -->
     <div id="footer">
         <div class="container vcenter">
-            <div class="row text-center">
-                <div class="col-sm-6 col-md-4">
-                    <h2>Partners</h2>
+            <div class="row text-left">
+                <div class="col-sm-12 col-md-4">
+                        <h3>Sponsors</h3>
+                        <p>The activities of the 1Florida Alzheimer's Disease Research Center are sponsored by the National Institute on Aging which governs Alzheimer's Disease Research Centers through the National Alzheimer's Coordinating Center. The 1Florida Alzheimer's Disease Research Center also receives yearly allocations from the Florida legislature 2013-2017.</p>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="http://nia.nih.gov"><img class="nia_logo" alt="NIA Logo" src="{{ url_for('static', filename='img/nia-logo-sm.png') }}"></a>
+
+                        </li>
+                        <br>
+                        <li>
+                            <a href="http://alz.washington.edu"><img alt="NACC Logo" src="{{ url_for('static', filename='img/nacc-logo.jpg') }}"></a>
+
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-md-3 col-md-offset-1">
+                    <h3>Partners</h3>
                     <ul class="list-unstyled">
                         <a href="http://med.ufl.edu/" target="blank">
                             <li>University of Florida</li>
@@ -131,40 +143,23 @@
                         </a>
                     </ul>
                 </div>
-                <div class="col-sm-6 col-md-4">
-                    <h2>Contact Us</h2>
+                <div class="col-sm-6 col-md-3 col-md-offset-1">
+                    <h3>Contact Us</h3>
                     <ul class="list-unstyled">
                         <a href="tel:+13522737436">
-                            <li><p><i class="fa fa-phone" aria-hidden="true">&nbsp;</i>352-273-7436</p></li>
+                            <li><i class="fa fa-phone" aria-hidden="true">&nbsp;</i>352-273-7436</li>
                         </a>
                         <a href="mailto:info@1floridaadrc.org" target="_blank">
-                            <li><p><i class="fa fa-envelope" aria-hidden="true">&nbsp;</i>info@1floridaadrc.org<p></li>
+                            <li><i class="fa fa-envelope" aria-hidden="true">&nbsp;</i>info@1floridaadrc.org</li>
                         </a>
                         <a href="http://1floridaadrc.org" target="_blank">
-                            <li><p><i class="fa fa-link" aria-hidden="true">&nbsp;</i>www.1FloridaADRC.org</p></li>
+                            <li><i class="fa fa-link" aria-hidden="true">&nbsp;</i>www.1FloridaADRC.org</li>
                         </a>
                         <a href="https://www.google.com/maps/place/University+of+Florida/@29.6436325,-82.3571242,17z/data=!3m1!4b1!4m5!3m4!1s0x88e8a30cfbe49275:0x206fe0de143d9886!8m2!3d29.6436325!4d-82.3549302" target="_blank">
-                            <li><p><i class="fa fa-map-marker" aria-hidden="true">&nbsp;</i>1Florida Alzheimer's Disease Research Center</p></li>
-                            <li><p>PO Box 100159</p></li>
-                            <li><p>Gainesville, FL 32610</p></li>
+                            <li><i class="fa fa-map-marker" aria-hidden="true">&nbsp;</i>1Florida Alzheimer's Disease Research Center</li>
+                            <li>PO Box 100159</li>
+                            <li>Gainesville, FL 32610</li>
                         </a>
-                    </ul>
-                </div>
-                <div class="col-sm-12 col-md-4">
-                    <div class="col-sm-6 col-md-12">
-                        <h2>Sponsors</h2>
-                        <p>The activities of the 1Florida Alzheimer's Disease Research Center are sponsored by the National Institute on Aging which governs Alzheimer's Disease Research Centers through the National Alzheimer's Coordinating Center. The 1Florida Alzheimer's Disease Research Center also receives yearly allocations from the Florida legislature 2013-2017.</p>
-                    </div>
-                    <ul class="list-unstyled col-sm-6 col-md-12 pdtop30">
-                        <li>
-                            <a href="http://nia.nih.gov"><img class="center-block imgpd nia_logo" alt="NIA Logo" src="{{ url_for('static', filename='img/nia-logo-sm.png') }}"></a>
-
-                        </li>
-                        <br>
-                        <li>
-                            <a href="http://alz.washington.edu"><img class="center-block imgpd" alt="NACC Logo" src="{{ url_for('static', filename='img/nacc-logo.jpg') }}"></a>
-
-                        </li>
                     </ul>
                 </div>
             </div>
