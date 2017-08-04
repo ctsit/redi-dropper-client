@@ -85,12 +85,6 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     transform: translate(-50%,-50%);
 }
 
-# {
-  background-color: #993333;
-  color: #ffffff;
-  height: 100vh;
-}
-
 #signup {
   height: 100vh;
 }
