@@ -149,7 +149,7 @@ def render_login_local():
     if current_user.is_authenticated():
         return redirect(get_role_landing_page())
 
-    uuid = session['uuid']
+    uuid = session.get('uuid')
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():

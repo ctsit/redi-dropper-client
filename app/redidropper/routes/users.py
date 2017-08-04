@@ -62,6 +62,9 @@ def get_highest_role():
     except Exception:
         return None
 
+    if not roles:
+        return []
+
     if ROLE_ADMIN in roles:
         return ROLE_ADMIN
     if ROLE_TECHNICIAN in roles:
