@@ -27,6 +27,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   color: #D8D8D8;
 }
 
+.body_offset { 
+  padding-top: 209px;
+}
+
 /* additional sections */
 #home,
 #image2,
@@ -43,7 +47,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #home {
-    background-image: url(/static/img/bottles_test2.jpg);
+    background-image: url(/static/img/bottles_02.png);
     margin-top: -5px;
 }
 
@@ -61,7 +65,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #about {
-  height: 55vh;
+  height: 100vh;
 }
 
 #scrolldownicon a {
@@ -73,6 +77,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 .vcenter {
+    width: 100%;
     position: absolute;
     top: 50%;
     top: 50%;
@@ -87,49 +92,31 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #signup {
-  height: 50vh;
+  height: 100vh;
 }
 
 .signup_icon {
     color: #8eb7b7;
 }
 
-.signup_border {
-    border: #8eb7b7 inset 8px;
-    padding: 8rem 3rem 12rem;
-}
-
-/*#signup .glyphicon {
-  border: 2px solid #FFFFFF;
-  border-radius: 50%;
-  display: inline-block;
-  font-size: 60px;
-  height: 140px;
-  line-height: 140px;
-  text-align: center;
-  vertical-align: middle;
-  width: 140px;
-}
-
-#signup a {
-  color: #FFFFFF;
-}*/
-
-
 #features  {
-    height: 90vh;
-    background: url(/static/img/gradient_bg.png) no-repeat center center fixed;
+    height: 150vh;
+    background: url(/static/img/water_drop.png) no-repeat center center fixed;
     display: table;
     width: 100%;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+}
+
+.feature_display_img {
+  width: 100%;
 }
 
 #help  {
-    height: 90vh;
-    background: url(/static/img/oil_opacity.jpg) no-repeat center center fixed;
+    height: 260vh;
+    background: url(/static/img/oil_teal_50.png) no-repeat center center fixed;
     display: table;
     width: 100%;
     -webkit-background-size: cover;
@@ -138,9 +125,16 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     background-size: cover;
 }
 
+.help_bg, .features_bg {
+    background: rgba(231, 240, 249, 0.76);
+}
+
 .help_bg {
-    background: rgba(237, 235, 220, 0.74);
-    padding: 30px;
+    padding: 20px;
+}
+
+.features_bg {
+  padding: 20px 0;
 }
 
 .ul_features {
@@ -154,21 +148,15 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #github {
-  height: 25vh;
+  height: 65vh;
   background-color: #4b4080;
   color: white;
 }
 
-/*#help {
-  background-color: #993333;
-  color: #ffffff;
-  height: 100vh;
-}*/
-
 #footer {
-  height: 48vh;
+  height: 160vh;
   color: white;
-  background-color: #3a4b69;
+  background-color: #3f4756;
 }
 
 .nia_logo {
@@ -177,11 +165,98 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 /*So that all content and icon is visible on smaller screens*/
-@media all and (max-width: 1000px) {
-  #about, #features, #signup, #github, #help, #footer, #image2, #image3 {
-    min-height: 100vh;
+
+@media all and (min-width: 400px) { 
+  #about {
+    height: 55vh;
+  } 
+
+  #features, #footer {
+    height: 85vh;
   }
+
+  #signup {
+    height: 50vh;
+  }
+
+  #github {
+    height: 35vh;
+  }
+
+  #help {
+    height: 100vh;
+  }
+}
+
+@media all and (min-width: 766px) {
+  .body_offset { 
+    padding-top: 65px;
+  }
+}
+
+@media (min-width: 768px) {
+  .vcenter {
+      width: 750px;
+  }
+
+  #footer {
+    height: 55vh;
+  }
+}
+
+@media (min-width: 992px) {
+  .vcenter {
+      width: 970px;
+  }
+}
+
+@media all and (min-width: 1000px) {
+  #image2, #image3 {
+    min-height: 85vh;
+  }
+
   #home {
     min-height: 45vh;
   }
+
+  .feature_display_img {
+    max-width: 500px;
+  }
+
+  #features {
+    height: 90vh;
+  }
+
+  .help_bg, .features_bg {
+    padding: 30px;
+  }
+
+  .signup_border {
+    border: #8eb7b7 inset 8px;
+    padding: 8rem 3rem 12rem;
+  }
 }
+
+@media (min-width: 1200px) {
+  .vcenter {
+      width: 1170px;
+  }
+  #footer {
+    height: 55vh;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -40,7 +40,13 @@
     {% endblock %}
   </head>
 
-  <body>
+  <body
+            {% if current_user.is_authenticated() %}
+            class="body_no_offset"
+            {% else %}
+            class="body_offset"
+            {% endif %}
+  >
     <!-- <div id="wrapper"> -->
         
         <!-- Sidebar -->
@@ -214,7 +220,8 @@
             {% else %}
 
             <!-- This navbar is for the landing page only, which connects to parallax.html -->
-            <nav class="navbar">
+            <!-- stick header here -->
+            <nav class="navbar navbar-fixed-top">
                 <div class="container-fluid bg-primary purple-background">
                     <div class="navbar-header">
                         <div class="navbar-brand" href="/">
@@ -268,7 +275,5 @@
             </div>
         </div>
     </div>
-
-
 </body>
 </html>
