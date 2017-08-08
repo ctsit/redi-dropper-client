@@ -119,7 +119,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #help  {
     position: relative;
-    height: 150vh; /* 200vh */
+    height: 150vh;
     background: url(/static/img/oil_teal_50.png) no-repeat center center fixed;
     display: table;
     width: 100%;
@@ -159,7 +159,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #footer {
-  height: 160vh;
+  /*height: 160vh;*/
   color: white;
   background-color: #3f4756;
 }
