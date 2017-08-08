@@ -1,6 +1,6 @@
-/* ============================================================================================== 
+/* ==============================================================================================
 This copyright notice must be kept untouched in the stylesheet at all times.
-The original version of this stylesheet and the associated (x)html 
+The original version of this stylesheet and the associated (x)html
 is available at http://www.script-tutorials.com/bootstrap-one-page-template-with-parallax-effect/
 Copyright (c) Script Tutorials. All rights reserved.
 This stylesheet and the associated (x)html may be modified in any way to fit your requirements.
@@ -27,7 +27,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
   color: #D8D8D8;
 }
 
-.body_offset { 
+.body_offset {
   padding-top: 209px;
 }
 
@@ -119,7 +119,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 #help  {
     position: relative;
-    height: 150vh;
+    height: 150vh; /* 200vh */
     background: url(/static/img/oil_teal_50.png) no-repeat center center fixed;
     display: table;
     width: 100%;
@@ -148,7 +148,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 .ul_features p {
-  font-weight: 400; 
+  font-weight: 400;
 }
 
 #github {
@@ -159,7 +159,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 #footer {
-  /*height: 160vh;*/
+  height: 160vh;
   color: white;
   background-color: #3f4756;
 }
@@ -171,26 +171,37 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 
 /*So that all content and icon is visible on smaller screens*/
 
-@media all and (min-width: 400px) { 
-/*  #about {
-    height: 55vh;
-  } 
-
-  #features, #footer {
-    height: 85vh;
+@media all and (min-width: 320px) {
+  #footer {
+    height: 190vh;
   }
 
-  #signup {
-    height: 50vh;
-  }*/
+  #help {
+    height: 270vh;
+  }
 
-/*  #github {
-    height: 35vh;
-  }*/
+  #features {
+    height: 165vh;
+  }
 
 }
 
-@media all and (min-width: 500px) { 
+@media all and (min-width: 360px) {
+  #footer {
+    height: 170vh;
+  }
+
+  #help {
+    height: 200vh;
+  }
+
+  #features {
+    height: 155vh;
+  }
+
+}
+
+@media all and (min-width: 500px) {
   #signup {
     position: relative;
     height: 100vh;
@@ -198,11 +209,11 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 @media all and (min-width: 766px) {
-  .body_offset { 
+  .body_offset {
     padding-top: 65px;
   }
 
-    #help, #features {
+    #footer, #help, #features {
     height: 100vh;
   }
 }
@@ -258,18 +269,3 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     height: 55vh;
   }*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
