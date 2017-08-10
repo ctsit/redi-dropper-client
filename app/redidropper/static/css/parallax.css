@@ -172,6 +172,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 /*So that all content and icon is visible on smaller screens*/
 
 @media all and (min-width: 320px) {
+  #about {
+    height: 120vh;
+  }
+
   #footer {
     height: 190vh;
   }
@@ -187,6 +191,10 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 }
 
 @media all and (min-width: 360px) {
+  #about {
+    height: 80vh;
+  }
+
   #footer {
     height: 170vh;
   }
