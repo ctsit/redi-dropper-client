@@ -48,10 +48,10 @@
             {% endif %}
   >
     <!-- <div id="wrapper"> -->
-        
+
         <!-- Sidebar -->
     <div class="container-fluid">
-        <div class="row">
+        <!-- <div class="row"> -->
 
             {% if current_user.is_authenticated() %}
             <nav class="sidenav bg-primary purple-background col-sm-12 col-md-3 col-lg-3">
@@ -208,7 +208,7 @@
 
 
 
-                    
+
                     <button class="hidenav" onclick="document.querySelector('#sidebar-nav').style.display='none';">menu</button>
                 </div>
                 <ul id="sidebar-nav" class="sidebar-nav" >
@@ -239,8 +239,8 @@
             </nav>
 
             {%endif%}
-
-            <div class="
+            <!-- </div> -->
+            <div class="row
                         {% if current_user.is_authenticated() %}
                         col-sm-12 col-md-9
                         {%endif%}
@@ -261,8 +261,8 @@
                     {% block content %}
                     {% endblock %}
             </div>
-        </div>
-        <div class="row">
+
+        <!-- <div class="row"> -->
             <div class="navbar-default navbar-fixed-bottom">
                 <div class=" text-center footer">
                     <a href="https://www.ctsi.ufl.edu/research/study-development/informatics-consulting/">CTS-IT</a>
@@ -271,7 +271,7 @@
                 &middot; <a href="https://github.com/ctsit/redi-dropper-client/tree/{{config['APP_VERSION']}}">Version {{config['APP_VERSION']}}</a>
                 </div>
             </div>
-        </div>
+        <!-- </div> -->
     </div>
 </body>
 </html>
